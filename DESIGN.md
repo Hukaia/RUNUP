@@ -553,11 +553,38 @@ l'accueil et sur la nuit sur la Journée, et de la ligne d'allure des Stats. Une
 *paraître* la même sur deux fonds différents n'a pas la même valeur sur les deux : c'est déjà le
 mécanisme de `primaryOnLight`, et ce n'est pas une divergence.
 
-### Ce qui reste à regarder, et que je ne tranche pas
+### La Journée : tranché, et pourquoi
 
-**La Journée.** Un anneau de progression sur fond noir est le vocabulaire de l'app Activité
-d'Apple, reconnue partout. Celui de RunUp en diffère réellement — une seule piste segmentée en
-trois arcs, et non trois anneaux concentriques, avec le compte au centre — mais la question 3 de
-la DA (« est-ce qu'on devine qu'il a été généré ? » et, par extension, copié ?) se pose là et
-seulement là. C'est un jugement sur une image rendue, pas une mesure : il appartient à Charlotte,
-sur la capture.
+Un anneau de progression sur fond noir est le vocabulaire de l'app Activité d'Apple, reconnue
+partout. La question 3 de la DA — « est-ce qu'on devine qu'il a été généré ? », et par extension
+copié ? — se posait là, et seulement là. Posée à Charlotte le 14 novembre, elle m'a renvoyé la
+décision. **L'anneau reste sur la nuit**, pour trois raisons, dans l'ordre de leur poids :
+
+1. **La forme diffère vraiment.** Apple empile trois anneaux concentriques et ne met aucun chiffre
+   au centre. Celui-ci est une piste UNIQUE coupée en trois arcs, avec le compte au moyeu. Apple
+   montre trois efforts séparés ; nous montrons une journée dont on a bouclé deux tiers.
+2. **L'anneau de progression n'appartient à personne.** C'est un objet de vocabulaire, comme une
+   barre ou une courbe. Ce qui fait la signature, c'est la nuit sous le dessin et les chiffres
+   posés dessus.
+3. **L'alternative coûte plus qu'elle ne rapporte.** Revenir au fond clair ferait retomber la
+   Journée à 1,5 % de surface sombre : le seul des six écrans sans signature, pour écarter une
+   ressemblance qui ne tient qu'au premier coup d'œil.
+
+**Le seul endroit où la réponse serait différente :** la grille de captures de l'App Store, où une
+vignette est tout ce qu'on voit. Les six écrans de la fiche sont un choix séparé, et le changer ne
+touche pas l'app.
+
+### L'accueil ne répète pas ce qui vit ailleurs
+
+Règle née le 14 novembre, d'une phrase de Charlotte devant la capture : « ça fait beaucoup d'infos
+du coup ». Elle avait raison, et c'est moi qui l'avais densifié le matin même.
+
+**L'accueil est un hub.** Tout ce qu'il pourrait dessiner appartient déjà à un autre écran — la
+semaine au Plan, l'anneau à la Journée, les chiffres aux Stats. Son travail est d'orienter, pas de
+résumer. Une carte qui raccourcit d'un tap un trajet déjà ouvert par la barre d'onglets ne gagne
+pas sa place.
+
+Ce qu'il garde, dans l'ordre des questions qu'on se pose en l'ouvrant : **qu'est-ce que je fais
+aujourd'hui · qu'est-ce que je viens de faire · où j'en suis dans mon plan · suis-je à jour de ma
+journée.** Quatre blocs. Ce qui a été retiré ce jour-là — les trente derniers jours, les trois
+mesures du jour, le pied du programme — vit en entier à un tap de là.
