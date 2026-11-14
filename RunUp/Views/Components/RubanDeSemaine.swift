@@ -143,7 +143,7 @@ struct RubanDeSemaine: View {
         return VStack(spacing: 6) {
             Spacer(minLength: 0)
             RoundedRectangle(cornerRadius: RUSpacing.radiusBar, style: .continuous)
-                .fill(surLaNuit ? famille.tintSurLaNuit : famille.tint)
+                .fill(couleur(de: famille))
                 .frame(width: Self.largeurDeLaMarque)
                 // Une séance faite recule sans disparaître — la même règle que les semaines
                 // passées du graphique du plan, et la même valeur.
@@ -168,6 +168,24 @@ struct RubanDeSemaine: View {
                 .frame(width: 4, height: 4)
         }
         .frame(maxWidth: .infinity)
+    }
+
+    /// La couleur d'une marque, sur le fond où elle est posée.
+    ///
+    /// LE REPOS EST LE SEUL CAS QUI NE SUIT PAS `SessionFamily.tint`, et c'est une mesure qui l'a
+    /// décidé. Sur la nuit, un jour de repos est du blanc à 28 % : 2,50:1, il recule. Sur la
+    /// page, `tint` rend `RUColor.text3`, soit 7,25:1 — trois fois le poids, pour dire la même
+    /// chose. Le creux de la semaine avançait donc sur un fond et reculait sur l'autre.
+    ///
+    /// `text4` donne 2,10:1 : le même retrait. Et c'est bien un jeton du système, pas une valeur
+    /// trouvée à l'œil.
+    ///
+    /// Le jeton partagé, lui, ne bouge PAS : il colore aussi le symbole de repos des lignes de
+    /// jour du Plan — un croissant de lune de quinze points qu'il faut pouvoir lire. Une barre
+    /// qui dit « creux » et un glyphe qui dit « repos » ne demandent pas le même poids.
+    private func couleur(de famille: SessionFamily) -> Color {
+        if surLaNuit { return famille.tintSurLaNuit }
+        return famille == .rest ? RUColor.text4 : famille.tint
     }
 
     /// Le quantième du jour `index` de la semaine en cours, ou `nil` si le calendrier n'a pas su.

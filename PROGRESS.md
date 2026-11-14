@@ -5544,3 +5544,24 @@ ils disent « aujourd'hui, c'est le 14 », un confort ; la forme de la semaine e
 texte. L'écran le plus ouvert de l'app, et sa moitié basse — le programme, la semaine, les
 objectifs — n'apparaissait sur aucune des 193 images. On la jugeait de mémoire, et c'est
 exactement ce qui a failli laisser passer le débordement. Deux captures de plus.
+
+## 14 novembre 2026 — un jour de repos pesait trois fois plus sur la page que sur la nuit
+
+Le ruban dit la semaine sur deux fonds. Un jour sans séance y garde un trait court — un creux, pas
+un trou. Sur la nuit, c'est du blanc à 28 % : **2,50:1**, il recule. Sur la carte, `SessionFamily.tint`
+rend `RUColor.text3` : **7,25:1** en thème clair, **6,00:1** en sombre. Le même creux avançait donc
+sur un fond et reculait sur l'autre, et les premières captures du bas de l'accueil le montrent
+sans discussion — trois blocs gris qui se lisent comme « quelque chose ».
+
+`text4` donne **2,10:1** et **2,16:1**. Le repos pèse maintenant pareil sur les trois fonds.
+
+**Le jeton partagé ne bouge pas**, et c'est le point : `SessionFamily.tint` colore aussi le
+croissant de lune des lignes de jour du Plan, un glyphe de quinze points qu'il faut pouvoir lire.
+Une barre qui dit « creux » et un symbole qui dit « repos » ne demandent pas le même poids. La
+correction vit donc dans le ruban, avec sa mesure à côté.
+
+### Et les deux captures neuves ont servi tout de suite
+
+Le bas de l'accueil au plus grand texte montre ce qu'on venait de corriger : les quantièmes
+s'effacent, le ruban se mesure lui-même, rien ne déborde. C'est la première image de cette moitié
+d'écran, et elle a confirmé un correctif le jour de sa prise.
