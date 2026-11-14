@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Toute chaîne affichée doit exister au catalogue.
+r"""Toute chaîne affichée doit exister au catalogue.
 
 # POURQUOI CE CONTRÔLE EXISTE
 
@@ -64,7 +64,7 @@ OUVERTURES = [
 
 
 def lire_litteral(ligne: str, debut: int):
-    """Le contenu du littéral commençant juste après `debut`, ou None s'il n'est pas terminé ici.
+    r"""Le contenu du littéral commençant juste après `debut`, ou None s'il n'est pas terminé ici.
 
     Suit la profondeur des interpolations : tant qu'on est dans un `\(…)`, un guillemet appartient
     à la chaîne intérieure et ne ferme rien.
