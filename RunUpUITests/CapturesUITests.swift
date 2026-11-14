@@ -267,6 +267,25 @@ final class CapturesUITests: XCTestCase {
                 tailleDuTexte: Self.ax2)
     }
 
+    /// # LE BAS DE L'ACCUEIL N'ÉTAIT PHOTOGRAPHIÉ NULLE PART
+    ///
+    /// Ni en taille normale, ni en grand texte. C'est l'écran le plus ouvert de l'app, et sa
+    /// moitié basse — le programme, la semaine, les objectifs du jour — n'apparaissait sur
+    /// aucune des images de la campagne. On la jugeait de mémoire.
+    ///
+    /// Le trou s'est vu le 14 novembre, quand le ruban de semaine a remplacé la bande de
+    /// l'accueil : le ruban se posait dans un cadre de hauteur fixe, et au plus grand texte ses
+    /// étiquettes en débordaient. Aucune capture n'aurait pu le montrer.
+    func test31AccueilBas() {
+        prendre(rang: 31, ecran: "prog", nom: "accueil-bas", diagnostic: true, defilements: 1)
+    }
+
+    func test32AccueilBasGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 32, ecran: "prog", nom: "grand-texte/accueil-bas", diagnostic: true,
+                defilements: 1, tailleDuTexte: Self.ax2)
+    }
+
     func test23StatsGrandTexte() throws {
         try passeSombreSeulement()
         prendre(rang: 23, ecran: "stats", nom: "grand-texte/stats", diagnostic: true,

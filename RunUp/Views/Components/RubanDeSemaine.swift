@@ -54,6 +54,19 @@ struct RubanDeSemaine: View {
     /// n'y répond pas.
     var quantiemes: Bool = false
 
+    /// LA TAILLE DU TEXTE DÉCIDE SI LES QUANTIÈMES TIENNENT.
+    ///
+    /// La bande que ce ruban remplace avait un `ViewThatFits` qui les laissait tomber quand la
+    /// place manquait, et une pastille d'état en `@ScaledMetric`. J'avais perdu les deux en la
+    /// remplaçant. `micro` vaut 9 points et le système de type plafonne l'agrandissement à 2× :
+    /// une initiale et un quantième l'un sous l'autre passent donc de 20 à 40 points de haut,
+    /// au-dessus d'une barre qui peut déjà en faire 76.
+    ///
+    /// Les quantièmes sont un confort — ils disent « aujourd'hui, c'est le 14 ». La forme de la
+    /// semaine, elle, est l'information. Au-delà des tailles ordinaires, le confort s'efface.
+    @Environment(\.dynamicTypeSize) private var tailleDuTexte
+    private var montreLesQuantiemes: Bool { quantiemes && !tailleDuTexte.isAccessibilitySize }
+
     /// L'encre pleine : blanche sur la nuit, celle du thème sur une carte.
     private var encre: Color { surLaNuit ? RUColor.surLaNuit : RUColor.textPrimary }
     /// L'encre seconde, pour les jours qui ne sont pas aujourd'hui.
@@ -141,7 +154,7 @@ struct RubanDeSemaine: View {
                     .font(RUFont.sans(.micro, weight: .bold))
                     .foregroundColor(jour.weekday == aujourdHui ? encre : encre2)
                     .lineLimit(1)
-                if quantiemes, let quantieme = quantieme(de: jour.weekday) {
+                if montreLesQuantiemes, let quantieme = quantieme(de: jour.weekday) {
                     Text(verbatim: quantieme)
                         .font(RUFont.sans(.micro, weight: jour.weekday == aujourdHui ? .bold : .regular))
                         .foregroundColor(jour.weekday == aujourdHui ? encre : encre2)

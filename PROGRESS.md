@@ -5522,3 +5522,25 @@ moins de hauteur. Rien n'est retiré — le compte, le libellé et les trois mes
 
 Séance du jour · dernière sortie · programme et semaine · objectifs du jour · chiffres. C'est
 l'ordre des questions qu'on se pose en ouvrant l'app.
+
+### Ce que la campagne a montré, et ce qu'elle ne pouvait pas montrer
+
+**L'anneau va bien.** Sur la vignette au tiers, il semblait n'être rempli qu'aux deux tiers alors
+que sa légende dit « 2/2 ». À pleine résolution, il est complet : deux arcs qui couvrent tout le
+cercle, avec les deux écarts de segment. Ce que je prenais pour la piste grise était
+l'anticrénelage de la réduction. Vérifié avant d'accuser.
+
+**Le ruban débordait au grand texte, et aucune image ne pouvait le dire.** La bande que j'ai
+remplacée avait deux adaptations que j'avais perdues : un `ViewThatFits` qui laissait tomber les
+quantièmes quand la place manquait, et une pastille d'état en `@ScaledMetric`. Je lui avais donné
+un cadre de hauteur fixe. `micro` vaut 9 points, le système plafonne l'agrandissement à 2× : une
+initiale et un quantième l'un sous l'autre font donc quarante points, au-dessus d'une barre qui
+peut déjà en faire soixante-seize.
+
+Le ruban se mesure maintenant lui-même, et les quantièmes s'effacent aux tailles accessibles —
+ils disent « aujourd'hui, c'est le 14 », un confort ; la forme de la semaine est l'information.
+
+**Et le bas de l'accueil n'était photographié nulle part.** Ni en taille normale, ni en grand
+texte. L'écran le plus ouvert de l'app, et sa moitié basse — le programme, la semaine, les
+objectifs — n'apparaissait sur aucune des 193 images. On la jugeait de mémoire, et c'est
+exactement ce qui a failli laisser passer le débordement. Deux captures de plus.

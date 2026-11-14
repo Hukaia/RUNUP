@@ -360,7 +360,12 @@ struct HomeView: View {
                        aujourdHui: indexDuJour,
                        surLaNuit: false,
                        quantiemes: true)
-            .frame(height: 104)
+            // PAS DE HAUTEUR FIXE : le ruban se mesure lui-même.
+            //
+            // Avec `.frame(height: 104)`, un réglage de texte accessible poussait les étiquettes
+            // hors du cadre — l'initiale et le quantième font alors quarante points à eux deux,
+            // au-dessus d'une barre qui peut en faire soixante-seize. La carte du Coach, elle,
+            // lui donne une hauteur parce qu'elle en a une : c'est une carte de nuit.
             .padding(.top, 2)
     }
 
