@@ -335,21 +335,32 @@ final class LiveRunViewModel {
         // on continuous footings (no 800s exist there) and claimed "FC bien maîtrisée" with no
         // real heart-rate reading behind it, the exact kind of fabricated claim the rest of the
         // app already scrubbed out.
+        //
+        // IL EN RESTAIT TROIS DE LA MÊME FAMILLE, retirées le 14 novembre. « Mi-séance, tu gères
+        // PARFAITEMENT », « Mi-séance, tu gères » et « BEAU RYTHME, reste régulière » disent
+        // comment la course se passe — et rien ne le mesure : ces consignes partent sur un
+        // minuteur, à 360 et 720 secondes, quelle que soit l'allure réelle. Quelqu'un à
+        // quarante secondes au kilomètre de sa cible s'entendait dire qu'il gérait parfaitement.
+        //
+        // Elles sont remplacées par ce qu'un entraîneur dit vraiment à ce moment-là, et qui est
+        // vrai sans rien mesurer : une sortie continue se court en deux moitiés égales, et sur
+        // du fractionné c'est la qualité de la récupération qui décide des dernières
+        // répétitions. Du coaching plutôt que de l'éloge.
         if todaySession.isIntervalSession {
             cues = [
                 (6, String(localized: "C'est parti \(name). Échauffement tranquille, reste en Z2.")),
                 (120, String(localized: "Fin d'échauffement. Première répétition : vise \(targetPace), foulée relâchée.")),
                 (360, String(localized: "Tiens ton allure sur chaque répétition, récupère bien entre les blocs")),
-                (720, String(localized: "Mi-séance, tu gères. Garde ta cadence sur les prochaines répétitions.")),
+                (720, String(localized: "Mi-séance. C'est la récupération qui tient la fin — ne la coupe pas.")),
                 (1080, String(localized: "Dernier bloc, c'est le moment — lâche tout dessus"))
             ]
         } else {
             cues = [
                 (6, String(localized: "C'est parti \(name). Départ tranquille, laisse le corps se mettre en route.")),
                 (120, String(localized: "Trouve ton rythme de croisière : vise \(targetPace), foulée relâchée.")),
-                (360, Accord.selon(f: String(localized: "Beau rythme, reste régulière — c'est la constance qui paie"),
-                                   m: String(localized: "Beau rythme, reste régulier — c'est la constance qui paie"))),
-                (720, String(localized: "Mi-séance, tu gères parfaitement. Garde ta cadence.")),
+                (360, Accord.selon(f: String(localized: "Reste régulière — c'est la constance qui paie"),
+                                   m: String(localized: "Reste régulier — c'est la constance qui paie"))),
+                (720, String(localized: "Mi-séance. La deuxième moitié se court comme la première.")),
                 (1080, String(localized: "Dernière partie — finis proprement, sans t'arracher"))
             ]
         }

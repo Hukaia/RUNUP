@@ -275,7 +275,12 @@ struct DebriefSheet: View {
                 Haptics.success()
                 let streak = appState.profile.streak
                 if AdaptivePlanEngine.streakMilestones.contains(streak) {
-                    appState.notify(icon: "flame.fill", colorHex: 0xFF6B4A, title: String(localized: "Série de \(streak) jours"), text: String(localized: "Tu enchaînes les séances sans lâcher — continue comme ça !"))
+                    // Le palier SUIVANT plutôt qu'un « continue comme ça ! ». Le fait — la série
+                    // — est déjà dans le titre ; le texte doit apprendre quelque chose.
+                    let suite = AdaptivePlanEngine.palierSuivant(apres: streak)
+                        .map { String(localized: "Prochain palier : \($0) jours.") }
+                        ?? String(localized: "Un an de suite. Il n'y a pas de palier au-delà.")
+                    appState.notify(icon: "flame.fill", colorHex: 0xFF6B4A, title: String(localized: "Série de \(streak) jours"), text: suite)
                     Haptics.impact(.heavy)
                 }
                 if AdaptivePlanEngine.checkDailyGoalsBonus(appState.profile) {

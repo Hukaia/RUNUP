@@ -5593,3 +5593,44 @@ vise exactement.
 
 Le garde lit le code ET les trois langues du catalogue, parce qu'une traduction est précisément
 l'endroit par où un 🔥 revient « pour faire vivant », et que personne ne relit 2 117 clés à l'œil.
+
+## 14 novembre 2026 — trois consignes disaient comment la course se passait, sans rien mesurer
+
+Le dernier marqueur de la « Claude touch » que DESIGN.md donne pour tenu par aucun garde : le
+texte générique. Il ne se mesure pas, il se relit. J'ai relu les 2 117 clés du catalogue en
+cherchant les signatures de l'encouragement creux — l'exclamation, l'éloge, la formule.
+
+La plupart tiennent. « Meilleur temps sur ce parcours ! », « Nouveau record personnel ! »,
+« Personne n'a encore couru cette semaine — lance-toi ! » : ce sont des faits ou des états vides
+avec une action. Un coach qui encourage fait son travail ; ce qui est interdit, c'est l'éloge qui
+ne repose sur rien.
+
+### Les trois qui ne reposaient sur rien
+
+- « Mi-séance, tu gères **parfaitement**. Garde ta cadence. »
+- « Mi-séance, tu gères. Garde ta cadence sur les prochaines répétitions. »
+- « **Beau rythme**, reste régulière — c'est la constance qui paie »
+
+Elles partent sur un MINUTEUR, à 360 et 720 secondes, quelle que soit l'allure réelle. Quelqu'un à
+quarante secondes au kilomètre de sa cible s'entendait dire qu'il gérait parfaitement. C'est la
+règle 2 autant que la 7 : rien de faux sur l'entraînement.
+
+Le commentaire juste au-dessus de ces lignes disait déjà la règle, pour une consigne retirée
+avant elles : « claimed "FC bien maîtrisée" with no real heart-rate reading behind it, **the exact
+kind of fabricated claim the rest of the app already scrubbed out** ». Trois étaient restées.
+
+Elles sont remplacées par ce qu'un entraîneur dit vraiment à ce moment-là, et qui est vrai sans
+rien mesurer : une sortie continue se court en deux moitiés égales, et sur du fractionné c'est la
+qualité de la récupération qui décide des dernières répétitions.
+
+### Et le palier de série
+
+« Tu enchaînes les séances sans lâcher — **continue comme ça !** » Le fait était vrai — la série
+est réelle — mais la phrase tient dans n'importe quelle app, et le titre disait déjà « Série de 7
+jours ». Elle nomme maintenant le palier SUIVANT, calculé depuis la liste des paliers : la seule
+chose qu'on veut savoir à ce moment-là, et un fait plutôt qu'un encouragement.
+
+**Pas de garde.** Un contrôle du « texte générique » serait une liste de mots interdits, et il
+signalerait « bien joué » dans « Dernière répétition faite, bien joué » — qui est juste, parce
+qu'une répétition FINIE est un fait. DESIGN.md dit que cette règle-là se tient à l'œil ; elle se
+tient à l'œil.

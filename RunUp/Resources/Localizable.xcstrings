@@ -5435,40 +5435,6 @@
         }
       }
     },
-    "Beau rythme, reste régulier — c'est la constance qui paie": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Good rhythm, stay steady — consistency is what pays"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Buen ritmo, mantente constante — la constancia es lo que paga"
-          }
-        }
-      }
-    },
-    "Beau rythme, reste régulière — c'est la constance qui paie": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Good rhythm, stay steady — consistency is what pays"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Buen ritmo, mantente constante — la constancia es lo que paga"
-          }
-        }
-      }
-    },
     "Bien récupérée → tu peux pousser un peu aujourd'hui si tu le sens.": {
       "localizations": {
         "en": {
@@ -16615,36 +16581,36 @@
         }
       }
     },
-    "Mi-séance, tu gères parfaitement. Garde ta cadence.": {
+    "Mi-séance. C'est la récupération qui tient la fin — ne la coupe pas.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Halfway, you're doing great. Keep your cadence."
+            "value": "Halfway. Recovery is what carries the last reps — don't cut it short."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mitad de sesión, lo estás haciendo genial. Mantén la cadencia."
+            "value": "Mitad de sesión. La recuperación sostiene el final — no la acortes."
           }
         }
       }
     },
-    "Mi-séance, tu gères. Garde ta cadence sur les prochaines répétitions.": {
+    "Mi-séance. La deuxième moitié se court comme la première.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Halfway, you've got this. Keep your cadence on the next reps."
+            "value": "Halfway. Run the second half like the first."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mitad de sesión, lo llevas bien. Mantén la cadencia en las próximas series."
+            "value": "Mitad de sesión. Corre la segunda mitad como la primera."
           }
         }
       }
@@ -20408,6 +20374,23 @@
         }
       }
     },
+    "Prochain palier : %lld jours.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next milestone: %lld days."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siguiente meta: %lld días."
+          }
+        }
+      }
+    },
     "Prochaine séance": {
       "localizations": {
         "en": {
@@ -22275,6 +22258,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restaurar mis compras"
+          }
+        }
+      }
+    },
+    "Reste régulier — c'est la constance qui paie": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stay steady — consistency is what pays"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantén el ritmo — la constancia es lo que paga"
+          }
+        }
+      }
+    },
+    "Reste régulière — c'est la constance qui paie": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stay steady — consistency is what pays"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantén el ritmo — la constancia es lo que paga"
           }
         }
       }
@@ -28273,22 +28290,6 @@
         }
       }
     },
-    "Tu enchaînes les séances sans lâcher — continue comme ça !": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You're stringing sessions together without letting up — keep it going!"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Encadenas las sesiones sin soltar — ¡sigue así!"
-          }
-        }
-      }
-    },
     "Tu es": {
       "localizations": {
         "en": {
@@ -28501,6 +28502,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Teléfono cargado, en modo de bajo consumo, con los números de la organización."
+          }
+        }
+      }
+    },
+    "Un an de suite. Il n'y a pas de palier au-delà.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A full year. There is no milestone beyond this one."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un año seguido. No hay meta más allá de esta."
           }
         }
       }

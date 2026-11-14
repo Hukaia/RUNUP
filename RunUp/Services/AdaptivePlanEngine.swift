@@ -2140,6 +2140,16 @@ enum AdaptivePlanEngine {
     /// same-day 3-goals bonus.
     static let streakMilestones: Set<Int> = [3, 7, 14, 21, 30, 60, 100, 180, 365]
 
+    /// Le palier de série qui suit celui qu'on vient d'atteindre, s'il y en a un.
+    ///
+    /// La notification de palier disait « tu enchaînes les séances sans lâcher — continue comme
+    /// ça ! ». Le fait était vrai, la phrase ne disait rien : « continue comme ça » tient dans
+    /// n'importe quelle app. Nommer le palier SUIVANT donne la seule chose qu'on veut savoir à
+    /// ce moment-là, et c'est un fait, pas un encouragement.
+    static func palierSuivant(apres palier: Int) -> Int? {
+        streakMilestones.filter { $0 > palier }.min()
+    }
+
     /// Regenerates the current week's plan in place around just-changed settings (running days,
     /// goal) — `ProgramSettingsSheet`'s save promises "le coach recalcule tes prochaines séances
     /// dès l'enregistrement", which used to be false: nothing regenerated until the next week
