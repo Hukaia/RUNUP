@@ -1014,6 +1014,25 @@ struct HomeView: View {
         .accessibilityElement(children: .combine)
     }
 
+    /// « 2/2 » : les objectifs du jour atteints sur ceux du jour.
+    ///
+    /// Nommé parce que les deux branches du `ViewThatFits` le dessinent, et qu'un nombre écrit
+    /// deux fois finit par ne plus l'être tout à fait.
+    private func compteDuJour(_ p: UserProfile) -> some View {
+        Text(verbatim: "\(p.dailyGoalsDone)/\(p.dailyGoalsTotal)")
+            .displayStyle(.banner)
+            .foregroundColor(RUColor.textPrimary)
+            .monospacedDigit()
+    }
+
+    private var libelleDeLaJournee: some View {
+        Text("Ta journée")
+            .font(RUFont.sans(.label, weight: .medium))
+            .foregroundColor(RUColor.text3)
+            .textCase(.uppercase)
+            .tracking(1.6)
+    }
+
     private var ringsCard: some View {
         let p = profile
         return Button(action: { appState.go(.rings) }) {
@@ -1035,19 +1054,34 @@ struct HomeView: View {
                         size: 72,
                         animateOnAppear: true
                     )
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(verbatim: "\(p.dailyGoalsDone)/\(p.dailyGoalsTotal)")
-                            .displayStyle(.banner)
-                            .foregroundColor(RUColor.textPrimary)
-                            .monospacedDigit()
-                        Text("Ta journée")
-                            .font(RUFont.sans(.label, weight: .medium))
-                            .foregroundColor(RUColor.text3)
-                            .textCase(.uppercase)
-                            .tracking(1.6)
+
+                    // LE COMPTE ET SON LIBELLÉ SE METTENT SUR UNE LIGNE QUAND ILS TIENNENT.
+                    //
+                    // Empilés, ils occupaient 241 points des 388 de la carte, et laissaient
+                    // 160 points de vide avant le chevron — mesuré sur la capture du
+                    // 14 novembre. La même ligne ailleurs dans l'app, « Le fil » sur le profil,
+                    // en laisse 50 : son sous-titre court sur deux lignes jusqu'au chevron.
+                    // Le trou est né le matin même, quand les trois mesures du jour sont
+                    // parties d'ici ; c'est une place vide, pas une respiration.
+                    //
+                    // Rien ne revient pour la combler : les deux textes se rangent côte à côte,
+                    // ce qui donne « 2/2 · TA JOURNÉE » en une lecture et ramène le vide dans
+                    // la grammaire de l'app. En grand texte, la ligne ne tient plus — le
+                    // `ViewThatFits` repasse alors à la pile, plutôt que de réduire un nombre
+                    // de 44 points à la moitié de sa taille.
+                    ViewThatFits(in: .horizontal) {
+                        HStack(alignment: .firstTextBaseline, spacing: 10) {
+                            compteDuJour(p)
+                            libelleDeLaJournee
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            compteDuJour(p)
+                            libelleDeLaJournee
+                        }
                     }
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
+
                     Spacer(minLength: 0)
                     Image(systemName: "chevron.right")
                         .font(RUFont.icone(.small, weight: .semibold))
@@ -1076,6 +1110,13 @@ struct HomeView: View {
             .padding(RUSpacing.cardPadding)
         }
         .buttonStyle(PressableStyle())
+        // LE NOM PRONONÇABLE DE LA CARTE.
+        //
+        // Sans lui, VoiceOver lisait ce qui est écrit : « deux barre oblique deux, T A
+        // J O U R N É E » — un libellé en capitales s'épelle. La phrase posée ici est MOT POUR
+        // MOT celle de l'anneau de l'écran Journée (`RingsView`), parce que c'est le même objet
+        // : cette carte en est l'entrée, et deux noms pour une chose font croire à deux choses.
+        .accessibilityLabel(Text(String(localized: "\(p.dailyGoalsDone) sur \(p.dailyGoalsTotal) objectifs bouclés")))
         // La carte revient. Je l'avais retirée en pariant qu'un anneau de cette taille n'a plus
         // besoin d'un cadre pour exister — vrai dans l'absolu, faux dans CET écran : la séance
         // au-dessus et l'offre en dessous sont des cartes blanches posées sur un fond lavande,

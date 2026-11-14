@@ -5671,3 +5671,43 @@ pas de total, et « Programme ouvert » est la seule façon de le dire.
 
 Séance du jour · dernière sortie · programme et semaine · objectifs du jour. Quatre blocs au lieu
 de six, et une vingtaine de nombres au lieu d'une trentaine.
+
+## 14 novembre 2026 — le ménage de l'accueil avait laissé un trou dans la carte Journée
+
+Vérification de la coupe précédente sur la campagne 198, en regardant les images plutôt qu'en
+relisant le code.
+
+**Ce que la capture dit de bon.** L'accueil tient en un écran : le bas de page, photographié
+séparément, est décalé de 122 pixels sur une image de 2 868, soit **41 points de défilement** —
+la hauteur d'une ligne de texte. Avant la coupe il fallait faire défiler pour atteindre l'anneau.
+Quatre blocs au lieu de six, une vingtaine de nombres au lieu d'une trentaine.
+
+**Ce qu'elle dit de mauvais, et que je n'avais pas vu.** En retirant les trois mesures du jour de
+la carte Journée, j'avais vidé sa moitié droite sans retoucher sa mise en page. Mesuré sur
+l'image, à l'intérieur de la carte : le contenu s'arrête à 241 points sur 388, puis **160 points
+de vide** avant le chevron.
+
+La même grammaire existe ailleurs dans l'app — « Le fil », sur le profil : icône, titre,
+sous-titre, chevron. Mesuré sur la même campagne : **50 points de vide**. Trois fois moins. Ce
+n'est donc pas la respiration d'une ligne de liste, c'est une place laissée libre par ce qui
+vient d'en partir : un composant sans intention, au sens de la troisième question de la DA.
+
+**Ce qui est fait.** Rien ne revient pour combler. Le compte et son libellé, qui étaient empilés,
+se rangent côte à côte — « 2/2 · TA JOURNÉE » en une lecture. Un `ViewThatFits` repasse à la pile
+en grand texte, plutôt que de réduire un nombre de 44 points à la moitié de sa taille.
+
+**Ce que le garde a attrapé au passage.** En sortant les deux `Text` dans des vues nommées — pour
+ne pas les écrire deux fois, une par branche du `ViewThatFits` — le bouton n'a plus porté, aux
+yeux de `check_a11y.py`, qu'une icône de chevron. Refus. Le garde avait tort sur la lettre et
+raison sur le fond : VoiceOver lisait bien quelque chose, mais il lisait « deux barre oblique
+deux, T A J O U R N É E » — un libellé en capitales s'épelle. La carte porte maintenant le nom
+prononçable de l'anneau dont elle est l'entrée, **mot pour mot celui de `RingsView`** :
+« %lld sur %lld objectifs bouclés ». Une clé déjà au catalogue, dans les trois langues.
+
+| | avant | après |
+| --- | --- | --- |
+| Vide à droite dans la carte Journée | 160 pt | à mesurer sur la prochaine campagne |
+| Vide de la ligne comparable (« Le fil », profil) | 50 pt | 50 pt |
+| Nom lu par VoiceOver | « 2/2, T A J O U R N É E » | « 2 sur 2 objectifs bouclés » |
+
+Contrôles et cas locaux verts. La construction et la campagne de captures restent à passer.
