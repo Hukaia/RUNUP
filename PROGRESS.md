@@ -5704,10 +5704,31 @@ deux, T A J O U R N É E » — un libellé en capitales s'épelle. La carte por
 prononçable de l'anneau dont elle est l'entrée, **mot pour mot celui de `RingsView`** :
 « %lld sur %lld objectifs bouclés ». Une clé déjà au catalogue, dans les trois langues.
 
+**Mesuré sur la campagne 199.**
+
 | | avant | après |
 | --- | --- | --- |
-| Vide à droite dans la carte Journée | 160 pt | à mesurer sur la prochaine campagne |
+| Vide à droite dans la carte Journée, en français | 160 pt | **73 pt** |
+| — en anglais | — | 96 pt |
+| — en espagnol | — | 130 pt |
 | Vide de la ligne comparable (« Le fil », profil) | 50 pt | 50 pt |
+| Hauteur de la carte | 109 pt | **96 pt**, identique dans les trois langues |
+| Défilement restant sur l'accueil | 41 pt | **31 pt** |
 | Nom lu par VoiceOver | « 2/2, T A J O U R N É E » | « 2 sur 2 objectifs bouclés » |
 
-Contrôles et cas locaux verts. La construction et la campagne de captures restent à passer.
+L'espagnol garde 130 points parce que « Tu día » fait six caractères contre dix à « Ta journée ».
+Ce n'est pas rattrapable sans faire dépendre la mise en page de la longueur d'un mot, ce qui
+serait pire ; l'image, elle, se tient.
+
+Le repli en grand texte est vérifié sur la capture d'accessibilité : la carte repasse à la pile,
+rien n'est tronqué, rien n'est réduit.
+
+Build 561 vert, **zéro avertissement du compilateur Swift** — compté dans le journal complet du
+build, pas déduit.
+
+**Au passage, relevé dans ce même journal.** `check_strings.py` levait six `SyntaxWarning` Python
+à chaque build : « `\(` is an invalid escape sequence », lignes 35 et 69, deux docstrings
+ordinaires qui contiennent des exemples d'interpolation Swift. Python avertit aujourd'hui,
+refusera demain : un garde de la barrière qui se serait cassé tout seul à la prochaine montée de
+version. Les deux docstrings sont maintenant brutes. Vérifié sur les 142 scripts de `ci_scripts`,
+en compilant chacun avec les avertissements promus en erreurs : aucun autre.
