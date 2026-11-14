@@ -57,12 +57,23 @@ couvrent qu'une partie :
 | Grand chiffre qui peut se tronquer en silence | `check_grands_chiffres.py` |
 | Ouverture qui déborde sur son propre fondu | `check_lancement.py` |
 | Jeton de texte hors famille ou en opacité | `check_jetons_de_texte.py` |
+| Emoji dans l'interface ou au catalogue | `check_emoji.py` |
 
-**L'emoji n'est tenu par aucun garde**, et je l'ai découvert en écrivant ce fichier : j'avais cité
-un contrôle des emojis qui n'existe pas, et `check_design.py` l'a refusé — un nom de garde entre
-accents graves est une promesse, et celle-là était fausse. `check_strings.py` ignore
-au contraire toute chaîne sans aucune lettre — un emoji, un chevron, un point médian — donc un
-emoji glissé dans l'interface passerait sans bruit. À faire.
+**L'emoji a enfin son garde**, et cette ligne du tableau a été fausse pendant un jour : en écrivant
+ce fichier le 13 novembre, j'avais cité un contrôle des emojis qui n'existait pas, et
+`check_design.py` l'a refusé — un nom de garde entre accents graves est une promesse.
+`check_strings.py` ne pouvait pas s'en charger : il ignore au contraire toute chaîne sans lettre,
+puisque son sujet est la traduction.
+
+`check_emoji.py` lit la règle d'Unicode plutôt que de deviner : un caractère est un emoji s'il a la
+présentation emoji **par défaut**, ou si on la lui demande avec U+FE0F derrière. `✓`, `▲`, `▼`, `·`,
+`—`, `″` sont des marques typographiques et passent — une première version les refusait, et un
+garde qui refuse du code juste est pire qu'aucun garde. Il scanne le code ET les trois langues du
+catalogue, parce qu'une traduction est exactement l'endroit par où un 🔥 revient « pour faire
+vivant ».
+
+À sa première exécution, il a trouvé **« Course reçue de ta montre ⌚ »** : un toast, dans les trois
+langues, qui doublait une notification portant déjà le symbole `applewatch`.
 
 Ce qu'aucun garde ne voit non plus : **le texte générique et le composant sans intention.** Une
 carte qui dit « Continuez comme ça ! » passe tous les contrôles. C'est à l'œil, sur l'image, et

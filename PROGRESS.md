@@ -5565,3 +5565,31 @@ correction vit donc dans le ruban, avec sa mesure à côté.
 Le bas de l'accueil au plus grand texte montre ce qu'on venait de corriger : les quantièmes
 s'effacent, le ruban se mesure lui-même, rien ne déborde. C'est la première image de cette moitié
 d'écran, et elle a confirmé un correctif le jour de sa prise.
+
+## 14 novembre 2026 — la règle 7 interdisait les emojis, et rien ne la tenait
+
+Les dégradés ont leur garde, le verre dépoli aussi. L'emoji n'avait personne, et DESIGN.md le
+notait depuis la veille : « aucun garde ne tient l'emoji ». `check_strings.py` ne pouvait pas s'en
+charger — il ignore explicitement les chaînes sans lettre, puisque son sujet est la traduction.
+
+### Ce qu'est un emoji, précisément
+
+Pas « tout ce qui n'est pas une lettre ». Le dépôt emploie `✓`, `▲`, `▼`, `·`, `—`, `″`. **Ma
+première version prenait la plage U+2600–U+27BF en bloc et signalait les huit `✓` du catalogue.**
+Un garde qui refuse du code juste est pire qu'aucun garde — celui-là aurait été désactivé dans la
+semaine.
+
+La règle d'Unicode est nette : un caractère est un emoji s'il a la présentation emoji **par
+défaut**, ou si on la lui demande avec U+FE0F derrière. `✓` (U+2713) ne l'a pas ; `✅` (U+2705) l'a ;
+`☀` est typographique et `☀️` est un emoji — même lettre, deux intentions. C'est cette règle-là qui
+est écrite, avec la liste des caractères du plan de base nommés un par un plutôt que devinés.
+
+### Ce qu'il a trouvé
+
+**« Course reçue de ta montre ⌚ »** — un toast, dans les trois langues, plus son littéral Swift.
+U+231A a bien la présentation emoji par défaut. Il doublait la notification juste au-dessus, qui
+porte déjà le symbole `applewatch` : l'emoji n'ajoutait rien qu'une décoration, ce que la règle 7
+vise exactement.
+
+Le garde lit le code ET les trois langues du catalogue, parce qu'une traduction est précisément
+l'endroit par où un 🔥 revient « pour faire vivant », et que personne ne relit 2 117 clés à l'œil.

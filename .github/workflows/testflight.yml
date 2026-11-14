@@ -858,6 +858,16 @@ jobs:
           cd ci_scripts && python3 test_nuit.py
           cd .. && python3 ci_scripts/check_nuit.py
 
+      # La règle 7 interdit les emojis, et rien ne la tenait : `check_strings.py` ignore
+      # explicitement les chaînes sans lettre, puisque son sujet est la traduction. DESIGN.md le
+      # notait comme un trou depuis le 13 novembre. À sa première exécution, le garde a trouvé
+      # « Course reçue de ta montre ⌚ » — un toast, dans les trois langues, qui doublait une
+      # notification portant déjà le symbole `applewatch`.
+      - name: Vérifier qu'aucun emoji n'est entré dans l'interface
+        run: |
+          cd ci_scripts && python3 test_emoji.py
+          cd .. && python3 ci_scripts/check_emoji.py
+
       # `lineLimit(1)` sans `minimumScaleFactor`, c'est une troncature. Sur une phrase elle se
       # voit ; sur un NOMBRE elle ment — « 1:23:45 » devient « 1:23… » et rien ne dit que ce n'est
       # pas l'heure complète. Trouvé sur l'écran de séance, où ni le chrono ni l'allure cible n'en

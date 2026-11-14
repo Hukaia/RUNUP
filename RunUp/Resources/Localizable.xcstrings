@@ -8584,23 +8584,6 @@
         }
       }
     },
-    "Course reçue de ta montre ⌚": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Run received from your watch ⌚"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Carrera recibida de tu reloj ⌚"
-          }
-        }
-      }
-    },
     "Course récupérée": {
       "extractionState": "manual",
       "localizations": {
