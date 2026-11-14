@@ -2009,23 +2009,6 @@
         }
       }
     },
-    "%lld semaines · voir le plan complet": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld weeks · see full plan"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld semanas · ver el plan completo"
-          }
-        }
-      }
-    },
     "%lld sortie": {
       "extractionState": "manual",
       "localizations": {
@@ -2981,22 +2964,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "3 a 5 km"
-          }
-        }
-      }
-    },
-    "30 derniers jours": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Last 30 days"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Últimos 30 días"
           }
         }
       }
@@ -20601,18 +20568,19 @@
         }
       }
     },
-    "Programme ouvert · voir le plan complet": {
+    "Programme ouvert": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open-ended program · see full plan"
+            "value": "Open-ended program"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Programa abierto · ver el plan completo"
+            "value": "Programa abierto"
           }
         }
       }

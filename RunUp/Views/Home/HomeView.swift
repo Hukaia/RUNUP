@@ -215,9 +215,18 @@ struct HomeView: View {
                 // trente jours contient à peu près tout ce qu'on a couru.
                 if let jalons = premiersJalons {
                     premiersJalonsCard(jalons).ruRises(reduceMotion)
-                } else if trenteJours.count > 0 {
-                    statsCard.ruRises(reduceMotion)
                 }
+
+                // LA CARTE « 30 DERNIERS JOURS » EST PARTIE.
+                //
+                // Quatre chiffres — distance, sorties, temps, allure — et un bouton vers l'onglet
+                // Stats, qui est dans la barre du bas, en permanence, à un doigt. Une carte
+                // entière pour raccourcir un trajet d'un tap, sur l'écran dont Charlotte dit le
+                // 14 novembre qu'il porte trop d'informations.
+                //
+                // La carte des PREMIERS JALONS reste : elle ne double rien. Elle s'affiche tant
+                // qu'on n'a pas assez couru pour que les statistiques veuillent dire quelque
+                // chose — c'est de l'accueil pour une débutante, pas un résumé.
 
                 if !planUnlocked {
 
@@ -314,12 +323,16 @@ struct HomeView: View {
                 }
 
                 weekStrip
-                if montreLeProgramme {
-                    if let total = shape.totalWeeks {
-                        Text("\(total) semaines · voir le plan complet").font(RUFont.sans(.small)).foregroundColor(RUColor.text2)
-                    } else {
-                        Text("Programme ouvert · voir le plan complet").font(RUFont.sans(.small)).foregroundColor(RUColor.text2)
-                    }
+                // LE PIED DE CARTE NE RESTE QUE POUR LE PROGRAMME OUVERT.
+                //
+                // Il disait « 7 semaines · voir le plan complet ». Les deux moitiés étaient déjà
+                // ailleurs : l'en-tête annonce « Semaine 1/7 », donc le total y est, et la carte
+                // ENTIÈRE est un bouton vers le plan, donc l'invitation aussi.
+                //
+                // Un programme sans date de course, lui, n'a pas de total à mettre dans son
+                // « Semaine 1 » : « Programme ouvert » est alors la seule façon de le dire.
+                if montreLeProgramme, shape.totalWeeks == nil {
+                    Text("Programme ouvert").font(RUFont.sans(.small)).foregroundColor(RUColor.text2)
                 }
             }
             .padding(RUSpacing.cardPadding)
@@ -329,9 +342,6 @@ struct HomeView: View {
         .disabled(!montreLeProgramme)
     }
 
-    /// Shows the real date number (today circled), not just the bare weekday letter — so it's
-    /// unambiguous which real calendar day each cell is, instead of an abstract L/M/M/J/V/S/D
-    /// that says nothing about "today" until you count.
     /// LA BANDE DE LA SEMAINE LAISSE TOMBER LE QUANTIÈME QUAND LE TEXTE EST TROP GRAND.
     ///
     /// Sept colonnes sur la largeur d'un téléphone, c'est une quarantaine de points chacune.
@@ -952,12 +962,15 @@ struct HomeView: View {
         return (runs.count, km, plusLongue)
     }
 
-    /// Les trois chiffres, dans la mise en page des tuiles de `statsCard` — c'est la même famille
-    /// de carte, et la ressemblance est le propos : celle-ci ne remplace pas l'autre, elle la
-    /// précède.
+    /// Les trois premiers chiffres d'une coureuse qui débute : combien de sorties, combien de
+    /// kilomètres, la plus longue.
     ///
     /// Pas un bouton : il n'y a rien derrière qu'on n'ait déjà sous les yeux. L'onglet Stats, avec
     /// moins de dix sorties, montre les mêmes nombres et des courbes de trois points.
+    ///
+    /// Elle a survécu au ménage du 14 novembre, où la carte « 30 derniers jours » est partie :
+    /// celle-là doublait l'onglet Stats, celle-ci le précède. Les tuiles qu'elles partageaient —
+    /// `statTile` — restent ici, puisque c'est leur dernier usage.
     private func premiersJalonsCard(_ jalons: (sorties: Int, km: Double, plusLongueKm: Double)) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             RUCardHeader(icon: "chart.line.uptrend.xyaxis",
@@ -982,53 +995,8 @@ struct HomeView: View {
         .ruCard()
     }
 
-    /// Les trente derniers jours, en une passe sur la requête déjà faite.
-    ///
-    /// Trente jours plutôt que « six semaines » : c'est une fenêtre qui se maintient toute seule
-    /// et que personne n'a besoin de se faire expliquer. Elle glisse, donc elle ne récompense
-    /// jamais d'avoir bien couru il y a deux mois.
-    private var trenteJours: (km: Double, count: Int, seconds: Int) {
-        let depuis = Calendar.current.date(byAdding: .day, value: -30, to: .now) ?? .distantPast
-        var km = 0.0, secondes = 0, n = 0
-        for r in runs where r.date >= depuis {
-            km += r.distanceKm; secondes += r.durationSeconds; n += 1
-        }
-        return (km, n, secondes)
-    }
 
-    /// Ses chiffres à elle, sur l'accueil et sans abonnement.
-    ///
-    /// Ils vivaient dans l'onglet Stats, donc ils étaient déjà gratuits — les poser ici ne
-    /// déverrouille rien, ça déplace. Et ça donne à l'accueil une raison d'être ouvert un jour
-    /// où l'on ne court pas, ce que trois éléments dont une annonce ne donnaient pas.
-    private var statsCard: some View {
-        let s = trenteJours
-        let allure = s.km > 0 ? PaceModel.paceText(Double(s.seconds) / s.km) : "—"
-        return Button(action: { appState.go(.stats) }) {
-            VStack(alignment: .leading, spacing: 14) {
-                RUCardHeader(icon: "chart.bar.fill",
-                             title: String(localized: "30 derniers jours"))
-                HStack(spacing: 10) {
-                    statTile(String(format: "%.0f", s.km), unit: "km", label: "Distance")
-                    statTile("\(s.count)", unit: nil, label: "Sorties")
-                }
-                HStack(spacing: 10) {
-                    statTile(dureeCourte(s.seconds), unit: nil, label: "Temps")
-                    statTile(allure, unit: s.km > 0 ? "/km" : nil, label: "Allure moyenne")
-                }
-            }
-            .padding(RUSpacing.cardPadding)
-        }
-        .buttonStyle(PressableStyle())
-        .ruCard()
-    }
 
-    /// « 3 h 28 », ou « 46 min » quand il n'y a pas d'heure à afficher.
-    ///
-    /// Un « 0 h 46 » serait exact et illisible : l'œil compte les zéros avant de lire le nombre.
-    private func dureeCourte(_ secondes: Int) -> String {
-        TimeFormat.duree(secondes)
-    }
 
     /// Un chiffre, son unité, son nom. `verbatim` pour la valeur : un nombre formaté n'est pas
     /// une phrase et n'a rien à faire dans le catalogue.
@@ -1048,9 +1016,6 @@ struct HomeView: View {
 
     private var ringsCard: some View {
         let p = profile
-        // Le même tableau que `DailyGoalsBarsView` dessine, donc la pastille d'un objectif porte
-        // toujours la couleur de SON arc.
-        let goalColors = DailyGoalsBarsView.fillColors
         return Button(action: { appState.go(.rings) }) {
             VStack(spacing: 18) {
                 // L'ANNEAU PASSE À CÔTÉ DE SON COMPTE, AU LIEU DE L'ENTOURER.
@@ -1089,13 +1054,14 @@ struct HomeView: View {
                         .foregroundColor(RUColor.text3)
                 }
 
-                // objectifs du jour », et elles ne répondaient pas pareil.
-                HStack(alignment: .top, spacing: 10) {
-                    ForEach(p.dailyGoalSlotsToday.map { $0.slot }, id: \.self) { slot in
-                        ringStat(name: goalName(slot), value: goalValue(slot, p),
-                                 color: goalColors[min(max(0, slot), goalColors.count - 1)])
-                    }
-                }
+                // LES TROIS MESURES — séance, calories, pas — SONT PARTIES D'ICI.
+                //
+                // Elles vivent en entier sur l'écran Journée, que cette carte ouvre d'un tap et
+                // qui les porte avec leurs barres de progression. Les garder ici, c'était six
+                // éléments de plus pour dire ce que l'anneau dit déjà : deux objectifs sur deux.
+                //
+                // L'anneau reste, parce qu'il est l'entrée vers la Journée et qu'il se lit sans
+                // se lire.
             }
             .frame(maxWidth: .infinity)
             // CETTE CARTE N'AVAIT PAS DE MARGES. Huit points en haut et en bas, zéro sur les
@@ -1118,57 +1084,8 @@ struct HomeView: View {
         .ruCard()
     }
 
-    /// Le nom d'un objectif, par son rang d'origine dans [Séance, Calories, Pas].
-    ///
-    /// Rendu comme CLÉ, pas comme texte traduit : `ringStat` fait lui-même la recherche au
-    /// catalogue. Traduire ici donnerait une chaîne française qu'on rechercherait ensuite comme
-    /// une clé — ce qui marche en français par identité, et casse partout ailleurs.
-    private func goalName(_ slot: Int) -> String {
-        switch slot {
-        case 0: return planUnlocked ? "Séance" : "Course"
-        case 1: return "Calories"
-        default: return "Pas"
-        }
-    }
 
-    private func goalValue(_ slot: Int, _ p: UserProfile) -> String {
-        switch slot {
-        case 0: return p.seanceDoneToday ? String(localized: "Faite") : String(localized: "À faire")
-        case 1: return Int(p.activeCaloriesToday).formatted()
-        default: return Int(p.stepsToday).formatted()
-        }
-    }
-
-    /// Un objectif en colonne sous l'anneau : sa pastille, son nom, sa valeur.
-    ///
-    /// La pastille revient ici alors qu'elle avait été retirée des anciennes lignes, et pour la
-    /// raison qui l'avait fait retirer : elle ne servait à rien tant que les colonnes étaient
-    /// empilées à CÔTÉ de l'anneau, puisque rien ne disait quelle ligne allait avec quel arc.
-    /// Sous l'anneau, les trois colonnes sont dans l'ordre des trois arcs — la pastille confirme
-    /// alors une correspondance que la position suggère déjà.
-    private func ringStat(name: String, value: String, color: Color) -> some View {
-        VStack(spacing: 6) {
-            // La pastille SUR la ligne du nom, pas flottant au-dessus : détachée, elle se lisait
-            // comme une puce décorative à mi-chemin entre l'anneau et le texte.
-            HStack(spacing: 6) {
-                Circle().fill(color).frame(width: 6, height: 6)
-                Text(LocalizedStringKey(name))
-                    .font(RUFont.sans(.label, weight: .medium))
-                    .foregroundColor(RUColor.text3)
-                    .textCase(.uppercase)
-                    .tracking(1.1)
-                    .lineLimit(1).minimumScaleFactor(0.7)
-            }
-            Text(value)
-                .font(RUFont.sans(.body, weight: .semibold))
-                .foregroundColor(RUColor.textPrimary)
-                .monospacedDigit()
-                .lineLimit(1).minimumScaleFactor(0.7)
-        }
-        .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text(LocalizedStringKey(name)) + Text(", ") + Text(value))
-    }
+ 
 
     /// `profile.streak` was already tracked (`AdaptivePlanEngine.applyDebrief`) and shown deep in
     /// Stats/Readiness/Club, but never on Home — the screen actually opened every day, where a

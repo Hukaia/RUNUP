@@ -5634,3 +5634,40 @@ chose qu'on veut savoir à ce moment-là, et un fait plutôt qu'un encouragement
 signalerait « bien joué » dans « Dernière répétition faite, bien joué » — qui est juste, parce
 qu'une répétition FINIE est un fait. DESIGN.md dit que cette règle-là se tient à l'œil ; elle se
 tient à l'œil.
+
+## 14 novembre 2026 — l'accueil portait trop d'informations, et c'est moi qui l'avais densifié
+
+Charlotte, en voyant la capture : « ça fait beaucoup d'infos du coup ». Compté sur l'image :
+**une trentaine de nombres sur un seul écran.** Et c'est bien moi qui l'ai densifié le matin même,
+en remontant le programme — la carte la plus chargée de l'app — au-dessus de la ligne de
+flottaison.
+
+Trois coupes, et ce que chacune ne perd pas.
+
+### La carte « 30 derniers jours »
+
+Quatre chiffres — distance, sorties, temps, allure — et un bouton vers l'onglet Stats, **qui est
+dans la barre du bas, en permanence, à un doigt**. Une carte entière pour raccourcir un trajet
+d'un tap.
+
+La carte des PREMIERS JALONS reste. Elle ne double rien : elle s'affiche tant qu'on n'a pas assez
+couru pour que les statistiques veuillent dire quelque chose. C'est de l'accueil pour une
+débutante, pas un résumé.
+
+### Les trois mesures du jour
+
+Séance, calories, pas — six éléments pour dire ce que l'anneau dit déjà au-dessus d'eux : deux
+objectifs sur deux. Elles vivent en entier sur l'écran Journée, que la carte ouvre d'un tap et qui
+les porte avec leurs barres. L'anneau reste : il est l'entrée, et il se lit sans se lire.
+
+### Le pied du programme
+
+« 7 semaines · voir le plan complet ». Les deux moitiés étaient ailleurs : l'en-tête annonce
+« Semaine 1/7 », donc le total y est, et la carte entière est un bouton vers le plan, donc
+l'invitation aussi. Seul le programme SANS date de course garde une ligne — son « Semaine 1 » n'a
+pas de total, et « Programme ouvert » est la seule façon de le dire.
+
+### Ce qui reste
+
+Séance du jour · dernière sortie · programme et semaine · objectifs du jour. Quatre blocs au lieu
+de six, et une vingtaine de nombres au lieu d'une trentaine.
