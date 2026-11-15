@@ -252,7 +252,15 @@ def ecarts() -> list:
                 "barrière que personne ne tient."))
 
     # Un document vidé de ses tableaux passerait tous les contrôles ci-dessus en silence.
-    minimums = {"jetons": 12, "accents": 8, "familles": 7, "crans": 13, "durees": 6}
+    #
+    # LE PLANCHER DES CRANS EST COMPTÉ, PAS ÉCRIT. Il valait 13 à la main, et le 15 novembre
+    # l'échelle unique a fait tomber quatre crans sur deux valeurs : Swift refusant deux cas à
+    # la même valeur brute, `label`, `title` et `hero` sont devenus des alias, et les cas réels
+    # sont passés de 13 à 9. Un plancher écrit à la main se serait mis à refuser un document
+    # juste, et la correction aurait été de BAISSER le plancher — le geste par lequel un garde
+    # perd son sens. Compté depuis les deux énumérations, il suit l'app sans qu'on y touche.
+    crans_reels = len(echelle("RUTextSize")) + len(echelle("RUDisplaySize"))
+    minimums = {"jetons": 12, "accents": 8, "familles": 7, "crans": crans_reels, "durees": 6}
     for quoi, seuil in minimums.items():
         if vus[quoi] < seuil:
             problemes.append((

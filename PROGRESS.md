@@ -6237,3 +6237,34 @@ décrit que le fond clair, et le sombre sera redessiné ensuite avec la même gr
 calcul du fond teinté avec « le rose de marque (#F50D7A) » — la démonstration tient, mais la
 valeur n'est plus celle-là, et la phrase le dit maintenant. Un commentaire qui ment est pire
 qu'un commentaire absent : c'est celui-là qu'on croit.
+
+### Le compilateur a refusé l'échelle, et il avait raison
+
+Campagne 209, morte en 81 secondes : `error: raw value for enum case is not unique`, quatre fois.
+Swift refuse deux cas d'énumération à la même valeur brute, et l'échelle unique faisait tomber
+quatre paires sur deux nombres. **Le harnais local ne compile pas de Swift** — c'est écrit depuis
+le 11 novembre, et c'est la deuxième fois que ça coûte une campagne.
+
+**Les quatre noms deviennent des alias, pas des suppressions.** `label` est `body`, `title` est
+`emphasis` ; côté chiffres, `title` est `figure` et `hero` est `banner`. Les 114 appels à
+`.label` et les 8 à `.title` continuent de nommer leur rôle, et le jour où l'un des deux rôles
+doit bouger, il bougera sans emporter l'autre. Un libellé de carte n'est pas un corps de texte,
+même quand les deux font 16 points.
+
+**Une conséquence à assumer** : `title`, côté chiffres, prend la graisse de `figure`. Un titre de
+page passe du demi-gras au gras. Le brief le demande — « titres d'écran en 40 lourd ».
+
+### Deux gardes réparés plutôt que desserrés
+
+**Le plancher de `check_design.py` est désormais compté.** Il exigeait « au moins 13 crans » — un
+nombre écrit à la main quand il y en avait treize. Avec neuf cas réels, il refusait un document
+juste, et la correction évidente aurait été de **baisser le plancher** : le geste exact par
+lequel un garde perd son sens. Il compte maintenant les cas des deux énumérations, donc il suit
+l'app sans qu'on y touche.
+
+**Et un cas de test a été réécrit, pas supprimé.** Il vérifiait que `title` était lu dans le bon
+tableau — la prémisse étant « le même nom, deux valeurs ». Il n'y a plus aucun homonyme entre les
+deux échelles, donc cette prémisse ne peut plus s'écrire. Le supprimer aurait retiré la seule
+protection contre un contrôle qui mélangerait les deux tables. Il porte maintenant sur la
+propriété qui rendait le défaut possible : **l'étanchéité** — un cran de chiffre n'apparaît
+jamais dans l'échelle du texte, et réciproquement.

@@ -305,10 +305,8 @@ d'accessibilité du système multiplie :
 | --- | --- | --- |
 | `micro` | 12 | méta : unités, micro-libellés, dates |
 | `small` | 14 | légendes, valeurs secondaires, notes |
-| `body` | 16 | le texte courant |
-| `label` | 16 | libellés de carte, titres de ligne de liste — **la graisse les distingue** |
-| `emphasis` | 20 | libellés qui doivent primer sur leurs voisins |
-| `title` | 20 | titres de carte et de section, en semi-gras |
+| `body` | 16 | le texte courant, et les libellés de carte sous l'alias `label` |
+| `emphasis` | 20 | libellés qui priment, titres de carte et de section sous l'alias `title` |
 
 Le titrage et les chiffres, `RUDisplaySize` — **l'échelle est fermée**, et `check_echelle.py` la
 tient :
@@ -318,16 +316,21 @@ tient :
 | `caption` | 12 | micro-chiffres, valeurs de pastille |
 | `label` | 16 | libellés de bouton, valeurs en ligne |
 | `subtitle` | 20 | titres de ligne de liste, grille de mesures dense |
-| `title` | 28 | titres de page, de feuille, de carte |
-| `figure` | 28 | LE chiffre d'une carte — un cumul, une moyenne, une allure |
-| `hero` | 40 | le chiffre unique d'un écran, et le titre d'écran |
-| `banner` | 40 | une accroche, un record : **au plus un par écran** |
+| `figure` | 28 | LE chiffre d'une carte, et les titres de page, de feuille et de carte sous l'alias `title` |
+| `banner` | 40 | le chiffre unique d'un écran, une accroche, un record — **au plus un par écran** — et le titre d'écran sous l'alias `hero` |
 
-**Deux crans peuvent partager un nombre.** `label` et `body` valent 16, `emphasis` et `title`
-valent 20, `title` et `figure` valent 28, `hero` et `banner` valent 40. Ce n'est pas une
-hésitation : l'échelle n'a que six valeurs, et ce qui sépare un libellé d'un corps de texte à
-taille égale, c'est la graisse. Les crans restent distincts parce qu'ils disent un RÔLE, et qu'un
-rôle se redimensionne sans toucher ses voisins.
+**Quatre noms sont des ALIAS, pas des crans.** `label` est `body`, `title` est `emphasis`,
+et côté chiffres `title` est `figure`, `hero` est `banner`. Swift refuse deux cas d'énumération
+à la même valeur brute — le compilateur l'a dit en quatre lignes le 15 novembre — et l'échelle
+unique fait tomber ces paires sur le même nombre.
+
+Les garder en alias plutôt que de les supprimer, c'est garder ce qu'ils disent : un libellé de
+carte n'est pas un corps de texte, même quand les deux font 16 points. Ce qui les sépare à taille
+égale, c'est la graisse. Et le jour où l'un des deux rôles doit bouger, il bougera sans emporter
+l'autre.
+
+**Une conséquence à assumer** : `title`, côté chiffres, prend la graisse de `figure`. Un titre de
+page passe donc du demi-gras au gras. Le brief le demande — « titres d'écran en 40 lourd ».
 
 **La graisse suit le cran**, parce que la graisse perçue baisse quand la taille monte : `figure`,
 `hero` et `banner` passent en grasse, les quatre crans du bas non.

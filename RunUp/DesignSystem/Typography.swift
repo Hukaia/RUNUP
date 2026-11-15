@@ -422,16 +422,18 @@ enum RUDisplaySize: CGFloat {
     case label = 16
     /// 20. Titres de ligne de liste, valeurs d'une grille de mesures dense.
     case subtitle = 20
-    /// 28. Titres de page et de feuille, titres de carte, valeurs mises en avant.
-    case title = 28
-    /// 28. LE chiffre d'une carte — un cumul, une moyenne, une allure. Même cran que `title` :
-    /// un titre de page et le grand chiffre d'une carte sont deux façons d'être le sujet.
+    /// 28. LE chiffre d'une carte — un cumul, une moyenne, une allure — et les titres de page,
+    /// de feuille et de carte : un titre et le grand chiffre d'une carte sont deux façons
+    /// d'être le sujet.
     case figure = 28
-    /// 40. Le chiffre unique d'un écran, et le titre d'écran — « Charlotte », « Ta forme évolue ».
-    case hero = 40
-    /// 40. Une accroche, un record : au plus un par écran. Même cran que `hero`, parce que
-    /// l'échelle s'arrête à 40 et qu'au-delà c'est la graisse qui parle.
+    /// 40. Le chiffre unique d'un écran, le titre d'écran, une accroche, un record : au plus un
+    /// par écran.
     case banner = 40
+
+    // `title` et `hero` sont des ALIAS, pour la même raison qu'au-dessus : Swift refuse deux
+    // cas à la même valeur brute, et ces deux noms-là disent un rôle que leur jumeau ne dit pas.
+    static let title = RUDisplaySize.figure
+    static let hero = RUDisplaySize.banner
 
     /// LA GRAISSE SUIT LE CRAN, parce que la graisse PERÇUE baisse quand la taille monte.
     ///
@@ -440,8 +442,12 @@ enum RUDisplaySize: CGFloat {
     /// seuil que personne ne relira.
     var grasse: Bool {
         switch self {
-        case .caption, .label, .subtitle, .title: return false
-        case .figure, .hero, .banner: return true
+        // `title` ET `hero` NE SONT PLUS LÀ : ce sont des alias de `figure` et `banner`, donc
+        // ils prennent leur graisse. Conséquence à assumer — un titre de page passe du demi-gras
+        // au gras, puisqu'il partage désormais le cran du grand chiffre. Le brief le demande :
+        // « titres d'écran en 40 lourd ».
+        case .caption, .label, .subtitle: return false
+        case .figure, .banner: return true
         }
     }
 }
@@ -496,15 +502,22 @@ enum RUTextSize: CGFloat {
     case small = 14
     /// 16 — le texte courant.
     case body = 16
-    /// 16 — libellés de carte et titres de ligne de liste. MÊME TAILLE que le corps, et c'est
-    /// la graisse qui les distingue : le brief dit « corps en 16, légendes en 14, méta en 12 »,
-    /// il n'y a pas de cran entre les deux.
-    case label = 16
-    /// 20 — libellés qui doivent primer sur leurs voisins.
+    /// 20 — libellés qui doivent primer sur leurs voisins, titres de carte et de section.
     case emphasis = 20
-    /// 20 — titres de carte et de section, en semi-gras. Même valeur qu'`emphasis`, même raison
-    /// qu'au-dessus : six nombres, et la graisse fait le reste.
-    case title = 20
+
+    // DEUX NOMS DE PLUS, ET CE NE SONT PAS DES CAS.
+    //
+    // `label` valait 14 et `body` 12 ; `title` valait 18,5 et `emphasis` 16. L'échelle unique
+    // les fait tomber deux par deux sur le même nombre — 16 et 20 — et Swift REFUSE deux cas
+    // d'énumération à la même valeur brute. Le compilateur de la campagne 209 l'a dit en quatre
+    // lignes, ce que le harnais local ne peut pas voir puisqu'il ne compile pas de Swift.
+    //
+    // Les garder en alias plutôt que de les supprimer, c'est garder ce qu'ils disent : un
+    // libellé de carte n'est pas un corps de texte, même quand les deux font 16 points. Les
+    // 114 appels à `.label` et les 8 à `.title` continuent de nommer leur rôle, et le jour où
+    // l'un des deux rôles doit bouger, il bougera sans emporter l'autre.
+    static let label = RUTextSize.body
+    static let title = RUTextSize.emphasis
 }
 
 struct EyebrowLabel: View {

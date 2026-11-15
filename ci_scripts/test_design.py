@@ -76,15 +76,25 @@ def _():
         assert (couleurs.RACINE / "ci_scripts" / cite).is_file(), cite
 
 
-@cas_test("`title` est comparé à l'échelle de son tableau, pas à son homonyme")
+@cas_test("chaque échelle est lue dans son propre tableau, sans fuite de l'autre")
 def _():
+    """LE DÉFAUT D'ORIGINE : `title` existait des deux côtés avec deux valeurs — 18,5 pour le
+    texte, 22 pour les chiffres — et le contrôle pouvait aller chercher la mauvaise.
+
+    Le 15 novembre, l'échelle unique a supprimé TOUS les homonymes : `title` et `hero` sont
+    devenus des alias, et les deux énumérations n'ont plus un seul nom en commun. La prémisse
+    d'origine ne peut donc plus s'écrire, et ce cas aurait pu être supprimé — ce qui aurait
+    retiré la seule protection contre un contrôle qui mélangerait les deux tables.
+
+    Il porte maintenant sur la propriété qui rendait le défaut possible : l'ÉTANCHÉITÉ. Un cran
+    qui n'appartient qu'à une échelle ne doit jamais apparaître dans l'autre.
+    """
     textes, affichage = ck.echelle("RUTextSize"), ck.echelle("RUDisplaySize")
-    # LA PRÉMISSE DU DÉFAUT : le même nom, deux valeurs. Écrite en inégalité plutôt qu'en
-    # nombres — elle l'était (18,5 et 22), elle l'est encore (20 et 28), et ce cas-ci ne
-    # porte pas sur CE que valent les crans mais sur le fait que le contrôle lit chaque
-    # tableau dans sa propre règle. Deux nombres en dur ici obligeaient à retoucher le banc
-    # à chaque réglage d'échelle, ce qui est le meilleur moyen de le voir finir désactivé.
-    assert textes["title"] != affichage["title"], (textes["title"], affichage["title"])
+    assert textes and affichage, (textes, affichage)
+    for cran in ("caption", "subtitle", "figure", "banner"):
+        assert cran not in textes, f"« {cran} » est un cran de chiffre, pas de texte : {textes}"
+    for cran in ("micro", "small", "body", "emphasis"):
+        assert cran not in affichage, f"« {cran} » est un cran de texte : {affichage}"
     # Et le document, tel qu'il est, passe — donc les deux tableaux sont lus chacun dans sa règle.
     assert ck.ecarts() == [], ck.ecarts()
 
