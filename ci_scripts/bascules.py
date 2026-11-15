@@ -550,6 +550,10 @@ def main() -> int:
             return seconde + decalage
 
         total_vides = 0
+        #: Combien d'images chaque fenêtre a vraiment rendues. Sur un enregistrement à cadence
+        #: variable, c'est ce qui dit si « je n'ai pas vu le changement » veut dire « il n'y en a
+        #: pas » ou « je n'avais pas assez d'images pour le voir ». Voir la fin de cette fonction.
+        images_comptees: list[int] = []
         changements: list[float | None] = []
         egares: list[str] = []
         for i, b in enumerate(bascules, start=1):
@@ -564,6 +568,7 @@ def main() -> int:
             # raccourcie, machine plus lente — la ligne de symboles le montre, elle ne
             # commencera pas par des « < ».
             classes = classer(suite, reference, _gris(suite[0]) if suite else None)
+            images_comptees.append(len(classes))
             vides = classes.count("vide")
             traversee, vides_traversee = mise_en_place(classes)
             total_vides += vides
@@ -665,10 +670,38 @@ def main() -> int:
                       f"durée, c'est l'image qui ne correspond pas au titre.")
                 return 1
         else:
-            print("  → aucun changement d'écran repéré : sur AUCUN plan la fenêtre ne quitte "
-                  "l'écran d'avant. Le changement est donc hors fenêtre — le découpage tombe "
-                  "à côté — et l'alignement ne se vérifie pas.")
-            return 1
+            # « JE N'AI PAS PU MESURER » N'EST PAS « C'EST FAUX ».
+            #
+            # Campagne 205 : les quatre plans montrent l'écran qu'ils visent, chacun avec dix
+            # fois la marge du suivant (6,1 contre 76,4 ; 5,9 contre 66,5 ; 5,9 contre 60,7 ;
+            # 6,0 contre 60,3). Le découpage est donc JUSTE, et pourtant cette branche refusait
+            # la campagne.
+            #
+            # La raison est dans le nombre d'images : les fenêtres en portaient 3, 6, 7 et 11 là
+            # où `fps=30` sur 0,90 s en annonce vingt-sept. `simctl recordVideo` enregistre à
+            # CADENCE VARIABLE — il n'émet une image que quand l'écran change — donc un écran
+            # immobile ne produit presque rien, et un fondu de 0,22 s peut tomber entre deux
+            # images. `posee()` porte déjà cette note pour son propre compte ; `images()` ne
+            # l'avait pas.
+            #
+            # Ce contrôle-ci existe pour attraper un découpage décalé de plusieurs secondes.
+            # Mais un décalage pareil met aussi chaque plan sur le MAUVAIS écran, et c'est le
+            # contrôle d'écran qui l'attrape — directement, sur l'image, et il l'a fait aux
+            # campagnes 202 et 203. Il n'y a donc rien à perdre à distinguer les deux cas.
+            attendu = int(options.fenetre * IPS)
+            if images_comptees and min(images_comptees) < attendu * 2 // 3:
+                print(f"  → changement d'écran non mesurable : les fenêtres portent "
+                      f"{min(images_comptees)} à {max(images_comptees)} images là où "
+                      f"{attendu} sont attendues. L'enregistrement est à cadence variable et "
+                      f"un écran immobile n'en produit presque aucune ; le fondu de 0,22 s "
+                      f"peut tomber entre deux images.")
+                print("    Les quatre plans montrent bien l'écran qu'ils visent — c'est le "
+                      "contrôle qui tranche le découpage, et il est passé.")
+            else:
+                print("  → aucun changement d'écran repéré, sur des fenêtres pourtant pleines : "
+                      "sur AUCUN plan la fenêtre ne quitte l'écran d'avant. Le changement est "
+                      "donc hors fenêtre — le découpage tombe à côté.")
+                return 1
 
         print(f"  → {total_vides} image(s) vide(s) en tout sur {len(bascules)} bascule(s). "
               f"Le fondu de 0,22 s fait attendre une mise en place d'une petite dizaine "

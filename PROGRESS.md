@@ -6050,3 +6050,36 @@ Cette session n'a pas les clés d'API d'Apple — elles vivent dans les secrets 
 commande est prête ; c'est `asc.py push-metadata` qui la portera. **Le plus rapide reste de poser
 l'adresse à la main dans App Store Connect** (App Information → Privacy Policy URL) : ce champ
 n'est pas lié à une version, il s'applique à l'app en vente immédiatement, sans attendre la 3.4.
+
+### Campagne 205 : le film était juste, et c'est le garde qui refusait
+
+L'instrumentation posée au chantier précédent a tranché, et dans l'autre sens que prévu.
+
+**Aucune ligne « ce plan vise X et montre Y » dans le journal.** Les quatre plans montrent
+l'écran qu'ils visent, chacun avec dix fois la marge du suivant :
+
+| plan | écart au bon écran | au suivant |
+| --- | --- | --- |
+| coach | 6,1 | 76,4 |
+| stats | 5,9 | 66,5 |
+| profil | 5,9 | 60,7 |
+| accueil | 6,0 | 60,3 |
+
+Le découpage est juste. La campagne échouait sur **l'autre** contrôle : « aucun changement
+d'écran repéré ».
+
+**Et la cause est dans le nombre d'images.** Les fenêtres portaient **3, 6, 7 et 11** images là
+où `fps=30` sur 0,90 s en annonce vingt-sept. `simctl recordVideo` enregistre à **cadence
+variable** : il n'émet une image que quand l'écran change, donc un écran immobile n'en produit
+presque aucune, et un fondu de 0,22 s peut tomber entre deux images. `posee()` porte déjà cette
+note pour son propre compte depuis qu'un film de quarante secondes avait été déclaré « plus court
+que le découpage » ; `images()` ne l'avait pas.
+
+**« Je n'ai pas pu mesurer » n'est pas « c'est faux ».** Ce contrôle existe pour attraper un
+découpage décalé de plusieurs secondes — mais un décalage pareil met aussi chaque plan sur le
+mauvais écran, et c'est le contrôle d'écran qui l'attrape, directement, sur l'image. Il l'a fait
+aux campagnes 202 et 203. Les deux cas sont donc maintenant distingués : fenêtres trop pauvres →
+on le dit et on passe ; fenêtres pleines et aucun changement → on refuse.
+
+Ce n'est pas un desserrage de confort : le contrôle qui tranche le découpage reste entier, et
+c'est lui qui a refusé les deux campagnes précédentes.
