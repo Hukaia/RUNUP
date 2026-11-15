@@ -5957,3 +5957,44 @@ Ce qui est su et ce qui ne l'est pas : le journal donne « changement d'écran �
 moyenne (attendu 0,60, étendue 0,40 → 0,90) » pour des fenêtres de 0,90 s. La marge est donc
 mince, et la campagne 201 est peut-être passée par chance. Ce n'est pas une conclusion, c'est ce
 qu'il y a à instruire — et ça devient le chantier suivant.
+
+## 15 novembre 2026 — le film d'aperçu : instruire avant de corriger
+
+Les campagnes 202 et 203 sont refusées au même endroit : « ce plan vise *stats* et montre
+*profil* », en anglais. L'image de preuve ne laisse aucun doute — c'est l'écran Profil, onglet
+Profil allumé. Le garde a raison sur ce qu'il affirme.
+
+**Mais le journal porte une contradiction, et c'est elle qu'il faut instruire.** Trois lignes plus
+haut, la recherche d'alignement conclut « chaque plan sur son écran », au même décalage et sur le
+même enregistrement. Deux mesures du même film, deux réponses.
+
+**Lecture du code : elles ne posent pas la même question.**
+
+| | ce qu'elle regarde |
+| --- | --- |
+| `alignement()` | UNE image par plan, à `debut + 0,5 s` |
+| le verdict | TROIS images, à 25 %, 50 % et 75 % du plan |
+
+Et le verdict garde, des trois, **celle dont la distance au plus proche écran est la plus
+faible** — pas celle qui montre l'écran visé. Un instant net sur le mauvais écran l'emporte donc
+sur un instant correct mais encore en train de se poser. Or son propre en-tête dit l'inverse :
+« il suffit qu'il CONTIENNE le bon écran », « un plan qui se pose lentement ou qui défile en
+chemin en a au moins un, et passe ». La règle écrite et la règle appliquée divergent.
+
+**Je ne touche pas à la règle, et c'est délibéré.** Desserrer un garde pour que la barrière
+repasse au vert est la façon ordinaire de tuer un garde. Tant que je ne sais pas ce que montrent
+les DEUX AUTRES instants, je ne peux pas dire si le film est juste ou faux — et je ne peux pas le
+savoir, parce que `brut.mov` ne part pas dans l'artefact (trop lourd) et qu'une seule image sur
+trois était gardée.
+
+**Ce qui est fait, donc : de quoi diagnoser la prochaine fois.** Les trois instants sont
+désormais gardés en PNG pleine taille quand un plan est refusé, et le journal dit pour chacun
+l'écran vu, sa distance, et la distance à l'écran visé — plus une marque sur celui que le verdict
+a retenu. Trois images par plan fautif, uniquement en cas d'échec.
+
+Et le message de la recherche dit maintenant ce qu'il a regardé : « chaque plan sur son écran **au
+premier instant** ». On ne lira plus une contradiction là où il y a deux questions.
+
+La prochaine campagne tranchera : si les trois instants montrent l'écran visé à l'un d'eux, la
+règle écrite est la bonne et c'est le code qui doit la suivre. Si aucun ne le montre, le film est
+vraiment coupé au mauvais endroit et c'est le découpage qu'il faut corriger.

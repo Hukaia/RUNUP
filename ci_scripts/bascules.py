@@ -519,9 +519,17 @@ def main() -> int:
             trouve, ecart, parfait, _ = alignement(options.entree, bascules, references,
                                                    decalage, travail)
             glissement = trouve - decalage
+            # « AU PREMIER INSTANT » N'EST PAS UN DÉTAIL DE FORMULATION.
+            #
+            # Cette recherche juge chaque plan sur UNE image, à `debut + 0,5 s` ; le verdict qui
+            # suit en regarde trois et garde la plus nette. Les deux peuvent donc ne pas dire la
+            # même chose du même enregistrement — c'est arrivé aux campagnes 202 et 203, où ce
+            # message annonçait « chaque plan sur son écran » et où le verdict en refusait un.
+            # Le message dit maintenant ce qu'il a regardé, pour qu'on ne lise plus une
+            # contradiction là où il y a deux questions.
             print(f"  alignement : {glissement:+.2f} s "
                   f"(écart moyen {ecart:.1f} au meilleur décalage, "
-                  f"{'chaque plan sur son écran' if parfait else 'IL EN RESTE UN DE TRAVERS'})")
+                  f"{'chaque plan sur son écran au premier instant' if parfait else 'IL EN RESTE UN DE TRAVERS'})")
             if abs(glissement) >= 0.5:
                 print(f"  → l'heure annoncée par la caméra était fausse de {glissement:+.2f} s. "
                       f"Le découpage suit le contenu, pas l'horloge.")
@@ -569,10 +577,25 @@ def main() -> int:
             if references:
                 # LE MEILLEUR DES TROIS INSTANTS, et on retient lequel pour la preuve : une
                 # image gardée doit être celle sur laquelle le verdict s'est prononcé.
+                #
+                # LES TROIS SONT GARDÉS, PAS SEULEMENT CELUI-LÀ — et c'est la correction du
+                # 15 novembre. Les campagnes 202 et 203 ont été refusées ici, et le journal
+                # portait une contradiction qu'aucune image ne permettait de trancher : la
+                # recherche d'alignement, juste au-dessus, avait conclu « chaque plan sur son
+                # écran », et ce verdict-ci en déclarait un de travers. Les deux lisent le MÊME
+                # enregistrement au MÊME décalage ; ils ne regardent simplement pas aux mêmes
+                # instants — la recherche en regarde un, `debut + 0,5 s`, ce verdict trois.
+                #
+                # L'enregistrement brut ne part pas dans l'artefact : il est trop lourd. Une
+                # seule image gardée sur trois laissait donc un verdict sans moyen de savoir ce
+                # que montraient les deux autres. Trois PNG par plan fautif, c'est le prix d'une
+                # diagnose au lieu d'une hypothèse.
+                juges: list[tuple[float, list]] = []
                 meilleur, classement = None, None
                 for k, instant in enumerate(instants_juges(b), start=1):
                     juge = posee(options.entree, vers_fichier(instant), travail, f"j{i}-{k}")
                     essai = le_plus_proche(juge, references)
+                    juges.append((instant, essai))
                     if classement is None or essai[0][1] < classement[0][1]:
                         meilleur, classement = instant, essai
                 vise = ecran_vise(b["nom"])
@@ -589,10 +612,25 @@ def main() -> int:
                     # tous : ça se lit sur quatre écarts, pas sur deux.
                     print(f"  {'':<10} écarts : "
                           + ", ".join(f"{n} {e:.1f}" for n, e in classement))
+                    # LES TROIS INSTANTS, NOMMÉS, AVANT LES IMAGES.
+                    #
+                    # Ce que le verdict garde est l'instant dont l'image est la PLUS NETTE au
+                    # sens de la distance — pas celui qui montre l'écran visé. Les trois lignes
+                    # ci-dessous disent donc si le plan contenait le bon écran à un autre
+                    # moment, ce que la ligne de verdict seule ne peut pas dire.
+                    for k, (instant, essai) in enumerate(juges, start=1):
+                        vu, ecart_vu = essai[0]
+                        marque = " ← jugé" if instant == meilleur else ""
+                        print(f"  {'':<10}   instant {k} (+{instant - b['debut']:.2f} s) : "
+                              f"« {vu} » à {ecart_vu:.1f}, "
+                              f"« {vise} » à {dict(essai)[vise]:.1f}{marque}")
                     if options.preuves:
-                        garde = preuve(options.entree, vers_fichier(meilleur),
-                                       options.preuves, f"{b['nom']}-montre-{proche}")
-                        print(f"  {'':<10} image jugée gardée : {garde}")
+                        for k, (instant, essai) in enumerate(juges, start=1):
+                            garde = preuve(options.entree, vers_fichier(instant),
+                                           options.preuves,
+                                           f"{b['nom']}-instant{k}-montre-{essai[0][0]}")
+                            marque = "  (celui du verdict)" if instant == meilleur else ""
+                            print(f"  {'':<10} image gardée : {garde}{marque}")
                 else:
                     print(f"  {'':<10} écran « {vise} » reconnu (écart {ecart:.1f}, "
                           f"le suivant à {suivant[1]:.1f})")
