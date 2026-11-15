@@ -5908,3 +5908,52 @@ en moins d'une hauteur — et c'est la mesure du « vide », au lieu d'une impre
 quelqu'un qui n'a PAS souscrit (`planUnlocked == false`), où la carte du programme disparaît
 aussi et où `PlusLockCard` prend sa place. `--paywall` ouvre la feuille d'abonnement, pas cet
 accueil-là.
+
+### Ce que la première image de l'accueil sans programme a montré
+
+**Un mensonge sur l'entraînement, et c'est la règle 2.** Le bandeau annonce « Mode course libre ».
+Deux lignes dessous, la carte de séance écrit :
+
+> Semaine 1 sur 7, bloc de base : on construit le volume avant de le spécialiser.
+
+Il n'y a pas de semaine 1 sur 7 : il n'y a pas de programme. Le profil garde son objectif et sa
+date de course après la fin d'un programme, donc `ProgramShape` recalculait une forme de plan
+pour un plan qui ne tourne plus, et `PourquoiCetteSeance` la commentait.
+
+Le fichier qui porte cette phrase dit pourtant la règle dans son en-tête : « là où le moteur n'a
+rien de chiffré à dire, cette fonction rend `nil` et l'écran se tait ». Il manquait le cas où le
+moteur n'a rien à dire du tout.
+
+`Contexte` gagne `estEnCourseLibre`, sans valeur par défaut — il n'y a qu'un appelant, et un
+défaut à `false` laisserait le prochain l'oublier en silence. Deux cas de test : les QUATRE blocs
+se taisent en course libre, et le même contexte hors course libre parle — sans quoi le premier
+passerait aussi avec une fonction qui ne dit jamais rien.
+
+Ici plutôt qu'en passant `semainesEnTout: nil` depuis l'appelant : ça suffirait à taire le bloc de
+base et le spécifique, mais `.deload` n'a besoin d'aucun total et `.affutage` se contente de la
+date de course, qui survit elle aussi.
+
+**Et le vide, mesuré.** L'écran défile de 129 points en course libre contre 200 points avec
+programme, le même jour. Il n'est donc pas plus court d'une hauteur d'écran — il est moins
+rempli : la carte du programme, qui porte en-tête, semaine, bloc, volume, barre et pastille,
+devient un ruban de sept barres **dans une carte blanche sans titre**. C'est ça que Charlotte
+voit, et ce n'est pas une impression : une carte dont tout le contenu est un graphique muet.
+
+### Le film d'aperçu est rouge depuis deux campagnes, et je ne l'avais pas vu
+
+La campagne 202 a échoué et je ne l'ai pas regardée : j'ai poussé le chantier suivant avant de
+vérifier le précédent. Le chantier des guillemets a donc été annoncé terminé sur une campagne que
+je n'avais pas ouverte. C'est une faute de méthode, pas de code.
+
+Les deux échecs sont au même endroit : le découpage du film d'aperçu, en anglais. Le plan qui vise
+l'onglet Stats montre le Profil — vérifié sur l'image de preuve que le harnais garde,
+`stats-montre-profil.png` : c'est sans ambiguïté l'écran Profil, onglet Profil allumé. Le garde a
+raison.
+
+**Les captures, elles, sont toutes bonnes** : l'échec est dans l'étape qui suit, et l'artefact est
+publié. C'est pourquoi ce chantier-ci a pu être mesuré malgré le rouge.
+
+Ce qui est su et ce qui ne l'est pas : le journal donne « changement d'écran à 0,64 s du plan en
+moyenne (attendu 0,60, étendue 0,40 → 0,90) » pour des fenêtres de 0,90 s. La marge est donc
+mince, et la campagne 201 est peut-être passée par chance. Ce n'est pas une conclusion, c'est ce
+qu'il y a à instruire — et ça devient le chantier suivant.

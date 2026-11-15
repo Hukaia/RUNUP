@@ -46,6 +46,17 @@ enum PourquoiCetteSeance {
         /// La séance a déjà été corrigée par le moteur — fatigue, blessure, semaine chargée.
         var dejaExplique: Bool
         var estUnJourDeRepos: Bool
+        /// Il n'y a PAS de programme en cours : `programPhase == .freerun`.
+        ///
+        /// Sans ce champ, cette fonction parlait quand même. Le profil garde son objectif et sa
+        /// date de course après la fin d'un programme, donc `ProgramShape` recalculait sept
+        /// semaines et un bloc de base, et l'accueil affichait « Semaine 1 sur 7, bloc de base »
+        /// deux lignes sous un bandeau qui annonce « Mode course libre ». Lu sur la première
+        /// capture de cet écran, le 15 novembre.
+        ///
+        /// Pas de valeur par défaut, et c'est voulu : il n'y a qu'un appelant, et un défaut à
+        /// `false` laisserait le prochain l'oublier en silence.
+        var estEnCourseLibre: Bool
     }
 
     /// La phrase, ou `nil` quand il n'y a rien de vrai et de chiffré à dire.
@@ -54,6 +65,17 @@ enum PourquoiCetteSeance {
         // phrase de bloc — « nuit courte » bat « bloc spécifique » — et deux explications
         // empilées sur la même carte, c'est une de trop.
         if c.dejaExplique || c.estUnJourDeRepos { return nil }
+
+        // PAS DE PROGRAMME, RIEN À DIRE SUR LE PROGRAMME.
+        //
+        // En course libre il n'y a ni semaine 1 sur 7, ni bloc de base, ni affûtage : les quatre
+        // phrases ci-dessous parleraient d'un plan qui ne tourne pas. C'est la règle 2 —
+        // « rien de faux sur l'entraînement » — avant d'être une question de mise en page.
+        //
+        // Ici plutôt qu'en passant `semainesEnTout: nil` depuis l'appelant : ça suffirait à
+        // taire le bloc de base et le bloc spécifique, mais `.deload` n'a besoin d'aucun total
+        // et `.affutage` se contente de la date de course, qui survit elle aussi.
+        if c.estEnCourseLibre { return nil }
 
         switch c.bloc {
         case .deload:

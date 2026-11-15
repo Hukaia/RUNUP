@@ -18,9 +18,11 @@ final class PourquoiCetteSeanceTests: XCTestCase {
                           total: Int? = 14,
                           jours: Int? = nil,
                           dejaExplique: Bool = false,
-                          repos: Bool = false) -> PourquoiCetteSeance.Contexte {
+                          repos: Bool = false,
+                          libre: Bool = false) -> PourquoiCetteSeance.Contexte {
         .init(bloc: bloc, semaine: semaine, semainesEnTout: total,
-              joursAvantLaCourse: jours, dejaExplique: dejaExplique, estUnJourDeRepos: repos)
+              joursAvantLaCourse: jours, dejaExplique: dejaExplique, estUnJourDeRepos: repos,
+              estEnCourseLibre: libre)
     }
 
     // MARK: Ce qui doit se taire
@@ -32,6 +34,31 @@ final class PourquoiCetteSeanceTests: XCTestCase {
         for bloc in [AdaptivePlanEngine.TrainingBlock.base, .specifique, .affutage, .deload] {
             XCTAssertNil(PourquoiCetteSeance.phrase(
                 contexte(bloc: bloc, jours: 10, dejaExplique: true)), "\(bloc)")
+        }
+    }
+
+    /// LE DÉFAUT DU 15 NOVEMBRE, LU SUR LA PREMIÈRE CAPTURE DE L'ACCUEIL EN COURSE LIBRE.
+    ///
+    /// Le bandeau annonçait « Mode course libre » et la carte de séance, deux lignes dessous,
+    /// « Semaine 1 sur 7, bloc de base : on construit le volume avant de le spécialiser. » Le
+    /// profil garde son objectif et sa date de course après la fin d'un programme, donc le
+    /// moteur recalculait une forme de plan pour un plan qui ne tourne plus.
+    ///
+    /// Les QUATRE blocs doivent se taire, et pas seulement les deux qui ont besoin d'un total :
+    /// `.deload` n'en demande aucun et `.affutage` se contente de la date de course.
+    func testEnCourseLibreAucunBlocNeParle() {
+        for bloc in [AdaptivePlanEngine.TrainingBlock.base, .specifique, .affutage, .deload] {
+            XCTAssertNil(PourquoiCetteSeance.phrase(
+                contexte(bloc: bloc, jours: 10, libre: true)), "\(bloc)")
+        }
+    }
+
+    /// Et le même contexte, programme en cours, parle — sans quoi le cas ci-dessus passerait
+    /// aussi avec une fonction qui ne dit jamais rien.
+    func testLeMemeContexteHorsCourseLibreParle() {
+        for bloc in [AdaptivePlanEngine.TrainingBlock.base, .specifique, .affutage, .deload] {
+            XCTAssertNotNil(PourquoiCetteSeance.phrase(
+                contexte(bloc: bloc, jours: 10, libre: false)), "\(bloc)")
         }
     }
 

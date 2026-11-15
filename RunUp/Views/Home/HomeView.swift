@@ -686,7 +686,8 @@ struct HomeView: View {
             semainesEnTout: shape.totalWeeks,
             joursAvantLaCourse: jours,
             dejaExplique: session.adjustment != nil || session.adaptationNote != nil,
-            estUnJourDeRepos: estUnJourDeRepos))
+            estUnJourDeRepos: estUnJourDeRepos,
+            estEnCourseLibre: isFreeRun))
     }
 
     private var sessionCard: some View {
