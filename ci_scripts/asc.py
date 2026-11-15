@@ -680,8 +680,56 @@ def cmd_push_metadata(args):
                 "attributes": {**attrs, "locale": locale},
                 "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": vid}}}}})
             print(f"  {locale} créé")
+    pousser_l_url_de_confidentialite(aid, args.dry_run)
     if args.dry_run:
         print("\n(--dry-run : rien n'a été envoyé)")
+
+
+def pousser_l_url_de_confidentialite(aid: str, a_blanc: bool) -> None:
+    """L'URL de politique de confidentialité, écrite par la machine comme le reste de la fiche.
+
+    # LE DÉFAUT, MESURÉ LE 15 NOVEMBRE SUR LA PAGE PUBLIQUE DE L'APP STORE
+
+    La fiche en vente annonçait l'adresse d'AVANT le renommage du dépôt — dix-sept fois dans le
+    HTML de la page publique — et cette adresse-là répond **404** depuis que le propriétaire a
+    changé de nom. Toute personne qui touchait « Politique de confidentialité » depuis l'App
+    Store tombait sur une page d'erreur, et Apple EXIGE que ce lien réponde. (Elle n'est pas
+    recopiée ici : `check_liens.py` refuse toute adresse publiée écrite en dur, y compris dans
+    un commentaire, et il a raison — c'est le journal qui garde les anciennes.)
+
+    # POURQUOI RIEN NE L'AVAIT VU
+
+    Le renommage a été traité : neuf copies de l'ancienne adresse corrigées, une déclaration par
+    langage (`liens.py`, `Liens.swift`), `check_liens.py` et ses neuf cas pour les tenir. Mais
+    cette URL-ci n'est écrite NULLE PART dans le dépôt côté Apple : elle vit sur
+    l'`appInfoLocalization`, personne ne l'écrivait, et `push-metadata` ne poussait que
+    `supportUrl`. La valeur posée à la main des mois plus tôt est donc restée.
+
+    Et `pret` la regardait : « confidentialité oui ». Il vérifiait qu'une valeur EXISTE, pas
+    qu'elle réponde. Une URL morte est une valeur.
+
+    # CE QUI CHANGE
+
+    Elle est poussée avec le reste, depuis `liens.py`, pour toutes les langues de la fiche. Un
+    prochain renommage ne demandera donc toujours qu'une ligne de chaque côté — et celle-ci
+    suivra, au lieu d'attendre que quelqu'un clique.
+
+    `verifier_les_pages_publiees`, appelée au début de `push-metadata`, a déjà vérifié que la
+    page répond : on ne pousse jamais une adresse qu'on n'a pas éprouvée.
+    """
+    for info in call("GET", f"apps/{aid}/appInfos")["data"]:
+        for il in call("GET", f"appInfos/{info['id']}/appInfoLocalizations")["data"]:
+            locale = il["attributes"].get("locale")
+            avant = il["attributes"].get("privacyPolicyUrl")
+            if avant == liens.CONFIDENTIALITE:
+                print(f"  {locale} : URL de confidentialité déjà à jour")
+                continue
+            print(f"  {locale} : URL de confidentialité {avant or 'VIDE'} → {liens.CONFIDENTIALITE}")
+            if a_blanc:
+                continue
+            call("PATCH", f"appInfoLocalizations/{il['id']}",
+                 {"data": {"type": "appInfoLocalizations", "id": il["id"],
+                           "attributes": {"privacyPolicyUrl": liens.CONFIDENTIALITE}}})
 
 
 # ── Les captures d'écran ──────────────────────────────────────────────────────────────────────
@@ -1268,10 +1316,21 @@ def cmd_pret(args):
             manques.append("la fiche d'app n'a pas de catégorie principale")
         for il in call("GET", f"appInfos/{info['id']}/appInfoLocalizations")["data"]:
             b = il["attributes"]
+            # UNE URL MORTE EST UNE VALEUR, et ce contrôle disait « oui » pour elle.
+            #
+            # Le 15 novembre, la fiche en vente annonçait l'adresse d'avant le renommage, qui
+            # répond 404. Ce diagnostic la trouvait renseignée et passait. Il compare donc
+            # maintenant à celle que `liens.py` déclare — la seule dont on ait vérifié qu'elle
+            # répond.
+            url = b.get("privacyPolicyUrl")
+            dit = "NON" if not url else ("oui" if url == liens.CONFIDENTIALITE else "AUTRE")
             print(f"    {b.get('locale')} : nom {'oui' if b.get('name') else 'NON'}, "
-                  f"confidentialité {'oui' if b.get('privacyPolicyUrl') else 'NON'}")
-            if not b.get("privacyPolicyUrl"):
+                  f"confidentialité {dit}")
+            if not url:
                 manques.append(f"{b.get('locale')} n'a pas d'URL de confidentialité")
+            elif url != liens.CONFIDENTIALITE:
+                manques.append(f"{b.get('locale')} annonce {url} au lieu de "
+                               f"{liens.CONFIDENTIALITE} → push-metadata la corrige")
 
     # 4. UNE SOUMISSION DÉJÀ OUVERTE. Apple n'en accepte qu'une à la fois, et un essai resté en
     #    travers bloque tous les suivants avec le même message illisible.

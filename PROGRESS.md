@@ -5998,3 +5998,53 @@ premier instant** ». On ne lira plus une contradiction là où il y a deux ques
 La prochaine campagne tranchera : si les trois instants montrent l'écran visé à l'un d'eux, la
 règle écrite est la bonne et c'est le code qui doit la suivre. Si aucun ne le montre, le film est
 vraiment coupé au mauvais endroit et c'est le découpage qu'il faut corriger.
+
+## 15 novembre 2026 — la fiche App Store annonçait une politique de confidentialité morte
+
+Charlotte : « remets la page privacy html elle a sauté ».
+
+**La page, elle, n'avait pas bougé.** Mesuré avant de toucher à quoi que ce soit : l'adresse
+déclarée répond **200**, son contenu est identique octet pour octet à `main` et à la branche de
+travail, sa dernière modification est le 11 novembre, `check_politique.py` dit « 12 sections,
+texte compris, les mêmes que dans le dépôt », et la page s'ouvre et se rend sans une requête
+échouée. `support.html` aussi.
+
+**C'est la fiche en vente qui pointait ailleurs.** Relevé sur la page publique de l'App Store,
+téléchargée telle qu'un visiteur la reçoit : l'ancienne adresse, celle d'avant le renommage du
+dépôt, **dix-sept fois dans le HTML**. Elle répond 404. Charlotte a donc cliqué depuis le
+magasin, et elle est tombée sur une erreur — comme tout le monde, et comme un examinateur
+d'Apple, qui EXIGE que ce lien réponde.
+
+**Pourquoi le renommage ne l'avait pas emportée avec lui.** Le 10 novembre, neuf copies de
+l'ancienne adresse ont été corrigées, une déclaration posée par langage, et `check_liens.py`
+écrit pour les tenir. Mais cette URL-ci n'est écrite **nulle part dans le dépôt** : elle vit sur
+l'`appInfoLocalization` d'App Store Connect, personne ne l'écrivait, et `push-metadata` ne
+poussait que `supportUrl`. La valeur posée à la main des mois plus tôt est restée.
+
+**Et le diagnostic la regardait.** `asc.py pret` imprimait « confidentialité oui » : il vérifiait
+qu'une valeur EXISTE, pas qu'elle réponde. **Une URL morte est une valeur.**
+
+### Ce qui change
+
+`push-metadata` pousse désormais l'URL de confidentialité depuis `liens.py`, pour toutes les
+langues de la fiche, juste après les textes — et `verifier_les_pages_publiees`, qui tourne au
+début de la même commande, a déjà éprouvé que la page répond. On ne pousse jamais une adresse
+qu'on n'a pas vérifiée.
+
+`pret` compare maintenant ce qu'Apple annonce à ce que `liens.py` déclare, au lieu de se
+contenter d'une valeur non vide : « oui », « AUTRE » ou « NON ».
+
+Un prochain renommage ne demande toujours qu'une ligne de chaque côté — et celle-ci suivra, au
+lieu d'attendre que quelqu'un clique.
+
+**Le garde m'a attrapé au passage.** La première version de ce commentaire recopiait l'ancienne
+adresse en toutes lettres pour l'expliquer : `check_liens.py` l'a refusée. Il a raison — une
+adresse publiée écrite en dur est exactement ce qu'il existe pour empêcher, commentaire compris.
+Ce sont les journaux qui gardent les anciennes.
+
+### Ce qui reste à faire, et qui n'est pas de moi
+
+Cette session n'a pas les clés d'API d'Apple — elles vivent dans les secrets de la CI. La
+commande est prête ; c'est `asc.py push-metadata` qui la portera. **Le plus rapide reste de poser
+l'adresse à la main dans App Store Connect** (App Information → Privacy Policy URL) : ce champ
+n'est pas lié à une version, il s'applique à l'app en vente immédiatement, sans attendre la 3.4.
