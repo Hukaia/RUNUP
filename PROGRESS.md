@@ -6155,3 +6155,53 @@ réintroduisant la faute — le garde refuse et nomme le script.
 
 Les quatre appels pointent sur Instrument Sans. `Inter-Light` n'a pas d'équivalent : ils prennent
 le Regular, comme le cran `.light` de l'app.
+
+## 15 novembre 2026 — une seule échelle, en points rendus
+
+Le brief demandait « échelle unique : 12 / 14 / 16 / 20 / 28 / 40 ».
+
+**Le plus important n'est pas les six nombres, c'est qu'ils soient enfin les vrais.** Les valeurs
+écrites dans le code passaient par deux facteurs de compensation — 1,25 pour le texte, 1,09 pour
+les chiffres — hérités de tailles dessinées contre Bebas Neue, une police abandonnée depuis
+longtemps. Aucun nombre du fichier n'était donc la taille à l'écran : « corps = 12 » rendait
+15 points.
+
+Ce n'est pas une subtilité d'implémentation. **Le 15 novembre, en relisant l'app pour ce brief,
+j'ai moi-même lu « 12 » et conclu que le texte courant était trop petit.** Il ne l'était pas. Un
+fichier dont les nombres ne veulent pas dire ce qu'ils disent finit par tromper ceux qui l'ont
+écrit.
+
+Les deux facteurs valent 1,0 et disparaissent. L'échelle ne vient plus d'un dessin ancien qu'il
+faut rattraper : elle est donnée en points rendus, et ce sont les écrans qui s'y ajustent.
+
+### La correspondance, cran par cran
+
+| cran | rendu avant | rendu après |
+| --- | --- | --- |
+| `RUTextSize.micro` | 10,6 | **12** |
+| `RUTextSize.small` | 13,1 | **14** |
+| `RUTextSize.body` | 15,0 | **16** |
+| `RUTextSize.label` | 17,5 | **16** |
+| `RUTextSize.emphasis` | 20,0 | **20** |
+| `RUTextSize.title` | 23,1 | **20** |
+| `RUDisplaySize.caption` | 12,0 | **12** |
+| `RUDisplaySize.label` | 15,3 | **16** |
+| `RUDisplaySize.subtitle` | 19,6 | **20** |
+| `RUDisplaySize.title` | 24,0 | **28** |
+| `RUDisplaySize.figure` | 30,5 | **28** |
+| `RUDisplaySize.hero` | 38,2 | **40** |
+| `RUDisplaySize.banner` | 48,0 | **40** |
+
+**Quatre paires partagent désormais un nombre**, et c'est voulu : l'échelle n'a que six valeurs,
+et ce qui sépare un libellé d'un corps de texte à taille égale, c'est la graisse — le brief le
+dit. Les crans restent distincts parce qu'ils nomment un RÔLE, et qu'un rôle se redimensionne
+sans toucher ses voisins.
+
+Les deux mouvements à surveiller sur la capture : le titre de page monte de 17 % (24 → 28) et le
+plus grand chiffre descend de 17 % (48 → 40).
+
+**Un banc a été réécrit plutôt que re-épinglé.** `test_design.py` affirmait « `title` vaut 18,5
+d'un côté et 22 de l'autre » pour poser la prémisse « même nom, deux valeurs ». Il l'affirme
+maintenant en inégalité : ce cas ne porte pas sur CE que valent les crans, mais sur le fait que
+le contrôle lit chaque tableau dans sa propre règle. Deux nombres en dur obligeaient à retoucher
+le banc à chaque réglage d'échelle — le meilleur moyen de le voir finir désactivé.

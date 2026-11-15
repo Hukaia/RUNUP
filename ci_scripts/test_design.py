@@ -79,8 +79,12 @@ def _():
 @cas_test("`title` est comparé à l'échelle de son tableau, pas à son homonyme")
 def _():
     textes, affichage = ck.echelle("RUTextSize"), ck.echelle("RUDisplaySize")
-    # La prémisse du défaut : le même nom, deux valeurs.
-    assert textes["title"] == 18.5 and affichage["title"] == 22.0
+    # LA PRÉMISSE DU DÉFAUT : le même nom, deux valeurs. Écrite en inégalité plutôt qu'en
+    # nombres — elle l'était (18,5 et 22), elle l'est encore (20 et 28), et ce cas-ci ne
+    # porte pas sur CE que valent les crans mais sur le fait que le contrôle lit chaque
+    # tableau dans sa propre règle. Deux nombres en dur ici obligeaient à retoucher le banc
+    # à chaque réglage d'échelle, ce qui est le meilleur moyen de le voir finir désactivé.
+    assert textes["title"] != affichage["title"], (textes["title"], affichage["title"])
     # Et le document, tel qu'il est, passe — donc les deux tableaux sont lus chacun dans sa règle.
     assert ck.ecarts() == [], ck.ecarts()
 

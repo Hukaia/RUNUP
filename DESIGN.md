@@ -290,32 +290,44 @@ courant, une graisse plus haut — pas une seconde famille.
 fichiers appelaient `.monospacedDigit()` à la main et tous les autres l'oubliaient, donc les
 colonnes de l'app dansaient partout sauf à trois endroits.
 
-### 4.1 Les deux échelles
+### 4.1 Une seule échelle : 12 / 14 / 16 / 20 / 28 / 40
+
+**Six nombres, et ce sont des POINTS RENDUS.** Jusqu'au 15 novembre, les valeurs écrites dans le
+code passaient par deux facteurs de compensation — 1,25 pour le texte, 1,09 pour les chiffres —
+hérités de tailles dessinées contre une police abandonnée. Aucun nombre du fichier n'était donc
+la taille réelle : « corps = 12 » rendait 15 points. Les deux facteurs valent 1,0, et un nombre
+est maintenant ce qu'on voit.
 
 Le texte courant, `RUTextSize` — ces valeurs sont des tailles de base, que le réglage
 d'accessibilité du système multiplie :
 
-| Cran | Valeur |
-| --- | --- |
-| `micro` | 8,5 |
-| `small` | 10,5 |
-| `body` | 12 |
-| `label` | 14 |
-| `emphasis` | 16 |
-| `title` | 18,5 |
+| Cran | Valeur | À quoi ça sert |
+| --- | --- | --- |
+| `micro` | 12 | méta : unités, micro-libellés, dates |
+| `small` | 14 | légendes, valeurs secondaires, notes |
+| `body` | 16 | le texte courant |
+| `label` | 16 | libellés de carte, titres de ligne de liste — **la graisse les distingue** |
+| `emphasis` | 20 | libellés qui doivent primer sur leurs voisins |
+| `title` | 20 | titres de carte et de section, en semi-gras |
 
 Le titrage et les chiffres, `RUDisplaySize` — **l'échelle est fermée**, et `check_echelle.py` la
-tient. Elle a remplacé vingt-six tailles relevées dans le dépôt :
+tient :
 
 | Cran | Valeur | À quoi ça sert |
 | --- | --- | --- |
-| `caption` | 11 | micro-chiffres, valeurs de pastille |
-| `label` | 14 | libellés de bouton, valeurs en ligne |
-| `subtitle` | 18 | titres de ligne de liste, grille de mesures dense |
-| `title` | 22 | titres de page, de feuille, de carte |
+| `caption` | 12 | micro-chiffres, valeurs de pastille |
+| `label` | 16 | libellés de bouton, valeurs en ligne |
+| `subtitle` | 20 | titres de ligne de liste, grille de mesures dense |
+| `title` | 28 | titres de page, de feuille, de carte |
 | `figure` | 28 | LE chiffre d'une carte — un cumul, une moyenne, une allure |
-| `hero` | 35 | le chiffre unique d'un écran |
-| `banner` | 44 | une accroche, un record : **au plus un par écran** |
+| `hero` | 40 | le chiffre unique d'un écran, et le titre d'écran |
+| `banner` | 40 | une accroche, un record : **au plus un par écran** |
+
+**Deux crans peuvent partager un nombre.** `label` et `body` valent 16, `emphasis` et `title`
+valent 20, `title` et `figure` valent 28, `hero` et `banner` valent 40. Ce n'est pas une
+hésitation : l'échelle n'a que six valeurs, et ce qui sépare un libellé d'un corps de texte à
+taille égale, c'est la graisse. Les crans restent distincts parce qu'ils disent un RÔLE, et qu'un
+rôle se redimensionne sans toucher ses voisins.
 
 **La graisse suit le cran**, parce que la graisse perçue baisse quand la taille monte : `figure`,
 `hero` et `banner` passent en grasse, les quatre crans du bas non.

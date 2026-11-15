@@ -68,7 +68,20 @@ enum DisplayFont {
     /// plus petit à taille de point égale, et les lignes tiendront dans un peu moins de largeur.
     /// C'est assumé : l'échelle qui suit est donnée en points rendus, et la capture tranchera
     /// s'il faut monter d'un cran.
-    static let sizeFactor: CGFloat = 1.101
+    /// # 1,0 DEPUIS LE 15 NOVEMBRE
+    ///
+    /// Tout ce qui précède raconte un facteur de compensation : les tailles avaient été
+    /// dessinées contre Bebas Neue, chaque famille suivante était plus large, et ce nombre les
+    /// ramenait à l'encombrement d'origine. Il a valu 1,16, puis 1,09, puis 1,101.
+    ///
+    /// Il n'a plus d'objet. L'échelle de l'app ne vient plus d'un dessin ancien qu'il faut
+    /// rattraper : elle est donnée en points rendus — 12 / 14 / 16 / 20 / 28 / 40 — et c'est à
+    /// elle que les écrans sont ajustés, pas l'inverse. Un facteur qui compense une référence
+    /// disparue ne fait plus qu'une chose : empêcher de lire les tailles dans le code.
+    ///
+    /// L'histoire reste écrite au-dessus parce qu'elle explique pourquoi les crans valaient des
+    /// nombres aussi improbables que 18,5 ou 10,5.
+    static let sizeFactor: CGFloat = 1.0
 
     /// La taille de point à demander pour retrouver l'encombrement dessiné à l'origine.
     static func pointSize(for designSize: CGFloat) -> CGFloat { designSize * sizeFactor }

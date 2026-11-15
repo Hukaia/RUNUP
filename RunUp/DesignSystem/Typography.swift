@@ -184,7 +184,17 @@ enum RUFont {
     /// Inter est 4,9 % plus large qu'Archivo et le facteur baisse de 3,8 %, donc une ligne occupe
     /// 1 % de plus qu'avant. Les neuf libellés d'une seule ligne gardent par ailleurs leur
     /// `minimumScaleFactor` — ils rétrécissent au lieu de se couper.
-    private static let bodySizeFactor: CGFloat = 1.25
+    /// 1,0 DEPUIS LE 15 NOVEMBRE, ET LE FACTEUR DISPARAÎT PLUTÔT QUE DE CHANGER DE VALEUR.
+    ///
+    /// Il valait 1,25, et il servait à rattraper des tailles dessinées contre une autre police.
+    /// Son effet de bord était qu'AUCUN nombre écrit dans ce fichier n'était la taille réelle :
+    /// « corps = 12 » rendait 15 points. Le 15 novembre, en relisant l'app pour un brief de
+    /// direction artistique, j'ai moi-même lu « 12 » et conclu que le texte courant était trop
+    /// petit — il ne l'était pas.
+    ///
+    /// L'échelle est désormais donnée en POINTS RENDUS — 12 / 14 / 16 / 20 / 28 / 40 — donc il
+    /// n'y a plus rien à compenser. Un nombre dans ce fichier est la taille à l'écran.
+    private static let bodySizeFactor: CGFloat = 1.0
 
     /// LA TROISIÈME FAMILLE AVAIT LE MÊME DÉFAUT QUE LES DEUX AUTRES.
     ///
@@ -406,20 +416,22 @@ extension Text {
 /// Comme `RUTextSize`, la variante numérique est étiquetée `horsEchelle:` pour que les
 /// vingt-six valeurs ne reviennent pas une par une.
 enum RUDisplaySize: CGFloat {
-    /// 11 → 12,0 pt. Micro-chiffres, valeurs de pastille.
-    case caption = 11
-    /// 14 → 15,3 pt. Libellés de bouton, valeurs en ligne.
-    case label = 14
-    /// 18 → 19,6 pt. Titres de ligne de liste, valeurs d'une grille de mesures dense.
-    case subtitle = 18
-    /// 22 → 24,0 pt. Titres de page et de feuille, titres de carte, valeurs mises en avant.
-    case title = 22
-    /// 28 → 30,5 pt. LE chiffre d'une carte — un cumul, une moyenne, une allure.
+    /// 12. Micro-chiffres, valeurs de pastille.
+    case caption = 12
+    /// 16. Libellés de bouton, valeurs en ligne.
+    case label = 16
+    /// 20. Titres de ligne de liste, valeurs d'une grille de mesures dense.
+    case subtitle = 20
+    /// 28. Titres de page et de feuille, titres de carte, valeurs mises en avant.
+    case title = 28
+    /// 28. LE chiffre d'une carte — un cumul, une moyenne, une allure. Même cran que `title` :
+    /// un titre de page et le grand chiffre d'une carte sont deux façons d'être le sujet.
     case figure = 28
-    /// 35 → 38,2 pt. Le chiffre unique d'un écran.
-    case hero = 35
-    /// 44 → 48,0 pt. Une accroche, un record : au plus un par écran.
-    case banner = 44
+    /// 40. Le chiffre unique d'un écran, et le titre d'écran — « Charlotte », « Ta forme évolue ».
+    case hero = 40
+    /// 40. Une accroche, un record : au plus un par écran. Même cran que `hero`, parce que
+    /// l'échelle s'arrête à 40 et qu'au-delà c'est la graisse qui parle.
+    case banner = 40
 
     /// LA GRAISSE SUIT LE CRAN, parce que la graisse PERÇUE baisse quand la taille monte.
     ///
@@ -478,18 +490,21 @@ enum RUIconSize: CGFloat {
 /// La variante numérique est `private` pour que les dix-neuf valeurs ne reviennent pas une par
 /// une : le compilateur refuse un nombre écrit à la main hors de ce fichier.
 enum RUTextSize: CGFloat {
-    /// 8,5 — suffixes d'unité, micro-libellés sous un chiffre.
-    case micro = 8.5
-    /// 10,5 — valeurs secondaires, notes, sous-titres de ligne.
-    case small = 10.5
-    /// 12 — le texte courant. Le seul cran qui ne bouge pas.
-    case body = 12
-    /// 14 — libellés de carte, titres de ligne de liste.
-    case label = 14
-    /// 16 — libellés qui doivent primer sur leurs voisins.
-    case emphasis = 16
-    /// 18,5 — titres de carte et de section.
-    case title = 18.5
+    /// 12 — méta : suffixes d'unité, micro-libellés sous un chiffre, dates.
+    case micro = 12
+    /// 14 — légendes : valeurs secondaires, notes, sous-titres de ligne.
+    case small = 14
+    /// 16 — le texte courant.
+    case body = 16
+    /// 16 — libellés de carte et titres de ligne de liste. MÊME TAILLE que le corps, et c'est
+    /// la graisse qui les distingue : le brief dit « corps en 16, légendes en 14, méta en 12 »,
+    /// il n'y a pas de cran entre les deux.
+    case label = 16
+    /// 20 — libellés qui doivent primer sur leurs voisins.
+    case emphasis = 20
+    /// 20 — titres de carte et de section, en semi-gras. Même valeur qu'`emphasis`, même raison
+    /// qu'au-dessus : six nombres, et la graisse fait le reste.
+    case title = 20
 }
 
 struct EyebrowLabel: View {
