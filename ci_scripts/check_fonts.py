@@ -26,6 +26,9 @@ import re, struct, sys, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FONT_DIR = ROOT / "RunUp/Resources/Fonts"
+#: Où un script peut légitimement aller chercher une police : celles livrées avec l'app, et
+#: celles de la fiche App Store, qui ne sont pas embarquées mais servent à composer les images.
+DOSSIERS_DE_POLICES = [FONT_DIR, ROOT / "appstore" / "polices"]
 
 
 def postscript_name(path):
@@ -96,6 +99,48 @@ def registered(target_block):
     return re.findall(r"-\s*(\S+\.ttf)", m.group(1))
 
 
+def polices_lues_par_les_scripts() -> bool:
+    r"""Les fichiers de police que les SCRIPTS ouvrent existent-ils ?
+
+    # LE DÉFAUT, CAMPAGNE 207
+
+    Le passage d'Inter à Instrument Sans a retiré six fichiers du dépôt. Le garde ci-dessous
+    vérifiait la chaîne Swift — déclarations, `UIAppFonts`, livraison par cible — et il est passé
+    au vert. Mais `screenshots.py` et `montage.py` ouvrent des fichiers de police EUX AUSSI, pour
+    composer les images de la fiche App Store et le film, et ils les nomment en dur. Trois
+    appels à `Inter-Light.ttf`, un à `Inter-SemiBold.ttf`.
+
+    La campagne a donc photographié les trente-neuf écrans, puis s'est arrêtée sur
+    `OSError: cannot open resource` à l'étape de composition. **Quarante-cinq minutes pour une
+    ligne.**
+
+    # CE QUI EST REGARDÉ
+
+    Tout chemin de `.ttf` écrit dans un script de `ci_scripts`, résolu contre le dossier des
+    polices de l'app ou celui de la fiche. Hors ligne, exact, et sans faux positif possible : un
+    nom de fichier est un nom de fichier.
+    """
+    motif = re.compile(r'"([\w-]+\.ttf)"')
+    manquants = []
+    for script in sorted((ROOT / "ci_scripts").glob("*.py")):
+        if script.name.startswith("test_") or script.name == "check_fonts.py":
+            continue
+        for nom in motif.findall(script.read_text(encoding="utf-8")):
+            if not any((d / nom).exists() for d in DOSSIERS_DE_POLICES):
+                manquants.append((script.name, nom))
+    if manquants:
+        print(f"{len(manquants)} police(s) ouverte(s) par un script et absente(s) du dépôt :\n")
+        for script, nom in manquants:
+            print(f"  · {script} ouvre « {nom} »")
+        print()
+        print("Un script qui ouvre une police absente ne casse qu'en intégration continue, après")
+        print("la campagne : quarante-cinq minutes de harnais pour une ligne. Cherchés dans :")
+        for d in DOSSIERS_DE_POLICES:
+            print(f"    {d.relative_to(ROOT)}")
+        return False
+    return True
+
+
 def main():
     consts = constants()
     if not consts.get("DisplayFont.family"):
@@ -133,7 +178,9 @@ def main():
             return []
         return re.findall(r"-\s*path:\s*(\S+)", m.group(1))
 
-    failed = False
+    if not polices_lues_par_les_scripts():
+        return 1
+
     failed = False
     for target, block in targets.items():
         files = registered(block)

@@ -145,7 +145,7 @@ def carte_titre(dossier: pathlib.Path, bandeau: str, mot: str, sous: str) -> pat
     largeur = S.tracked_width(d, mot, police, -4.0)
     y = S.CANVAS[1] // 2 - 190
     S.tracked(d, ((S.CANVAS[0] - largeur) / 2, y), mot, police, S.ENCRE + (255,), -4.0)
-    petite = ImageFont.truetype(str(S.FONTS / "Inter-Light.ttf"), 54)
+    petite = ImageFont.truetype(str(S.FONTS / "InstrumentSans-Regular.ttf"), 54)
     w = d.textlength(sous, font=petite)
     d.text(((S.CANVAS[0] - w) / 2, y + 250), sous, font=petite, fill=S.ENCRE + (160,))
     img.convert("RGB").save(f)

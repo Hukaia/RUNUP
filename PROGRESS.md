@@ -6134,3 +6134,24 @@ fabriqué l'italique sous le nom PostScript `InstrumentSansItalic-Italic`, pas
 la police système **sans rien dire** — exactement la panne que `check_fonts.py` a été écrit pour
 rendre impossible. Les trois enregistrements de nom ont été reposés à la main, pour les deux
 plateformes.
+
+### Ce que le changement de police a cassé, et que seul le CI voyait
+
+La campagne 207 a photographié les trente-neuf écrans, puis s'est arrêtée à l'étape de
+composition sur `OSError: cannot open resource`. **Quarante-cinq minutes pour une ligne.**
+
+`screenshots.py` et `montage.py` ouvrent eux aussi des fichiers de police — pour composer les
+images de la fiche App Store et le film — et ils les nomment en dur : trois appels à
+`Inter-Light.ttf`, un à `Inter-SemiBold.ttf`. J'ai retiré les six fichiers d'Inter sans chercher
+qui les lisait en dehors de l'app.
+
+`check_fonts.py` était passé au vert, et il avait raison sur son périmètre : il vérifie la chaîne
+Swift — déclarations, `UIAppFonts`, livraison par cible. Personne ne regardait les scripts.
+
+**Le garde couvre maintenant les deux côtés.** Tout chemin de `.ttf` écrit dans un script de
+`ci_scripts` doit exister, cherché dans les polices de l'app et dans celles de la fiche. Hors
+ligne, exact, sans faux positif possible : un nom de fichier est un nom de fichier. Éprouvé en
+réintroduisant la faute — le garde refuse et nomme le script.
+
+Les quatre appels pointent sur Instrument Sans. `Inter-Light` n'a pas d'équivalent : ils prennent
+le Regular, comme le cran `.light` de l'app.

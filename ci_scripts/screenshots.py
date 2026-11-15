@@ -459,7 +459,7 @@ def clean_status_bar(shot: Image.Image) -> Image.Image:
     draw.rectangle((0, 0, w, band), fill=bg)
 
     size = round(w * 0.042)
-    font = ImageFont.truetype(str(FONTS / "Inter-SemiBold.ttf"), size)
+    font = ImageFont.truetype(str(FONTS / "InstrumentSans-SemiBold.ttf"), size)
     draw.text((round(w * 0.082), mid), "9:41", font=font, fill=ink, anchor="lm")
 
     unit = w / 430          # un point de la dalle, en pixels
@@ -530,7 +530,7 @@ def _accroche(canvas: Image.Image, caption, rang: int, total: int, numero: bool 
         y += TITRE_INTERLIGNE
 
     if sous:
-        sous_font = ImageFont.truetype(str(FONTS / "Inter-Light.ttf"), SOUS_TAILLE)
+        sous_font = ImageFont.truetype(str(FONTS / "InstrumentSans-Regular.ttf"), SOUS_TAILLE)
         y = TITRE_HAUT + TITRE_LIGNES * TITRE_INTERLIGNE + 18
         for ligne in wrap(draw, sous, sous_font, CANVAS[0] - MARGE * 2):
             draw.text((MARGE, y), ligne, font=sous_font, fill=ENCRE + (155,))
@@ -638,7 +638,7 @@ def overflowing_captions(captions: dict) -> list[str]:
     """
     probe = ImageDraw.Draw(Image.new("RGB", (1, 1)))
     title_font = ImageFont.truetype(str(TITRE_POLICE), TITRE_TAILLE)
-    sub_font = ImageFont.truetype(str(FONTS / "Inter-Light.ttf"), SOUS_TAILLE)
+    sub_font = ImageFont.truetype(str(FONTS / "InstrumentSans-Regular.ttf"), SOUS_TAILLE)
     out: list[str] = []
     for locale, bloc in sorted(captions.items()):
         items = accroches(bloc)
