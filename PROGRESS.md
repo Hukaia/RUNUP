@@ -5770,3 +5770,31 @@ du code juste est pire qu'aucun garde.
 **Relevé au passage, et noté comme tâche :** `SessionDetailSheet`, la feuille qui s'ouvre sur une
 séance du plan, n'apparaît dans AUCUNE capture. « sortie » photographie la page d'une course
 passée, pas celle-ci. C'est l'écran qu'on ouvre avant de courir.
+
+### Vérifié sur la campagne 200
+
+**L'en-tête est entier.** Sur la capture d'accessibilité : « Ton programme · 10 km · 47:30 » sur
+deux lignes, et le « J-41 » descendu sur sa propre ligne, poussé à droite — le mécanisme de
+`RUCardHeader` s'applique enfin, parce que le compte à rebours est passé par son paramètre.
+
+**Les sept autres écrans en grand texte n'ont rien perdu.** Regardés : stats, profil, bilan de la
+semaine, aperçu du club, sortie, course en cours, accueil. Rien n'est poussé hors de l'écran,
+rien ne se chevauche. Deux sous-titres gagnent leur deuxième ligne au passage — « Cette semaine ·
+Face à la semaine passée » sur les stats, « Le fil · Ton club, tes abonnements… » sur le profil.
+
+Les coupures qui restent en grand texte ne viennent pas des en-têtes : la biographie du profil,
+le nom du club sur l'aperçu. Chacune a son propre composant et sa propre limite.
+
+**La comparaison au pixel près des captures ORDINAIRES n'a pas pu se faire**, et c'est une limite
+qu'il faut écrire plutôt que contourner : la campagne 199 a tourné un samedi de repos, la 200 un
+dimanche de sortie longue. Le jeu de données de capture suit la date, donc les deux accueils ne
+montrent pas la même app — carte de séance de 290 points là où il y avait trois lignes de repos,
+28,3 km au lieu de 14,1. Ce qui est vérifié à la place : aux tailles ordinaires, l'expression
+`tailleDuTexte.isAccessibilitySize ? 2 : 1` vaut littéralement 1, donc le code emprunté est le
+même qu'avant ; et les en-têtes des quatre écrans ordinaires regardés tiennent bien sur une
+ligne.
+
+**Une chose regardée et laissée telle quelle.** À côté d'un titre sur deux lignes, le glyphe de
+l'en-tête se centre verticalement, donc il se pose entre les deux lignes. L'aligner sur la
+première demanderait de changer l'alignement des 68 en-têtes à TOUTES les tailles pour un gain
+qui n'existe qu'en accessibilité. Centrer est aussi ce que font les rangées de liste d'iOS.
