@@ -273,6 +273,9 @@ struct HomeView: View {
         let montreLeProgramme = planUnlocked && !isFreeRun
         let shape = planShape
         let block = AdaptivePlanEngine.trainingBlock(forWeek: profile.weekNumber, shape: shape)
+        // Nommé ici parce qu'un bloc `ViewBuilder` n'accepte pas de déclaration, et que les deux
+        // branches ci-dessous — avec ou sans date de course — portent le même titre.
+        let titreDuProgramme = String(localized: "Ton programme · \(profile.goalDisplay)")
         return Button(action: { appState.go(.plan) }) {
             VStack(alignment: .leading, spacing: 12) {
                 // Combiné à part du ruban ci-dessous : il expose déjà un élément par jour, avec
@@ -280,20 +283,27 @@ struct HomeView: View {
                 // au lieu de s'y ajouter.
                 Group {
                     if montreLeProgramme {
-                        HStack(alignment: .firstTextBaseline, spacing: 10) {
-                            RUCardHeader(icon: "map.fill",
-                                         title: String(localized: "Ton programme · \(profile.goalDisplay)"))
-                            // Le compte à rebours, en texte gris au bout de la ligne. Il était
-                            // une capsule rose remplie ; il se lit aussi bien sans, et il cesse
-                            // de réclamer l'attention d'un bouton alors qu'on ne peut pas le
-                            // toucher. La flèche qui l'accompagnait est partie pour de bon : la
-                            // section entière est un bouton, et sa dernière ligne dit déjà
-                            // « voir le plan complet ».
-                            if let days = profile.daysUntilRace {
+                        // LE COMPTE À REBOURS PASSE PAR L'ACCESSOIRE DE L'EN-TÊTE.
+                        //
+                        // Il était posé à côté de `RUCardHeader`, dans un `HStack` à nous. Vu de
+                        // l'en-tête, il n'existait donc pas — et le mécanisme que `RUCardHeader`
+                        // porte justement pour ça, l'accessoire qui descend SOUS le titre au
+                        // deuxième cran d'accessibilité, ne s'appliquait pas. Résultat sur la
+                        // capture en grand texte du 14 novembre : « Ton programme · 10… ».
+                        //
+                        // Il reste du texte gris au bout de la ligne : il était une capsule rose
+                        // remplie ; il se lit aussi bien sans, et il cesse de réclamer
+                        // l'attention d'un bouton alors qu'on ne peut pas le toucher. La flèche
+                        // qui l'accompagnait est partie pour de bon : la section entière est un
+                        // bouton, et sa dernière ligne dit déjà « voir le plan complet ».
+                        if let days = profile.daysUntilRace {
+                            RUCardHeader(icon: "map.fill", title: titreDuProgramme) {
                                 Text(String(localized: "J-\(days)"))
                                     .font(RUFont.sans(.small, weight: .bold))
                                     .foregroundColor(RUColor.text3)
                             }
+                        } else {
+                            RUCardHeader(icon: "map.fill", title: titreDuProgramme)
                         }
                         Text("\(weekEyebrow) · Bloc \(block.label)").displayStyle(.subtitle).foregroundColor(RUColor.textPrimary)
                     }

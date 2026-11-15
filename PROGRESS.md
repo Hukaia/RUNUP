@@ -5732,3 +5732,41 @@ ordinaires qui contiennent des exemples d'interpolation Swift. Python avertit au
 refusera demain : un garde de la barrière qui se serait cassé tout seul à la prochaine montée de
 version. Les deux docstrings sont maintenant brutes. Vérifié sur les 142 scripts de `ci_scripts`,
 en compilant chacun avec les avertissements promus en erreurs : aucun autre.
+
+## 15 novembre 2026 — un titre de section se faisait encore couper en grand texte
+
+Trouvé en regardant la capture d'accessibilité de la campagne 199, à pleine résolution :
+l'en-tête de la carte du programme affiche **« Ton programme · 10… »**. L'objectif de la
+coureuse — sa distance et son chrono cible — disparaît de l'en-tête au deuxième cran
+d'accessibilité.
+
+`CardHeaderView.swift` porte depuis le 8 novembre un mécanisme écrit exactement contre ça :
+l'accessoire d'un en-tête descend SOUS le titre en grand texte, pour que le titre récupère toute
+la largeur. Son commentaire le dit mot pour mot — « un titre de section tronqué est le seul mot
+qui dise de quoi parle la carte ».
+
+**Il ne s'appliquait pas, pour deux raisons.**
+
+La première : le « J-41 » n'était pas l'accessoire de l'en-tête. Il était posé À CÔTÉ de
+`RUCardHeader`, dans un `HStack` écrit sur place. Vu de l'en-tête, il n'existait pas. Compté dans
+l'app : sur 68 appels, deux passent par le paramètre `accessory`, trois posent leur voisin dans
+un `HStack` — et deux de ces trois sont des `Spacer`, donc légitimes. Le programme était le
+troisième.
+
+La seconde, et c'est elle qui compte : même seul sur toute la largeur,
+« Ton programme · 10 km · 47:30 » ne tient pas sur une ligne à 35 points. Le titre portait
+`lineLimit(1)`. Il en prend deux — **uniquement aux tailles d'accessibilité**. Aux tailles
+ordinaires, rien ne change : une ligne, réduction d'un cinquième au besoin, exactement comme
+avant. Le sous-titre suit la même règle.
+
+C'est la correction qui compte, parce qu'elle vaut pour les 68 en-têtes et pour le prochain,
+sans que personne ait à se souvenir de passer par `accessory`.
+
+**Pas de garde.** La règle vérifiable serait « un `RUCardHeader` ne se pose pas à côté d'une autre
+vue dans un `HStack` » — elle refuserait les deux `Spacer`, qui sont justes, et la feuille de
+séance, dont la pastille ne tronque plus rien depuis la correction ci-dessus. Un garde qui refuse
+du code juste est pire qu'aucun garde.
+
+**Relevé au passage, et noté comme tâche :** `SessionDetailSheet`, la feuille qui s'ouvre sur une
+séance du plan, n'apparaît dans AUCUNE capture. « sortie » photographie la page d'une course
+passée, pas celle-ci. C'est l'écran qu'on ouvre avant de courir.

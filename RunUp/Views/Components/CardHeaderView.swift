@@ -125,15 +125,29 @@ struct RUCardHeader<Accessory: View>: View {
                 // (`.title`) et les mesures 19,6 (`.subtitle`). L'écart que cette note défendait
                 // s'est donc élargi, pas réduit — 17,5 pour l'intertitre reste au bon endroit,
                 // entre le texte courant et les chiffres.
+                //
+                // ET LE TITRE PREND DEUX LIGNES EN GRAND TEXTE, PLUTÔT QUE DE SE FAIRE COUPER.
+                //
+                // L'accessoire qui descend sous le titre, plus haut, ne suffit pas : rendu seul
+                // sur toute la largeur, « Ton programme · 10 km · 47:30 » au deuxième cran
+                // d'accessibilité ne tient toujours pas sur une ligne. Vu sur la capture en
+                // grand texte du 14 novembre, à pleine résolution : « Ton programme · 10… ».
+                // L'objectif de la coureuse, distance et chrono, disparaissait de l'en-tête.
+                //
+                // Aux tailles ordinaires, RIEN ne change — une ligne, réduction d'un cinquième
+                // au besoin, exactement comme avant. Le deuxième rang ne s'ouvre qu'aux tailles
+                // d'accessibilité, où la hauteur est déjà ce qu'on échange contre la lisibilité.
                 Text(LocalizedStringKey(title))
                     .font(RUFont.sans(.label, weight: .bold))
                     .foregroundColor(RUColor.textPrimary)
-                    .lineLimit(1).minimumScaleFactor(0.8)
+                    .lineLimit(tailleDuTexte.isAccessibilitySize ? 2 : 1)
+                    .minimumScaleFactor(0.8)
                 if let subtitle {
                     Text(LocalizedStringKey(subtitle))
                         .font(RUFont.sans(.small))
                         .foregroundColor(RUColor.text3)
-                        .lineLimit(1).minimumScaleFactor(0.8)
+                        .lineLimit(tailleDuTexte.isAccessibilitySize ? 2 : 1)
+                        .minimumScaleFactor(0.8)
                 }
             }
             Spacer(minLength: 6)
