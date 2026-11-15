@@ -88,7 +88,8 @@ enum RUColor {
         //
         // LA VALEUR CLAIRE ÉTAIT À 7 %, ET CE N'ÉTAIT PLUS UNE TRACE.
         //
-        // Sept pour cent du rose de marque (#F50D7A) sur le neutre clair (#F4F3F8) donne
+        // Sept pour cent du rose de marque — #F50D7A à l'époque de ce relevé, #F0225F depuis le
+        // 15 novembre, et la démonstration ne change pas — sur le neutre clair (#F4F3F8) donne
         // #F4E3EF : une page ROSE, pas une page teintée. Sur une capture de vrai téléphone,
         // l'écran entier paraît imprimé sur du papier rose, et les cartes blanches censées
         // « flotter dessus » se lisent comme des trous. La moitié (#F4EBF4) fait ce que la

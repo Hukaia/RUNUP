@@ -32,7 +32,9 @@ struct AccentTheme: Identifiable, Equatable {
 
     /// Les trois valeurs claires de la palette de marque, fixées À LA MAIN.
     ///
-    /// Elles venaient de la maquette, et `tail` (#7053E6) en vient toujours. Les deux roses, non :
+    /// Elles venaient de la maquette. Aucune des trois n'en vient plus : les deux roses ont été
+    /// déplacées en teinte (voir plus bas), et `tail` est passé du #7053E6 de la maquette au
+    /// #7B3FE4 du logo le 15 novembre. Les deux roses, non plus :
     /// la maquette les donnait à la teinte 341, et c'est précisément cette teinte qui a été
     /// changée. Aucune formule ne les produit — ni la dérivation par assombrissement, ni la
     /// descente au seuil de contraste — donc elles sont écrites ici.
@@ -83,8 +85,31 @@ struct AccentTheme: Identifiable, Equatable {
     /// Seule la palette « rose » figure dans cette table : c'est la seule dont la maquette
     /// définisse une déclinaison claire à la main. Les sept autres suivent la règle
     /// multiplicative, qui conserve leur teinte.
+    ///
+    /// # 15 NOVEMBRE 2026 : UN SEUL ACCENT, #F0225F
+    ///
+    /// Le brief de direction artistique demande « un seul accent #F0225F : boutons, onglet
+    /// actif, séance du jour, progression ». Les huit thèmes restent — c'est la décision D1,
+    /// réaffirmée le jour même — mais le rose, qui est le défaut et ce que montrent la fiche et
+    /// les captures, prend cette valeur, et `primary` et `light` prennent LA MÊME.
+    ///
+    /// Les fondre est le propos. `light` servait à 74 endroits qui « veulent tous de l'éclat » —
+    /// l'anneau, l'onglet actif, le libellé RUN — et c'est précisément la liste que le brief
+    /// range sous l'accent unique. Deux roses à vingt points de teinte l'un de l'autre, ce n'est
+    /// pas de l'éclat, c'est l'hésitation que le brief appelle « sept couleurs d'accent ».
+    ///
+    /// Mesuré sur blanc : #F0225F rend **4,12:1**, au-dessus des 4,02 de l'ancien `primary` et
+    /// des 3,63 de l'ancien `light`. Le seuil maison de 3,5 est tenu, et l'accent gagne même un
+    /// peu de contraste en se simplifiant.
+    ///
+    /// `tail` passe à #7B3FE4, qui est la fin du dégradé du logo. Il ne sert plus qu'à UNE chose
+    /// — le tracé GPS sur fond noir, la seule signature graphique que le brief conserve.
+    ///
+    /// LE THÈME SOMBRE N'EST PAS TOUCHÉ ICI. Cette table ne contient que la déclinaison claire ;
+    /// le brief ne décrit que le fond clair, et le sombre sera redessiné ensuite avec la même
+    /// grammaire. Voir le tableau des décisions.
     private static let mockupLightPalettes: [String: (primary: Color, light: Color, tail: Color)] = [
-        "rose": (Color(hex: 0xF50D7A), Color(hex: 0xFF1F85), Color(hex: 0x7053E6))
+        "rose": (Color(hex: 0xF0225F), Color(hex: 0xF0225F), Color(hex: 0x7B3FE4))
     ]
 
     /// Le seuil de contraste que les accents doivent atteindre sur du blanc.

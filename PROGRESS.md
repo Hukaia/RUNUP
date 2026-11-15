@@ -6205,3 +6205,35 @@ d'un côté et 22 de l'autre » pour poser la prémisse « même nom, deux valeu
 maintenant en inégalité : ce cas ne porte pas sur CE que valent les crans, mais sur le fait que
 le contrôle lit chaque tableau dans sa propre règle. Deux nombres en dur obligeaient à retoucher
 le banc à chaque réglage d'échelle — le meilleur moyen de le voir finir désactivé.
+
+## 15 novembre 2026 — un seul accent, #F0225F
+
+Le brief : « un seul accent #F0225F : boutons, onglet actif, séance du jour, progression ». Les
+huit thèmes restent — c'est D1, réaffirmée le jour même — mais le rose, qui est le défaut et ce
+que montrent la fiche et les captures, prend cette valeur.
+
+**`primary` et `light` prennent la MÊME, et les fondre est le propos.** `light` servait à
+74 endroits qui « veulent tous de l'éclat » — l'anneau, l'onglet actif, le libellé RUN — et c'est
+exactement la liste que le brief range sous l'accent unique. Deux roses à vingt points de teinte
+l'un de l'autre, ce n'est pas de l'éclat : c'est l'hésitation que le brief appelle « sept
+couleurs d'accent ».
+
+**Mesuré sur blanc**, et l'accent gagne du contraste en se simplifiant :
+
+| | sur blanc | seuil maison 3,5 |
+| --- | --- | --- |
+| ancien `primary` `#F50D7A` | 4,02:1 | OK |
+| ancien `light` `#FF1F85` | 3,63:1 | OK |
+| **`#F0225F`** | **4,12:1** | OK |
+
+`tail` passe du `#7053E6` de la maquette au **`#7B3FE4`** du logo. Il ne sert plus qu'à une
+chose : le tracé GPS sur fond noir, la seule signature graphique que le brief conserve.
+
+**Le thème sombre n'est pas touché.** Seule la déclinaison claire est redéfinie ; le brief ne
+décrit que le fond clair, et le sombre sera redessiné ensuite avec la même grammaire.
+
+**Deux commentaires devenaient faux, et ils sont corrigés.** `AccentTheme.swift` affirmait que
+« `tail` vient toujours de la maquette » — ce n'est plus vrai. `Colors.swift` illustrait le
+calcul du fond teinté avec « le rose de marque (#F50D7A) » — la démonstration tient, mais la
+valeur n'est plus celle-là, et la phrase le dit maintenant. Un commentaire qui ment est pire
+qu'un commentaire absent : c'est celui-là qu'on croit.
