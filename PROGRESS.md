@@ -6083,3 +6083,54 @@ on le dit et on passe ; fenêtres pleines et aucun changement → on refuse.
 
 Ce n'est pas un desserrage de confort : le contrôle qui tranche le découpage reste entier, et
 c'est lui qui a refusé les deux campagnes précédentes.
+
+## 15 novembre 2026 — Instrument Sans remplace Inter
+
+Le brief du 15 novembre demandait « remplacer SF Pro partout par Geist (ou General Sans) ».
+**L'app n'était pas en SF Pro** : elle embarquait Inter en six graisses et DM Mono en deux,
+déclarées et appelées par `.custom(...)`, avec `check_fonts.py` pour refuser une police demandée
+et non livrée. Le reproche, lui, tenait : Inter avait été choisie le 9 novembre pour être « le
+sosie le plus proche de SF Pro qui se distribue en fichier », après six familles refusées pour
+avoir « une voix ».
+
+**Le choix s'est fait sur une image, pas sur un nom.** Les trois candidates ont été montées sur
+de vraies chaînes de l'app, à la nouvelle échelle, avec le nouvel accent. Charlotte a tranché
+pour Instrument Sans.
+
+**Et General Sans était un piège juridique.** Sa licence (ITF Free Font License, pas OFL)
+autorise l'embarquement dans une app — §01 — mais interdit explicitement de la mettre à
+disposition « through […] a **repository** ». Le dépôt RUNUP est public, vérifié. La déposer
+aurait été une infraction livrée dans un commit. Instrument Sans et Space Grotesk sont sous
+**OFL 1.1**, vérifié sur leurs fichiers de licence : redistribuables, donc déposables comme Inter
+l'était.
+
+### Ce qui a été livré
+
+Google Fonts ne publie qu'un fichier **variable**. Les quatre graisses statiques ont été tirées
+de lui avec `fontTools.varLib.instancer` — l'OFL l'autorise, et aucun nom réservé n'est déclaré
+dans celui d'Instrument Sans. Cinq fichiers : Regular, Medium, SemiBold, Bold, Italic, plus
+l'OFL. Les six fichiers d'Inter sont retirés.
+
+**Il n'y a pas de maigre.** L'axe de graisse d'Instrument Sans commence à 400 : `.light` retombe
+sur le Regular. Une police absente ne lève rien — elle rend la police système, en silence.
+
+**Le facteur de taille passe de 1,09 à 1,101**, par la même méthode qu'au changement précédent :
+il suit la hauteur de capitale, parce que c'est elle qui décide de la taille perçue. Mesuré sur
+les fichiers — Instrument Sans 0,7200 em contre 0,7275 pour Inter, 1,0 % de moins, donc le
+facteur monte d'autant pour que les titres ne bougent pas.
+
+| | Inter | Instrument Sans |
+| --- | --- | --- |
+| hauteur de capitale | 0,7275 em | 0,7200 em (**−1,0 %**) |
+| hauteur d'x | 0,5459 em | 0,5100 em (**−6,6 %**) |
+| « Charlotte 14,1 6:18 » | 8,583 em | 8,254 em (**−3,8 %**) |
+
+Le texte courant paraîtra donc un peu plus petit à taille de point égale, et les lignes tiendront
+dans moins de largeur. C'est assumé, et la capture tranchera s'il faut monter d'un cran.
+
+**Le garde a attrapé la vraie faute de ce chantier.** `instancer` avec `updateFontNames` a
+fabriqué l'italique sous le nom PostScript `InstrumentSansItalic-Italic`, pas
+`InstrumentSans-Italic`. L'app l'aurait demandée, ne l'aurait pas trouvée, et serait retombée sur
+la police système **sans rien dire** — exactement la panne que `check_fonts.py` a été écrit pour
+rendre impossible. Les trois enregistrements de nom ont été reposés à la main, pour les deux
+plateformes.

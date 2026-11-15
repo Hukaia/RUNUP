@@ -272,7 +272,11 @@ enum RUFont {
     private static func sans(_ size: CGFloat, weight: DMWeight = .regular) -> Font {
         let pointSize = scaled(size * bodySizeFactor)
         switch weight {
-        case .light: return .custom("\(bodyFamily)-Light", fixedSize: pointSize)
+        // INSTRUMENT SANS N'A PAS DE MAIGRE, et ce n'est pas un oubli de livraison : son axe de
+        // graisse commence à 400. Le cran `.light` retombe donc sur le Regular plutôt que de
+        // demander un fichier qui n'existe pas — une police absente ne lève rien, elle rend la
+        // police système, et c'est la panne silencieuse que `check_fonts.py` existe pour empêcher.
+        case .light: return .custom("\(bodyFamily)-Regular", fixedSize: pointSize)
         case .regular: return .custom("\(bodyFamily)-Regular", fixedSize: pointSize)
         case .medium: return .custom("\(bodyFamily)-Medium", fixedSize: pointSize)
         case .semibold: return .custom("\(bodyFamily)-SemiBold", fixedSize: pointSize)

@@ -32,7 +32,7 @@ enum DisplayFont {
     /// différentes, sans que rien ne le signale — exactement la panne silencieuse que
     /// `ci_scripts/check_fonts.py` a été écrit pour rendre impossible. Un fichier livré aux trois
     /// cibles rend le même dessin sur les trois.
-    static let family = "Inter"
+    static let family = "InstrumentSans"
 
     /// Le nom PostScript, pas le nom de famille : c'est celui-là que `Font.custom` attend.
     static let postScriptName = "\(family)-Medium"
@@ -55,7 +55,20 @@ enum DisplayFont {
     ///
     /// Inter est 4,9 % plus large qu'Archivo ; au facteur réduit, une ligne occupe donc 1 % de
     /// plus qu'avant. Rien à reprendre dans les gabarits.
-    static let sizeFactor: CGFloat = 1.09
+    ///
+    /// # INSTRUMENT SANS, 15 NOVEMBRE 2026 : 1,101
+    ///
+    /// Même méthode, même mesure, appliquée à la famille suivante. Relevé sur les fichiers :
+    /// Instrument Sans a une hauteur de capitale de 0,7200 em contre 0,7275 pour Inter, soit
+    /// **1,0 % de moins**. Pour que la taille PERÇUE d'un titre ne bouge pas, le facteur monte
+    /// d'autant : 1,09 × (0,7275 / 0,7200) = 1,101.
+    ///
+    /// Sa hauteur d'x, elle, est 6,6 % plus basse (0,5100 contre 0,5459) et une vraie chaîne —
+    /// « Charlotte 14,1 6:18 » — occupe 3,8 % de moins. Le texte courant paraîtra donc un peu
+    /// plus petit à taille de point égale, et les lignes tiendront dans un peu moins de largeur.
+    /// C'est assumé : l'échelle qui suit est donnée en points rendus, et la capture tranchera
+    /// s'il faut monter d'un cran.
+    static let sizeFactor: CGFloat = 1.101
 
     /// La taille de point à demander pour retrouver l'encombrement dessiné à l'origine.
     static func pointSize(for designSize: CGFloat) -> CGFloat { designSize * sizeFactor }

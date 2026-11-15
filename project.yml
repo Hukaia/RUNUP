@@ -142,12 +142,11 @@ targets:
         NSSupportsLiveActivitiesFrequentUpdates: true
         ITSAppUsesNonExemptEncryption: false
         UIAppFonts:
-          - Inter-Light.ttf
-          - Inter-Regular.ttf
-          - Inter-Medium.ttf
-          - Inter-SemiBold.ttf
-          - Inter-Bold.ttf
-          - Inter-Italic.ttf
+          - InstrumentSans-Regular.ttf
+          - InstrumentSans-Medium.ttf
+          - InstrumentSans-SemiBold.ttf
+          - InstrumentSans-Bold.ttf
+          - InstrumentSans-Italic.ttf
           - DMMono-Regular.ttf
           - DMMono-Medium.ttf
     dependencies:
@@ -261,9 +260,8 @@ targets:
           # Cette cible ne déclare que 3 fichiers dans son UIAppFonts, et ce que l'UIAppFonts
           # n'enregistre pas ne peut pas se charger : embarquer les 5 autres n'ajouterait que
           # ~750 Ko de poids mort dans une extension.
-          - "Inter-Light.ttf"
-          - "Inter-Regular.ttf"
-          - "Inter-Italic.ttf"
+          - "InstrumentSans-Regular.ttf"
+          - "InstrumentSans-Italic.ttf"
           - "DMMono-Regular.ttf"
           - "DMMono-Medium.ttf"
       - path: RunUp/Resources/Localizable.xcstrings
@@ -282,9 +280,9 @@ targets:
         # font set into a second bundle. Same family as the app (DisplayFont.family): a widget in a
         # different typeface than the app is the one mismatch a user sees side by side.
         UIAppFonts:
-          - Inter-Medium.ttf
-          - Inter-Bold.ttf
-          - Inter-SemiBold.ttf
+          - InstrumentSans-Medium.ttf
+          - InstrumentSans-Bold.ttf
+          - InstrumentSans-SemiBold.ttf
     entitlements:
       path: RunUpWidgets/RunUpWidgets.entitlements
       properties:
@@ -379,9 +377,8 @@ targets:
           # Cette cible ne déclare que 3 fichiers dans son UIAppFonts, et ce que l'UIAppFonts
           # n'enregistre pas ne peut pas se charger : embarquer les 5 autres n'ajouterait que
           # ~750 Ko de poids mort au poignet.
-          - "Inter-Light.ttf"
-          - "Inter-Regular.ttf"
-          - "Inter-Italic.ttf"
+          - "InstrumentSans-Regular.ttf"
+          - "InstrumentSans-Italic.ttf"
           - "DMMono-Regular.ttf"
           - "DMMono-Medium.ttf"
       # Le MÊME catalogue de chaînes que l'app iPhone. Le partager plutôt que d'en créer un second
@@ -410,9 +407,9 @@ targets:
         NSHealthUpdateUsageDescription: "RunUp enregistre ta course comme une vraie séance dans Santé — elle compte dans tes anneaux."
         NSLocationWhenInUseUsageDescription: "RunUp utilise ta position pour mesurer distance et allure pendant une course depuis la montre."
         UIAppFonts:
-          - Inter-Medium.ttf
-          - Inter-Bold.ttf
-          - Inter-SemiBold.ttf
+          - InstrumentSans-Medium.ttf
+          - InstrumentSans-Bold.ttf
+          - InstrumentSans-SemiBold.ttf
     entitlements:
       path: RunUpWatch/RunUpWatch.entitlements
       properties:
