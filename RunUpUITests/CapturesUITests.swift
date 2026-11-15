@@ -309,6 +309,29 @@ final class CapturesUITests: XCTestCase {
                 seance: true, tailleDuTexte: Self.ax2)
     }
 
+    /// # L'ACCUEIL SANS PROGRAMME, QUE PERSONNE N'AVAIT JAMAIS VU
+    ///
+    /// Toutes les captures de l'accueil montrent un programme actif. Or c'est la carte du
+    /// programme qui porte la moitié de la hauteur de l'écran : sans elle, il ne reste de cette
+    /// carte que le ruban des sept jours.
+    ///
+    /// Charlotte, le 15 novembre : « maintenant l'accueil fait vide lorsqu'il n'y a pas de
+    /// programme en cours, mais c'est peut-être fait exprès ? » Personne ne pouvait répondre.
+    /// La carte « 30 derniers jours », retirée la veille parce qu'elle doublait l'onglet Stats,
+    /// était aussi ce qui remplissait cet écran-là — et la coupe a été mesurée sur un jour AVEC
+    /// programme.
+    ///
+    /// Deux captures, le haut et après un défilement : si les deux images sont identiques, c'est
+    /// que l'écran tient en moins d'une hauteur, et c'est la mesure de ce « vide ».
+    func test35AccueilLibre() {
+        prendre(rang: 35, ecran: "prog", nom: "accueil-libre", diagnostic: true, libre: true)
+    }
+
+    func test36AccueilLibreBas() {
+        prendre(rang: 36, ecran: "prog", nom: "accueil-libre-bas", diagnostic: true,
+                defilements: 1, libre: true)
+    }
+
     func test23StatsGrandTexte() throws {
         try passeSombreSeulement()
         prendre(rang: 23, ecran: "stats", nom: "grand-texte/stats", diagnostic: true,
@@ -385,6 +408,7 @@ final class CapturesUITests: XCTestCase {
                          reglages: Bool = false, plusDeReglages: Bool = false,
                          cycle: Bool = false,
                          courseEnCours: Bool = false, seance: Bool = false,
+                         libre: Bool = false,
                          attente: TimeInterval = 2.0,
                          tailleDuTexte: String? = nil) {
         let clair = ProcessInfo.processInfo.environment["RUNUP_CAPTURES_CLAIR"] != nil
@@ -408,6 +432,9 @@ final class CapturesUITests: XCTestCase {
         // La feuille de la séance du jour, qui ne s'atteint par aucun `--ecran=` : c'est une
         // feuille, pas un écran. Voir `CaptureSeed.seanceDemandee`.
         if seance { app.launchArguments += ["--seance"] }
+        // Le mode course libre : pas de programme, donc pas la carte qui porte la moitié de la
+        // hauteur de l'accueil. Voir `CaptureSeed.libreDemandee`.
+        if libre { app.launchArguments += ["--libre"] }
         // LA TAILLE DU TEXTE, PAR LE MÊME CHEMIN QUE LA LANGUE.
         //
         // `TextSizeStore` lit `UIApplication.shared.preferredContentSizeCategory`, et

@@ -156,6 +156,22 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains("--cycle")
     }
 
+    /// `--libre` : poser le profil en MODE COURSE LIBRE, pour photographier l'accueil sans
+    /// programme.
+    ///
+    /// Charlotte, le 15 novembre : « maintenant l'accueil fait vide lorsqu'il n'y a pas de
+    /// programme en cours ». Elle a raison de le demander, et personne ne pouvait répondre : cet
+    /// état n'était photographié nulle part. Toutes les captures de l'accueil montrent un
+    /// programme actif, et c'est la carte du programme qui porte la moitié de la hauteur de
+    /// l'écran — sans elle, il ne reste que le ruban des sept jours.
+    ///
+    /// `.freerun` est un état stable : `refreshProgramForCurrentDate` ne fait que reconstruire
+    /// la bande de la semaine et s'arrête là. Le poser dans la graine ne force donc rien que
+    /// l'app ne tienne d'elle-même.
+    static var libreDemandee: Bool {
+        ProcessInfo.processInfo.arguments.contains("--libre")
+    }
+
     /// `--seance` : ouvrir la feuille de la séance du jour.
     ///
     /// C'est l'écran qu'on ouvre AVANT de courir — le détail de la séance, son découpage en
@@ -260,6 +276,17 @@ enum CaptureSeed {
         // dans `ThemeStore` au moment où il charge le profil, donc bien après.
         profil.isLightMode = modeClairDemande
         AdaptivePlanEngine.applyOnboarding(resultat(maintenant: maintenant), to: profil)
+
+        // LE MODE COURSE LIBRE, QUAND ON LE DEMANDE.
+        //
+        // Posé APRÈS l'inscription : `applyOnboarding` termine en `.active`, donc l'écrire avant
+        // ne servirait à rien. `refreshProgramForCurrentDate` est appelée tout de suite pour que
+        // la bande de la semaine soit celle de la course libre et non celle d'un programme qui
+        // vient d'être annulé. Voir `CaptureSeed.libreDemandee`.
+        if libreDemandee {
+            profil.programPhase = .freerun
+            AdaptivePlanEngine.refreshProgramForCurrentDate(profil)
+        }
 
         // Les chiffres du jour. Ils ne viennent pas d'Apple Santé ici — personne n'a marché dans
         // un simulateur — donc ils sont posés directement, aux valeurs d'une vraie journée

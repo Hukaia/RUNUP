@@ -5880,3 +5880,31 @@ la même chose, à deux centimètres l'un de l'autre.
 Z2 » ; et la carte dont on vient les portait déjà. Pour une sortie continue il n'y a qu'un bloc,
 donc la section annonce un découpage et rend une répétition. C'est le même reproche que Charlotte
 a fait à l'accueil le 14 novembre.
+
+## 15 novembre 2026 — l'accueil sans programme n'était photographié nulle part
+
+Charlotte, en regardant l'app : « maintenant l'accueil fait vide lorsqu'il n'y a pas de programme
+en cours, mais c'est peut-être fait exprès ? »
+
+**Ce n'est pas fait exprès, et personne ne pouvait répondre.** Toutes les captures de l'accueil,
+depuis qu'elles existent, montrent un programme ACTIF. Cet état-là n'a jamais été vu.
+
+Et la question tombe juste. En course libre, `programWeekCard` ne rend que le ruban des sept
+jours : pas d'en-tête, pas de « Semaine 1/7 », pas de volume, pas de barre, pas de pastille
+d'écart. La carte passe d'environ 290 points à la hauteur d'un ruban. Or la carte
+« 30 derniers jours », retirée le 14 novembre parce qu'elle doublait l'onglet Stats, était aussi
+ce qui remplissait cet écran-là — et cette coupe a été mesurée sur un jour AVEC programme. Le
+vide qu'elle décrit est donc vraisemblablement de mon fait, et je ne l'ai pas vérifié.
+
+**On regarde avant de redessiner.** `--libre` pose `programPhase = .freerun` après l'inscription
+et rappelle `refreshProgramForCurrentDate` pour que la bande de la semaine soit celle de la
+course libre. C'est un état stable de l'app, pas un montage : le moteur, en `.freerun`,
+reconstruit la bande et s'arrête là.
+
+Deux captures : le haut et après un défilement. Si les deux images sont identiques, l'écran tient
+en moins d'une hauteur — et c'est la mesure du « vide », au lieu d'une impression.
+
+**Un état voisin reste non photographié**, et il est noté plutôt que traité ici : l'accueil de
+quelqu'un qui n'a PAS souscrit (`planUnlocked == false`), où la carte du programme disparaît
+aussi et où `PlusLockCard` prend sa place. `--paywall` ouvre la feuille d'abonnement, pas cet
+accueil-là.
