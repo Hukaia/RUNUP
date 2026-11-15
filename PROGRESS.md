@@ -5825,3 +5825,58 @@ dépendance au jour que l'accueil. Ce n'est pas le défaut du bloc du cycle, où
 états différents alternent et chacun vaut d'être vu.
 
 Contrôles et cas locaux verts. L'image dira le reste.
+
+### Ce que la première image de la feuille a montré
+
+**La feuille existe, elle est photographiée, dans les trois langues et en grand texte.** Vérifié
+avant de regarder quoi que ce soit : l'image EST la feuille et non l'accueil — 59,5 d'écart moyen
+entre les deux, dans les trois langues.
+
+En grand texte, elle tient : l'en-tête « Séance clé » et sa pastille « Niveau 2 » restent sur une
+ligne, rien n'est tronqué. C'est le troisième en-tête qui pose son accessoire à côté de
+`RUCardHeader` ; l'image dit qu'il n'y a rien à y corriger, et c'était la raison d'attendre une
+image.
+
+**Et elle a montré un défaut, celui-là réel.** La phrase du coach s'affichait :
+
+> Le coach a ajusté cette semaine à "Niveau 2" d'après ta forme la semaine dernière.
+
+Le guillemet droit `"` est celui de la machine à écrire. L'app savait déjà faire : à deux
+centimètres de là, la notification qui annonce LE MÊME ajustement écrit
+« On lève un peu le pied sur « %@ » », et sa version anglaise « Easing off on “%@” ». La règle
+existait, en trois langues, et cette phrase-là ne la suivait pas — la forme de défaut la plus
+fréquente de ce dépôt.
+
+Corrigé dans les trois langues, selon la convention déjà en place : « %@ » en français, “%@” en
+anglais, «%@» en espagnol. Deux valeurs anglaises de la nutrition d'ultra portaient la même faute
+alors que leurs versions française et espagnole étaient justes : corrigées aussi.
+
+**Un garde, parce qu'une relecture ne tient pas.** `check_guillemets.py` + `test_guillemets.py`,
+douze cas. Il ne regarde que le catalogue, qui est en JSON : un guillemet droit à l'intérieur
+d'une chaîne y apparaît échappé, donc la recherche est exacte et ne peut pas se tromper sur du
+code. Et elle suffit — `check_strings.py` refuse déjà toute chaîne affichée absente du catalogue,
+il n'y a pas de second chemin. Éprouvé en réintroduisant le défaut : le garde refuse, et le
+dépôt tel qu'il est passe.
+
+Ce qu'il NE regarde pas, et c'est écrit dans son en-tête : quel guillemet courbe employer — une
+chaîne française a le droit de citer de l'anglais. Et l'apostrophe : le catalogue en porte 827,
+toutes droites, zéro courbe. C'est un choix uniforme, pas un oubli, et le changer serait une
+décision de direction artistique sur 827 chaînes.
+
+**Deux captures en grand texte n'étaient surveillées par aucun garde.** `grand-texte/seance`
+(nouvelle) et `grand-texte/accueil-bas` (depuis sa création) manquaient aux `PAIRES` de
+`check_grand_texte.py` : si le réglage de taille cessait d'être lu, elles deviendraient des
+copies des captures ordinaires sans que rien ne le dise. Ajoutées, après mesure sur la campagne
+201 dans les trois langues — la séance entre 19,4 et 20,2, le bas de l'accueil entre 21,7 et
+23,4, pour un plancher à 10.
+
+### Deux questions de direction, pas des défauts à corriger seul
+
+**La feuille s'appelle « Séance clé », la carte qui l'ouvre « Séance du jour ».** Deux noms pour
+la même chose, à deux centimètres l'un de l'autre.
+
+**Et elle dit trois fois les mêmes trois nombres.** La rangée du haut donne 39′ · 6:18 · Z2 ;
+« Structure de la séance » les redonne dans son unique ligne, « Course continue · 39′ · 6:18/km ·
+Z2 » ; et la carte dont on vient les portait déjà. Pour une sortie continue il n'y a qu'un bloc,
+donc la section annonce un découpage et rend une répétition. C'est le même reproche que Charlotte
+a fait à l'accueil le 14 novembre.

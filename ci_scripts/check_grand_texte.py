@@ -54,6 +54,14 @@ PAIRES = {
     "diagnostic/grand-texte/sortie.png": "diagnostic/sortie.png",
     "diagnostic/grand-texte/club-apercu.png": "diagnostic/club-apercu.png",
     "diagnostic/grand-texte/profil.png": "diagnostic/profil.png",
+    # Ajoutées le 15 novembre, et elles manquaient depuis leur création : une capture en grand
+    # texte que ce contrôle ne connaît pas n'est surveillée par rien. Si le réglage de taille
+    # cessait d'être lu, elles deviendraient des copies des captures ordinaires sans que rien ne
+    # le dise — c'est exactement le défaut que ce fichier existe pour attraper. Mesurées sur la
+    # campagne 201, dans les trois langues : la séance entre 19,4 et 20,2, le bas de l'accueil
+    # entre 21,7 et 23,4, pour un plancher à 10.
+    "diagnostic/grand-texte/seance.png": "diagnostic/seance.png",
+    "diagnostic/grand-texte/accueil-bas.png": "diagnostic/accueil-bas.png",
 }
 
 

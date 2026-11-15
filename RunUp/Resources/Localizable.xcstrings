@@ -14765,18 +14765,18 @@
         }
       }
     },
-    "Le coach a ajusté cette semaine à \"%@\" d'après ta forme la semaine dernière.": {
+    "Le coach a ajusté cette semaine à « %@ » d'après ta forme la semaine dernière.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The coach adjusted this week to \"%@\" based on how you've been feeling lately."
+            "value": "The coach adjusted this week to “%@” based on how you've been feeling lately."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El coach ajustó esta semana a \"%@\" según tu forma la semana pasada."
+            "value": "El coach ajustó esta semana a «%@» según tu forma la semana pasada."
           }
         }
       }
@@ -28937,7 +28937,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "One feed every %lld minutes, by the watch. \"Eat regularly\" doesn't get done: an instruction without a clock doesn't survive fatigue."
+            "value": "One feed every %lld minutes, by the watch. “Eat regularly” doesn't get done: an instruction without a clock doesn't survive fatigue."
           }
         },
         "es": {
@@ -28953,7 +28953,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "One feed every %lld minutes, by the watch. \"Eat regularly\" doesn't get done: an instruction without a clock doesn't survive fatigue."
+            "value": "One feed every %lld minutes, by the watch. “Eat regularly” doesn't get done: an instruction without a clock doesn't survive fatigue."
           }
         },
         "es": {

@@ -288,7 +288,7 @@ struct SessionDetailSheet: View {
                             if adj.hasPrefix("Allégée") {
                                 Text("Cette séance a été allégée aujourd'hui d'après ta forme du jour — la semaine reprend son cours normal demain.")
                             } else {
-                                Text("Le coach a ajusté cette semaine à \"\(adj)\" d'après ta forme la semaine dernière.")
+                                Text("Le coach a ajusté cette semaine à « \(adj) » d'après ta forme la semaine dernière.")
                             }
                         }
                         .font(RUFont.sans(.body))
