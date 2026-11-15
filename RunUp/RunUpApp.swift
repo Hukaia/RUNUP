@@ -173,6 +173,14 @@ private struct RootView: View {
                 if CaptureSeed.sortieDemandee, let id = appState?.cachedActivityDetail?.id {
                     appState?.ouvrirLaSortie(id)
                 }
+                // ET LA FEUILLE DE LA SÉANCE DU JOUR, qui n'était photographiée nulle part.
+                //
+                // Même ordre et même raison que les deux au-dessus : c'est une feuille, elle se
+                // présente par-dessus l'écran demandé. Rien à choisir dedans — elle lit
+                // `profile.todaySession`. Voir `CaptureSeed.seanceDemandee`.
+                if CaptureSeed.seanceDemandee {
+                    appState?.openSessionDetail()
+                }
                 #endif
             }
             // Cold launch never fires the `scenePhase` handler below (there's no previous phase to

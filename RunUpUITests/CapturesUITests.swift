@@ -286,6 +286,29 @@ final class CapturesUITests: XCTestCase {
                 defilements: 1, tailleDuTexte: Self.ax2)
     }
 
+    /// # LA FEUILLE DE LA SÉANCE DU JOUR, QUE PERSONNE N'AVAIT JAMAIS VUE
+    ///
+    /// C'est l'écran qu'on ouvre AVANT de courir : le détail de la séance, son découpage en
+    /// échauffement, bloc et retour au calme, ses allures cibles, son bouton de départ. Il
+    /// n'apparaissait sur AUCUNE des images de la campagne — « sortie » photographie la page
+    /// d'une course PASSÉE, pas celle-ci. Relevé le 15 novembre, en cherchant où regarder un
+    /// en-tête de carte qui se posait à côté de son accessoire.
+    ///
+    /// Ce qu'elle montre suit le jour de la campagne : une sortie longue un dimanche, trois
+    /// lignes de repos un jour de repos. Les deux sont des états réels, et c'est la même
+    /// dépendance au jour que l'accueil.
+    func test33Seance() {
+        prendre(rang: 33, ecran: "prog", nom: "seance", diagnostic: true, seance: true)
+    }
+
+    /// Et en grand texte, parce que c'est une feuille DENSE — trois étapes, chacune avec son
+    /// titre, sa durée, son allure et sa zone — et qu'une feuille a moins de hauteur qu'un écran.
+    func test34SeanceGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 34, ecran: "prog", nom: "grand-texte/seance", diagnostic: true,
+                seance: true, tailleDuTexte: Self.ax2)
+    }
+
     func test23StatsGrandTexte() throws {
         try passeSombreSeulement()
         prendre(rang: 23, ecran: "stats", nom: "grand-texte/stats", diagnostic: true,
@@ -361,7 +384,8 @@ final class CapturesUITests: XCTestCase {
                          inscription: Bool = false, paywall: Bool = false,
                          reglages: Bool = false, plusDeReglages: Bool = false,
                          cycle: Bool = false,
-                         courseEnCours: Bool = false, attente: TimeInterval = 2.0,
+                         courseEnCours: Bool = false, seance: Bool = false,
+                         attente: TimeInterval = 2.0,
                          tailleDuTexte: String? = nil) {
         let clair = ProcessInfo.processInfo.environment["RUNUP_CAPTURES_CLAIR"] != nil
         let app = XCUIApplication()
@@ -381,6 +405,9 @@ final class CapturesUITests: XCTestCase {
         if plusDeReglages { app.launchArguments += ["--reglages-plus"] }
         if cycle { app.launchArguments += ["--cycle"] }
         if courseEnCours { app.launchArguments += ["--encours"] }
+        // La feuille de la séance du jour, qui ne s'atteint par aucun `--ecran=` : c'est une
+        // feuille, pas un écran. Voir `CaptureSeed.seanceDemandee`.
+        if seance { app.launchArguments += ["--seance"] }
         // LA TAILLE DU TEXTE, PAR LE MÊME CHEMIN QUE LA LANGUE.
         //
         // `TextSizeStore` lit `UIApplication.shared.preferredContentSizeCategory`, et

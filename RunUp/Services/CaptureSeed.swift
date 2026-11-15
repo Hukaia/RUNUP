@@ -156,6 +156,24 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains("--cycle")
     }
 
+    /// `--seance` : ouvrir la feuille de la séance du jour.
+    ///
+    /// C'est l'écran qu'on ouvre AVANT de courir — le détail de la séance, son découpage en
+    /// échauffement, bloc et retour au calme, ses allures cibles. Il n'apparaissait sur AUCUNE
+    /// image de la campagne : « sortie » photographie la page d'une course PASSÉE, pas celle-ci.
+    /// Un écran qu'on ne photographie pas est un écran qu'on juge de mémoire.
+    ///
+    /// Il n'y a rien à choisir : la feuille lit `profile.todaySession`, donc elle montre la
+    /// séance du jour de démonstration. Ce qu'elle montre suit donc le jour de la campagne —
+    /// une sortie longue un dimanche, trois lignes de repos un jour de repos. Les deux sont des
+    /// états réels de l'app, et c'est la même dépendance au jour que l'accueil, qui n'a jamais
+    /// posé de problème. Ce n'est PAS le cas du bloc du cycle, où un seul et même écran était
+    /// tantôt atteint tantôt manqué selon la langue : là, deux états différents alternent, et
+    /// chacun vaut d'être vu.
+    static var seanceDemandee: Bool {
+        ProcessInfo.processInfo.arguments.contains("--seance")
+    }
+
     /// `--encours` : démarrer une course, pour photographier l'écran de course.
     ///
     /// ET IL N'Y AURA PAS DE DISTANCE DESSUS, C'EST ATTENDU. Le simulateur n'a pas de signal GPS,

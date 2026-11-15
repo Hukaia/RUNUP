@@ -5798,3 +5798,30 @@ ligne.
 l'en-tête se centre verticalement, donc il se pose entre les deux lignes. L'aligner sur la
 première demanderait de changer l'alignement des 68 en-têtes à TOUTES les tailles pour un gain
 qui n'existe qu'en accessibilité. Centrer est aussi ce que font les rangées de liste d'iOS.
+
+## 15 novembre 2026 — la feuille de séance n'était photographiée nulle part
+
+C'est l'écran qu'on ouvre AVANT de courir : le détail de la séance du jour, son découpage en
+échauffement, bloc et retour au calme, ses allures cibles, son bouton de départ. Il n'apparaissait
+sur **aucune** des images de la campagne. « sortie » photographie la page d'une course PASSÉE,
+pas celle-ci.
+
+Relevé le 15 novembre en cherchant où regarder le troisième en-tête qui pose son accessoire à
+côté de `RUCardHeader` au lieu de passer par son paramètre : il est dans cette feuille, et il n'y
+avait aucune image pour décider s'il fallait y toucher. La correction a donc été faite au bon
+endroit — dans le composant, pour les 68 en-têtes — et celle-ci est restée en attente d'une
+image.
+
+**Deux captures : la feuille, et la feuille en grand texte.** Une feuille a moins de hauteur qu'un
+écran, et celle-ci porte trois étapes avec chacune son titre, sa durée, son allure et sa zone.
+
+`--seance` ouvre la feuille par le même chemin que `--reglages` ouvre celle des réglages : l'app
+la présente elle-même au lancement. Rien à choisir dedans — elle lit `profile.todaySession`.
+
+**Ce que l'image montrera suit le jour de la campagne** : une sortie longue un dimanche, trois
+lignes de repos un jour de repos. Les deux sont des états réels de l'app, et c'est la même
+dépendance au jour que l'accueil. Ce n'est pas le défaut du bloc du cycle, où un seul et même
+écran était tantôt atteint tantôt manqué selon la langue des textes qui le précédaient : ici, deux
+états différents alternent et chacun vaut d'être vu.
+
+Contrôles et cas locaux verts. L'image dira le reste.
