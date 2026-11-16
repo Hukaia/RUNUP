@@ -524,9 +524,18 @@ struct HomeView: View {
             }
 
             if profile.seanceDoneToday {
+                // LE VERT DE « SÉANCE FAITE » DEVIENT L'ACCENT.
+                //
+                // Point 2 du brief du 15 novembre, qui le nomme : « le vert de "séance faite"
+                // devient une coche dans l'accent ». `lime` est une couleur SÉMANTIQUE — elle
+                // veut dire MIEUX, et l'écran des stats s'en sert pour ça. La dépenser sur un
+                // état binaire, c'est la vider de son sens là où elle disait quelque chose.
+                //
+                // La coche `✓` porte déjà l'information en entier, et elle ne dépend ni du
+                // daltonisme ni du contraste. Même raisonnement que les flèches ▲ et ▼.
                 Text("Séance faite aujourd'hui ✓")
                     .font(RUFont.sans(.body, weight: .semibold))
-                    .foregroundColor(RUColor.lime)
+                    .foregroundColor(RUColor.rose)
                     .padding(.top, 14)
             } else {
                 // Les chiffres ne s'affichent pas un jour de repos : il n'y a ni durée, ni
@@ -665,8 +674,10 @@ struct HomeView: View {
                      ? String(localized: "Le plan prévoyait du repos — ta sortie compte quand même.")
                      : session.displaySubtitle)
                     .font(RUFont.sans(.small)).foregroundColor(RUColor.text2).padding(.top, 4)
+                // Voir la note du même texte dans `freeRunCard` : la coche porte l'information,
+                // la couleur sémantique n'ajoutait qu'un ton.
                 Text("Séance faite aujourd'hui ✓")
-                    .font(RUFont.sans(.body, weight: .semibold)).foregroundColor(RUColor.lime)
+                    .font(RUFont.sans(.body, weight: .semibold)).foregroundColor(RUColor.rose)
                     .padding(.top, 14)
                 // Une carte qui n'a plus d'action garde la place d'une carte qui en a une.
                 //

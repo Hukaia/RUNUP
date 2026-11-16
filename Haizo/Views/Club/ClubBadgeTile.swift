@@ -59,7 +59,7 @@ struct BadgeDetailView: View {
             // sur le texte, où il se voit.
             StatChip(
                 text: badge.earned ? "Débloqué" : "Pas encore débloqué",
-                color: badge.earned ? RUColor.lime : RUColor.text3
+                color: badge.earned ? RUColor.rose : RUColor.text3
             )
 
             Text(badge.detail)

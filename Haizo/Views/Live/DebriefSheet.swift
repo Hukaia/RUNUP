@@ -146,11 +146,17 @@ struct DebriefSheet: View {
                             // un pouce levé.
                             Image(systemName: impactLines[i].0)
                                 .font(RUFont.icone(.medium, weight: .semibold))
-                                .foregroundColor(i == 0 ? RUColor.cyan : RUColor.ember)
+                                // L'ACCENT ET L'EMBER, PAS LE TURQUOISE ET L'EMBER. Les
+                                // trois états sont ordonnés — la flèche le dit déjà — et le
+                                // turquoise ne disait rien de plus que « pas l'autre ». Point 2
+                                // du brief : un seul accent, et les couleurs qui restent veulent
+                                // dire quelque chose. `ember` dit « plus dur », l'accent dit
+                                // « c'est le bon côté ».
+                                .foregroundColor(i == 0 ? RUColor.rose : RUColor.ember)
                                 .frame(width: 20)
                                 .accessibilityHidden(true)
                             (Text(impactLines[i].1).foregroundColor(RUColor.text2)
-                                + Text(impactLines[i].2).foregroundColor(i == 0 ? RUColor.textPrimary : RUColor.cyan).fontWeight(.bold))
+                                + Text(impactLines[i].2).foregroundColor(i == 0 ? RUColor.textPrimary : RUColor.ember).fontWeight(.bold))
                                 .font(RUFont.sans(.label))
                                 .lineSpacing(2)
                         }

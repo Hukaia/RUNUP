@@ -74,7 +74,7 @@ struct BuildingProgramView: View {
                     RingView(pct: buildFraction * 100, color: RUColor.rose, size: 110, strokeWidth: 7) {
                         Text(buildIsDone ? "✓" : "\(Int(buildFraction * 100))%")
                             .displayStyle(.figure)
-                            .foregroundColor(buildIsDone ? RUColor.lime : RUColor.textPrimary)
+                            .foregroundColor(buildIsDone ? RUColor.rose : RUColor.textPrimary)
                     }
                     VStack(spacing: 6) {
                         // A generic "ON CONSTRUIT TON PROGRAMME" was the exact same reveal moment for
@@ -84,7 +84,7 @@ struct BuildingProgramView: View {
                         if !vm.name.trimmingCharacters(in: .whitespaces).isEmpty {
                             EyebrowLabel(text: String(localized: "Pour \(vm.name.trimmingCharacters(in: .whitespaces))"), color: RUColor.rose)
                         }
-                        Text("ON CONSTRUIT\nTON PROGRAMME")
+                        Text("On construit\nton programme")
                             .displayStyle(.figure)
                             .multilineTextAlignment(.center)
                             .foregroundColor(RUColor.textPrimary)

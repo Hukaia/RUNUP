@@ -25,7 +25,7 @@ struct WelcomeView: View {
                         AppMarkView(size: 88, radius: 26)
                             .shadow(color: RUColor.rose.opacity(RUColor.isLight ? 0 : 0.4), radius: 30, x: 0, y: 16)
 
-                        Text("COURS COMME\nSI TU AVAIS\nUN COACH")
+                        Text("Cours comme\nsi tu avais\nun coach")
                             .displayStyle(.banner)
                             .foregroundColor(RUColor.textPrimary)
                             .lineSpacing(-4)

@@ -8,7 +8,7 @@ struct GoalStepView: View {
         let who = vm.name.isEmpty ? String(localized: "toi") : vm.name
         return ObScreen {
             ScrollView {
-                ObTitle(eyebrow: String(localized: "Étape 2 · \(who)"), title: "POURQUOI TU COURS ?", subtitle: "C'est la base de tout ton programme.")
+                ObTitle(eyebrow: String(localized: "Étape 2 · \(who)"), title: "Pourquoi tu cours ?", subtitle: "C'est la base de tout ton programme.")
                 VStack(spacing: 8) {
                     ForEach(GoalType.allCases.filter(\.estProposable)) { goal in
                         SelectableCard(

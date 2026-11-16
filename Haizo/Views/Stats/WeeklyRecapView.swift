@@ -162,11 +162,11 @@ struct WeeklyRecapView: View {
                 // `RunRecordDiscipline` demande que « toutes » soit une décision ÉCRITE et non
                 // l'absence de décision, et c'est exactement ce qui manquait aux quatre autres
                 // agrégations de cet écran.
-                statTile(value: "\(bilan.nombreDeSeances)", unit: nil, label: String(localized: "Séances"), chip: nil, chipColor: RUColor.lime)
+                statTile(value: "\(bilan.nombreDeSeances)", unit: nil, label: String(localized: "Séances"), chip: nil)
             }
             HStack(spacing: 10) {
-                statTile(value: PaceModel.formatTotalDuration(bilan.secondesActives), unit: nil, label: String(localized: "Temps actif"), chip: nil, chipColor: RUColor.cyan)
-                statTile(value: "\(profile.streak)", unit: String(localized: "j"), label: String(localized: "Série"), chip: nil, chipColor: RUColor.amber)
+                statTile(value: PaceModel.formatTotalDuration(bilan.secondesActives), unit: nil, label: String(localized: "Temps actif"), chip: nil)
+                statTile(value: "\(profile.streak)", unit: String(localized: "j"), label: String(localized: "Série"), chip: nil)
             }
         }
     }
@@ -184,7 +184,14 @@ struct WeeklyRecapView: View {
     /// reprend la micro-étiquette du système. Les couleurs sémantiques restent où elles
     /// servent — la pastille d'écart « ▼ 19,6 km » garde son ambre, parce que l'ambre y veut dire
     /// « moins bien que la semaine passée ».
-    private func statTile(value: String, unit: String?, label: String, chip: String?, chipColor: Color) -> some View {
+    /// `chipColor` A UN DÉFAUT DEPUIS LE 16 NOVEMBRE, et trois appels ont cessé de le passer.
+    ///
+    /// La pastille ne s'affiche que si `chip` existe ET qu'on est aux tailles d'accessibilité.
+    /// Les trois tuiles sans pastille passaient pourtant une couleur chacune — `lime`, `cyan`,
+    /// `amber` — jamais rendue : trois teintes décoratives écrites pour rien, exactement les
+    /// « trois tuiles côte à côte, trois teintes » que `check_teintes.py` cite en exemple.
+    private func statTile(value: String, unit: String?, label: String,
+                          chip: String?, chipColor: Color = RUColor.text2) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             RUChiffre(valeur: value, unite: unit)
             Text(label)

@@ -8,7 +8,7 @@ struct NameStepView: View {
         ObScreen {
             ObCorps {
                 VStack(alignment: .leading, spacing: 0) {
-                    ObTitle(eyebrow: "Pour commencer", title: "COMMENT\nTU T'APPELLES ?",
+                    ObTitle(eyebrow: "Pour commencer", title: "Comment\ntu t'appelles ?",
                             subtitle: "Ton coach s'adressera à toi par ton prénom. Le nom sert à tes amis, pour te retrouver dans le Club.")
                     ObTextField(placeholder: "Prénom", text: $vm.name)
                         .padding(.top, 24)

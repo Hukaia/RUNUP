@@ -219,7 +219,11 @@ struct ClubBoardSection: View {
     private func rang(_ valeur: Int, estMoi: Bool) -> some View {
         Text("\(valeur)")
             .displayStyle(.label)
-            .foregroundColor(estMoi ? RUColor.rose2 : (valeur == 1 ? RUColor.amber : RUColor.text2))
+            // LE PREMIER N'EST PLUS EN AMBRE. L'or d'un podium est une convention, mais
+            // `amber` est une couleur SÉMANTIQUE dans cette app — elle veut dire « moins
+            // bien » — et la dépenser sur la première place la vide de son sens là où elle
+            // sert vraiment. Le rang 1 se lit parce qu'il est en haut de la liste.
+            .foregroundColor(estMoi ? RUColor.rose2 : RUColor.text2)
             .frame(width: 20)
     }
 
@@ -260,7 +264,10 @@ struct ClubBoardSection: View {
     /// shape to read as "done and then some" — the number next to it already says 114%).
     private func weeklyPctBadge(pct: Int, isMe: Bool) -> some View {
         let fraction = min(Double(pct) / 100, 1)
-        let color = pct >= 100 ? RUColor.lime : (isMe ? RUColor.rose2 : RUColor.textPrimary)
+        // L'accent au-delà de 100 %, comme toutes les autres marques de « fait » depuis le
+        // 16 novembre. Le chiffre à côté dit déjà « 114 % » ; la couleur confirme, elle
+        // n'informe pas.
+        let color = pct >= 100 ? RUColor.rose : (isMe ? RUColor.rose2 : RUColor.textPrimary)
         return HStack(spacing: 6) {
             ZStack {
                 Circle().stroke(RUColor.line, lineWidth: 3)

@@ -288,7 +288,7 @@ struct ActivityDetailView: View {
         if let duree = s.durationDisplay { out.append(Mesure(valeur: duree, libelle: "temps")) }
         if let allure = s.avgPace, !allure.isEmpty { out.append(Mesure(valeur: allure, libelle: "allure")) }
         if let dplus = s.elevationGainM, dplus > 0 {
-            out.append(Mesure(valeur: "\(dplus) m", libelle: "D+", teinte: RUColor.lime))
+            out.append(Mesure(valeur: "\(dplus) m", libelle: "D+", teinte: RUColor.rose))
         }
         if let fc = s.avgHeartRate { out.append(Mesure(valeur: "\(fc)", libelle: "bpm moyen")) }
         if let kcal = s.kcal { out.append(Mesure(valeur: "\(kcal)", libelle: "kcal")) }

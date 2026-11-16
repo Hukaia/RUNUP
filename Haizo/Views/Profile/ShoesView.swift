@@ -97,7 +97,10 @@ struct ShoesView: View {
         let fraction = shoe.alertThresholdKm > 0 ? km / shoe.alertThresholdKm : 0
         let isDefault = profile.defaultShoeID == shoe.id
         let isRetired = shoe.retiredAt != nil
-        let barColor: Color = fraction >= 1 ? RUColor.rose : (fraction >= 0.8 ? RUColor.amber : RUColor.cyan)
+        // `cyan` POUR UNE PAIRE NEUVE ÉTAIT DÉCORATIF : il n'y a rien à signaler tant qu'une
+        // chaussure a de la vie devant elle. L'ambre reste, il nomme un avertissement — « bientôt
+        // en fin de vie » — et l'accent la fin. Trois états, deux couleurs et un gris.
+        let barColor: Color = fraction >= 1 ? RUColor.rose : (fraction >= 0.8 ? RUColor.amber : RUColor.text3)
 
         return VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -107,7 +110,7 @@ struct ShoesView: View {
                     // — same gotcha `EyebrowLabel` works around — so this needs the explicit
                     // wrap too, or it'd silently never translate into EN/ES.
                     Text(LocalizedStringKey(isRetired ? "Retirée" : (isDefault ? "Paire par défaut" : "Appuie pour la définir par défaut")))
-                        .font(RUFont.sans(.small)).foregroundColor(isDefault && !isRetired ? RUColor.cyan : RUColor.text3)
+                        .font(RUFont.sans(.small)).foregroundColor(isDefault && !isRetired ? RUColor.rose : RUColor.text3)
                 }
                 Spacer()
                 Menu {

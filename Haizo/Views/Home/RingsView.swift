@@ -292,7 +292,10 @@ struct RingsView: View {
                     Spacer()
                     Text(restDay ? "Repos" : (done ? "Faite ✓" : (isToday ? "À faire" : "Non faite")))
                         .font(RUFont.sans(.small, weight: .bold))
-                        .foregroundColor(restDay ? RUColor.text2 : (done ? RUColor.lime : RUColor.text2))
+                        // « Faite ✓ » prend l'accent, pas le lime — point 2 du brief. Et le
+                        // reste garde `text2` : une ligne d'état qui n'est pas « fait » n'a
+                        // aucune raison d'être colorée.
+                        .foregroundColor(restDay ? RUColor.text2 : (done ? RUColor.rose : RUColor.text2))
                 }
                 if !restDay {
                     LinearBar(fraction: displayProgress[0], color: color, height: 5)

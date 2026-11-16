@@ -51,10 +51,10 @@ struct ClubEventsSection: View {
         let time = Self.eventTimeFormatter.string(from: date)
         if Calendar.current.isDateInToday(date) {
             return Calendar.current.component(.hour, from: date) >= 17
-                ? String(localized: "CE SOIR · \(time)")
-                : String(localized: "AUJOURD'HUI · \(time)")
+                ? String(localized: "Ce soir · \(time)")
+                : String(localized: "Aujourd'hui · \(time)")
         }
-        if Calendar.current.isDateInTomorrow(date) { return String(localized: "DEMAIN · \(time)") }
+        if Calendar.current.isDateInTomorrow(date) { return String(localized: "Demain · \(time)") }
         return Self.eventDateFormatter.string(from: date).uppercased()
     }
 

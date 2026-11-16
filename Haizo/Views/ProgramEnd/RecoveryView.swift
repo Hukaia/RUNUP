@@ -21,7 +21,7 @@ struct RecoveryView: View {
                     // façon dans toute l'app.
                     Image(systemName: "leaf.fill")
                         .font(RUFont.icone(.hero, weight: .medium))
-                        .foregroundColor(RUColor.lime)
+                        .foregroundColor(RUColor.rose)
                         .accessibilityHidden(true)
                     Text("Place à la récupération").displayStyle(.title).foregroundColor(RUColor.textPrimary)
                     Text("Ton corps a fait le plus dur. On souffle \(total) jours avant de repartir — c'est ce qui fait tenir les progrès dans la durée.")
@@ -30,8 +30,8 @@ struct RecoveryView: View {
                     HStack(spacing: 6) {
                         ForEach(0..<total, id: \.self) { i in
                             RoundedRectangle(cornerRadius: RUSpacing.radiusChip, style: .continuous)
-                                .fill(i < done ? RUColor.lime : RUColor.card)
-                                .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusChip, style: .continuous).stroke(i < done ? RUColor.lime : RUColor.line, lineWidth: RUSpacing.hairline))
+                                .fill(i < done ? RUColor.rose : RUColor.card)
+                                .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusChip, style: .continuous).stroke(i < done ? RUColor.rose : RUColor.line, lineWidth: RUSpacing.hairline))
                                 .frame(width: 34, height: 34)
                                 .overlay(
                                     Text(i < done ? "✓" : "\(i + 1)")
@@ -40,7 +40,7 @@ struct RecoveryView: View {
                                         // `lime`, qui vaut 0xC8FF3D en sombre et 0x6B9E00 en clair. La règle
                                         // choisit par la luminance du fond réel — ce qu'un littéral ne peut
                                         // pas faire, quel que soit le soin avec lequel on le choisit.
-                                        .foregroundColor(i < done ? RUColor.onAccent(RUColor.lime) : RUColor.text2)
+                                        .foregroundColor(i < done ? RUColor.onAccent(RUColor.rose) : RUColor.text2)
                                 )
                         }
                     }

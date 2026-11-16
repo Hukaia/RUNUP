@@ -103,7 +103,7 @@ struct RouteDetailSheet: View {
     private var stats: some View {
         HStack(spacing: 10) {
             if let km = current.distanceKm {
-                statTile(String(format: "%.1f", locale: Locale.current, km), String(localized: verbatim: "km"))
+                statTile(String(format: "%.1f", locale: Locale.current, km), "km")
             }
             if let elevation = current.elevationGainM, elevation > 0 {
                 statTile("\(elevation)", String(localized: "D+"))
@@ -113,7 +113,7 @@ struct RouteDetailSheet: View {
             if let seconds = current.durationSeconds, seconds > 0 {
                 statTile(PaceModel.formatDuration(Double(seconds)), String(localized: "Son temps"))
             }
-            statTile("\(current.savesCount)", String(localized: "GARDÉ"))
+            statTile("\(current.savesCount)", String(localized: "Gardé"))
         }
     }
 

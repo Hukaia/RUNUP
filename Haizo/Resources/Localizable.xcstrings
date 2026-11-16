@@ -3529,23 +3529,6 @@
         }
       }
     },
-    "AUJOURD'HUI · %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TODAY · %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HOY · %@"
-          }
-        }
-      }
-    },
     "AVANT DE REPRENDRE": {
       "localizations": {
         "en": {
@@ -5136,6 +5119,22 @@
         }
       }
     },
+    "Aujourd'hui · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoy · %@"
+          }
+        }
+      }
+    },
     "Aujourd'hui, c'est %@.": {
       "localizations": {
         "en": {
@@ -5909,23 +5908,6 @@
         }
       }
     },
-    "CE SOIR · %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TONIGHT · %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ESTA NOCHE · %@"
-          }
-        }
-      }
-    },
     "COMMENCER": {
       "localizations": {
         "en": {
@@ -5938,23 +5920,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "EMPEZAR"
-          }
-        }
-      }
-    },
-    "COMMENT\nTU T'APPELLES ?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHAT'S\nYOUR NAME?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿CÓMO\nTE LLAMAS?"
           }
         }
       }
@@ -6003,22 +5968,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "CORRER"
-          }
-        }
-      }
-    },
-    "COURS COMME\nSI TU AVAIS\nUN COACH": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RUN LIKE\nYOU HAD\nA COACH"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CORRE COMO\nSI TUVIERAS\nUN COACH"
           }
         }
       }
@@ -6515,6 +6464,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Esta denuncia será revisada. Indica cuál es el problema."
+          }
+        }
+      }
+    },
+    "Ce soir · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tonight · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta noche · %@"
           }
         }
       }
@@ -7655,6 +7620,22 @@
         }
       }
     },
+    "Comment\ntu t'appelles ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What's\nyour name?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cómo\nte llamas?"
+          }
+        }
+      }
+    },
     "Commentaires": {
       "localizations": {
         "en": {
@@ -8312,6 +8293,22 @@
         }
       }
     },
+    "Cours comme\nsi tu avais\nun coach": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run like\nyou had\na coach"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corre como\nsi tuvieras\nun coach"
+          }
+        }
+      }
+    },
     "Cours quand tu veux": {
       "localizations": {
         "en": {
@@ -8859,23 +8856,6 @@
         }
       }
     },
-    "DEMAIN · %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TOMORROW · %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MAÑANA · %@"
-          }
-        }
-      }
-    },
     "DEMANDER À SUIVRE": {
       "extractionState": "manual",
       "localizations": {
@@ -9069,6 +9049,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mañana"
+          }
+        }
+      }
+    },
+    "Demain · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tomorrow · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mañana · %@"
           }
         }
       }
@@ -11167,22 +11163,6 @@
         }
       }
     },
-    "FC MOY": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AVG HR"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FC MED"
-          }
-        }
-      }
-    },
     "FC moy %lld": {
       "localizations": {
         "en": {
@@ -11195,6 +11175,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "FC med %lld"
+          }
+        }
+      }
+    },
+    "FC moy.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avg HR"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC med."
           }
         }
       }
@@ -11723,18 +11719,18 @@
         }
       }
     },
-    "GARDÉ": {
+    "Gardé": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "SAVED"
+            "value": "Saved"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "GUARDADA"
+            "value": "Guardada"
           }
         }
       }
@@ -17719,38 +17715,6 @@
         }
       }
     },
-    "ON CONSTRUIT\nTON PROGRAMME": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BUILDING\nYOUR PROGRAM"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CREANDO\nTU PROGRAMA"
-          }
-        }
-      }
-    },
-    "ON PEUT COMPTER\nTES PAS DANS L'APP ?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MAY WE COUNT\nYOUR STEPS IN THE APP?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿PODEMOS CONTAR\nTUS PASOS EN LA APP?"
-          }
-        }
-      }
-    },
     "Objectif": {
       "localizations": {
         "en": {
@@ -17966,6 +17930,22 @@
         }
       }
     },
+    "On construit\nton programme": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Building\nyour program"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creando\ntu programa"
+          }
+        }
+      }
+    },
     "On lève un peu le pied sur « %@ » — le programme s'ajuste à ta forme du jour.": {
       "extractionState": "manual",
       "localizations": {
@@ -17996,6 +17976,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "En el agua no se come"
+          }
+        }
+      }
+    },
+    "On peut compter\ntes pas dans l'app ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "May we count\nyour steps in the app?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Podemos contar\ntus pasos en la app?"
           }
         }
       }
@@ -18326,22 +18322,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "MÁS TARDE"
-          }
-        }
-      }
-    },
-    "POURQUOI TU COURS ?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHY DO YOU RUN?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿POR QUÉ CORRES?"
           }
         }
       }
@@ -20087,6 +20067,22 @@
         }
       }
     },
+    "Pourquoi tu cours ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Why do you run?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Por qué corres?"
+          }
+        }
+      }
+    },
     "Premiers pas": {
       "localizations": {
         "en": {
@@ -21261,23 +21257,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "CORRER"
-          }
-        }
-      }
-    },
-    "RUN EN COURS · %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RUN IN PROGRESS · %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CARRERA EN CURSO · %@"
           }
         }
       }
@@ -22516,6 +22495,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Run"
+          }
+        }
+      }
+    },
+    "Run en cours · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run in progress · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carrera en curso · %@"
           }
         }
       }

@@ -741,9 +741,9 @@ struct RacePageView: View {
                 if message.kind != "message" {
                     Text(Self.libelleDuGenre(message.kind))
                         .font(RUFont.sans(.small, weight: .bold))
-                        .foregroundColor(RUColor.cyan)
+                        .foregroundColor(RUColor.text2)
                         .padding(.horizontal, 8).padding(.vertical, 2)
-                        .background(RUColor.cyan.opacity(0.14), in: Capsule())
+                        .background(RUColor.card2, in: Capsule())
                 }
                 Menu {
                     Button("Signaler ce message") {
@@ -773,7 +773,7 @@ struct RacePageView: View {
             if message.closed {
                 Text("réglé")
                     .font(RUFont.sans(.small, weight: .bold))
-                    .foregroundColor(RUColor.lime)
+                    .foregroundColor(RUColor.rose)
             }
         }
     }

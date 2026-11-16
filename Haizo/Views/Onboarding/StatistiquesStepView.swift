@@ -35,7 +35,7 @@ struct StatistiquesStepView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     ObTitle(
                         eyebrow: String(localized: "Étape 8 · la mesure"),
-                        title: String(localized: "ON PEUT COMPTER\nTES PAS DANS L'APP ?"),
+                        title: String(localized: "On peut compter\ntes pas dans l'app ?"),
                         subtitle: String(localized: "Pas tes pas de course — ceux que tu fais dans l'app. Savoir à quel écran les gens s'arrêtent est la seule façon de réparer ce qui coince.")
                     )
 

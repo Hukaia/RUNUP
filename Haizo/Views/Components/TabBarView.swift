@@ -512,7 +512,7 @@ struct RunInProgressPill: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Circle().fill(RUColor.onRose).frame(width: 7, height: 7)
-                Text("RUN EN COURS · \(elapsed)")
+                Text("Run en cours · \(elapsed)")
                     .font(RUFont.display(.caption))
                     .tracking(1)
                     .foregroundColor(RUColor.onRose)

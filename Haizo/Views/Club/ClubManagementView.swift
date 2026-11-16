@@ -215,7 +215,7 @@ struct ClubManagementView: View {
                     if identiteEnregistree {
                         Text("Enregistré")
                             .font(RUFont.sans(.small, weight: .semibold))
-                            .foregroundColor(RUColor.lime)
+                            .foregroundColor(RUColor.rose)
                     }
                     Spacer(minLength: 0)
                 }

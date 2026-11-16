@@ -129,11 +129,104 @@ for f in sorted((RACINE / "Haizo").rglob("*.swift")):
                 f"    `AppNotification` et explique ce qu'elle dit.\n"
                 f"    {ligne.strip()[:110]}")
 
+# ── LES TROIS COULEURS SÉMANTIQUES, PARTOUT OÙ ELLES SONT POSÉES ─────────────────────────────
+#
+# CE QUE LA PREMIÈRE VERSION NE VOYAIT PAS, ET CE QUE ÇA A COÛTÉ.
+#
+# Ce script n'inspectait que `RUCardHeader(tint:)` et `RUStatTile(tint:)`. Une couleur posée en
+# `.foregroundColor(RUColor.lime)` — l'écriture la plus courante — était HORS DE SA PORTÉE.
+#
+# Le 16 novembre à midi, la flamme de la série est passée « allumée à l'accent, éteinte au gris »
+# sur l'écran des stats, dans le bilan hebdo, dans la feuille de débriefing et dans le widget.
+# PAS SUR L'ACCUEIL, l'écran qu'on ouvre tous les jours. Le garde s'est tu, et il avait raison de
+# se taire : la pastille de série est un `.foregroundColor`. Le relevé complet en a trouvé
+# SOIXANTE-QUATORZE, dans trente-deux fichiers.
+#
+# LA RÈGLE EST LA MÊME QU'EN HAUT, appliquée à toutes les écritures : `lime` veut dire MIEUX,
+# `amber` veut dire MOINS BIEN, `cyan` ne veut rien dire du tout. Une couleur sémantique dépensée
+# en décoration est vidée de son sens là où elle disait quelque chose.
+DIRECTES = re.compile(r"RUColor\.(lime|cyan|amber|amberText)\b")
+
+AVERTISSEMENT = ("un avertissement : `amber` y veut dire MOINS BIEN, et c'est exactement ce que "
+                 "la ligne annonce. C'est l'emploi qui justifie la couleur, pas celui qui la vide.")
+
+#: fichier → (nombre d'emplois directs autorisés, pourquoi)
+DIRECTES_AUTORISEES = {
+    # ── 1. DES AVERTISSEMENTS ─────────────────────────────────────────────────────────────────
+    "Haizo/Views/Auth/AccountSwitchSheet.swift": (1, AVERTISSEMENT),
+    "Haizo/Views/Club/EditActivitySheet.swift": (1, AVERTISSEMENT),
+    "Haizo/Views/Coach/CoachView.swift": (3, AVERTISSEMENT + " La bulle d'erreur du coach : "
+                                          "l'icône, son texte et son bord."),
+    "Haizo/Views/Home/Sheets/MoveSessionSheet.swift": (1, AVERTISSEMENT),
+    "Haizo/Views/Live/RecapView.swift": (1, AVERTISSEMENT),
+    "Haizo/Views/Onboarding/RaceDetailsStepView.swift": (2, AVERTISSEMENT + " Un dénivelé de "
+                                                        "course qu'on n'a pas renseigné."),
+    "Haizo/Views/Onboarding/RunningDaysStepView.swift": (1, AVERTISSEMENT + " Moins de jours "
+                                                         "cochés que le minimum de l'objectif."),
+    "Haizo/Views/Profile/ProfileView.swift": (1, AVERTISSEMENT + " « Session expirée »."),
+    "Haizo/Views/Profile/ShoesView.swift": (2, AVERTISSEMENT + " Une paire au-delà de 80 % de sa "
+                                            "durée de vie, et la ligne qui le dit."),
+    "Haizo/Views/Race/RacePageView.swift": (3, AVERTISSEMENT + " Un bandeau d'alerte de course, "
+                                            "plus la teinte d'« état confirmé » déjà déclarée "
+                                            "en haut de ce fichier."),
+    "Haizo/Views/Stats/HistoryView.swift": (1, AVERTISSEMENT),
+    "Haizo/Views/Stats/StatsView.swift": (6, "cinq pour le bloc Vélo, marqué en turquoise d'un "
+                                          "bout à l'autre — un repère de discipline tenu sur "
+                                          "toute la section, et non une décoration — plus une "
+                                          "charge d'entraînement élevée, qui est un "
+                                          "avertissement."),
+
+    # ── 2. DEUX PALETTES QUI ATTENDENT UNE DÉCISION ───────────────────────────────────────────
+    #
+    # Elles ne sont pas des oublis : ce sont deux tables cohérentes, chacune décidée une fois,
+    # qui distribuent une couleur par CATÉGORIE. Le brief du 15 novembre les condamne toutes les
+    # deux sans les nommer — « un seul accent #F0225F […] tout le reste disparaît » — et la
+    # première a même sa consigne précise au point 4 : « les badges deviennent des cercles 64 px
+    # sur fond #F3EEF4, icône noire, ACCENT POUR LES OBTENUS ».
+    #
+    # Les retirer touche sept écrans pour la première et l'onboarding entier pour la seconde.
+    # C'est un chantier, pas une ligne, et il attend d'être fait plutôt que d'être oublié : le
+    # compte ci-dessous le dira tant qu'il reste à faire.
+    "Haizo/Models/ClubBadgeCatalog.swift": (
+        3, "une couleur par FAMILLE de badge — série en ambre, dénivelé en lime, volume en "
+           "turquoise. Sept écrans la lisent. Le point 4 du brief dit ce qui doit la remplacer : "
+           "l'accent pour les obtenus, le gris pour les autres."),
+    "Haizo/DesignSystem/Colors.swift": (
+        3, "`GoalType.tint` — une couleur par OBJECTIF, posée sur les cartes de l'onboarding. "
+           "Huit teintes dont trois sémantiques. Le brief n'en veut qu'une."),
+}
+
+compte_direct = {}
+for f in sorted((RACINE / "Haizo").rglob("*.swift")):
+    rel = f.relative_to(RACINE).as_posix()
+    for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
+        if ligne.lstrip().startswith("//"):
+            continue
+        for trouve in DIRECTES.finditer(ligne):
+            compte_direct[rel] = compte_direct.get(rel, 0) + 1
+            if rel not in DIRECTES_AUTORISEES:
+                fautes.append(
+                    f"{rel}:{num} : `RUColor.{trouve.group(1)}` posé en direct.\n"
+                    f"    `lime` veut dire MIEUX, `amber` veut dire MOINS BIEN, `cyan` ne dit\n"
+                    f"    rien. Si celle-ci nomme vraiment quelque chose, inscris le fichier\n"
+                    f"    dans DIRECTES_AUTORISEES avec sa raison. Sinon, c'est l'accent ou le\n"
+                    f"    gris.\n"
+                    f"    {ligne.strip()[:110]}")
+
+for rel, (attendu, raison) in sorted(DIRECTES_AUTORISEES.items()):
+    n = compte_direct.get(rel, 0)
+    if n != attendu:
+        fautes.append(f"{rel} : {n} emploi(s) direct(s), {attendu} déclaré(s).\n"
+                      f"    Raison inscrite : {raison}\n"
+                      f"    Un de plus : il faut le justifier. Un de moins : l'entrée maigrit.")
+
 if fautes:
-    print("Des teintes d'en-tête de carte hors de ce qui est déclaré :\n")
+    print("Des teintes hors de ce qui est déclaré :\n")
     for f in fautes:
         print("  • " + f)
     sys.exit(1)
 
-print(f"Teintes d'en-tête : {sum(compte.values())} déclarée(s) dans {len(AUTORISE)} fichiers, "
-      f"tout le reste sur l'accent.")
+print(f"Teintes d'en-tête : {sum(compte.values())} déclarée(s) dans {len(AUTORISE)} fichiers. "
+      f"Emplois directs de lime/cyan/ambre : {sum(compte_direct.values())} dans "
+      f"{len(DIRECTES_AUTORISEES)} fichiers — des avertissements, un repère de discipline, "
+      f"et deux palettes qui attendent une décision.")

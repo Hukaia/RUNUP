@@ -358,7 +358,7 @@ struct NewGoalWizardView: View {
                 if buildFinished {
                     Text(verbatim: "✓")
                         .font(.system(size: 26))
-                        .foregroundColor(RUColor.lime)
+                        .foregroundColor(RUColor.rose)
                 } else {
                     Image(systemName: "target")
                         .font(RUFont.icone(.xlarge, weight: .semibold))

@@ -581,9 +581,26 @@ struct ProfileView: View {
     }
 
 
+    /// # LES QUATRE PASTILLES DE LA GRILLE COMMUNAUTÉ
+    ///
+    /// Point 2 du brief du 15 novembre, qui les nomme une par une : « les pastilles d'icônes
+    /// colorées du profil (violet, rose, turquoise, beige) deviennent toutes `#F3EEF4` avec
+    /// icône noire ».
+    ///
+    /// Quatre couleurs pour quatre destinations qui se valent, c'était quatre signaux qui ne
+    /// signalaient rien — exactement ce que `check_teintes.py` dit de la rangée de l'écran
+    /// Stats : « trois tuiles côte à côte, trois teintes ». La grille se lit mieux quand ce
+    /// qui la distingue est le SYMBOLE et le mot, pas le fond.
+    ///
+    /// `card2` ET NON `#F3EEF4`, pour la raison déjà écrite dans `ChipView` le 16 novembre : la
+    /// valeur du brief est une lavande FROIDE, les fonds clairs de l'app sont chauds, et
+    /// `check_jetons_de_texte.py` tient la règle « la famille du fond ». On garde la direction —
+    /// une surface déclarée, la même pour les quatre — et la famille de la page.
+    ///
+    /// `degrade` PART AVEC. Il distinguait le Club par un disque plein : « deux tuiles sur
+    /// quatre en aplat plein et deux en teinte pâle, la grille disait une hiérarchie qui
+    /// n'existe pas ». Plus personne ne le passait depuis, et il n'a plus rien à distinguer.
     private func tuileSociale(icone: String,
-                              teinte: Color,
-                              degrade: Bool = false,
                               titre: String,
                               ligne: String,
                               pastille: String? = nil,
@@ -594,18 +611,10 @@ struct ProfileView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .top, spacing: 6) {
                     ZStack {
-                        // Le dégradé de marque est réservé au Club : c'est ce qui le distingue
-                        // des trois autres sans colorer la moitié de la page. Les autres portent
-                        // leur teinte diluée dans le disque, à pleine intensité sur le symbole —
-                        // le seul endroit de la tuile où la couleur est vraiment celle qu'on pose.
-                        if degrade {
-                            Circle().fill(RUColor.rose)
-                        } else {
-                            Circle().fill(teinte.opacity(0.16))
-                        }
+                        Circle().fill(RUColor.card2)
                         Image(systemName: icone)
                             .font(RUFont.icone(.medium, weight: .semibold))
-                            .foregroundColor(degrade ? .white : teinte)
+                            .foregroundColor(RUColor.textPrimary)
                     }
                     .frame(width: 38, height: 38)
 
@@ -687,7 +696,7 @@ struct ProfileView: View {
         LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
                   spacing: 12) {
             tuileSociale(
-                icone: "person.2.fill", teinte: RUColor.violet,
+                icone: "person.2.fill",
                 titre: String(localized: "Amis"), ligne: ligneDesAmis,
                 pastille: pastilleDesDemandes, etiquettePastille: etiquetteDesDemandes,
                 action: {
@@ -696,14 +705,12 @@ struct ProfileView: View {
                 })
 
             tuileSociale(
-                // Deux tuiles sur quatre en aplat plein et deux en teinte pâle : la grille
-                // disait une hiérarchie qui n'existe pas. Les quatre destinations se valent.
-                icone: "trophy.fill", teinte: RUColor.rose,
+                icone: "trophy.fill",
                 titre: String(localized: "Running Club"), ligne: ligneDuClub,
                 action: { appState.go(.club) })
 
             tuileSociale(
-                icone: "flag.checkered", teinte: RUColor.cyan,
+                icone: "flag.checkered",
                 titre: String(localized: "Courses"), ligne: ligneDesCourses,
                 action: {
                     appState.openRacesTabOnNextVisit = true
@@ -711,7 +718,7 @@ struct ProfileView: View {
                 })
 
             tuileSociale(
-                icone: "map.fill", teinte: RUColor.amber,
+                icone: "map.fill",
                 titre: String(localized: "Itinéraires"), ligne: String(localized: "Où courir, ici ou en voyage"),
                 action: {
                     appState.openRoutesTabOnNextVisit = true

@@ -118,7 +118,7 @@ private struct ConnectRow: View {
                 } else if busy {
                     ProgressView().tint(RUColor.textPrimary)
                 } else if connected {
-                    Text("Connecté ✓").font(RUFont.sans(.small, weight: .bold)).foregroundColor(RUColor.lime)
+                    Text("Connecté ✓").font(RUFont.sans(.small, weight: .bold)).foregroundColor(RUColor.rose)
                 } else {
                     Text("Connecter")
                         .font(RUFont.sans(.small, weight: .semibold))
@@ -129,8 +129,8 @@ private struct ConnectRow: View {
             }
             .padding(14)
             .opacity(source != .apple ? 0.5 : 1)
-            .background(connected ? RUColor.lime.opacity(0.1) : RUColor.card, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous).stroke(connected ? RUColor.lime.opacity(0.35) : RUColor.line, lineWidth: RUSpacing.hairline))
+            .background(connected ? RUColor.rose.opacity(0.1) : RUColor.card, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous).stroke(connected ? RUColor.rose.opacity(0.35) : RUColor.line, lineWidth: RUSpacing.hairline))
         }
         .buttonStyle(PressableStyle())
         .disabled(source != .apple)

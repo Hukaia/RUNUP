@@ -70,7 +70,7 @@ struct RouteThumbnail: View {
                 let r = lineWidth * 1.4
                 context.fill(
                     Path(ellipseIn: CGRect(x: start.x - r, y: start.y - r, width: r * 2, height: r * 2)),
-                    with: .color(RUColor.lime)
+                    with: .color(RUColor.rose)
                 )
             }
         }

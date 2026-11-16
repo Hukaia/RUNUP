@@ -930,7 +930,7 @@ struct StatsView: View {
                 phraseDObjectif(
                     objectif: profile.goalDisplay,
                     secondes: deltaSeconds,
-                    couleur: deltaSeconds >= 0 ? RUColor.lime : RUColor.amber
+                    couleur: RUColor.text2
                 )
                 .font(RUFont.sans(.small))
             }

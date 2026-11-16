@@ -356,7 +356,7 @@ struct CoachView: View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
                 .font(RUFont.icone(.body))
-                .foregroundColor(RUColor.lime)
+                .foregroundColor(RUColor.rose)
             Text(message.text)
                 .font(RUFont.sans(.small, weight: .semibold))
                 .foregroundColor(RUColor.text2)

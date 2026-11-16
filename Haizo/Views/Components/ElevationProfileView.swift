@@ -6,7 +6,7 @@ import SwiftUI
 /// vertical-accuracy readings at all has nothing real to draw.
 struct ElevationProfileView: View {
     var route: [RunRecord.RoutePoint]
-    var lineColor: Color = RUColor.lime
+    var lineColor: Color = RUColor.rose
 
     static func hasData(_ route: [RunRecord.RoutePoint]) -> Bool {
         route.compactMap(\.altitude).count >= 2

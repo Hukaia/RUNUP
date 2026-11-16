@@ -582,7 +582,7 @@ private struct StravaConnectionRow: View {
                      : Pluriel.choisir(importedCount,
                                        String(localized: "\(importedCount) course importée."),
                                        String(localized: "\(importedCount) courses importées.")))
-                    .font(RUFont.sans(.small)).foregroundColor(RUColor.lime)
+                    .font(RUFont.sans(.small)).foregroundColor(RUColor.rose)
             }
             if let errorMessage {
                 Text(errorMessage).font(RUFont.sans(.small)).foregroundColor(RUColor.rose)

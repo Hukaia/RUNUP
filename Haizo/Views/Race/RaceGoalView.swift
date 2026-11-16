@@ -190,9 +190,9 @@ struct RaceGoalView: View {
                     }
                 } else {
                     HStack(spacing: 10) {
-                        tile("\(profile.weekNumber)", "SEMAINE", highlighted: true)
+                        tile("\(profile.weekNumber)", "Semaine", highlighted: true)
                         tile(goalTarget, "Objectif", highlighted: false)
-                        tile("\(profile.streak)", "SÉRIE", highlighted: false)
+                        tile("\(profile.streak)", "Série", highlighted: false)
                     }
                 }
 
@@ -244,7 +244,7 @@ struct RaceGoalView: View {
                     HStack {
                         RUCardHeader(icon: "calendar", title: "Préparation")
                         if let total = shape.totalWeeks {
-                            StatChip(text: String(localized: "Semaine \(min(profile.weekNumber, total))/\(total)"), color: RUColor.lime)
+                            StatChip(text: String(localized: "Semaine \(min(profile.weekNumber, total))/\(total)"), color: RUColor.text2)
                         }
                     }
                     if let total = shape.totalWeeks {

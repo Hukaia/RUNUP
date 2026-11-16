@@ -125,7 +125,7 @@ struct RecapView: View {
                             // `statTile` rend son libellé par un `Text(String)` nu — d'où les
                             // `String(localized:)`. « KM », « KCAL » et « D+ (m) » sont des
                             // symboles d'unité et restent tels quels.
-                            statTile(String(format: "%.2f", locale: Locale.current, run.distanceKm), verbatim: "km", index: 0)
+                            statTile(String(format: "%.2f", locale: Locale.current, run.distanceKm), "km", index: 0)
                             statTile(PaceModel.formatDuration(Double(run.durationSeconds)), String(localized: "Temps"), index: 1)
                             statTile(run.avgPace, String(localized: "Allure moy."), index: 2)
                         }
@@ -136,8 +136,8 @@ struct RecapView: View {
                             // turquoise ; la fréquence cardiaque en rose et le dénivelé en lime
                             // sont la même ligne, le même défaut et la même correction — une
                             // rangée de mesures ne se lit pas mieux parce qu'elle est peinte.
-                            statTile(run.avgHeartRate > 0 ? "\(run.avgHeartRate)" : "—", String(localized: "FC MOY"), index: 3)
-                            statTile("\(run.kcal)", "KCAL", index: 4)
+                            statTile(run.avgHeartRate > 0 ? "\(run.avgHeartRate)" : "—", String(localized: "FC moy."), index: 3)
+                            statTile("\(run.kcal)", "kcal", index: 4)
                             statTile(run.elevationGainM > 0 ? "+\(run.elevationGainM)" : "—", "D+ (m)", index: 5)
                         }
 
@@ -375,7 +375,7 @@ struct RecapView: View {
             HStack {
                 Text(verbatim: "\(Int(minAlt.rounded())) m").font(RUFont.mono(.small)).foregroundColor(RUColor.text2)
                 Spacer()
-                Text("+\(run.elevationGainM) m D+").font(RUFont.sans(.small, weight: .bold)).foregroundColor(RUColor.lime)
+                Text("+\(run.elevationGainM) m D+").font(RUFont.sans(.small, weight: .bold)).foregroundColor(RUColor.rose)
                 Spacer()
                 Text(verbatim: "\(Int(maxAlt.rounded())) m").font(RUFont.mono(.small)).foregroundColor(RUColor.text2)
             }

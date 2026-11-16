@@ -63,7 +63,41 @@ def _():
 
 @cas_de("un mot d'une seule lettre n'est pas un libellé")
 def _():
-    assert avec({"Haizo/V.swift": 'Text("J")\nText("5 KM")'}, {})[0].count("5 KM") == 1
+    p = avec({"Haizo/V.swift": 'Text("J")\nText("CE SOIR")'}, {})
+    assert len(p) == 1 and "CE SOIR" in p[0], p
+
+
+@cas_de("UN LITTÉRAL CACHÉ DERRIÈRE UNE INTERPOLATION EST VU")
+def _():
+    # LE CAS QUI MANQUAIT, ET IL A COÛTÉ UNE CAMPAGNE. Le motif d'origine cherchait `"…"` avec
+    # `[^"\\]` : le premier littéral contenant une interpolation, il appariait le guillemet
+    # FERMANT du premier avec le guillemet OUVRANT du second, et « GARDÉ » n'était dans aucune
+    # paire. Vingt-et-un libellés sortaient par là, dont quatre titres d'écran.
+    p = avec({"Haizo/V.swift": 'statTile("\\(n)", String(localized: "GARDÉ"))'}, {})
+    assert len(p) == 1 and "GARDÉ" in p[0], p
+
+
+@cas_de("un littéral À L'INTÉRIEUR d'une interpolation est vu aussi")
+def _():
+    p = avec({"Haizo/V.swift": 'Text("x \\(cond ? "OUI" : "non")")'}, {})
+    assert len(p) == 1 and "OUI" in p[0], p
+
+
+@cas_de("une échappée ordinaire ne coupe pas le littéral en deux")
+def _():
+    p = avec({"Haizo/V.swift": 'Text("COMMENT\\nTU T\'APPELLES ?")'}, {})
+    assert len(p) == 1 and "COMMENT" in p[0] and "APPELLES" in p[0], p
+
+
+@cas_de("un sigle ou un nom propre dans une phrase ne compte pas")
+def _():
+    assert avec({"Haizo/V.swift": 'Text("HYROX · Semaine 3")\nText("120 XP")'}, {}) == []
+
+
+@cas_de("mais un libellé qui ne contient QUE des capitales compte, sigle ou pas")
+def _():
+    p = avec({"Haizo/V.swift": 'Text("XP GAGNÉS")'}, {})
+    assert len(p) == 1, p
 
 
 @cas_de("un verbe HTTP et un gabarit de date ne comptent pas")

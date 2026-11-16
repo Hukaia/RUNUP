@@ -28,6 +28,27 @@ retirer l'une laissait les deux autres :
 C'est la troisième qui demande un garde. Les deux premières se voient à la lecture ; une clé de
 catalogue en capitales, non.
 
+# POURQUOI IL LIT LE SWIFT AU LIEU DE CHERCHER DES GUILLEMETS
+
+La première version cherchait `"…"` par expression régulière, avec `[^"\\]` pour le contenu.
+Elle a tenu deux heures. Sur cette ligne :
+
+    statTile("\\(current.savesCount)", String(localized: "GARDÉ"))
+
+le premier littéral contient une INTERPOLATION, donc une barre oblique inverse, donc le motif
+ne peut pas le capturer. Il se resynchronise alors sur le guillemet suivant et apparie le
+guillemet FERMANT du premier littéral avec le guillemet OUVRANT du second — après quoi
+« GARDÉ » n'est plus dans aucune paire. Invisible.
+
+Ce n'est pas un cas tordu : une ligne qui affiche un chiffre et son libellé en interpole
+presque toujours un. Le garde ne voyait donc PAS la famille de lignes qu'il est le plus censé
+surveiller.
+
+`litteraux()` lit la ligne caractère par caractère : il entre dans un littéral au guillemet
+ouvrant, en sort au guillemet fermant non échappé, et traverse `\\( … )` en comptant ses
+parenthèses — en rendant au passage les littéraux qui vivent DEDANS, puisqu'ils s'affichent
+eux aussi.
+
 # CE QU'IL NE VOIT PAS
 
 Une chaîne mise en capitales à l'exécution — `.uppercased()`, un `textCase` reçu en paramètre.
@@ -47,6 +68,14 @@ CIBLES = ["Haizo", "HaizoWatch", "HaizoWidgets"]
 TECHNIQUES = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS",
               "UTC", "GMT", "UTF-8", "EEEE", "REPLACE_WITH_STRAVA_CLIENT_ID"}
 
+#: Les mots qui s'écrivent en capitales DANS une phrase en casse normale : un nom propre, un
+#: sigle. « HYROX » est une marque, « XP » un sigle, « GPS » et « HR » des abréviations
+#: d'usage. Un libellé n'est refusé que si, UNE FOIS CES MOTS RETIRÉS, il reste des capitales.
+#:
+#: C'est la différence entre « HYROX · Semaine 3 », qui est juste, et « SEMAINE 3 », qui crie.
+MOTS_EN_CAPITALES = {"HYROX", "XP", "GPS", "HR", "FC", "PR", "KM", "D+", "VO2", "Z1", "Z2",
+                     "Z3", "Z4", "Z5", "TV", "ID", "URL", "API", "OK"}
+
 BOUTON = ("le libellé d'un bouton — les capitales d'un bouton sont une convention assumée, et le "
           "brief du 15 novembre ne nomme que des LABELS. Le jour où elle tranche l'inverse, "
           "c'est cette liste qui se vide.")
@@ -54,7 +83,7 @@ BOUTON = ("le libellé d'un bouton — les capitales d'un bouton sont une conven
 #: fichier → (nombre de libellés en capitales autorisés, pourquoi)
 PERMIS = {
     # ── 1. DES BOUTONS ────────────────────────────────────────────────────────────────────────
-    "Haizo/Views/Auth/SignInView.swift": (2, BOUTON),
+    "Haizo/Views/Auth/SignInView.swift": (3, BOUTON),
     "Haizo/Views/Club/ClubView.swift": (1, BOUTON),
     "Haizo/Views/Club/FriendsView.swift": (1, BOUTON),
     "Haizo/Views/Club/PublicProfileView.swift": (4, BOUTON),
@@ -73,7 +102,6 @@ PERMIS = {
     "Haizo/Views/Onboarding/StatistiquesStepView.swift": (2, BOUTON),
     "Haizo/Views/Onboarding/WelcomeView.swift": (1, BOUTON),
     "Haizo/Views/Profile/ProfileView.swift": (2, BOUTON),
-    "Haizo/Views/Profile/SauvegardeView.swift": (2, BOUTON),
     "Haizo/Views/ProgramEnd/NewGoalWizardView.swift": (5, BOUTON),
     "Haizo/Views/ProgramEnd/RecoveryView.swift": (2, BOUTON),
     "Haizo/Views/Race/CreateRaceSheet.swift": (1, BOUTON),
@@ -86,7 +114,7 @@ PERMIS = {
            "un écran de l'app — la même distinction que `check_degrade.py` fait pour les "
            "dégradés."),
     "Haizo/Views/Live/RunVideoFrameView.swift": (
-        3, "les images de la vidéo d'export. Même raison."),
+        1, "les images de la vidéo d'export. Même raison."),
 
     # ── 3. UNE DETTE NOMMÉE, QUI ATTEND UNE MACHINE ──────────────────────────────────────────
     #
@@ -105,7 +133,7 @@ PERMIS = {
     # CE QUI LÈVE LA DETTE : refaire la capture montre sur un Mac, puis ces deux entrées
     # disparaissent d'ici. Le compte à zéro fera parler le garde tout seul.
     "HaizoWatch/WatchViews.swift": (
-        3, "« OK » est un bouton ; « EN PAUSE » et « EN COURS » sont une dette nommée — voir "
+        2, "« EN PAUSE » et « EN COURS » sont une dette nommée — voir "
            "le bloc ci-dessus, la capture montre livrée à Apple est empreintée contre toute la "
            "cible et ne se refait pas sans machine macOS."),
     "HaizoWidgets/DailyGoalsWidget.swift": (
@@ -121,7 +149,48 @@ PERMIS = {
            "rôles, une chaîne — ça se sépare le jour où quelqu'un s'en occupe."),
 }
 
-MOTIF = re.compile(r'"([^"\\]{2,60})"')
+def litteraux(ligne: str):
+    """Les littéraux de chaîne d'une ligne Swift, interpolations traversées."""
+    i, n = 0, len(ligne)
+    while i < n:
+        if ligne[i] != '"':
+            i += 1
+            continue
+        i += 1
+        morceau = []
+        while i < n:
+            c = ligne[i]
+            if c == "\\" and i + 1 < n:
+                # `\(` ouvre une interpolation : on la traverse en comptant ses parenthèses,
+                # et ce qu'elle contient est relu comme du Swift — un littéral peut y vivre.
+                if ligne[i + 1] == "(":
+                    profondeur, j = 1, i + 2
+                    debut = j
+                    while j < n and profondeur:
+                        if ligne[j] == "(":
+                            profondeur += 1
+                        elif ligne[j] == ")":
+                            profondeur -= 1
+                        j += 1
+                    yield from litteraux(ligne[debut:j - 1])
+                    # Une ellipse à la place du trou : sans elle, « COMMENT \(x) TU T'APPELLES »
+                    # se rapporte « COMMENTTU T'APPELLES » et personne ne retrouve la ligne.
+                    morceau.append("…")
+                    i = j
+                    continue
+                # Une échappée ordinaire : `\"`, `\\`, `\n`… Un espace à la place, sinon
+                # « COMMENT\nTU T'APPELLES » se rapporte « COMMENTTU T'APPELLES ».
+                morceau.append(" ")
+                i += 2
+                continue
+            if c == '"':
+                i += 1
+                break
+            morceau.append(c)
+            i += 1
+        texte = "".join(morceau)
+        if texte:
+            yield texte
 
 
 def ecarts() -> list:
@@ -132,11 +201,15 @@ def ecarts() -> list:
             for numero, ligne in enumerate(chemin.read_text(encoding="utf-8").split("\n"), 1):
                 if ligne.lstrip().startswith("//"):
                     continue
-                for trouve in MOTIF.finditer(ligne):
-                    texte = trouve.group(1)
+                for texte in litteraux(ligne):
                     if texte in TECHNIQUES:
                         continue
-                    lettres = [c for c in texte if c.isalpha()]
+                    # Les sigles et les noms propres retirés d'abord : ce qui reste est le
+                    # libellé, et c'est lui qu'on juge.
+                    reste = texte
+                    for mot in MOTS_EN_CAPITALES:
+                        reste = reste.replace(mot, " ")
+                    lettres = [c for c in reste if c.isalpha()]
                     if len(lettres) < 2 or not all(c.isupper() for c in lettres):
                         continue
                     compte[relatif] = compte.get(relatif, 0) + 1

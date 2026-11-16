@@ -19,8 +19,22 @@ struct SessionDetailSheet: View {
         // sur lequel les tests ci-dessous classent la séance. Seul l'affichage passe par
         // `displayTitle`. Ne pas localiser ni toucher à cette classification.
         let title = session.title.lowercased()
-        let warmup = (String(localized: "Échauffement"), String(localized: "10-15′ · Z2 · footing relâché"), RUColor.cyan)
-        let cooldown = (String(localized: "Retour au calme"), String(localized: "5-10′ · Z1 · marche + étirements"), RUColor.lime)
+        // ── LA BARRE D'UNE ÉTAPE PREND L'INTENSITÉ DE CETTE ÉTAPE ───────────────────────────
+        //
+        // Elles étaient en `cyan` et en `lime` : deux couleurs SÉMANTIQUES — `lime` veut dire
+        // MIEUX, et l'écran des stats s'en sert pour ça — dépensées à distinguer le début et la
+        // fin d'une liste de trois lignes. Point 2 du brief : tout ce qui n'est ni l'accent ni
+        // une intensité de séance disparaît.
+        //
+        // `recuperation` POUR LES DEUX, et ce n'est pas une perte : un échauffement et un retour
+        // au calme sont le même effort, et leur place dans la liste — première et dernière — les
+        // distingue mieux qu'une couleur. Ce qui doit se voir, c'est le BLOC DE TRAVAIL au
+        // milieu, qui garde l'accent.
+        //
+        // Et le brief autorise exactement ça : « les intensités de séance gardent leurs teintes
+        // fixes et n'apparaissent QUE SUR DES SÉANCES ». Une étape est sur une séance.
+        let warmup = (String(localized: "Échauffement"), String(localized: "10-15′ · Z2 · footing relâché"), RUColor.recuperation)
+        let cooldown = (String(localized: "Retour au calme"), String(localized: "5-10′ · Z1 · marche + étirements"), RUColor.recuperation)
 
         // HYROX sessions are structurally different from a running-only week — a "compromised
         // running" block or a functional circuit isn't a warmup/interval/cooldown shape at all,
@@ -178,7 +192,9 @@ struct SessionDetailSheet: View {
         let ravitaillement = (
             String(localized: "Ravitaillement"),
             String(localized: "une prise toutes les \(UltraRaceDay.minutesEntreDeuxPrises) min, à la montre — c'est la séance où tu testes ce que tu mangeras le jour J"),
-            RUColor.lime
+            // GRIS, et pas une intensité : le ravitaillement n'est pas un effort. C'est une
+            // consigne de logistique posée au milieu d'étapes qui, elles, se courent.
+            RUColor.text3
         )
 
         switch kind {
@@ -197,7 +213,7 @@ struct SessionDetailSheet: View {
         case .ultraPowerHike:
             return [(String(localized: "Marche rapide en côte"), String(localized: "\(session.durationMinutes)′ · le cardio doit monter autant qu'en courant · tes bâtons si tu en auras le jour J"), RUColor.rose)]
         case .ultraNightRun:
-            return [(String(localized: "À la frontale"), String(localized: "\(session.durationMinutes)′ · en terrain, avec LES DEUX frontales du jour J · le faisceau écrase le relief, tu iras moins vite"), RUColor.cyan)]
+            return [(String(localized: "À la frontale"), String(localized: "\(session.durationMinutes)′ · en terrain, avec LES DEUX frontales du jour J · le faisceau écrase le relief, tu iras moins vite"), RUColor.rose)]
         case .ultraLongRun, .ultraSpecificLongRun, .easedLongRun:
             return [
                 (String(localized: "Temps debout"), String(localized: "\(session.durationMinutes)′ · \(session.zone) · c'est la durée qui compte, pas la distance"), RUColor.rose),
@@ -315,9 +331,11 @@ struct SessionDetailSheet: View {
         // Le `padding(.top, 16)` des deux branches tombe : `ruBarreDuBas` pose ses marges.
         .ruBarreDuBas {
             if moved {
+                // L'accent, pas le lime — même règle que « Séance faite ✓ » sur l'accueil : la
+                // coche porte l'information, la couleur sémantique n'ajoutait qu'un ton.
                 Text("Séance déplacée à demain ✓")
                     .font(RUFont.sans(.label, weight: .semibold))
-                    .foregroundColor(RUColor.lime)
+                    .foregroundColor(RUColor.rose)
                     .frame(maxWidth: .infinity)
                     .padding(18)
                     // Surface neutre : l'accent reste au texte et à l'icône. Un lime

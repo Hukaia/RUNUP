@@ -925,9 +925,11 @@ struct LiveRunView: View {
                 String(localized: "FC · \(appState.profile.todaySession.zone)"),
                 Ink.accent
             )
-            // `liveMetric` rend son libellé par un `Text(String)` nu — mais « KCAL » est un
-            // symbole, il ne se traduit pas.
-            liveMetric("\(Int(vm?.kcal ?? 0))", "KCAL", Ink.cyan)
+            // `liveMetric` rend son libellé par un `Text(String)` nu — mais « kcal » est un
+            // symbole, il ne se traduit pas. Et un symbole d'unité s'écrit en minuscules : le
+            // kilo du Système international est un `k` bas, et la capitale ne venait que du
+            // libellé espacé que le point 1 du brief a retiré.
+            liveMetric("\(Int(vm?.kcal ?? 0))", "kcal", Ink.cyan)
         }
         if enColonne {
             VStack(spacing: 10) { cellules }
