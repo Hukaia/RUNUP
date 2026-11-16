@@ -130,9 +130,15 @@ struct RecapView: View {
                             statTile(run.avgPace, String(localized: "ALLURE MOY"), index: 2)
                         }
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                            statTile(run.avgHeartRate > 0 ? "\(run.avgHeartRate)" : "—", String(localized: "FC MOY"), RUColor.rose, index: 3)
-                            statTile("\(run.kcal)", "KCAL", RUColor.cyan, index: 4)
-                            statTile(run.elevationGainM > 0 ? "+\(run.elevationGainM)" : "—", "D+ (m)", RUColor.lime, index: 5)
+                            // TROIS TUILES, TROIS COULEURS, AUCUNE RAISON — et `statTile` rend
+                            // déjà `RUColor.textPrimary` par défaut. Il suffisait de ne pas la
+                            // surcharger. Le brief du 15 novembre ne nomme que les calories
+                            // turquoise ; la fréquence cardiaque en rose et le dénivelé en lime
+                            // sont la même ligne, le même défaut et la même correction — une
+                            // rangée de mesures ne se lit pas mieux parce qu'elle est peinte.
+                            statTile(run.avgHeartRate > 0 ? "\(run.avgHeartRate)" : "—", String(localized: "FC MOY"), index: 3)
+                            statTile("\(run.kcal)", "KCAL", index: 4)
+                            statTile(run.elevationGainM > 0 ? "+\(run.elevationGainM)" : "—", "D+ (m)", index: 5)
                         }
 
                         // Only when real per-km timings exist — a manual entry or a GPS run under
@@ -443,7 +449,9 @@ struct RecapView: View {
             .padding(.top, 44)
             .frame(maxHeight: .infinity, alignment: .top)
             VStack(alignment: .leading, spacing: 4) {
-                EyebrowLabel(text: "✓ Séance terminée", color: RUColor.lime)
+                // Le ✓ passe du vert à l'ACCENT. Le vert disait « bien » ; ici il n'y a rien à
+                // juger, la séance est finie, c'est un fait. Voir le brief du 15 novembre.
+                EyebrowLabel(text: "✓ Séance terminée", color: RUColor.rose)
                 Text(verbatim: run.titreAffiche).displayStyle(.title).foregroundColor(RUColor.textPrimary)
             }
             .padding(.horizontal, 18)

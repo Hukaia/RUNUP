@@ -564,7 +564,7 @@ final class AppState {
         let distance = String(format: "%.1f", locale: Locale.current, record.distanceKm)
         notify(
             icon: "lifepreserver.fill",
-            colorHex: 0x38E0D0,
+            colorHex: AppNotification.incident,
             title: String(localized: "Course récupérée"),
             text: String(localized: "L'app s'est fermée pendant ta sortie — \(distance) km avaient été enregistrés. Valide ton ressenti pour les garder.")
         )
@@ -670,7 +670,7 @@ final class AppState {
         let distance = String(format: "%.1f", locale: Locale.current, courus)
         notify(
             icon: "heart.fill",
-            colorHex: 0xFF3B6B,
+            colorHex: AppNotification.accent,
             title: Pluriel.choisir(imported.count,
                 String(localized: "Sortie récupérée dans Santé"),
                 String(localized: "\(imported.count) sorties récupérées dans Santé")),
@@ -756,7 +756,7 @@ final class AppState {
         if profile.weekNumber != previousWeek {
             let title = String(localized: "Nouvelle semaine")
             let text = String(localized: "Semaine \(profile.weekNumber) prête, ajustée d'après ta forme de la semaine passée.")
-            notify(icon: "mark", colorHex: 0xFF3B6B, title: title, text: text, coachOnly: true)
+            notify(icon: "mark", colorHex: AppNotification.accent, title: title, text: text, coachOnly: true)
             // `notify` above already no-ops the bell entry when this toggle is off (`coachOnly:
             // true`) — mirror that here so the real notification doesn't fire when the in-app one
             // didn't either.
@@ -838,7 +838,7 @@ final class AppState {
         // `WorkoutSession`) — l'afficher tel quel remettait du français dans une notification
         // par ailleurs traduite.
         let sessionName = profile.todaySession.displayTitle
-        notify(icon: "moon.zzz.fill", colorHex: 0x8A6CFF, title: String(localized: "Séance allégée aujourd'hui"), text: "\(sessionName) · \(reason).")
+        notify(icon: "moon.zzz.fill", colorHex: AppNotification.avertissement, title: String(localized: "Séance allégée aujourd'hui"), text: "\(sessionName) · \(reason).")
         if profile.coachNotificationsEnabled {
             NotificationService.shared.postImmediateNotification(
                 title: String(localized: "Séance allégée aujourd'hui"),
@@ -955,7 +955,7 @@ final class AppState {
         profile.activeCaloriesToday = await calories
         if AdaptivePlanEngine.checkDailyGoalsBonus(profile) {
             postClubActivity(type: "badge", text: String(localized: "a bouclé ses 3 objectifs du jour"), xpEarned: 120, contentKey: "daily_goals")
-            notify(icon: "sparkles", colorHex: 0xC9FF3B, title: String(localized: "Journée bouclée"), text: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
+            notify(icon: "sparkles", colorHex: AppNotification.accent, title: String(localized: "Journée bouclée"), text: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
             NotificationService.shared.postImmediateNotification(title: String(localized: "Journée bouclée"), body: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
             toast(String(localized: "Journée bouclée · +120 XP"))
         }

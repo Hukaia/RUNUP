@@ -247,7 +247,7 @@ final class ClubStore {
             if item.kudos > seen {
                 let gained = item.kudos - seen
                 appState.notify(
-                    icon: "hands.clap.fill", colorHex: 0xFF3B6B,
+                    icon: "hands.clap.fill", colorHex: AppNotification.accent,
                     title: String(localized: "Nouveaux encouragements"),
                     text: Pluriel.choisir(gained,
                         String(localized: "Quelqu'un a applaudi ta séance."),
@@ -422,7 +422,7 @@ final class ClubStore {
             if item.commentsCount > seen {
                 let gained = item.commentsCount - seen
                 appState.notify(
-                    icon: "bubble.left.fill", colorHex: 0xFF3B6B,
+                    icon: "bubble.left.fill", colorHex: AppNotification.accent,
                     title: String(localized: "Nouveaux commentaires"),
                     text: Pluriel.choisir(gained,
                         String(localized: "Quelqu'un a commenté ta séance."),

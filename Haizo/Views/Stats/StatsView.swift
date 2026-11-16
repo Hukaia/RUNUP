@@ -722,7 +722,11 @@ struct StatsView: View {
                 // derrière elle dans tous les cas, parce qu'au milieu d'un graphique
                 // aucune position n'est à l'abri d'un trait qui passe.
                 let label = context.resolve(
-                    Text("RECORD").font(RUFont.sans(.micro, weight: .bold)).foregroundColor(RUColor.limeSombre)
+                    // L'ACCENT, PAS LE LIME. Le lime de la nuit était là pour dire « le
+                    // meilleur » ; mais la courbe elle-même est peinte à l'accent, et un
+                    // sommet qui change de couleur se lit comme une autre donnée. Il garde
+                    // l'encre de la nuit — voir le commentaire de `courbeDAllure`.
+                    Text("RECORD").font(RUFont.sans(.micro, weight: .bold)).foregroundColor(RUColor.accentDeLaNuit)
                 )
                 let labelSize = label.measure(in: size)
                 let fitsAbove = p.y - 14 - labelSize.height / 2 >= 1
@@ -993,8 +997,13 @@ struct StatsView: View {
                          title: "Charge d'entraînement",
                          subtitle: "Sur 8 semaines") {
                 if let ratio = acuteChronicRatio(bars) {
+                    // L'AMBRE RESTE, LE TURQUOISE PART. L'ambre d'une charge trop haute DIT
+                    // quelque chose — c'est un avertissement, et c'est le seul emploi de cette
+                    // couleur qui vaille. « Zone optimale » en turquoise ne disait rien : une
+                    // charge juste est l'état normal, et l'état normal n'a pas de couleur.
                     StatChip(text: loadZoneLabel(ratio),
-                              color: TrainingLoad.zone(for: ratio) == .high ? RUColor.amber : RUColor.cyan)
+                              color: TrainingLoad.zone(for: ratio) == .high ? RUColor.amber
+                                                                            : RUColor.text2)
                 }
             }
             if runs.isEmpty {

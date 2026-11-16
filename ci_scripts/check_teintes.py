@@ -85,6 +85,47 @@ for rel, (attendu, raison) in sorted(AUTORISE.items()):
         fautes.append(f"{rel} : {n} teinte(s), {attendu} déclarée(s).\n"
                       f"    Raison inscrite : {raison}")
 
+# ── LA PALETTE PARALLÈLE DE LA CLOCHE ────────────────────────────────────────────────────────
+#
+# Le relevé du 16 novembre a trouvé NEUF couleurs de notification écrites en dur, une par site
+# d'appel : trois roses voisins — dont deux qui n'étaient pas l'accent — deux verts, un orange,
+# un violet, un turquoise et un ambre. Personne ne les avait choisies ensemble.
+#
+# C'est le même défaut que les teintes d'en-tête ci-dessus, dans un autre coin de l'app : une
+# couleur posée au moment où on écrit la ligne, qui ne s'accorde avec rien et ne dit rien. Et il
+# était plus difficile à voir, parce qu'une notification ne paraît qu'après un geste précis — une
+# course récupérée, une paire usée — donc jamais sur une capture.
+#
+# Ce qu'une cloche a besoin de dire tient en trois registres, et `AppNotification` les nomme :
+# `accent` pour un fait, `avertissement` pour un écart à surveiller, `incident` pour une panne
+# dont on s'est relevé.
+CLOCHE_EN_DUR = re.compile(r"colorHex:\s*(0x[0-9A-Fa-f]{6})")
+
+#: fichier:ligne → pourquoi cette couleur-là n'est pas encore passée par un nom.
+CLOCHE_TOLEREE = {
+    "0xFF6B4A": "La flamme de la série. Le brief du 15 novembre demande de la passer au GRIS, "
+                "mais `check_teintes.py` justifie nommément la flamme conditionnelle de l'écran "
+                "des stats comme porteuse de sens — « elle ne décore pas la flamme, elle dit si "
+                "la flamme est allumée ». Les deux ne peuvent pas être vraies. En attente d'un "
+                "arbitrage de Charlotte ; cette entrée existe pour que l'attente soit visible "
+                "plutôt que confondue avec un oubli.",
+}
+
+for f in sorted((RACINE / "Haizo").rglob("*.swift")):
+    for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
+        if ligne.lstrip().startswith("//"):
+            continue
+        for valeur in CLOCHE_EN_DUR.findall(ligne):
+            if valeur in CLOCHE_TOLEREE:
+                continue
+            rel = f.relative_to(RACINE).as_posix()
+            fautes.append(
+                f"{rel}:{num} : une couleur de cloche écrite en dur, {valeur}.\n"
+                f"    Passe par `AppNotification.accent`, `.avertissement` ou `.incident`.\n"
+                f"    Si ce message dit vraiment autre chose, nomme la valeur dans\n"
+                f"    `AppNotification` et explique ce qu'elle dit.\n"
+                f"    {ligne.strip()[:110]}")
+
 if fautes:
     print("Des teintes d'en-tête de carte hors de ce qui est déclaré :\n")
     for f in fautes:

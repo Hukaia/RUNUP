@@ -214,7 +214,7 @@ struct DebriefSheet: View {
                     let kmBefore = shoe.totalKm(runs: runs.filter { $0 !== run })
                     let kmAfter = kmBefore + run.distanceKm
                     if kmBefore < shoe.alertThresholdKm, kmAfter >= shoe.alertThresholdKm {
-                        appState.notify(icon: "shoe.fill", colorHex: 0xFFB03D, title: String(localized: "\(shoe.name) en fin de vie"), text: String(localized: "Cette paire dépasse \(Int(shoe.alertThresholdKm)) km — pense à la changer bientôt."))
+                        appState.notify(icon: "shoe.fill", colorHex: AppNotification.avertissement, title: String(localized: "\(shoe.name) en fin de vie"), text: String(localized: "Cette paire dépasse \(Int(shoe.alertThresholdKm)) km — pense à la changer bientôt."))
                     }
                 }
                 AdaptivePlanEngine.applyDebrief(rpe: rpe, run: run, profile: appState.profile)
@@ -267,7 +267,7 @@ struct DebriefSheet: View {
                 // notify() call sites were the rare same-day 3-goals bonus, a club kudos/
                 // comment, or a weekly plan update, so a solo runner who just isn't hitting
                 // that exact daily combo would never see anything land in the bell at all.
-                appState.notify(icon: "checkmark.circle.fill", colorHex: 0xC9FF3B, title: String(localized: "Séance terminée"), text: run.distanceKm > 0.05 ? "\(run.title) · \(distance) km · +120 XP" : "\(run.title) · +120 XP")
+                appState.notify(icon: "checkmark.circle.fill", colorHex: AppNotification.accent, title: String(localized: "Séance terminée"), text: run.distanceKm > 0.05 ? "\(run.title) · \(distance) km · +120 XP" : "\(run.title) · +120 XP")
                 // This single tap awards XP, updates the streak, and possibly a daily-goals
                 // bonus — the app's core adaptive-plan mechanic — but had zero haptic feedback,
                 // the same as tapping a settings toggle. A success tap here, and a stronger one
@@ -285,7 +285,7 @@ struct DebriefSheet: View {
                 }
                 if AdaptivePlanEngine.checkDailyGoalsBonus(appState.profile) {
                     appState.postClubActivity(type: "badge", text: String(localized: "a bouclé ses 3 objectifs du jour"), xpEarned: 120, contentKey: "daily_goals")
-                    appState.notify(icon: "sparkles", colorHex: 0xC9FF3B, title: String(localized: "Journée bouclée"), text: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
+                    appState.notify(icon: "sparkles", colorHex: AppNotification.accent, title: String(localized: "Journée bouclée"), text: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
                     NotificationService.shared.postImmediateNotification(title: String(localized: "Journée bouclée"), body: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
                     Haptics.impact(.heavy)
                 }

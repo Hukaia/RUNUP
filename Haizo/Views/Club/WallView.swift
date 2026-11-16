@@ -366,11 +366,17 @@ struct WallView: View {
                     appState.go(.club)
                 }) {
                     HStack(spacing: 10) {
+                        // LE TURQUOISE PART, ET AVEC LUI LA DERNIÈRE COULEUR DÉCORATIVE DU MUR.
+                        //
+                        // Il peignait la pastille, l'icône, le libellé du genre et son contour —
+                        // quatre emplois pour désigner une course, c'est-à-dire pour redire ce
+                        // que le drapeau à damier dit déjà. Le brief du 15 novembre le nomme.
+                        // L'encre et le gris suffisent ; la surface garde son fond neutre.
                         ZStack {
-                            Circle().fill(RUColor.cyan.opacity(0.16))
+                            Circle().fill(RUColor.card2)
                             Image(systemName: "flag.checkered")
                                 .font(RUFont.icone(.body, weight: .semibold))
-                                .foregroundColor(RUColor.cyan)
+                                .foregroundColor(RUColor.textPrimary)
                         }
                         .frame(width: 34, height: 34)
 
@@ -387,9 +393,9 @@ struct WallView: View {
                         Spacer(minLength: 0)
                         Text(genreLisible(post.kind))
                             .font(RUFont.sans(.small, weight: .semibold))
-                            .foregroundColor(RUColor.cyan)
+                            .foregroundColor(RUColor.text2)
                             .padding(.horizontal, 8).padding(.vertical, 4)
-                            .overlay(Capsule().strokeBorder(RUColor.cyan.opacity(0.4),
+                            .overlay(Capsule().strokeBorder(RUColor.line,
                                                             lineWidth: RUSpacing.hairline))
                     }
                     .contentShape(Rectangle())

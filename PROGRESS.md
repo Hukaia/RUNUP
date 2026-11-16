@@ -6716,3 +6716,58 @@ heure vérifier une arithmétique de calendrier.
 récupération et le renforcement n'apparaissent sur aucun des écrans photographiés — dont le seuil
 `#F5A524`, le plus bas des six en contraste à 2,04:1. Ce n'est pas la graine qui en décide mais
 le programme que le moteur compose pour ce profil. Chantier à part.
+
+---
+
+## 16 novembre 2026 — les couleurs décoratives, et la palette que personne ne voyait
+
+Point 2 du brief du 15 novembre, la moitié qui restait : la liste de couleurs que Charlotte avait
+relevées écran par écran.
+
+### Les cinq qu'elle avait nommées
+
+| Ce qu'elle a vu | Ce que c'était | Ce que c'est |
+| --- | --- | --- |
+| le vert « séance faite » | `lime`, et `#C9FF3B` dans la cloche | un ✓ d'accent |
+| le RECORD lime | `limeSombre` sur la courbe d'allure | l'accent de la nuit |
+| les kcal turquoise | `cyan` | l'encre |
+| « Zone optimale » turquoise | `cyan` | gris — **l'ambre de la charge haute reste** |
+| le turquoise du mur | `cyan`, quatre emplois | l'encre et le gris |
+
+**`statTile` rendait déjà `RUColor.textPrimary` par défaut.** Trois tuiles du récap la
+surchargeaient — rose, turquoise, lime, côte à côte. Il suffisait de ne pas passer l'argument.
+Le brief ne nomme que les calories ; la fréquence cardiaque et le dénivelé sont la même ligne,
+le même défaut et la même correction.
+
+Sur le mur du Club, le turquoise peignait la pastille, l'icône, le libellé du genre et son
+contour : **quatre emplois pour redire ce que le drapeau à damier dit déjà.**
+
+Et « Zone optimale » montre la bonne frontière. L'ambre d'une charge trop haute DIT quelque
+chose — c'est un avertissement. Une charge juste est l'état normal, et l'état normal n'a pas de
+couleur.
+
+### La trouvaille : la cloche avait sa propre palette
+
+**Neuf couleurs de notification écrites en dur, une par site d'appel.** Trois roses voisins —
+dont deux qui n'étaient pas l'accent — deux verts, un orange, un violet, un turquoise et un
+ambre. Personne ne les avait choisies ensemble.
+
+Le défaut était plus difficile à voir que les autres, et pour une raison structurelle : **une
+notification ne paraît qu'après un geste précis** — une course récupérée après une fermeture, une
+paire de chaussures usée — donc elle n'est sur aucune capture. Un écran qu'on ne photographie pas
+dérive sans que rien ne le dise.
+
+Ce qu'une cloche a besoin de dire tient en trois registres, désormais nommés dans
+`AppNotification` : **un fait** (`accent`), **un écart à surveiller** (`avertissement`), **une
+panne dont on s'est relevé** (`incident`). Huit sites sur neuf y passent.
+
+### Le neuvième est une question, et le garde la porte
+
+La flamme orange de la série. Le brief demande le gris ; `check_teintes.py` justifie nommément la
+flamme conditionnelle de l'écran des stats comme porteuse de sens — « elle ne décore pas la
+flamme, elle dit si la flamme est allumée ». **Les deux ne peuvent pas être vraies.**
+
+Elle est donc tolérée avec cette raison écrite, en attendant l'arbitrage de Charlotte. Une
+attente inscrite dans la CI ne se confond pas avec un oubli ; une attente non écrite, si.
+
+Le contrôle refuse toute autre couleur de cloche en dur — éprouvé en en réintroduisant une.
