@@ -7656,3 +7656,37 @@ neutre.
 
 C'est la même leçon que le reste de la journée, prise par l'autre bout : un banc se vérifie en
 regardant ce qu'il allume, pas en relisant son intention.
+
+## 16 novembre 2026 — la campagne 220 : l'icône du coach est faite, et la moitié de #41
+
+### Ce qui est vérifié
+
+| promesse | mesure |
+|---|---|
+| `plan-specifique.png` existe dans les trois langues | oui, 28 captures claires au lieu de 27 |
+| l'icône du coach est un aplat | tuile `#EEECE7`, encre `#181511`, **0 pixel rose/violet** |
+| et dans le bloc « Coach » des anneaux | dégradé de marque : 8 766 → **820 px** (le reste est le violet d'intensité du ruban) |
+| récupération `#5AA9E6` | **1 922 px** — elle n'existait sur aucune image |
+| seuil `#F5A524` | **toujours 0** |
+| rien de cassé | tracé 0 px dans la bande, nuit 0 → 285,0 pt, bande d'état vide, ruban 747 → 782 |
+
+### Pourquoi le seuil manque encore, et pourquoi je ne devine pas une deuxième fois
+
+Trois sauts menaient à la **semaine 4**, qui est la **décharge** — « À venir · Récup », le creux
+gris du graphique. Elle porte un footing récup et un footing tonique. Une semaine d'allègement ne
+porte pas de seuil : c'est sa définition.
+
+Plutôt qu'un second essai au jugé, j'ai lu le moteur. `AdaptivePlanEngine` ligne 749 pose un
+archétype **« Tempo run »** — `kind: .tempoRun`, que `SessionFamily` rend en `.tempo` — dans le
+bloc **spécifique**, et nulle part ailleurs pour ce profil. Le plafond de deux séances de qualité
+par semaine laisse la place au fractionné VMA **et** au tempo quand la semaine compte quatre
+séances, ce qui est le cas.
+
+Quatre sauts mènent à la **semaine 5**, le pic du plan — 34 km, la plus haute barre — qui est une
+semaine spécifique pleine.
+
+### Le `functional` restera absent, et c'est juste
+
+`#44506B` est le renforcement HYROX. Le profil de démonstration vise un 10 km : il n'en fait pas.
+Le photographier demanderait un second profil de démonstration, ce qui est un autre chantier —
+et pas un défaut.

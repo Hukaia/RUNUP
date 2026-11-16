@@ -341,12 +341,27 @@ final class CapturesUITests: XCTestCase {
     /// spécifique, et l'écran s'ouvre sur la semaine 1 du bloc Base, qui ne porte que de
     /// l'endurance et du fractionné léger.
     ///
-    /// Trois semaines en avant suffisent à y entrer. C'est une capture de DIAGNOSTIC : elle ne
-    /// part pas chez Apple, elle existe pour qu'on puisse juger ces deux teintes sur une image
-    /// au lieu de les croire sur parole.
+    /// C'est une capture de DIAGNOSTIC : elle ne part pas chez Apple, elle existe pour qu'on
+    /// puisse juger ces teintes sur une image au lieu de les croire sur parole.
+    ///
+    /// # Quatre et non trois, et c'est la campagne 220 qui l'a dit
+    ///
+    /// Trois sauts menaient à la SEMAINE 4, et la semaine 4 est la DÉCHARGE — « À venir · Récup »,
+    /// le creux gris du graphique. Elle a bien livré la récupération `#5AA9E6`, 1922 pixels, une
+    /// teinte qui n'existait sur aucune image jusque-là. Mais une semaine d'allègement ne porte
+    /// pas de seuil, et `#F5A524` est resté à zéro.
+    ///
+    /// Le moteur a tranché la question plutôt qu'un second essai : `AdaptivePlanEngine` ligne 749
+    /// pose un archétype « Tempo run » — `kind: .tempoRun`, que `SessionFamily` rend en `.tempo` —
+    /// dans le bloc SPÉCIFIQUE, et nulle part ailleurs pour ce profil. Le plafond de deux séances
+    /// de qualité par semaine laisse la place au fractionné VMA ET au tempo quand la semaine
+    /// compte quatre séances, ce qui est le cas ici.
+    ///
+    /// Quatre sauts mènent donc à la semaine 5, le pic du plan — 34 km, la plus haute barre du
+    /// graphique — qui est une semaine spécifique pleine.
     func test37PlanSpecifique() {
         prendre(rang: 37, ecran: "plan", nom: "plan-specifique", diagnostic: true,
-                semainesEnAvant: 3)
+                semainesEnAvant: 4)
     }
 
     func test23StatsGrandTexte() throws {
