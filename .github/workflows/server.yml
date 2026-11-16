@@ -11,7 +11,7 @@
 #
 # ─── ET CES TESTS NE SONT PAS UNE BARRIÈRE : LA POUSSÉE EST DÉJÀ EN LIGNE ─────────────────────
 #
-# Vercel déploie la branche de travail `claude/haizo-ios-swiftui-app-5b1yv6` EN PRODUCTION, à
+# Vercel déploie la branche de travail `claude/runup-ios-swiftui-app-5b1yv6` EN PRODUCTION, à
 # chaque commit — douze déploiements « Production » le 7 novembre 2026, un par commit, enregistrés
 # par Vercel sur les déploiements GitHub du dépôt. Il n'y a pas de préproduction, et ce workflow
 # tourne PENDANT que le déploiement se fait, pas avant.

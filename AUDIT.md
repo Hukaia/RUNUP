@@ -1,6 +1,6 @@
 # Phase 1 — état des lieux
 
-Relevé le 9 novembre 2026, sur `claude/haizo-ios-swiftui-app-5b1yv6` (la branche qui EST la
+Relevé le 9 novembre 2026, sur `claude/runup-ios-swiftui-app-5b1yv6` (la branche qui EST la
 production Vercel et la source des builds TestFlight).
 
 **Rien n'a été modifié.** Tout ce qui suit est mesuré, pas estimé. Quand je n'ai pas pu mesurer,

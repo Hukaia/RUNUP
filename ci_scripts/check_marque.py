@@ -68,6 +68,14 @@ TOLERES = [
      "d'abonnement `.plus.monthly` et `.plus.yearly`. Chez Apple, un identifiant différent est "
      "une app différente : nouvelle fiche, zéro avis, aucune mise à jour pour qui a déjà l'app, "
      "et les abonnements en cours cessent d'être reconnus."),
+    ("claude/runup-ios-swiftui-app-5b1yv6",
+     "LA BRANCHE DE TRAVAIL, ET C'EST CETTE LISTE QUI L'A OUBLIÉE. Elle n'y était pas le "
+     "16 novembre : le balayage l'a donc renommée dans `testflight.yml`, vers une branche qui "
+     "n'existe pas, et le workflow a cessé de partir EN SILENCE pendant douze commits — avec ses "
+     "122 appels de gardes et la seule build installable sur un téléphone. Un nom de branche est "
+     "une adresse, exactement comme l'identifiant de paquet et le domaine juste à côté : personne "
+     "ne le voit, et le changer coûte une panne. `check_branche.py` le compare maintenant à la "
+     "vraie branche, puisqu'un renommage cohérent partout est cohérent ET faux."),
     ("group.com.hicsuntco.runup",
      "Le groupe applicatif, seul canal par lequel le widget et la montre lisent les données de "
      "l'app. Le renommer les vide."),

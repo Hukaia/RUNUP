@@ -41,7 +41,7 @@ n'apparaît, l'avant/après est écrit ici, et les trois langues ont été véri
 | Que faire des neuf commits de `claude/running-club-finance-wwuq46` | Mesurés le 9 novembre : ni sur `main` ni sur la branche de travail. Deux idées en ont été reprises (chantiers 16 et 17). Restent une direction artistique concurrente — **Oswald** en fonte d'affichage, quand la branche de travail a tranché pour Inter — et des retouches de profil dont l'équivalent existe. Rien ne presse ; la branche ne se supprime pas tant que ce n'est pas tranché. |
 | Que faire de `ef3ad89`, sur `claude/new-session-otcd8z` | « La lecture des agrégats rentre dans `api/events.js` : douze fonctions, pas treize ». Quelqu'un s'est battu contre le même plafond Vercel, sur une autre branche, pour une autre fonctionnalité. Le code n'est nulle part ailleurs. |
 | `main` et la branche de travail n'ont en commun que le commit initial | 853 commits d'un côté, 50 de l'autre, aucune fusion depuis le 13 juillet. Ça n'empêche rien, sauf pour `privacy.html` : la page dont l'adresse est sur la fiche App Store est servie par GitHub Pages **depuis `main`**, donc mise à jour à la main. `check_politique.py` compare la page publiée en ligne au dépôt. |
-| Cette branche doit-elle rester la production ? | Elle l'est, confirmé dans les réglages Vercel le 7 novembre : `Settings → Environments → Production → Branch Tracking` porte `claude/haizo-ios-swiftui-app-5b1yv6`. Donc aucune relecture, aucune préproduction. Les aperçus, eux, sont maintenant éprouvables — voir le chantier 11. |
+| Cette branche doit-elle rester la production ? | Elle l'est, confirmé dans les réglages Vercel le 7 novembre : `Settings → Environments → Production → Branch Tracking` porte `claude/runup-ios-swiftui-app-5b1yv6`. Donc aucune relecture, aucune préproduction. Les aperçus, eux, sont maintenant éprouvables — voir le chantier 11. |
 
 
 ## Au passage
@@ -7281,3 +7281,143 @@ Et le paramètre `baisseProgrammee` de `WeekKmSummary` est devenu du code que de
 calculent et que personne ne lit : il part, comme les trois booléens `surLaNuit` ce matin.
 `AdaptivePlanEngine.baisseProgrammee` reste, avec ses cas — le jour où une **phrase** dira la
 chose sous la barre plutôt qu'une couleur, elle est là.
+
+## 16 novembre 2026 — mon garde des capitales avait deux heures, et il avait un trou
+
+J'ai écrit `check_majuscules.py` le matin même pour refuser un libellé tout en capitales, et je
+l'ai cru fini parce que ses dix cas passaient. Il cherchait un littéral avec
+`"([^"\\]{2,60})"` — une paire de guillemets sans guillemet ni échappée entre les deux.
+
+### Ce motif ne peut pas voir un littéral qui contient une interpolation
+
+Sur `statTile("\(n)", String(localized: "GARDÉ"))`, la classe exclut `\`, donc le premier
+littéral ne s'apparie pas. Le moteur repart, trouve le guillemet **fermant** de `"\(n)"` et
+l'apparie avec le guillemet **ouvrant** de `"GARDÉ"`. Ce qu'il lit entre les deux,
+`, String(localized: `, n'est pas en capitales. Et « GARDÉ » n'est dans aucune paire.
+
+Un scanner de caractères remplace le motif : il traverse les interpolations, descend dedans, et
+rend chaque littéral séparément. **Vingt-et-un libellés sont sortis de ce trou**, dont douze clés
+de catalogue — et cinq d'entre elles sont des titres d'écran de l'embarquement : « COMMENT TU
+T'APPELLES ? », « POURQUOI TU COURS ? », « COURS COMME SI TU AVAIS UN COACH », « ON CONSTRUIT TON
+PROGRAMME », « ON PEUT COMPTER TES PAS DANS L'APP ? ». Les quatre premiers écrans que voit
+quelqu'un qui installe l'app. Le garde les regardait sans les voir.
+
+### Le quatrième garde de la journée à ne connaître qu'une orthographe
+
+Après le dégradé peint dans un `Canvas`, le 96 du compte à rebours écrit `display(horsEchelle:)`
+au lieu de `displayStyle(horsEchelle:)`, et le couple chiffre+unité caché par `metaStyle`. Les
+trois premiers étaient des gardes anciens. Celui-ci, je venais de l'écrire.
+
+La leçon ne porte donc pas sur l'âge du code : **un garde se vérifie en changeant l'écriture
+qu'il surveille, pas en le relisant.** Je l'ai relu trois fois ce matin-là.
+
+Cinq cas nouveaux le disent maintenant, dont celui qui aurait suffi : un littéral derrière une
+interpolation, un littéral dedans, une échappée ordinaire, un sigle dans une phrase, un libellé
+qui n'est **que** des capitales.
+
+Et un cas périmé réparé : `"5 KM"` servait de témoin positif à « un mot d'une seule lettre n'est
+pas un libellé », mais « KM » est entré dans la liste des sigles — le témoin passait, et
+l'assertion lisait un indice dans une liste vide. **Un témoin qui devient légitime ne protège
+plus rien.**
+
+### Deux lignes Swift cassées, et la campagne 216 est tombée en 84 secondes
+
+Mon remplacement de « KM » par « km » était textuel, et il a produit
+`String(localized: verbatim: "km")` et `statTile(…, verbatim: "km", index: 0)`. Un remplacement
+qui ne regarde pas ce qu'il y a autour du mot écrit du Swift qui ne compile pas, et **aucun garde
+local ne compile le Swift** : seule la campagne le fait.
+
+### Point 2 du brief, le reste
+
+Les emplois directs de `lime`, `amber` et `cyan` passent de **71 à 29**. Ce qui reste a trois
+familles, chacune déclarée dans `check_teintes.py` avec sa raison :
+
+- **les avertissements**, où l'ambre veut dire « moins bien » ;
+- **le repère de discipline Vélo**, turquoise par convention et pas par décoration ;
+- **deux palettes qui attendent une décision de Charlotte** — les couleurs des badges de club
+  (`ClubBadgeCatalog`) et celles des types d'objectif (`GoalType.tint`). Elles ne sont ni
+  décoratives ni sémantiques tant qu'on n'a pas tranché ce qu'elles distinguent.
+
+Le garde compte dans les deux sens : le jour où elle décide, c'est lui qui dira que la liste doit
+se vider.
+
+### Un seul commit pour deux chantiers, et c'est assumé
+
+Les capitales et les teintes tombent sur les mêmes lignes : **trente-quatre des quatre-vingts
+blocs** du diff portent les deux. Les séparer demanderait de couper à l'intérieur des blocs, à la
+main, pour fabriquer un état intermédiaire que la barrière n'aurait jamais vu. Une histoire plus
+lisible ne vaut pas un commit non vérifié.
+
+## 16 novembre 2026 — un renommage de marque a éteint TestFlight, en silence, pendant douze commits
+
+En lisant les déclencheurs pour une autre raison, j'ai vu que `testflight.yml` part sur
+`claude/haizo-ios-swiftui-app-5b1yv6`. **Cette branche n'existe pas.** Le dépôt en a quatre, et le
+développement se fait sur `claude/runup-ios-swiftui-app-5b1yv6`, la seule que Charlotte ait
+nommée.
+
+Le renommage de la marque (`f4dcc9b`) avait changé la ligne. Depuis, **douze commits** — tout le
+brief de direction artistique, points 1 à 5 — et pas une exécution. La dernière build TestFlight
+date de ce matin 9 h 11.
+
+### Ce que ça a coûté, et ce que ça n'a pas coûté
+
+- **Aucune build installable sur un téléphone depuis 9 h 11.** C'est le vrai prix : Charlotte ne
+  peut essayer aucun des écrans refaits aujourd'hui.
+- **Les 122 appels de gardes de `testflight.yml` ne tournaient plus en CI.** La barrière locale
+  (`tout.sh`) les lance tous, et je l'ai passée avant chaque commit — le travail n'est donc pas
+  non vérifié. Mais il ne l'était plus que sur ma machine.
+- **`check_declencheur.py` et `check_cablage.py` se sont tus avec lui**, alors que leur objet est
+  précisément de dire qu'un garde ne tourne pas. Ils étaient câblés dans le fichier éteint.
+- **La compilation Swift, elle, a continué** : `captures.yml` construit pour un simulateur, et
+  c'est ce qui a fait tomber la campagne 216 en 84 secondes. Rien de cassé n'est passé.
+
+### Un renommage de marque a touché une adresse
+
+Un nom de branche, un identifiant de paquet, un domaine ne sont pas des mots de marque : ce sont
+des endroits où quelque chose se trouve. Charlotte l'avait tranché le même jour pour les deux
+autres — le paquet reste `com.hicsuntco.runup`, le domaine reste `runup-nu.vercel.app` — et la
+branche a glissé **parce qu'elle n'était pas dans la question**.
+
+Et `check_marque.py`, le garde écrit pour ce renommage, décrit cette catégorie mot pour mot :
+« chacun est un identifiant qu'une personne ne voit jamais, et dont le renommage coûte une
+panne ». Dix identifiants y figuraient. La branche n'y était pas, donc le balayage l'a emportée.
+Elle y est maintenant, onzième, avec son histoire.
+
+### Un relevé daté réécrit à l'aveugle ne relève plus rien
+
+Quatre documents nommaient la branche, et pas comme un mot de marque :
+
+> `PROGRESS.md` : « confirmé dans les réglages Vercel le 7 novembre : `Branch Tracking` porte
+> `claude/haizo-ios-swiftui-app-5b1yv6` »
+
+Le 7 novembre, cette branche n'existait pas. C'était une **observation datée**, et le renommage
+l'a rendue fausse — même chose dans `IOS_SETUP.md`, `PHASE2.md` et `AUDIT.md`. Restaurées.
+
+### Le garde, et pourquoi il ne pouvait pas vivre dans `testflight.yml`
+
+**GitHub lit le bloc `on:` du fichier tel qu'il est sur le commit poussé.** Un workflow dont le
+déclencheur vient d'être cassé ne part pas, donc ne peut pas se plaindre de lui-même. C'est
+exactement ce qui s'est produit, et ça exclut `testflight.yml` comme hôte.
+
+`captures.yml` part bien sur toutes les branches, mais sa liste de chemins ne couvre pas les
+autres workflows — et l'y ajouter ferait payer soixante minutes de machine macOS à chaque virgule
+de CI.
+
+D'où **`gardes.yml`** : `branches: "**"`, donc aucun nom de branche à casser ; des chemins
+étroits, donc il ne part que quand le câblage change ; du Python sur Ubuntu, donc quelques
+secondes. Il lance `check_branche.py`, `check_declencheur.py` et `check_cablage.py` — les trois
+contrôles qui portent sur la chaîne et non sur l'app, dont deux étaient dans le fichier éteint.
+
+### Et le cas qui compte le plus
+
+**Un contrôle de cohérence n'aurait rien vu.** Le renommage a changé les sept occurrences de la
+même façon : elles étaient toutes d'accord entre elles, et toutes fausses. Vérifier qu'un nom est
+écrit partout pareil ne dit rien du tout.
+
+`check_branche.py` compare donc au **réel** — `GITHUB_REF_NAME` en CI, `git branch --show-current`
+en local — et refuse plutôt que de se taire si la branche est introuvable. Treize cas, dont « un
+renommage cohérent partout passe quand même », qui est le défaut d'origine écrit en banc.
+
+Il s'est attrapé lui-même en chemin : la raison que j'écrivais pour dispenser `RELEASE.md` nommait
+les deux autres branches, et il a aussitôt compté quatre citations là où j'en déclarais deux.
+C'est exactement son travail.

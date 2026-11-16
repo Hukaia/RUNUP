@@ -1,7 +1,7 @@
 # Phase 2 — la liste unique des chantiers
 
 Établie le 9 novembre 2026, à partir de `AUDIT.md` et de mesures refaites aujourd'hui sur
-`claude/haizo-ios-swiftui-app-5b1yv6`.
+`claude/runup-ios-swiftui-app-5b1yv6`.
 
 **Rien n'est commencé.** Le brief dit : j'attends ta validation avant d'écrire du code. Cette
 liste est donc à lire, à trancher et à renvoyer — pas à exécuter.

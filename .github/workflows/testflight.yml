@@ -69,7 +69,7 @@ on:
 
   push:
     branches:
-      - claude/haizo-ios-swiftui-app-5b1yv6
+      - claude/runup-ios-swiftui-app-5b1yv6
     # Rien de ce qui suit ne peut changer le binaire iOS d'un octet : le déclencher pour un
     # correctif d'API ou une phrase de politique de confidentialité, ce serait payer une machine
     # macOS pour reconstruire à l'identique.

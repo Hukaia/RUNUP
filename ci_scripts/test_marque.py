@@ -136,6 +136,18 @@ def _():
     assert ck.SUR_LE_SUJET == {"ci_scripts/check_marque.py", "ci_scripts/test_marque.py"}
 
 
+@cas_test("LA BRANCHE DE TRAVAIL EST TOLÉRÉE — c'est son absence qui a éteint TestFlight")
+def _():
+    # Elle n'était pas dans la liste le 16 novembre. Le balayage l'a donc renommée dans
+    # `testflight.yml`, vers une branche inexistante, et le workflow s'est tu douze commits.
+    # Ce cas rougit le jour où quelqu'un retire l'entrée en croyant nettoyer.
+    mots = [m for m, _ in ck.TOLERES]
+    assert "claude/runup-ios-swiftui-app-5b1yv6" in mots, mots
+    # Et le contrôle ne doit plus la voir comme un reste, où qu'elle soit écrite.
+    assert ck.restes("on:\n  push:\n    branches:\n"
+                     "      - claude/runup-ios-swiftui-app-5b1yv6\n") == []
+
+
 @cas_test("CHAQUE TOLÉRANCE PORTE UNE RAISON ÉCRITE, pas seulement un motif")
 def _():
     for mot, raison in ck.TOLERES:

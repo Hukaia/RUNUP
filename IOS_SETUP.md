@@ -246,7 +246,7 @@ devrait y être automatiquement, générée depuis `project.yml`) et relance le 
    (nouvelles dépendances : `@neondatabase/serverless`, `bcryptjs`, `jose`).
 
    > **La branche connectée est une branche de travail, et elle est la PRODUCTION.** Au
-   > 7 novembre 2026, c'est `claude/haizo-ios-swiftui-app-5b1yv6` : Vercel enregistre un
+   > 7 novembre 2026, c'est `claude/runup-ios-swiftui-app-5b1yv6` : Vercel enregistre un
    > déploiement « Production » par commit — douze ce jour-là. `main` n'a pas bougé depuis le
    > 24 octobre et ne contient même pas `api/races/`. Donc : pas de préproduction, pas de
    > relecture, et une modification de `api/`, `lib/` ou `package.json` est EN LIGNE dans la

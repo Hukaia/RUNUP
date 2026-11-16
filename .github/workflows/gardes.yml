@@ -1,0 +1,73 @@
+# Les gardes qui surveillent le câblage de la chaîne elle-même.
+#
+# ─── POURQUOI CE WORKFLOW EXISTE, ET POURQUOI IL EST SÉPARÉ ─────────────────────────────────────
+#
+# Le 16 novembre 2026, le renommage de la marque (`f4dcc9b`) a changé la branche de
+# `testflight.yml` pour une branche QUI N'EXISTE PAS. Le workflow a cessé de partir pendant
+# douze commits, en silence :
+# GitHub ne signale pas un déclencheur qui ne correspond à rien — il n'y a pas d'exécution, donc
+# pas de rouge. Et ce fichier porte 122 appels de gardes.
+#
+# ON NE PEUT PAS CONFIER CETTE SURVEILLANCE À `testflight.yml`. GitHub lit le bloc `on:` du fichier
+# TEL QU'IL EST SUR LE COMMIT POUSSÉ : un fichier dont le déclencheur vient d'être cassé ne part
+# pas, donc ne peut pas se plaindre de lui-même. C'est exactement ce qui s'est produit.
+#
+# Il ne peut pas non plus vivre dans `captures.yml` : celui-là part sur toutes les branches, mais
+# sa liste de chemins ne couvre pas les autres workflows — et l'y ajouter ferait payer soixante
+# minutes de machine macOS à chaque virgule changée dans un fichier de CI.
+#
+# D'où ce workflow-ci : `branches: "**"`, donc aucun nom de branche à casser ; des chemins étroits,
+# donc il ne part que quand le câblage change ; et du Python sur Ubuntu, donc quelques secondes.
+#
+# ─── CE QU'IL LANCE ─────────────────────────────────────────────────────────────────────────────
+#
+# Les trois contrôles qui portent sur la CHAÎNE et non sur l'app :
+#
+#   · `check_branche.py`   — tout nom de branche écrit dans le dépôt est la branche courante ;
+#   · `check_cablage.py`   — chaque garde et chaque fichier de cas est nommé par un workflow ;
+#   · `check_declencheur.py` — la liste de chemins de `captures.yml` couvre tout ce qui a un visage.
+#
+# Les deux derniers étaient câblés dans `testflight.yml` et se sont donc tus avec lui. Ils y
+# restent — un garde lancé deux fois ne coûte rien — mais ils ont maintenant un chemin qui ne
+# dépend plus d'un nom de branche.
+
+name: Gardes du câblage
+
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      # Tout changement de workflow : c'est là que le câblage se casse.
+      - ".github/workflows/**"
+      # Et les scripts lancés ici, pour que les modifier relance ce qui les exécute — la seconde
+      # règle de `check_declencheur.py`, appliquée à ce fichier-ci.
+      - "ci_scripts/check_branche.py"
+      - "ci_scripts/test_branche.py"
+      - "ci_scripts/check_cablage.py"
+      - "ci_scripts/check_declencheur.py"
+      - "ci_scripts/test_declencheur.py"
+  workflow_dispatch:
+
+jobs:
+  cablage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Les cas du contrôle de branche
+        run: cd ci_scripts && python3 test_branche.py
+
+      # `GITHUB_REF_NAME` est la seule source juste ici : le checkout est détaché, donc
+      # `git branch --show-current` ne rend rien.
+      - name: Tout nom de branche du dépôt est la branche courante
+        run: python3 ci_scripts/check_branche.py
+
+      - name: Les cas du contrôle de déclencheur
+        run: cd ci_scripts && python3 test_declencheur.py
+
+      - name: Le déclencheur des captures couvre tout ce qui a un visage
+        run: python3 ci_scripts/check_declencheur.py
+
+      - name: Chaque garde est lancé par un workflow
+        run: python3 ci_scripts/check_cablage.py
