@@ -190,7 +190,10 @@ struct DailyGoalsWidgetView: View {
     /// `check_encres.py` compare les deux à chaque construction.
     private var textPrimary: Color { isLight ? Color(hex: 0x181511) : .white }
     private var text2: Color { isLight ? .black.opacity(0.45) : .white.opacity(0.42) }
-    private var flameColor: Color { snapshot.streak > 0 ? Color(hex: 0xFFB03D) : text2 }
+    /// Allumée ou éteinte, dans l'accent et le gris — le miroir de l'écran des stats depuis le
+    /// 16 novembre. C'était un ambre écrit en dur, c'est-à-dire une troisième couleur, dans la
+    /// seule surface de l'app qu'on voit sans l'ouvrir.
+    private var flameColor: Color { snapshot.streak > 0 ? colors[0] : text2 }
 
     /// Les objectifs réellement en jeu : deux un jour de repos, trois sinon. L'anneau se partage
     /// alors en deux arcs plutôt que d'en dessiner un troisième qui ne pourra jamais se remplir.

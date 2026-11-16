@@ -101,15 +101,18 @@ for rel, (attendu, raison) in sorted(AUTORISE.items()):
 # dont on s'est relevé.
 CLOCHE_EN_DUR = re.compile(r"colorHex:\s*(0x[0-9A-Fa-f]{6})")
 
-#: fichier:ligne → pourquoi cette couleur-là n'est pas encore passée par un nom.
-CLOCHE_TOLEREE = {
-    "0xFF6B4A": "La flamme de la série. Le brief du 15 novembre demande de la passer au GRIS, "
-                "mais `check_teintes.py` justifie nommément la flamme conditionnelle de l'écran "
-                "des stats comme porteuse de sens — « elle ne décore pas la flamme, elle dit si "
-                "la flamme est allumée ». Les deux ne peuvent pas être vraies. En attente d'un "
-                "arbitrage de Charlotte ; cette entrée existe pour que l'attente soit visible "
-                "plutôt que confondue avec un oubli.",
-}
+#: valeur → pourquoi cette couleur-là n'est pas encore passée par un nom.
+#:
+#: VIDE, ET C'EST LE BON ÉTAT. Elle a porté une entrée pendant une heure, le 16 novembre : la
+#: flamme de la série, `0xFF6B4A`, parce que le brief demandait le gris quand ce fichier
+#: justifiait la couleur comme porteuse de sens. La contradiction était réelle et l'entrée
+#: servait à la rendre visible plutôt qu'à la cacher.
+#:
+#: Elle a été tranchée par une synthèse, pas par un camp : ce qui devait partir était une
+#: TROISIÈME couleur dans une app qui n'en a qu'une, pas le fait qu'allumée et éteinte se
+#: distinguent. La flamme est à l'accent quand la série court, au gris quand elle est cassée.
+#: L'exception part donc avec la question qui la justifiait.
+CLOCHE_TOLEREE = {}
 
 for f in sorted((RACINE / "Haizo").rglob("*.swift")):
     for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):

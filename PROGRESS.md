@@ -6771,3 +6771,40 @@ Elle est donc tolérée avec cette raison écrite, en attendant l'arbitrage de C
 attente inscrite dans la CI ne se confond pas avec un oubli ; une attente non écrite, si.
 
 Le contrôle refuse toute autre couleur de cloche en dur — éprouvé en en réintroduisant une.
+
+---
+
+## 16 novembre 2026 — la flamme et le ▼, tranchés par une synthèse
+
+Les deux dernières couleurs du point 2, celles où le brief et le code se contredisaient.
+
+### La flamme : les deux avaient raison sur leur moitié
+
+Le brief du 15 novembre demandait de retirer la flamme colorée. `check_teintes.py` la défendait
+nommément — « la seule teinte conditionnelle de l'app, et c'est ce qui la justifie : elle ne
+décore pas la flamme, elle dit si la flamme est allumée ».
+
+Ce qui devait partir n'était pas la distinction, c'était **une troisième couleur dans une app qui
+n'en a qu'une**. Allumée à l'accent, éteinte au gris : la même information, sans vocabulaire
+ajouté. Le vert de l'écran des stats, l'ambre `#FFB03D` du widget et l'orange `#FF6B4A` de la
+cloche partent ensemble.
+
+Le widget compte double : c'est la seule surface de l'app qu'on voit **sans l'ouvrir**.
+
+### Le ▼ : le brief a raison, contre une décision du 14 novembre
+
+La pastille d'écart gardait son ambre, avec cette raison écrite : « l'ambre y veut dire *moins
+bien que la semaine passée* ». L'argument est exact — et c'est **précisément ce qu'on ne veut
+plus dire.** Une semaine plus courte qu'une autre n'est pas un échec : elle peut être une
+semaine de récupération, que le programme a lui-même demandée.
+
+Les flèches `▲` et `▼` portent l'information en entier, et dans une forme qui ne dépend ni du
+daltonisme ni du contraste. La couleur n'ajoutait qu'un jugement.
+
+### L'exception du garde part avec la question
+
+`CLOCHE_TOLEREE` a porté une entrée pendant une heure. Elle existait pour rendre la contradiction
+**visible** plutôt que de la laisser passer pour un oubli. La contradiction est tranchée, l'entrée
+n'a plus d'objet, et le commentaire qui la remplace raconte pourquoi elle a existé.
+
+Une attente inscrite dans la CI se referme ; une attente non écrite s'oublie.

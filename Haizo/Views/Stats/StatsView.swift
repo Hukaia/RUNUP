@@ -217,11 +217,18 @@ struct StatsView: View {
                            value: PaceModel.formatTotalDuration(totalDurationSeconds), unit: nil,
                            footnote: nil, progress: nil,
                            serie: parSemaine(runsOnFoot) { Double($0.durationSeconds) })
-                // La seule teinte conditionnelle de l'app, et c'est ce qui la justifie : verte
-                // quand la série court, grise quand elle est cassée. Elle ne décore pas la
-                // flamme, elle dit si la flamme est allumée.
+                // LA SEULE TEINTE CONDITIONNELLE DE L'APP, et c'est ce qui la justifie : elle
+                // ne décore pas la flamme, elle dit si la flamme est ALLUMÉE.
+                //
+                // ELLE PASSE DU VERT À L'ACCENT le 16 novembre, et c'est la synthèse de deux
+                // exigences qui paraissaient s'exclure. Le brief du 15 demande de retirer la
+                // flamme colorée ; ce commentaire-ci défendait la couleur comme porteuse de
+                // sens. Les deux ont raison sur leur moitié : ce qui devait partir, c'est une
+                // TROISIÈME couleur dans une app qui n'en a qu'une — pas le fait qu'allumée et
+                // éteinte se distinguent. L'accent et le gris le distinguent aussi bien, et
+                // sans ajouter de vocabulaire.
                 RUStatTile(icon: "flame.fill",
-                           tint: profile.streak > 0 ? RUColor.lime : RUColor.text3,
+                           tint: profile.streak > 0 ? RUColor.rose : RUColor.text3,
                            title: "Série",
                            value: "\(profile.streak)",
                            unit: Pluriel.choisir(profile.streak, "jour", "jours"),
@@ -647,8 +654,9 @@ struct StatsView: View {
                     // pour les fonds qui ne sont pas ceux du thème ; c'en est un.
                     StatChip(
                         text: delta >= 0 ? "▲ \(Int(delta.rounded()))″/km" : "▼ \(Int(-delta.rounded()))″/km",
-                        color: surLaNuit ? (delta >= 0 ? RUColor.limeSombre : RUColor.amberSombre)
-                                         : (delta >= 0 ? RUColor.lime : RUColor.amber),
+                        // Même raison qu'au bilan de la semaine : la flèche porte le sens, la
+                        // couleur ne faisait que le juger.
+                        color: surLaNuit ? RUColor.surLaNuit2 : RUColor.text2,
                         background: surLaNuit ? RUColor.surLaNuit.opacity(0.10) : nil
                     )
                 }

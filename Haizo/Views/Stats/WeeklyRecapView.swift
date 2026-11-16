@@ -143,7 +143,20 @@ struct WeeklyRecapView: View {
                          // pourcentage. Vu en regardant la capture de l'écran, pas en relisant
                          // le code.
                          chip: bilan.kilometresSemainePrecedente > 0 ? (deltaKm >= 0 ? "▲ \(String(format: "%.1f", locale: Locale.current, deltaKm)) km" : "▼ \(String(format: "%.1f", locale: Locale.current, -deltaKm)) km") : nil,
-                         chipColor: deltaKm >= 0 ? RUColor.lime : RUColor.amber)
+                         // LA FLÈCHE DIT DÉJÀ LE SENS, la couleur le redisait.
+                         //
+                         // « ▲ » et « ▼ » portent l'information en entier, et dans une forme
+                         // qui ne dépend ni du daltonisme ni du contraste. Le vert et l'ambre
+                         // n'ajoutaient qu'un jugement : « bien », « moins bien ». Le brief du
+                         // 15 novembre les retire, et ils ne manquent à rien.
+                         //
+                         // CE QUI AVAIT ÉTÉ DÉCIDÉ LE CONTRAIRE, ET POURQUOI ON Y REVIENT :
+                         // le 14 novembre, cette ligne gardait son ambre parce que « l'ambre y
+                         // veut dire moins bien que la semaine passée ». C'est vrai — et c'est
+                         // précisément ce qu'on ne veut plus dire. Une semaine plus courte
+                         // qu'une autre n'est pas un échec ; elle peut être une semaine de
+                         // récupération, que le programme a lui-même demandée.
+                         chipColor: RUColor.text2)
                 // `.allDisciplines` ET NON `weekRuns` NU. Le compte porte bien sur tout — une
                 // séance est une séance, qu'elle se courre, se roule ou se nage — mais
                 // `RunRecordDiscipline` demande que « toutes » soit une décision ÉCRITE et non

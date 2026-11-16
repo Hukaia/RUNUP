@@ -280,7 +280,7 @@ struct DebriefSheet: View {
                     let suite = AdaptivePlanEngine.palierSuivant(apres: streak)
                         .map { String(localized: "Prochain palier : \($0) jours.") }
                         ?? String(localized: "Un an de suite. Il n'y a pas de palier au-delà.")
-                    appState.notify(icon: "flame.fill", colorHex: 0xFF6B4A, title: String(localized: "Série de \(streak) jours"), text: suite)
+                    appState.notify(icon: "flame.fill", colorHex: AppNotification.accent, title: String(localized: "Série de \(streak) jours"), text: suite)
                     Haptics.impact(.heavy)
                 }
                 if AdaptivePlanEngine.checkDailyGoalsBonus(appState.profile) {
