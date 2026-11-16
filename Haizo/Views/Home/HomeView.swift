@@ -40,18 +40,6 @@ struct HomeView: View {
         )
     }
 
-    /// La hauteur du bandeau de la dernière sortie, qui suit le réglage de taille du texte.
-    ///
-    /// LE CADRE SUIT LE TEXTE, PARCE QUE C'EST LE TEXTE QUI EST DESSUS. Le bandeau est un tracé
-    /// pleine image avec la date et les chiffres posés en blanc par-dessus, et un voile dégradé
-    /// qui garantit la lisibilité. À 150 points fixes, au deuxième cran d'accessibilité, les
-    /// chiffres montaient au-delà du voile et le trait rose leur passait en travers — vu sur la
-    /// capture en grand texte. En grandissant avec eux, le bandeau garde la proportion pour
-    /// laquelle le voile a été réglé.
-    ///
-    /// Plafonné à 300, soit 2,0 × — le même plafond que la typographie, et pour la même raison :
-    /// au-delà, personne n'a regardé.
-    @ScaledMetric(relativeTo: .body) private var hauteurDeLaTrace: CGFloat = 150
 
     private var profile: UserProfile { appState.profile }
     private var isFreeRun: Bool { profile.programPhase == .freerun }
@@ -78,183 +66,128 @@ struct HomeView: View {
     private var mainContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                HeaderView(
-                    // La date du jour, pas "Semaine 4/9" : la carte programme juste en dessous
-                    // affiche déjà la semaine ET le bloc, donc l'eyebrow ne faisait que répéter
-                    // l'information la plus proche à l'écran. Une date ancre le prénom dans le
-                    // vrai jour, comme la maquette (`.greet` au-dessus de `.greet-name`).
+                EnTeteDAccueil(courses: runs)
+
+                VStack(alignment: .leading, spacing: 12) {
+
+                    // La séance d'abord.
                     //
-                    // Le prénom SEUL, sans salutation. « Salut Charlotte » se lit une fois avec
-                    // plaisir et cent fois comme un automatisme ; le prénom seul, sous la date du
-                    // jour, dit la même chose sans faire semblant de dire bonjour.
-                    eyebrow: isFreeRun ? String(localized: "Mode course libre") : todayDateEyebrow,
-                    title: profile.name,
-                    // 32 → 26. LE PRÉNOM EST UNE SALUTATION, PAS LE CONTENU DE L'ÉCRAN.
+                    // L'ordre venait de la maquette — anneau, chiffres, séance — et la maquette a
+                    // raison sur un écran qu'on consulte. Celui-ci n'est pas consulté, il est utilisé :
+                    // on l'ouvre pour savoir ce qu'on court aujourd'hui, et c'est la seule carte qui
+                    // porte un bouton. Elle arrivait en troisième position, après deux blocs qui
+                    // regardent en arrière. Ce qui se fait passe donc avant ce qui s'est fait.
                     //
-                    // L'argument d'origine — « les écrans modernes ouvrent sur un mot posé
-                    // grand » — reste vrai, et il ne dit pas DE COMBIEN. À 32 il rendait 34,9
-                    // points : plus gros que le titre d'une page de club (26,2) et presque
-                    // aussi gros que le record collectif (36), qui est le chiffre le plus
-                    // dominant de l'app. Un prénom qu'on ne lit pas — on le sait déjà — occupait
-                    // le haut du barème.
+                    // L'anneau ne perd rien à venir en second : c'est un état, pas une action, et il
+                    // reste au-dessus de la ligne de flottaison.
+                    // Le programme entier — la séance du jour comprise — fait partie de Haizo Plus.
                     //
-                    // Le cran de titre de l'app le met à 24,0 : au-dessus de tout texte de
-                    // l'écran, et sous les deux chiffres des cartes, qui sont ce qu'on vient voir.
-                    // C'était un 26 écrit ici seulement ; le prénom n'a pas de raison d'être le
-                    // seul titre de l'app à son propre palier.
-                    titleSize: .title
-                ) {
-                    HStack(spacing: 8) {
-                        streakChip
-                        Button(action: { appState.openNotifications() }) {
-                            ZStack(alignment: .topTrailing) {
-                                Circle()
-                                    .fill(RUColor.card)
-                                    .overlay(Circle().stroke(RUColor.line, lineWidth: RUSpacing.hairline))
-                                    .frame(width: 36, height: 36)
-                                    .overlay(Image(systemName: "bell").font(RUFont.icone(.medium)).foregroundColor(RUColor.textPrimary))
-                                if unreadCount > 0 {
-                                    Circle().fill(RUColor.rose).frame(width: 8, height: 8)
-                                        .overlay(Circle().stroke(RUColor.bg, lineWidth: 1.5))
-                                }
-                            }
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(PressableStyle())
-                        .accessibilityLabel(unreadCount > 0
-                            ? String(localized: "Notifications, \(unreadCount) non lues")
-                            : String(localized: "Notifications"))
-                        // L'avatar est parti : le Profil est un onglet maintenant, ce bouton
-                        // était un second chemin vers la même destination, à côté d'une barre
-                        // d'onglets qui la montre en permanence. L'en-tête de la maquette est
-                        // d'ailleurs réduit à la date, au nom et à la pastille de série — elle
-                        // ne pose pas d'avatar ici, précisément pour cette raison.
-                        //
-                        // La cloche reste : les notifications n'ont pas d'onglet, et la maquette
-                        // ne les omet pas au sens d'une décision de les supprimer.
+                    // Sans lui, l'accueil ne devient pas vide : il redevient ce qu'il est pour qui ne
+                    // suit pas de plan. On court quand on veut, on enregistre, on garde ses anneaux
+                    // du jour et sa série. Le bouton DÉMARRER est exactement le même — verrouiller la
+                    // possibilité de courir dans une app de course n'aurait aucun sens, et c'est
+                    // précisément ce qui peuple le Club et fait vivre le fil.
+                    //
+                    // Ce qui manque est nommé et montré juste en dessous, plutôt que simplement
+                    // absent : personne ne peut vouloir un programme dont il ignore l'existence.
+                    // La séance du jour est la seule chose qui change avec l'abonnement en tête
+                    // d'écran. Tout ce qui suit est à soi — ses objectifs, sa semaine, ses chiffres —
+                    // et n'a donc aucune raison d'être derrière le verrou.
+                    if planUnlocked {
+                        sessionCard.ruRises(reduceMotion)
+                    } else {
+                        freeRunCard.ruRises(reduceMotion)
+                    }
+
+                    // LE BANDEAU DE LA DERNIÈRE SORTIE EST MONTÉ DANS L'EN-TÊTE.
+                    //
+                    // Il vivait ici, entre la séance du jour et le programme, et la note qui l'y
+                    // plaçait avait raison contre la maquette : « on ouvre l'accueil pour savoir
+                    // ce qu'on court aujourd'hui », donc ce qui SE FAIT passe avant ce qui S'EST
+                    // FAIT.
+                    //
+                    // Le brief du 15 novembre ne défait pas cet ordre, il le DÉPLACE : l'accueil
+                    // ouvre sur une image, et la séance du jour est la première carte posée
+                    // dessus. Le tracé devient le fond de l'en-tête ; la carte qui porte le
+                    // bouton reste la première chose qu'on lit SUR LA PAGE.
+                    //
+                    // Et c'est une carte de nuit en moins sur un écran qui n'en veut qu'une :
+                    // deux points de fixation n'en font aucun, règle 5 de `CarteDeNuit`.
+
+                    // L'ORDRE SUIT LES QUESTIONS QU'ON SE POSE EN OUVRANT L'APP.
+                    //
+                    // Qu'est-ce que je fais aujourd'hui (la séance) — qu'est-ce que je viens de faire
+                    // (le tracé) — où j'en suis dans mon plan (le programme) — et le reste.
+                    //
+                    // Le programme passait APRÈS les objectifs du jour, c'est-à-dire sous la ligne de
+                    // flottaison : sur la capture du 13 novembre, « Ton programme · 10 km · 47:30 »
+                    // n'apparaissait qu'en bas de l'écran, à moitié caché par la barre d'onglets.
+                    // C'est la promesse que l'app vend — un plan qui s'adapte — et c'était la seule
+                    // chose qu'on ne voyait pas en ouvrant.
+
+                    // La bande de la semaine pour tout le monde. Elle disait deux choses, et une
+                    // seule était le produit payant : CE QUI EST PRÉVU. Ce qu'on a COURU est son
+                    // propre historique. La carte montre donc les sept jours à tout le monde, et
+                    // n'ajoute le programme qu'à qui l'a — ce qui vend mieux qu'un cadenas : une
+                    // semaine à moitié remplie à côté d'une semaine dont chaque jour porte un nom
+                    // montre la forme de ce qui manque, là où une case grise s'apprend à ne plus
+                    // être vue.
+                    programWeekCard.ruRises(reduceMotion)
+
+                    ringsCard.ruRises(reduceMotion)
+
+                    // Les chiffres, pour tout le monde aussi, et cachés tant qu'il n'y a rien à
+                    // montrer : « 0 km · 0 sortie » le premier jour est une carte qui décourage.
+                    //
+                    // DE LA 3e À LA 9e SORTIE, CE N'EST PAS LA BONNE CARTE, et c'est la carte des
+                    // premiers jalons qui prend la place — voir `premiersJalons`. Les deux ensemble
+                    // diraient deux fois la même chose : avec moins de dix sorties, la fenêtre de
+                    // trente jours contient à peu près tout ce qu'on a couru.
+                    if let jalons = premiersJalons {
+                        premiersJalonsCard(jalons).ruRises(reduceMotion)
+                    }
+
+                    // LA CARTE « 30 DERNIERS JOURS » EST PARTIE.
+                    //
+                    // Quatre chiffres — distance, sorties, temps, allure — et un bouton vers l'onglet
+                    // Stats, qui est dans la barre du bas, en permanence, à un doigt. Une carte
+                    // entière pour raccourcir un trajet d'un tap, sur l'écran dont Charlotte dit le
+                    // 14 novembre qu'il porte trop d'informations.
+                    //
+                    // La carte des PREMIERS JALONS reste : elle ne double rien. Elle s'affiche tant
+                    // qu'on n'a pas assez couru pour que les statistiques veuillent dire quelque
+                    // chose — c'est de l'accueil pour une débutante, pas un résumé.
+
+                    if !planUnlocked {
+
+                        // Sans la ligne « ce qui reste gratuit » : les trois quarts de l'écran
+                        // au-dessus SONT la version gratuite en fonctionnement — la carte pour
+                        // partir courir, les anneaux du jour, la série. Le rappeler par écrit
+                        // au-dessous, c'est décrire ce qu'on a sous les yeux.
+                        // En dernier, et c'est le point. À la troisième place sur trois, cette carte
+                        // était un mur ; sous quatre blocs de contenu réel, c'est une proposition.
+                        PlusLockCard(feature: .adaptivePlan, showsFreeReminder: false)
+                            .ruRises(reduceMotion)
+                    }
+
+                    // `planUnlocked` en plus d'`isFreeRun` : sans abonnement, cette ligne promettait
+                    // un coach qui est lui aussi derrière le verrou, deux centimètres sous une carte
+                    // qui explique déjà qu'il n'y a pas de programme. Elle disait donc la même chose
+                    // une deuxième fois, en annonçant une aide qui n'arrivera pas.
+                    if isFreeRun && planUnlocked {
+                        Text("Pas de plan fixe — le coach te propose de quoi garder la forme, jour après jour.")
+                            .font(RUFont.sans(.small))
+                            .foregroundColor(RUColor.text3)
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 4)
                     }
                 }
-
-                // La séance d'abord.
-                //
-                // L'ordre venait de la maquette — anneau, chiffres, séance — et la maquette a
-                // raison sur un écran qu'on consulte. Celui-ci n'est pas consulté, il est utilisé :
-                // on l'ouvre pour savoir ce qu'on court aujourd'hui, et c'est la seule carte qui
-                // porte un bouton. Elle arrivait en troisième position, après deux blocs qui
-                // regardent en arrière. Ce qui se fait passe donc avant ce qui s'est fait.
-                //
-                // L'anneau ne perd rien à venir en second : c'est un état, pas une action, et il
-                // reste au-dessus de la ligne de flottaison.
-                // Le programme entier — la séance du jour comprise — fait partie de Haizo Plus.
-                //
-                // Sans lui, l'accueil ne devient pas vide : il redevient ce qu'il est pour qui ne
-                // suit pas de plan. On court quand on veut, on enregistre, on garde ses anneaux
-                // du jour et sa série. Le bouton DÉMARRER est exactement le même — verrouiller la
-                // possibilité de courir dans une app de course n'aurait aucun sens, et c'est
-                // précisément ce qui peuple le Club et fait vivre le fil.
-                //
-                // Ce qui manque est nommé et montré juste en dessous, plutôt que simplement
-                // absent : personne ne peut vouloir un programme dont il ignore l'existence.
-                // La séance du jour est la seule chose qui change avec l'abonnement en tête
-                // d'écran. Tout ce qui suit est à soi — ses objectifs, sa semaine, ses chiffres —
-                // et n'a donc aucune raison d'être derrière le verrou.
-                if planUnlocked {
-                    sessionCard.ruRises(reduceMotion)
-                } else {
-                    freeRunCard.ruRises(reduceMotion)
-                }
-
-                // LA DERNIÈRE SORTIE, JUSTE APRÈS CELLE DU JOUR.
-                //
-                // L'accueil n'avait AUCUNE image. Pas une : une carte de séance, un anneau, une
-                // bande de sept jours, des chiffres — du texte et des formes, sur six cents
-                // points de défilement. Et l'app possède pourtant le seul vrai visuel qu'une app
-                // de course puisse avoir, son tracé GPS, qui ne sortait jamais de l'onglet Club.
-                //
-                // POURQUOI PAS TOUT EN HAUT, comme la maquette le proposait. La note vingt
-                // lignes plus haut tranche déjà la question et elle a raison : « on ouvre
-                // l'accueil pour savoir ce qu'on court aujourd'hui », donc ce qui SE FAIT passe
-                // avant ce qui S'EST FAIT. Un bandeau rétrospectif posé au-dessus de la seule
-                // carte qui porte un bouton aurait défait cette décision pour une raison
-                // d'esthétique — ce qui est exactement la mauvaise façon de gagner un argument.
-                //
-                // Juste après, en revanche, il répond à la carte du jour : voilà ce que tu cours
-                // aujourd'hui, voilà ce que tu as couru la dernière fois. Et il reste au-dessus
-                // de la ligne de flottaison.
-                derniereSortie.ruRises(reduceMotion)
-
-                // L'ORDRE SUIT LES QUESTIONS QU'ON SE POSE EN OUVRANT L'APP.
-                //
-                // Qu'est-ce que je fais aujourd'hui (la séance) — qu'est-ce que je viens de faire
-                // (le tracé) — où j'en suis dans mon plan (le programme) — et le reste.
-                //
-                // Le programme passait APRÈS les objectifs du jour, c'est-à-dire sous la ligne de
-                // flottaison : sur la capture du 13 novembre, « Ton programme · 10 km · 47:30 »
-                // n'apparaissait qu'en bas de l'écran, à moitié caché par la barre d'onglets.
-                // C'est la promesse que l'app vend — un plan qui s'adapte — et c'était la seule
-                // chose qu'on ne voyait pas en ouvrant.
-
-                // La bande de la semaine pour tout le monde. Elle disait deux choses, et une
-                // seule était le produit payant : CE QUI EST PRÉVU. Ce qu'on a COURU est son
-                // propre historique. La carte montre donc les sept jours à tout le monde, et
-                // n'ajoute le programme qu'à qui l'a — ce qui vend mieux qu'un cadenas : une
-                // semaine à moitié remplie à côté d'une semaine dont chaque jour porte un nom
-                // montre la forme de ce qui manque, là où une case grise s'apprend à ne plus
-                // être vue.
-                programWeekCard.ruRises(reduceMotion)
-
-                ringsCard.ruRises(reduceMotion)
-
-                // Les chiffres, pour tout le monde aussi, et cachés tant qu'il n'y a rien à
-                // montrer : « 0 km · 0 sortie » le premier jour est une carte qui décourage.
-                //
-                // DE LA 3e À LA 9e SORTIE, CE N'EST PAS LA BONNE CARTE, et c'est la carte des
-                // premiers jalons qui prend la place — voir `premiersJalons`. Les deux ensemble
-                // diraient deux fois la même chose : avec moins de dix sorties, la fenêtre de
-                // trente jours contient à peu près tout ce qu'on a couru.
-                if let jalons = premiersJalons {
-                    premiersJalonsCard(jalons).ruRises(reduceMotion)
-                }
-
-                // LA CARTE « 30 DERNIERS JOURS » EST PARTIE.
-                //
-                // Quatre chiffres — distance, sorties, temps, allure — et un bouton vers l'onglet
-                // Stats, qui est dans la barre du bas, en permanence, à un doigt. Une carte
-                // entière pour raccourcir un trajet d'un tap, sur l'écran dont Charlotte dit le
-                // 14 novembre qu'il porte trop d'informations.
-                //
-                // La carte des PREMIERS JALONS reste : elle ne double rien. Elle s'affiche tant
-                // qu'on n'a pas assez couru pour que les statistiques veuillent dire quelque
-                // chose — c'est de l'accueil pour une débutante, pas un résumé.
-
-                if !planUnlocked {
-
-                    // Sans la ligne « ce qui reste gratuit » : les trois quarts de l'écran
-                    // au-dessus SONT la version gratuite en fonctionnement — la carte pour
-                    // partir courir, les anneaux du jour, la série. Le rappeler par écrit
-                    // au-dessous, c'est décrire ce qu'on a sous les yeux.
-                    // En dernier, et c'est le point. À la troisième place sur trois, cette carte
-                    // était un mur ; sous quatre blocs de contenu réel, c'est une proposition.
-                    PlusLockCard(feature: .adaptivePlan, showsFreeReminder: false)
-                        .ruRises(reduceMotion)
-                }
-
-                // `planUnlocked` en plus d'`isFreeRun` : sans abonnement, cette ligne promettait
-                // un coach qui est lui aussi derrière le verrou, deux centimètres sous une carte
-                // qui explique déjà qu'il n'y a pas de programme. Elle disait donc la même chose
-                // une deuxième fois, en annonçant une aide qui n'arrivera pas.
-                if isFreeRun && planUnlocked {
-                    Text("Pas de plan fixe — le coach te propose de quoi garder la forme, jour après jour.")
-                        .font(RUFont.sans(.small))
-                        .foregroundColor(RUColor.text3)
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 4)
-                }
+                .padding(.horizontal, RUSpacing.pagePadding)
             }
-            .padding(.horizontal, RUSpacing.pagePadding)
-            .padding(.top, 8)
+            // L'EN-TÊTE EST LE SEUL ÉLÉMENT DE LA PAGE SANS MARGE LATÉRALE, et c'est ce qui en
+            // fait un en-tête : il va d'un bord à l'autre. Tout ce qui suit la reprend
+            // individuellement — une marge posée sur la pile entière rentrerait l'en-tête avec.
             .padding(.bottom, 130)
         }
     }
@@ -633,57 +566,16 @@ struct HomeView: View {
         .ruCard()
     }
 
-    /// La dernière sortie qui a laissé une trace, en bandeau.
-    ///
-    /// `route.count > 1` et pas seulement « la dernière sortie » : une séance saisie à la main
-    /// ou validée sans GPS n'a rien à montrer, et un bandeau vide vaut moins que pas de bandeau.
-    /// On remonte donc jusqu'à la dernière qui en a une — sinon rien, et l'accueil retrouve
-    /// exactement la mise en page qu'il avait.
-    ///
-    /// Le tracé est DESSINÉ (`SelfDrawingRoute`), pas cartographié. L'historique, lui, affiche
-    /// une vraie carte dans ses vignettes, et c'est juste à cet endroit-là : on y cherche OÙ on
-    /// a couru. Ici on cherche QU'ON a couru — et un dessin se charge sans tuiles, sans réseau,
-    /// et se dessine tout seul à l'apparition, ce qu'une carte ne fait pas.
-    @ViewBuilder private var derniereSortie: some View {
-        if let derniere = runs.filter({ $0.route.count > 1 }).max(by: { $0.date < $1.date }) {
-            Button(action: { Haptics.selection(); appState.go(.history) }) {
-                // ── LES CHIFFRES SE POSENT SUR LE TRACÉ, ET PAS SOUS LUI ────────────────
-                //
-                // La première version mettait une bande de 104 points puis une ligne de chiffres
-                // dessous. La capture a montré le défaut : une boucle est à peu près aussi haute
-                // que large, `SelfDrawingRoute` conserve ses proportions, donc elle se cale sur
-                // la hauteur et laisse DEUX LARGES MARGES NOIRES. Le bandeau était vide aux trois
-                // quarts.
-                //
-                // La géométrie ne se discute pas : un sujet carré dans un cadre large laisse des
-                // marges, se fait rogner, ou devient une vignette. Rogner ampute l'information
-                // que le tracé porte pour décorer ; une vignette à côté des chiffres aurait fait
-                // du bandeau une ligne d'historique de plus.
-                //
-                // Le noir cesse donc d'être du vide et devient un FOND : le tracé occupe tout le
-                // cadre, et la date et les chiffres se posent dessus en blanc, comme un texte sur
-                // une photo. Un voile dégradé au bas garantit la lisibilité quelle que soit la
-                // forme de la boucle — le trait peut passer derrière le texte sans le gêner,
-                // exactement comme une photo le ferait.
-                CarteDeNuit(hauteur: min(hauteurDeLaTrace, 300)) {
-                    SelfDrawingRoute(route: derniere.route, lineWidth: 3,
-                                     targetPoints: 140, showsStart: true)
-                } legende: {
-                    LegendeDeNuit(
-                        surtitre: Text(verbatim: derniere.date.formatted(
-                            .dateTime.weekday(.abbreviated).day().month(.abbreviated)
-                                .locale(Locale.current))),
-                        chiffres: [ChiffreDeNuit(valeur: Distances.valeur(derniere.distanceKm), unite: "km"),
-                                   ChiffreDeNuit(valeur: derniere.avgPace, unite: "/km")])
-                }
-            }
-            .buttonStyle(PressableStyle())
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(String(localized: "Ta dernière sortie"))
-            .accessibilityValue(String(localized: "\(Distances.km(derniere.distanceKm)) à \(derniere.avgPace) du kilomètre"))
-            .accessibilityHint(String(localized: "Ouvre l'historique"))
-        }
-    }
+    // ── `derniereSortie` A ÉTÉ SUPPRIMÉ LE 16 NOVEMBRE ──────────────────────────────────────
+    //
+    // Le bandeau est devenu l'en-tête : même tracé, même composant, même voile, en plein cadre
+    // et en haut de l'écran. Ce qu'il portait de plus — la date, la distance et l'allure — est
+    // la ligne posée sous le prénom.
+    //
+    // CE QU'IL AVAIT ET QUI NE SE RETROUVE PAS : un tap qui ouvrait l'historique, avec son
+    // libellé et sa valeur VoiceOver. L'en-tête n'est pas un bouton — on ne rend pas tapable la
+    // bande qui porte le prénom et la cloche, parce qu'un tap manqué sur la cloche deviendrait
+    // une navigation. L'historique reste à un onglet.
 
     /// La phrase « pourquoi cette séance » du jour, quand il y en a une.
     ///
@@ -1157,34 +1049,6 @@ struct HomeView: View {
 
  
 
-    /// `profile.streak` was already tracked (`AdaptivePlanEngine.applyDebrief`) and shown deep in
-    /// Stats/Readiness/Club, but never on Home — the screen actually opened every day, where a
-    /// visible streak does the most to make her not want to break it.
-    private var streakChip: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "flame.fill").font(RUFont.icone(.body))
-            Text("\(profile.streak)").font(RUFont.sans(.label, weight: .bold))
-        }
-        .foregroundColor(profile.streak > 0 ? RUColor.amber : RUColor.text3)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(RUColor.card, in: Capsule())
-        .overlay(Capsule().stroke(RUColor.line, lineWidth: RUSpacing.hairline))
-        // Was just "5" to VoiceOver with no context — the flame icon that gives it meaning
-        // visually carries no information for someone who can't see it.
-        .accessibilityElement(children: .combine)
-        // Deux clés entières plutôt qu'un « jour\(s) » recollé : le pluriel ne se fabrique pas en
-        // ajoutant un « s » dans les autres langues.
-        .accessibilityLabel(Pluriel.choisir(profile.streak,
-            String(localized: "Série, \(profile.streak) jour"),
-            String(localized: "Série, \(profile.streak) jours")))
-    }
-
-    /// La date du jour, en toutes lettres — `EyebrowLabel` la passe en capitales comme tous les
-    /// eyebrows de l'app.
-    private var todayDateEyebrow: String {
-        Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale.current))
-    }
 
     /// "Semaine 4/9" when the program has a real end (a race goal periodizes toward one), else
     /// just "Semaine 4" — matches the mockup's "SEM. 4/9" without claiming a total for the

@@ -7018,3 +7018,77 @@ parce que l'allure cible en fournissait **deux à elle seule**, une par branche 
 `targetPaceLine`. Les branches fusionnées, le compte est tombé à deux et le test a refusé — à
 raison. Il est maintenant exact plutôt que minoré, parce que sa seule raison d'être est de ne pas
 pouvoir passer en ne regardant rien.
+
+## 16 novembre 2026 — l'accueil ouvre sur une image
+
+> « L'accueil ouvre sur une image plein écran en en-tête (photo de coureur, lumière naturelle,
+> grain conservé, sombre vers le bas) avec "Charlotte" et la séance du jour par-dessus, comme
+> l'accueil Hukaia mais avec la palette Haizo. »
+
+### L'image, et pourquoi ce n'est pas une photo
+
+L'app n'en possède aucune. Une silhouette fabriquée pour l'occasion est exactement ce que la
+question 3 de la direction artistique refuse — « est-ce qu'on devine qu'il a été généré ? ». Une
+photo de banque d'images a la même réponse, avec une question de licence en plus.
+
+L'app possède **une** image, et le brief la nomme lui-même au point 3 : le tracé GPS, « la seule
+signature graphique de l'app ». Elle vient de ce qu'on a couru, elle ne ressemble à personne
+d'autre, et elle change à chaque sortie. Le jour où les photos existent, c'est un fichier à poser
+derrière ce même cadre.
+
+### Ce qui est écrit dessus — la référence tranche mieux qu'un raisonnement
+
+J'ai ouvert `vitrine/1-accueil.png`. Sur l'accueil Hukaia, ce qui est posé sur la photo, c'est la
+salutation, le **grand mot** et un sous-titre ; la carte « Votre itinéraire » est dans la feuille
+blanche qui chevauche l'image par le bas. Et surtout : **l'image et le mot se répondent** — la
+photo montre l'Islande, le mot dit « Islande ».
+
+Ici l'image montre la dernière sortie. Ce qui est écrit dessus la **nomme** donc, et la carte de
+la séance du jour est la première de la feuille, juste dessous — « par-dessus » au sens où la
+référence le montre.
+
+C'est aussi la règle 4 de `CarteDeNuit` : les chiffres se posent **sur** le dessin, ils le
+légendent. Un tracé sans sa ligne deviendrait un papier peint, c'est-à-dire la seule chose que le
+composant refuse — « un fond sombre n'est pas une signature, c'est un goût ».
+
+### Deux conséquences qui tombent juste
+
+**Le bandeau du milieu de page disparaît.** C'était une deuxième carte de nuit sur le même écran,
+et la règle 5 dit « une seule par écran : deux points de fixation n'en font aucun ».
+
+**L'argument du 14 novembre n'est pas défait, il est déplacé.** « On ouvre l'accueil pour savoir
+ce qu'on court aujourd'hui », donc ce qui se fait passe avant ce qui s'est fait : l'accueil ouvre
+sur une image, et la carte qui porte le bouton reste la première chose qu'on lit **sur la page**.
+
+### Le prénom à 40
+
+Point 1 du brief, qui le nomme : « titres d'écran en 40 lourd ("Charlotte", "Ta forme évolue",
+"Le fil") ». Il était à 24 depuis le 14 novembre, avec un argument qui tenait **pour une page
+blanche** : « un prénom qu'on ne lit pas — on le sait déjà — occupait le haut du barème »,
+au-dessus des chiffres qu'on vient voir. Sur l'image, il ne concurrence plus rien.
+
+### Pourquoi un fichier à part, et ce que ça a attrapé
+
+Le premier jet écrivait l'en-tête dans `HomeView`. `check_nuit.py` a dit « rien de la page n'est
+peint sur la nuit » — et il avait raison de se taire : il n'inspecte que le corps des appels à
+`CarteDeNuit`, et son en-tête le dit depuis toujours — « une vue tierce appelée depuis une carte
+de nuit : son corps est écrit ailleurs ».
+
+La rangée du haut est exactement ce cas : le mot de la marque, la pastille de série et la cloche
+sont posés **sur** la nuit mais vivent hors du bloc. Le premier jet y laissait une capsule
+`RUColor.card`, c'est-à-dire **blanche en thème clair**, sur du presque-noir, à côté d'un bouton
+voilé.
+
+Sorti dans `EnTeteDAccueil.swift` et inscrit dans `FICHIERS_DE_NUIT`, tout son contenu est tenu à
+la règle.
+
+### Et la flamme de l'accueil, oubliée par sa propre correction
+
+Le 16 novembre à midi, la flamme passait « allumée à l'accent, éteinte au gris » sur l'écran des
+stats, dans le bilan hebdo, dans la feuille de débriefing et dans le widget. **Pas sur
+l'accueil** — l'écran qu'on ouvre tous les jours.
+
+`check_teintes.py` n'a rien dit, et il avait raison de se taire lui aussi : il n'inspecte que
+`RUCardHeader(tint:)` et `RUStatTile(tint:)`. Une couleur posée en `.foregroundColor` directe est
+hors de sa portée. Le relevé complet en donne **74 dans 32 fichiers** — c'est un chantier à part,
+et le garde doit grandir avec lui.

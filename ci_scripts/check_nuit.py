@@ -63,6 +63,14 @@ INTERDITS = [
 # Les fichiers dont TOUT le contenu est dessiné sur la nuit.
 FICHIERS_DE_NUIT = [
     "Haizo/Views/Components/DrawnRoute.swift",
+    # L'en-tête de l'accueil, depuis le 16 novembre. Il a été écrit d'abord DANS `HomeView`, et
+    # c'était le cas que la note ci-dessus décrit : la rangée du haut — le mot de la marque, la
+    # pastille de série, la cloche — est posée SUR la nuit mais vit hors du bloc `CarteDeNuit`,
+    # donc hors de la portée du garde. Le premier jet y laissait une capsule `RUColor.card`,
+    # c'est-à-dire BLANCHE en thème clair, posée sur du presque-noir à côté d'un bouton voilé.
+    #
+    # Sorti dans son fichier, tout son contenu est tenu à la règle.
+    "Haizo/Views/Home/EnTeteDAccueil.swift",
 ]
 
 # `RubanDeSemaine` y a figuré du 13 au 14 novembre. Il en est sorti le jour où l'accueil a

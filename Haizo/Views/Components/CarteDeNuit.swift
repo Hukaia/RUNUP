@@ -45,6 +45,14 @@ struct CarteDeNuit<Dessin: View, Legende: View>: View {
     }
 
     var hauteur: CGFloat
+    /// Le rayon des coins. `0` pour une carte qui va d'un bord à l'autre de l'écran.
+    ///
+    /// L'EN-TÊTE DE L'ACCUEIL EST LE SEUL CAS, et ce n'est pas un rayon « hors échelle » : zéro
+    /// n'est pas une valeur d'arrondi, c'est son absence. Une carte posée DANS une page a des
+    /// coins parce qu'elle est un objet sur un fond ; un en-tête qui occupe toute la largeur
+    /// n'est pas posé sur la page, il la commence. Arrondi, il laisserait deux triangles de
+    /// fond clair en haut de l'écran.
+    var rayon: CGFloat = RUSpacing.radiusCard
     var pose: Pose = .basGauche
     /// La marge du dessin. 14 par défaut, la valeur du bandeau de l'accueil.
     var marge: CGFloat = RUSpacing.cardPadding
@@ -67,8 +75,8 @@ struct CarteDeNuit<Dessin: View, Legende: View>: View {
         // page derrière, et sans lui ce serait le fond de la page qui apparaîtrait, un ton plus
         // foncé que les cartes voisines.
         .background(RUColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous)
+        .clipShape(RoundedRectangle(cornerRadius: rayon, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: rayon, style: .continuous)
             .stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
     }
 
