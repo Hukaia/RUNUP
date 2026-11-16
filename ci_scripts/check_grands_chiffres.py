@@ -40,10 +40,18 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 DOSSIERS = ["Haizo", "HaizoWidgets", "HaizoWatch"]
 
 # `displayStyle(.hero)`, `RUFont.display(.banner)`, `displayStyle(horsEchelle: 52)`.
+# `display(horsEchelle:)` A ÉTÉ AJOUTÉ LE 16 NOVEMBRE, et il manquait depuis le premier jour.
+# Le motif connaissait `displayStyle(horsEchelle:)` — le modificateur de vue — mais pas
+# `RUFont.display(horsEchelle:)`, la fabrique de police qu'on passe à `.font(…)`. Les deux
+# écrivent le même grand corps ; seule la première était contrôlée.
+#
+# Ce qui sortait par là : le 96 du compte à rebours de la course, LE PLUS GROS CHIFFRE DE L'APP.
+# C'est la même forme de trou que le dégradé peint dans un `Canvas` — un garde ne voit que les
+# orthographes qu'on lui a données.
 GRAND = re.compile(
     r"displayStyle\(\s*\.(hero|banner)\b"
     r"|display\(\s*\.(hero|banner)\s*\)"
-    r"|displayStyle\(\s*horsEchelle:\s*(\d+|[^)\n]+)"
+    r"|display(?:Style)?\(\s*horsEchelle:\s*(\d+|[^)\n]+)"
 )
 # Le plus petit cran considéré comme « grand » : `hero` vaut 35.
 SEUIL = 35

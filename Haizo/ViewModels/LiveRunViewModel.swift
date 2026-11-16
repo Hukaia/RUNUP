@@ -191,11 +191,16 @@ final class LiveRunViewModel {
         // signalait — la pastille était en 12 pt dans un coin. Elle est maintenant le surtitre du
         // bloc de consigne, au centre de l'écran de course, et un « ÉCHAUFFEMENT » sur un
         // téléphone anglais s'y verrait tout de suite.
+        //
+        // ILS ÉTAIENT EN CAPITALES, ET LE BRIEF DU 15 NOVEMBRE LES EN SORT : « supprimer les
+        // majuscules espacées — ce sont des labels en 12 gris, casse normale ». Les capitales
+        // étaient dans la CHAÎNE, pas dans un `textCase` : c'est donc le catalogue qui change,
+        // dans les trois langues, et pas seulement la vue qui l'affiche.
         switch currentSegment {
-        case .warmup: return String(localized: "ÉCHAUFFEMENT")
-        case .rep(let n): return String(localized: "RÉP. \(n)/\(reps)")
-        case .recovery: return String(localized: "RÉCUPÉRATION")
-        case .cooldown: return String(localized: "RETOUR AU CALME")
+        case .warmup: return String(localized: "Échauffement")
+        case .rep(let n): return String(localized: "Rép. \(n)/\(reps)")
+        case .recovery: return String(localized: "Récupération")
+        case .cooldown: return String(localized: "Retour au calme")
         }
     }
     /// L'allure cible du jour est-elle la consigne de CET instant ?

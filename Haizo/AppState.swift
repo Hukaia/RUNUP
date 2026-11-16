@@ -1026,7 +1026,7 @@ final class AppState {
         // and (since the HealthKit write only fires below, after this guard) it won't create a
         // phantom workout in Apple Health either.
         guard record.distanceKm >= 0.1 || record.durationSeconds >= 120 else {
-            toast(String(localized: "Course trop courte — rien n'a été enregistré."))
+            toast(String(localized: "Course trop courte, rien n'a été enregistré."))
             go(.home)
             return nil
         }

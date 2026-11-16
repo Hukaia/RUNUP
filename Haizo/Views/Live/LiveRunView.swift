@@ -492,9 +492,16 @@ struct LiveRunView: View {
         if hasInstruction {
             VStack(spacing: 2) {
                 HStack(spacing: 8) {
-                    Text(vm?.segmentLabel ?? String(localized: "ALLURE CIBLE"))
-                        .font(RUFont.display(.caption)).tracking(2)
-                        .foregroundColor(Ink.accentSoft)
+                    // ── UN LABEL, PLUS UNE ENSEIGNE ─────────────────────────────────────
+                    //
+                    // Point 5 du brief : « remplace ALLURE CIBLE par un label discret ». Il
+                    // était en capitales espacées — `tracking(2)` — et en ACCENT, donc de la
+                    // couleur du chiffre qu'il annonce : un deuxième objet allumé, là où il
+                    // n'en faut qu'un. 12 points, gris, casse normale, comme tous les labels
+                    // de l'app depuis le point 1.
+                    Text(libelleDeConsigne)
+                        .font(RUFont.sans(.micro, weight: .medium))
+                        .foregroundColor(Ink.label)
                     // LE RESTANT, à côté du nom du segment.
                     //
                     // L'écran annonçait « RÉP. 3/5 » et s'arrêtait là. Elle savait donc quelle
@@ -504,9 +511,9 @@ struct LiveRunView: View {
                     // lui qui surveille la condition de fin du segment à chaque seconde.
                     if let remaining = vm?.segmentRemainingLabel {
                         Text(verbatim: "·")
-                            .font(RUFont.display(.caption)).foregroundColor(Ink.label)
+                            .font(RUFont.sans(.micro)).foregroundColor(Ink.label)
                         Text(remaining)
-                            .font(RUFont.display(.caption)).tracking(1)
+                            .font(RUFont.sans(.micro, weight: .semibold))
                             .foregroundColor(.white.opacity(0.82))
                             .monospacedDigit()
                             .contentTransition(.numericText())
@@ -523,40 +530,45 @@ struct LiveRunView: View {
         }
     }
 
+    /// Le libellé du bloc de consigne : le segment en cours, ou « Allure cible » sur une séance
+    /// continue — et le mot « cible » quand ce n'est PAS le moment de tenir l'allure.
+    ///
+    /// LE MOT A CHANGÉ DE LIGNE, ET C'EST CE QUI LAISSE LE CHIFFRE GRANDIR. Il vivait À CÔTÉ de
+    /// l'allure, et c'est lui qui bornait sa taille : mesuré sur `InstrumentSans-Bold` avec le
+    /// `tracking` de l'échelle, « CIBLE 10:30/km » fait 520 points à 72, contre 284 utiles sur
+    /// l'iPhone le plus étroit. C'est la mesure qui avait fixé le plafond à 44 le 13 novembre.
+    ///
+    /// Seul, le chiffre tient : « 6:18/km » fait 263 points à 72. Et le mot dit exactement la
+    /// même chose un cran plus haut, dans le label qui annonce déjà le segment.
+    private var libelleDeConsigne: String {
+        let segment = vm?.segmentLabel ?? String(localized: "Allure cible")
+        return (vm?.isTargetEffortNow ?? true) ? segment : String(localized: "\(segment) · cible")
+    }
+
     /// L'ALLURE CIBLE, ET QUAND ELLE EST VRAIMENT LA CONSIGNE.
     ///
     /// Pendant une répétition — ou pendant toute une séance continue — l'allure du jour EST ce
     /// qu'elle doit faire maintenant : gros, en accent, c'est la première chose lue de l'écran.
     ///
-    /// Et depuis le 13 novembre, les TAILLES le disent aussi : `banner`, le cran que l'échelle
-    /// réserve à un seul objet par écran. Elle était à `hero` sous un chrono plus grand qu'elle,
-    /// ce qui faisait de cette phrase une intention et pas une description.
+    /// 72 POINTS, ET C'EST LE BRIEF QUI LE DEMANDE : « agrandit le chiffre central à 72 ». Elle
+    /// est passée de `hero` à `banner` le 13 novembre, soit de 35 à 40 rendus, et c'était déjà
+    /// la bonne direction — mais 40, c'est le cran d'un titre d'écran. Ce chiffre-là se lit à
+    /// bout de bras, en courant, essoufflée. Il sort donc de l'échelle, et `check_echelle.py`
+    /// porte la raison à côté du décompte.
     ///
-    /// Pendant l'échauffement, la récupération et le retour au calme, non : ces segments sont
-    /// volontairement hors allure cible, et l'écran affichait pourtant « ÉCHAUFFEMENT » suivi de
-    /// l'allure des répétitions dans le même accent — soit, lu à bout de souffle, la consigne de
-    /// courir son échauffement à l'allure de son travail. Le chiffre reste, parce qu'il est utile
-    /// de savoir vers quoi on s'échauffe ; il perd l'accent et gagne le mot CIBLE. Même place,
-    /// même taille, aucun saut de mise en page toutes les quatre-vingt-dix secondes : l'accent
-    /// seul dit « c'est maintenant ».
-    @ViewBuilder private var targetPaceLine: some View {
+    /// Pendant l'échauffement, la récupération et le retour au calme, ces segments sont
+    /// volontairement hors allure cible : l'écran affichait « ÉCHAUFFEMENT » suivi de l'allure
+    /// des répétitions dans le même accent — soit, lu à bout de souffle, la consigne de courir
+    /// son échauffement à l'allure de son travail. Le chiffre reste, parce qu'il est utile de
+    /// savoir vers quoi on s'échauffe ; il perd l'accent, et le mot « cible » est monté dans le
+    /// label. MÊME PLACE, MÊME TAILLE, aucun saut de mise en page toutes les quatre-vingt-dix
+    /// secondes — ce qui n'était plus tenable autrement à 72.
+    private var targetPaceLine: some View {
         let pace = appState.profile.todaySession.pace
-        if vm?.isTargetEffortNow ?? true {
-            Text(verbatim: "\(pace)/km")
-                .displayStyle(.banner)
-                .foregroundColor(Ink.accent)
-                .lineLimit(1).minimumScaleFactor(0.5)
-        } else {
-            HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Text("CIBLE")
-                    .font(RUFont.display(.caption)).tracking(2)
-                    .foregroundColor(Ink.label)
-                Text(verbatim: "\(pace)/km")
-                    .displayStyle(.banner)
-                    .foregroundColor(.white.opacity(0.45))
-                    .lineLimit(1).minimumScaleFactor(0.5)
-            }
-        }
+        return Text(verbatim: "\(pace)/km")
+            .displayStyle(horsEchelle: 72, grasse: true)
+            .foregroundColor((vm?.isTargetEffortNow ?? true) ? Ink.accent : .white.opacity(0.45))
+            .lineLimit(1).minimumScaleFactor(0.5)
     }
 
     /// Ce que la consigne dit à voix haute, à la lettre — y compris le segment et son restant,

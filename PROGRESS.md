@@ -6944,3 +6944,77 @@ Point 1 du brief, qui nomme le procédé. Les capitales étaient dans la **chaî
 `textCase` : c'est donc le catalogue qui change, dans les trois langues. `check_strings.py` a
 refusé le premier jet, parce que « Bouclés » n'y était pas encore — il a fait exactement ce pour
 quoi il existe.
+
+## 16 novembre 2026 — l'écran de séance : un label discret, un chiffre à 72
+
+> « L'écran de séance garde son panneau noir, remplace "ALLURE CIBLE" par un label discret et
+> agrandit le chiffre central à 72. La toast "Course trop courte" perd son tiret cadratin et se
+> positionne au-dessus de la barre d'onglets, jamais dessus. »
+
+### Le chiffre central, c'est l'allure — vérifié sur la capture
+
+Les deux membres de la phrase parlent du même bloc : le label qu'on remplace est celui de
+l'allure, et le chiffre juste dessous est **6:18/km**. La capture de la campagne du 16 novembre
+au matin le montre sans ambiguïté — « ALLURE CIBLE » en rose espacé, puis l'allure en gros, puis
+le chrono plus petit.
+
+### Ce qui empêchait le chiffre de grandir, c'était un mot
+
+Le 13 novembre, un plafond avait été posé à 44 points, avec sa mesure : *« "CIBLE 10:30/km" — le
+pire cas, un coureur lent pendant son échauffement — occupe 261 pt à 44 et 301 à 52. Au-delà, la
+consigne se tronque en course sans qu'aucun test ne puisse le voir. »*
+
+Largeurs recalculées sur `InstrumentSans-Bold.ttf`, avec le `tracking` de −3 % que l'échelle
+applique, contre les **284 points utiles** de l'iPhone le plus étroit :
+
+| | 40 pt | 72 pt |
+| --- | ---: | ---: |
+| `6:18/km` | 146 | **263** |
+| `10:30/km` | 174 | 313 |
+| `CIBLE 10:30/km` | 289 | 520 |
+
+Le plafond ne venait donc pas de l'allure : il venait du **mot posé à côté d'elle**. Seul, le
+chiffre tient à 72 pour toute allure à un chiffre de minutes — c'est-à-dire tout le monde entre
+4:00 et 9:59.
+
+Le mot monte donc dans le label, qui annonce déjà le segment : « Échauffement · cible ». Il dit
+exactement la même chose, un cran plus haut dans la lecture, et il ne pèse plus sur la largeur du
+nombre. **Même place, même taille, aucun saut de mise en page toutes les quatre-vingt-dix
+secondes** — ce que la note du 13 novembre tenait à préserver, et qui n'était plus tenable
+autrement à 72.
+
+### Le label était en accent, c'est-à-dire de la couleur de ce qu'il annonce
+
+En capitales espacées (`tracking(2)`) **et** en `Ink.accentSoft` : deux objets allumés dans un
+bloc qui n'en veut qu'un. 12 points, gris, casse normale.
+
+Les quatre libellés de segment suivent — « ÉCHAUFFEMENT » devient « Échauffement ». Les capitales
+étaient dans la **chaîne**, pas dans un `textCase` : six clés sortent du catalogue, trois y
+entrent, dans les trois langues.
+
+### La toast était déjà au bon endroit, et l'arithmétique le dit
+
+`tabBarBottomInset (12) + tabBarHeight (56) + 14` = 82 points sous le bord bas ; la barre occupe
+12 à 68. Quatorze points d'écart, jamais dessus. Il restait le tiret cadratin.
+
+**Et il y en a 193 autres.** Le catalogue compte 194 chaînes qui en portent un. Le tiret cadratin
+est de la ponctuation française légitime ; c'est sa répétition mécanique qui se lit comme un tic.
+Réécrire 194 chaînes en trois langues change le **ton** de l'app : c'est une décision de
+direction, pas une correction. Celle que le brief nomme est corrigée, les autres sont comptées.
+
+### Un garde ne voyait pas le plus gros chiffre de l'app
+
+`check_grands_chiffres.py` vérifie qu'un grand corps limité à une ligne peut rétrécir. Son motif
+connaissait `displayStyle(horsEchelle:)` — le modificateur de vue — mais **pas**
+`RUFont.display(horsEchelle:)`, la fabrique de police qu'on passe à `.font(…)`. Les deux écrivent
+le même grand corps ; seule la première était contrôlée. Ce qui sortait par là : le **96** du
+compte à rebours de la course.
+
+Même forme de trou que le dégradé peint dans un `Canvas` : un garde ne voit que les orthographes
+qu'on lui a données.
+
+Son test de l'écran de séance exigeait « au moins trois grands corps ». Il en trouvait trois
+parce que l'allure cible en fournissait **deux à elle seule**, une par branche de
+`targetPaceLine`. Les branches fusionnées, le compte est tombé à deux et le test a refusé — à
+raison. Il est maintenant exact plutôt que minoré, parce que sa seule raison d'être est de ne pas
+pouvoir passer en ne regardant rien.

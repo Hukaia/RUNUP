@@ -453,6 +453,22 @@
         }
       }
     },
+    "%@ · cible": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · target"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · objetivo"
+          }
+        }
+      }
+    },
     "%@ · facultatif": {
       "extractionState": "manual",
       "localizations": {
@@ -3497,23 +3513,6 @@
         }
       }
     },
-    "ALLURE CIBLE": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TARGET PACE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RITMO OBJETIVO"
-          }
-        }
-      }
-    },
     "ALLURE MOY": {
       "localizations": {
         "en": {
@@ -5959,23 +5958,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "CADA SEMANA"
-          }
-        }
-      }
-    },
-    "CIBLE": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TARGET"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OBJETIVO"
           }
         }
       }
@@ -8551,19 +8533,19 @@
         }
       }
     },
-    "Course trop courte — rien n'a été enregistré.": {
+    "Course trop courte, rien n'a été enregistré.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Run too short — nothing was saved."
+            "value": "Run too short, nothing was saved."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Carrera demasiado corta — no se ha guardado nada."
+            "value": "Carrera demasiado corta, no se ha guardado nada."
           }
         }
       }
@@ -21489,22 +21471,6 @@
         }
       }
     },
-    "RETOUR AU CALME": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "COOL DOWN"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VUELTA A LA CALMA"
-          }
-        }
-      }
-    },
     "RUN": {
       "localizations": {
         "en": {
@@ -22793,38 +22759,6 @@
         }
       }
     },
-    "RÉCUPÉRATION": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RECOVERY"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RECUPERACIÓN"
-          }
-        }
-      }
-    },
-    "RÉP. %lld/%lld": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "REP. %lld/%lld"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "REP. %lld/%lld"
-          }
-        }
-      }
-    },
     "Réalise des séances de fractionné ou de VMA.": {
       "extractionState": "manual",
       "localizations": {
@@ -22844,6 +22778,22 @@
     },
     "Récup": {
       "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuperación"
+          }
+        }
+      }
+    },
+    "Récupération": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -22954,6 +22904,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajustes"
+          }
+        }
+      }
+    },
+    "Rép. %lld/%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rep. %lld/%lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rep. %lld/%lld"
           }
         }
       }
@@ -34825,22 +34791,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Varía"
-          }
-        }
-      }
-    },
-    "ÉCHAUFFEMENT": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WARMUP"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CALENTAMIENTO"
           }
         }
       }
