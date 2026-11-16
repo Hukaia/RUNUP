@@ -45,10 +45,14 @@ struct SplashView: View {
                     .opacity(tile)
                     .scaleEffect(0.88 + 0.12 * tile)
 
-                Text(verbatim: "HAIZO")
-                    .font(RUFont.display(.hero))
-                    .tracking(4)
-                    .foregroundColor(RUColor.textPrimary)
+                // L'ENCRE EST CELLE DU KIT, PAS CELLE DE L'INTERFACE. `#1A1023` est un noir
+                // FROID — bleu nettement au-dessus du rouge — là où `textPrimary` est passé au
+                // chaud le 12 novembre pour suivre la famille des fonds. Les deux ont la même
+                // luminance à un dixième près (18,31:1 contre 18,19:1 sur blanc), donc la
+                // différence ne se voit qu'à côté : un logo garde son encre, c'est tout ce qui
+                // le distingue d'un mot de l'interface.
+                MotDeMarque(tuile: markSize)
+                    .foregroundStyle(RUColor.encreDeMarque)
                     .fixedSize()
                     // Un volet qui s'ouvre depuis la tuile. `scaleEffect` sur un masque plutôt
                     // qu'une largeur animée : la largeur reflowerait le `HStack` à chaque image et

@@ -28,12 +28,17 @@ TYPO = "Haizo/DesignSystem/Typography.swift"
 
 # fichier → (nombre de sorties attendu, la raison) — pour le TITRAGE
 AUTORISE = {
+    # LES TROIS ONT PERDU UNE SORTIE LE 16 NOVEMBRE, et c'est une bonne nouvelle : le mot de la
+    # marque y était composé hors échelle — `display(horsEchelle: 15)`, puis 19 pour la vidéo —
+    # parce qu'un logo n'a effectivement pas de raison de suivre l'échelle du texte. Il n'est
+    # plus composé du tout : c'est une image, et une image n'a pas de cran de typographie. La
+    # sortie d'échelle disparaît avec la cause qui la justifiait.
     "Haizo/Views/Live/RunShareCardView.swift":
-        (2, "carte d'export : géométrie de pixels fixe pour une image partagée"),
+        (1, "carte d'export : géométrie de pixels fixe pour une image partagée"),
     "Haizo/Views/Live/RunVideoFrameView.swift":
-        (3, "image de la vidéo d'export : même raison"),
+        (2, "image de la vidéo d'export : même raison"),
     "Haizo/Views/Club/BadgeShareCardView.swift":
-        (2, "carte d'export d'un badge : même raison"),
+        (1, "carte d'export d'un badge : même raison"),
     "Haizo/Views/Components/AvatarView.swift":
         (3, "initiales à 0,4 × le diamètre de l'avatar : une suite continue, pas un cran"),
     "Haizo/Views/Live/LiveRunView.swift":

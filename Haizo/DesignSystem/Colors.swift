@@ -615,6 +615,24 @@ enum RUColor {
     /// L'accent principal sur la nuit, quand un seul suffit.
     static var accentDeLaNuit: Color { AccentTheme.current.primary }
 
+    /// L'ENCRE DU LOGO, ET ELLE NE SUIT NI LE THÈME NI LES FONDS.
+    ///
+    /// `#1A1023` est la valeur mesurée dans le kit de marque du 16 novembre, identique sur les
+    /// deux verrous sombres qu'il livre. C'est un noir FROID : bleu 0x23 nettement au-dessus du
+    /// rouge 0x1A.
+    ///
+    /// `textPrimary`, lui, est passé au CHAUD le 12 novembre pour suivre la famille des fonds —
+    /// c'est la règle que `check_jetons_de_texte.py` vérifie en lisant les fonds, et elle est
+    /// juste pour du texte. Un logo n'est pas du texte : il garde son encre quand tout le reste
+    /// s'accorde au fond, et c'est précisément ce qui le fait lire comme une signature.
+    ///
+    /// Les deux ont la même luminance à un dixième près — 18,31:1 contre 18,19:1 sur blanc —
+    /// donc la différence ne se voit que si on les met côte à côte. Elle existe quand même.
+    ///
+    /// PAS DE VARIANTE SOMBRE. Sur un fond sombre, le mot se pose en BLANC, comme le kit le
+    /// livre ; ce jeton ne sert que là où l'encre foncée est la bonne.
+    static let encreDeMarque = Color(hex: 0x1A1023)
+
     // ── LES SIX TEINTES D'INTENSITÉ ──────────────────────────────────────────────────────────
     //
     // Le brief du 15 novembre les fixe nommément : « cinq teintes d'intensité fixes », plus une

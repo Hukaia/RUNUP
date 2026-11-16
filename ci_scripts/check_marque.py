@@ -108,12 +108,16 @@ TOLERES = [
 ANCIEN = re.compile(r"runup", re.IGNORECASE)
 #: Les capitales ne servent qu'au logo. Partout ailleurs, Haizo est un mot dans une phrase.
 CAPITALES = re.compile(r"\bHAIZO\b")
+#: Où les capitales ont encore leur place.
+#:
+#: LA LISTE A FONDU LE 16 NOVEMBRE, et c'est le bon sens de l'histoire. Elle portait les quatre
+#: écrans qui composaient le nom en capitales dans la fonte de l'interface ; ils posent
+#: maintenant le mot DESSINÉ du kit, en minuscules, et n'ont plus de capitales à justifier.
+#: Elle a fondu une deuxième fois le même jour : les cartons d'ouverture et de fin du film
+#: gravaient le nom à 220 points dans une TROISIÈME fonte, Bricolage Grotesque Condensed. Ils
+#: posent maintenant la même forme que l'app. Il ne reste qu'une adresse de test — et les deux
+#: fichiers de ce contrôle, qui doivent épeler ce qu'ils jugent.
 PORTEURS_DU_LOGO = {
-    "Haizo/Views/Components/SplashView.swift",
-    "Haizo/Views/Club/BadgeShareCardView.swift",
-    "Haizo/Views/Live/RunShareCardView.swift",
-    "Haizo/Views/Live/RunVideoFrameView.swift",
-    "appstore/apercu.json",
     "ci_scripts/check_marque.py",
     "ci_scripts/test_marque.py",
     "HaizoTests/ContactMatcherTests.swift",
@@ -170,7 +174,70 @@ SUR_LE_SUJET = {"ci_scripts/check_marque.py", "ci_scripts/test_marque.py"}
 #: chantier a passé la matinée à corriger ailleurs.
 
 
-def main(racine=RACINE) -> int:
+#: Le dessin du mot, et le seul exemplaire qui existe.
+MOT = "Haizo/Resources/Assets.xcassets/haizo-mot.imageset"
+
+
+def le_mot(racine=RACINE) -> list:
+    """Le fichier du mot est là, et il se rendra comme on croit qu'il se rend.
+
+    # DEUX PANNES SILENCIEUSES, ET ELLES NE SE RESSEMBLENT PAS
+
+    LA PREMIÈRE EST BRUYANTE MAIS TARDIVE. `montage.py` ouvre ce fichier pour graver les cartons
+    du film. S'il n'est plus là, la campagne photographie trente-neuf écrans puis meurt à
+    l'étape de composition — c'est exactement ce qui est arrivé le 15 novembre avec une police,
+    pour quarante-cinq minutes perdues et une ligne à corriger.
+
+    LA SECONDE NE FAIT AUCUN BRUIT. L'image est déclarée `template` : elle ne porte que sa
+    forme, et prend le style qu'on lui donne. C'est ce qui permet à la carte de partage de la
+    remplir d'un DÉGRADÉ. Si quelqu'un repasse l'intention à `original`, `foregroundStyle` cesse
+    de s'appliquer et le mot devient un bloc blanc sur la carte — sans erreur, sans
+    avertissement, et sans que la construction bronche.
+    """
+    import json
+    plaintes = []
+    dossier = racine / MOT
+    contents = dossier / "Contents.json"
+    if not contents.is_file():
+        return [f"{MOT}/Contents.json est introuvable : le mot de la marque n'a plus de "
+                f"déclaration, et `Image(\"haizo-mot\")` rendra du vide."]
+    d = json.loads(contents.read_text(encoding="utf-8"))
+    noms = [i.get("filename") for i in d.get("images", []) if i.get("filename")]
+    if not noms:
+        plaintes.append(f"{MOT}/Contents.json ne nomme aucun fichier.")
+    for nom in noms:
+        if not (dossier / nom).is_file():
+            plaintes.append(f"{MOT}/{nom} est déclaré mais absent.")
+    intention = (d.get("properties") or {}).get("template-rendering-intent")
+    if intention != "template":
+        plaintes.append(
+            f"{MOT} : l'intention de rendu vaut « {intention} » et non « template ». Le mot "
+            f"cesserait alors de prendre le style qu'on lui donne — et la carte de partage, qui "
+            f"le remplit d'un dégradé, afficherait un bloc blanc sans que rien ne le signale.")
+
+    # Et le chemin que les scripts ouvrent doit être celui-là.
+    montage = (racine / "ci_scripts" / "montage.py")
+    if montage.is_file():
+        texte = montage.read_text(encoding="utf-8")
+        for ligne in texte.splitlines():
+            if "haizo-mot.png" in ligne and "=" in ligne and not ligne.strip().startswith("#"):
+                chemin = ligne.split('"')[1] if '"' in ligne else ""
+                if chemin and not (racine / chemin).is_file():
+                    plaintes.append(
+                        f"ci_scripts/montage.py ouvre « {chemin} », qui n'existe pas. La "
+                        f"campagne photographierait tout avant de mourir à la composition.")
+    return plaintes
+
+
+def noms(racine=RACINE) -> list:
+    """Les endroits qui portent encore l'ancien nom, ou qui crient le nouveau.
+
+    SÉPARÉE DE `le_mot` À DESSEIN. Les deux règles de ce contrôle n'ont ni le même objet ni la
+    même portée : celle-ci relit TOUT le dépôt, l'autre inspecte UN imageset. Les mêler dans
+    `main` a fait échouer d'un coup les dix cas qui n'éprouvaient que les noms, parce qu'un dépôt
+    fabriqué pour un cas ne contient évidemment pas le catalogue de l'app. Un contrôle qui ne
+    peut plus être éprouvé par morceaux finit éprouvé par aucun.
+    """
     plaintes = []
     for p in fichiers(racine):
         try:
@@ -187,6 +254,11 @@ def main(racine=RACINE) -> int:
                     f"{nom}:{ligne} — « HAIZO » en capitales hors du logo. Dans une phrase, "
                     f"c'est « Haizo » : {extrait}")
 
+    return plaintes
+
+
+def main(racine=RACINE) -> int:
+    plaintes = le_mot(racine) + noms(racine)
     if plaintes:
         for plainte in plaintes:
             print(f"::error::{plainte}", file=sys.stderr)

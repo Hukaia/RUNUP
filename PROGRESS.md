@@ -6565,3 +6565,84 @@ dessin a changé.
 `HAIZO` dans le logo et l'écran de lancement — quatre endroits, tous en `Text(verbatim:)`.
 `Haizo` partout ailleurs, parce que dans une phrase c'est un mot et non un cri. C'est ce que
 l'app faisait déjà sans l'avoir décidé, d'où les deux graphies `RunUp` et `RUNUP` mélangées.
+
+---
+
+## 16 novembre 2026 — le mot de la marque est dessiné, plus composé
+
+Charlotte a livré le kit de marque et tranché deux choses : **le `haizo` minuscule**, et l'image
+du kit plutôt que le nom typographié.
+
+### Ce que le kit confirme sans qu'on ait rien à faire
+
+**Le symbole est déjà celui de l'app** — quatre barres ascendantes — et son dégradé,
+`#FF0F5C → #7C5CFE`, est à deux niveaux près celui de l'icône en place. L'icône ne porte aucun
+mot : elle survit au changement de nom sans être redessinée.
+
+**En revanche l'icône du kit ne peut pas la remplacer en l'état.** Ses barres touchent le bord :
+1 % de marge à droite, 2,5 % en haut, contre ~20 % aujourd'hui. Sous le masque réel d'iOS — une
+superellipse — **1,21 % des barres blanches disparaît, dans la zone x 901–1015 / y 26–160**,
+c'est-à-dire la pointe arrondie de la plus haute barre. L'icône en place n'y perd aucun pixel.
+Le symbole à **94 %** suffit à tout faire rentrer. C'est à la designer de ré-exporter ; d'ici là
+l'icône actuelle reste la bonne, et le canal alpha du kit est opaque, donc Apple l'accepterait.
+
+### Cinq endroits composaient le nom, aucun ne portait le logo
+
+L'écran de lancement, l'image de fin de course, la carte de partage, la carte de badge — tous
+écrivaient le nom en capitales dans Instrument Sans, avec un `tracking` réglé à la main. Et le
+**carton d'ouverture et de fin du film App Store** l'écrivait à 220 points dans une TROISIÈME
+fonte, Bricolage Grotesque Condensed. C'est la première et la dernière image qu'on voit de la
+marque sur la fiche, et elle montrait le nom tapé.
+
+Un logo est un dessin. Il ne se retape pas, et surtout il ne suit pas la fonte de l'interface le
+jour où elle change — ce qui est arrivé deux fois cette semaine.
+
+### Une seule image, template, pour quatre habillages
+
+Le mot paraît en encre de marque, en blanc, et — sur une des trois styles de carte de partage —
+en **dégradé**. Un aplat n'aurait pas su faire le troisième. L'image est donc déclarée
+`template` : elle ne porte que sa forme et prend le `foregroundStyle` qu'on lui donne, dégradé
+compris. Ce n'est pas une licence prise sur la marque : **le kit lui-même livre la même forme en
+deux encres.** La forme est la marque, la couleur est le contexte.
+
+Le script du film lit **le même fichier** et le teinte de son côté, plutôt que d'en garder un
+second exemplaire dans `appstore/` qui divergerait au premier ajustement.
+
+### Les tailles sont mesurées, pas choisies
+
+Sur `haizo_A_white.png` : le mot fait **0,835 fois la hauteur du symbole**. Dans `AppMarkView`,
+les barres occupent **0,59** de la tuile. Le mot vaut donc `0,835 × 0,59 ≈ 0,49` fois la tuile
+qui l'accompagne — la seule constante de `MotDeMarque`. Sur le carton du film, il est posé à la
+hauteur d'encre exacte qu'occupait le nom composé, 151 pixels, et prend alors 37 % du cadre.
+
+### Une encre de marque, qui ne suit pas le thème
+
+`#1A1023`, mesuré sur les deux verrous sombres du kit. C'est un noir **froid** — bleu 0x23
+au-dessus du rouge 0x1A — là où `textPrimary` est passé au **chaud** le 12 novembre pour suivre
+la famille des fonds. Même luminance à un dixième près (18,31:1 contre 18,19:1 sur blanc),
+familles opposées. Un logo garde son encre quand tout le reste s'accorde au fond ; c'est ce qui
+le fait lire comme une signature.
+
+**C'est le troisième signal dans le même sens**, et il attend une décision : le brief demande
+`#F3EEF4` pour les pastilles, le logo porte un noir froid, et les fonds clairs sont chauds.
+
+### Un garde pour deux pannes qui ne se ressemblent pas
+
+`check_marque.py` surveille désormais aussi le fichier du mot. La première panne est bruyante
+mais tardive : le fichier absent, et la campagne photographie trente-neuf écrans avant de mourir
+à la composition — c'est la panne du 15 novembre, quarante-cinq minutes pour une ligne. La
+seconde ne fait **aucun bruit** : l'intention de rendu repassée de `template` à `original`, et
+le dégradé de la carte de partage cesse de s'appliquer — le mot devient un bloc blanc, sans
+erreur et sans avertissement.
+
+Vingt-cinq cas. Et trois de mes propres cas étaient devenus faux, tous dits par le banc : un
+mélangeait les deux règles du contrôle — séparées en `le_mot` et `noms`, parce qu'un contrôle
+qu'on ne peut plus éprouver par morceaux finit éprouvé par aucun — et un autre vérifiait une
+exemption que je venais de retirer. Réécrit sur la propriété plutôt que sur un nom épinglé.
+
+### Et une sortie d'échelle qui disparaît avec sa cause
+
+`check_echelle.py` compte les `display(horsEchelle:)` par fichier et se plaint dans les deux
+sens. Les trois fichiers d'export en perdent une chacun : le mot y était composé hors échelle,
+à juste titre — un logo n'a pas à suivre l'échelle du texte. Il n'est plus composé du tout, et
+une image n'a pas de cran de typographie.

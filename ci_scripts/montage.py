@@ -128,6 +128,11 @@ def plaque(titre: str, sous: str, rang: int, total: int, bandeau: str,
     return f, c, tt
 
 
+#: Le mot de la marque, dessiné. Lu dans les ressources de l'app : un seul fichier porte la
+#: forme, et `check_marque.py` vérifie qu'il existe toujours là où les scripts le cherchent.
+MARQUE = "Haizo/Resources/Assets.xcassets/haizo-mot.imageset/haizo-mot.png"
+
+
 def carte_titre(dossier: pathlib.Path, bandeau: str, mot: str, sous: str) -> pathlib.Path:
     """L'image d'ouverture ou de fin : le fond de la fiche, et le nom au centre.
 
@@ -141,10 +146,31 @@ def carte_titre(dossier: pathlib.Path, bandeau: str, mot: str, sous: str) -> pat
     img = S.cadre(1, bandeau).convert("RGBA")
     d = ImageDraw.Draw(img)
     from PIL import ImageFont
-    police = ImageFont.truetype(str(S.TITRE_POLICE), 220)
-    largeur = S.tracked_width(d, mot, police, -4.0)
+
+    # LE MOT EST POSÉ, PAS COMPOSÉ — correction du 16 novembre.
+    #
+    # Il était écrit à 220 points dans Bricolage Grotesque Condensed, c'est-à-dire dans une
+    # TROISIÈME fonte : ni celle de l'app, ni celle du logo. Ce carton est la première et la
+    # dernière image que quelqu'un voit de la marque sur l'App Store, et il y montrait le nom
+    # composé au lieu de la marque dessinée.
+    #
+    # LA FORME VIENT DU FICHIER DE L'APP, et il n'y en a qu'un. `haizo-mot.png` est une image
+    # template : elle ne porte que l'alpha, donc on la teinte ici de l'encre du cadre comme
+    # SwiftUI la teinte là-bas. Un seul dessin, deux rendus — plutôt qu'un second exemplaire
+    # dans `appstore/` qui divergerait au premier ajustement.
+    #
+    # LA TAILLE EST MESURÉE SUR CE QU'ELLE REMPLACE : le nom composé en capitales rendait
+    # 151 pixels d'encre de haut. Le mot dessiné est posé à cette hauteur-là, et fait alors
+    # 473 pixels de large, soit 37 % du cadre. Le poids vertical de la carte ne bouge pas.
+    forme = Image.open(S.ROOT / MARQUE).convert("RGBA")
+    hauteur = 151
+    largeur_marque = round(forme.width * hauteur / forme.height)
+    forme = forme.resize((largeur_marque, hauteur), Image.LANCZOS)
+    encre = Image.new("RGBA", forme.size, S.ENCRE + (255,))
+    encre.putalpha(forme.getchannel("A"))
     y = S.CANVAS[1] // 2 - 190
-    S.tracked(d, ((S.CANVAS[0] - largeur) / 2, y), mot, police, S.ENCRE + (255,), -4.0)
+    img.alpha_composite(encre, ((S.CANVAS[0] - largeur_marque) // 2, y))
+
     petite = ImageFont.truetype(str(S.FONTS / "InstrumentSans-Regular.ttf"), 54)
     w = d.textlength(sous, font=petite)
     d.text(((S.CANVAS[0] - w) / 2, y + 250), sous, font=petite, fill=S.ENCRE + (160,))

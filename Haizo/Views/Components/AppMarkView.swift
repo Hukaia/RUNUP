@@ -75,3 +75,50 @@ struct AppMarkView: View, Animatable {
         .padding()
         .background(RUColor.pageBackground)
 }
+
+/// Le mot de la marque, dessiné — et non composé dans la fonte de l'interface.
+///
+/// # POURQUOI UNE IMAGE PLUTÔT QU'UN `Text`
+///
+/// Jusqu'au 16 novembre, quatre écrans composaient le nom en capitales dans Instrument Sans,
+/// avec un `tracking` réglé à la main. Ce n'était pas le logo : c'était son NOM, composé dans
+/// la fonte de l'app. Un logo est un dessin ; il ne se retape pas, et surtout il ne suit
+/// pas la fonte de l'interface le jour où elle change — ce qui est arrivé deux fois cette
+/// semaine, Bebas puis Inter puis Instrument Sans.
+///
+/// Le kit de marque livre le mot en minuscules. C'est la forme retenue : les rondes du `a` et du
+/// `o` portent une identité que les capitales effacent.
+///
+/// # POURQUOI UNE IMAGE *TEMPLATE*
+///
+/// Le mot paraît sur quatre fonds et en trois habillages : l'encre de marque sur le lancement,
+/// du blanc sur une image de course, et — sur une carte de partage — un DÉGRADÉ. Un aplat
+/// n'aurait pas su faire le troisième. Une image template ne porte que la forme et prend le
+/// style qu'on lui donne, `foregroundStyle` compris, donc un dégradé.
+///
+/// Ce n'est pas une licence : le kit lui-même livre la même forme en deux encres. La forme est
+/// la marque, la couleur est le contexte.
+///
+/// # LA HAUTEUR EST CELLE DU KIT, PAS UNE VALEUR CHOISIE À L'ŒIL
+///
+/// Mesuré sur `haizo_A_white.png` : le mot fait **0,835 fois la hauteur du symbole**. Dans
+/// `AppMarkView`, les barres occupent **0,59** de la tuile — `glyphSize` vaut `size * 0.62` et
+/// les barres traversent 95 % de leur zone de dessin. Le mot vaut donc `0,835 × 0,59 ≈ 0,49`
+/// fois la tuile qui l'accompagne, et c'est la seule constante de ce fichier.
+struct MotDeMarque: View {
+    /// La taille de la tuile `AppMarkView` à côté de laquelle le mot est posé.
+    var tuile: CGFloat
+
+    /// Le rapport mesuré sur le kit — voir le commentaire en tête.
+    static let hauteurRelative: CGFloat = 0.49
+
+    var body: some View {
+        Image("haizo-mot")
+            .resizable()
+            .scaledToFit()
+            .frame(height: tuile * Self.hauteurRelative)
+            // Le mot est une image, pas du texte : sans ceci, VoiceOver ne dirait rien là où
+            // il lisait le nom.
+            .accessibilityLabel(Text(verbatim: "Haizo"))
+    }
+}

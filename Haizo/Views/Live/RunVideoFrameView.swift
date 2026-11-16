@@ -135,10 +135,8 @@ struct RunVideoFrameView: View {
     private var signature: some View {
         HStack(spacing: 8) {
             AppMarkView(size: 24)
-            Text(verbatim: "HAIZO")
-                .font(RUFont.display(horsEchelle: 19))
-                .tracking(3)
-                .foregroundColor(.white)
+            MotDeMarque(tuile: 24)
+                .foregroundStyle(Color.white)
         }
     }
 

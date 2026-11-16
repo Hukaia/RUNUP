@@ -50,7 +50,7 @@ struct BadgeShareCardView: View {
                 VStack(spacing: 6) {
                     HStack(spacing: 8) {
                         AppMarkView(size: 22, radius: 6, color: RUColor.rose)
-                        Text(verbatim: "HAIZO").font(RUFont.display(horsEchelle: 15)).tracking(4).foregroundColor(RUColor.textPrimary)
+                        MotDeMarque(tuile: 22).foregroundStyle(RUColor.encreDeMarque)
                     }
                     Text(Self.dateFormatter.string(from: .now))
                         .font(RUFont.mono(horsEchelle: 9.5))

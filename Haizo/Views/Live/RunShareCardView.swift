@@ -125,7 +125,7 @@ struct RunShareCardView: View {
             VStack(spacing: 6) {
                 HStack(spacing: 8) {
                     AppMarkView(size: 22, radius: 6)
-                    Text(verbatim: "HAIZO").font(RUFont.display(horsEchelle: 15)).tracking(4).foregroundStyle(valueStyle)
+                    MotDeMarque(tuile: 22).foregroundStyle(valueStyle)
                 }
                 Text(Self.dateFormatter.string(from: run.date))
                     .font(RUFont.mono(horsEchelle: 9.5))

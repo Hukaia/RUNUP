@@ -26,7 +26,9 @@ def _sur(contenu, nom="Haizo/X.swift"):
         f = racine / nom
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(contenu, encoding="utf-8")
-        return ck.main(racine)
+        # `noms` et non `main` : ce dépôt d'un seul fichier ne contient pas le catalogue de
+        # l'app, dont `le_mot` a son propre jeu de cas.
+        return 1 if ck.noms(racine) else 0
 
 
 @cas_test("un dépôt sans l'ancien nom passe")
@@ -99,10 +101,16 @@ def _():
     assert _sur('Text("Bienvenue dans HAIZO Plus")\n') == 1
 
 
-@cas_test("et acceptées dans les quatre fichiers qui portent le logo")
+@cas_test("et acceptées dans CHAQUE fichier de la liste, quelle qu'elle soit")
 def _():
-    assert _sur('Text(verbatim: "HAIZO")\n',
-                nom="Haizo/Views/Components/SplashView.swift") == 0
+    # Épinglé sur SplashView jusqu'au 16 novembre, où cet écran a cessé de composer le nom en
+    # capitales pour poser le mot dessiné. Le cas a alors éprouvé une exemption qui n'existait
+    # plus. Il porte maintenant sur la PROPRIÉTÉ — tout ce qui est dans la liste passe, tout ce
+    # qui n'y est pas est refusé — et il survit au prochain élagage.
+    assert ck.PORTEURS_DU_LOGO, "la liste est vide : ce cas ne prouverait rien"
+    for nom in ck.PORTEURS_DU_LOGO:
+        assert _sur('le mot HAIZO\n', nom=nom) == 0, nom
+    assert _sur('le mot HAIZO\n', nom="Haizo/Views/Ailleurs.swift") == 1
 
 
 @cas_test("UN JOURNAL GARDE L'ANCIEN NOM — c'est son travail de le raconter")
@@ -132,6 +140,61 @@ def _():
 def _():
     for mot, raison in ck.TOLERES:
         assert len(raison) > 60, f"{mot} : raison trop courte pour être une raison"
+
+
+# --- LE MOT DE LA MARQUE, SON FICHIER ET SON INTENTION DE RENDU ---------------------------
+
+def _catalogue(contents: str, avec_png=True):
+    """Un dépôt d'un seul imageset, pour éprouver `le_mot`."""
+    with tempfile.TemporaryDirectory() as d:
+        racine = pathlib.Path(d)
+        dossier = racine / ck.MOT
+        dossier.mkdir(parents=True)
+        (dossier / "Contents.json").write_text(contents, encoding="utf-8")
+        if avec_png:
+            (dossier / "haizo-mot.png").write_bytes(b"\x89PNG\r\n")
+        return ck.le_mot(racine)
+
+
+BON = ('{"images":[{"filename":"haizo-mot.png","idiom":"universal"}],'
+       '"properties":{"template-rendering-intent":"template"}}')
+
+
+@cas_test("un imageset complet et template ne pose aucun problème")
+def _():
+    assert _catalogue(BON) == []
+
+
+@cas_test("UN FICHIER DÉCLARÉ MAIS ABSENT EST SIGNALÉ — la panne de la campagne 207")
+def _():
+    p = _catalogue(BON, avec_png=False)
+    assert len(p) == 1 and "absent" in p[0], p
+
+
+@cas_test("UNE INTENTION DE RENDU CHANGÉE EST SIGNALÉE — la panne qui ne fait aucun bruit")
+def _():
+    p = _catalogue(BON.replace('"template"', '"original"'))
+    assert len(p) == 1 and "template" in p[0], p
+
+
+@cas_test("et une intention ABSENTE aussi, parce que le défaut n'est pas template")
+def _():
+    p = _catalogue('{"images":[{"filename":"haizo-mot.png","idiom":"universal"}]}')
+    assert len(p) == 1 and "template" in p[0], p
+
+
+@cas_test("un catalogue qui ne nomme aucun fichier est signalé")
+def _():
+    p = _catalogue('{"images":[{"idiom":"universal"}],'
+                   '"properties":{"template-rendering-intent":"template"}}')
+    assert len(p) == 1 and "aucun fichier" in p[0], p
+
+
+@cas_test("et un imageset disparu tout entier")
+def _():
+    with tempfile.TemporaryDirectory() as d:
+        p = ck.le_mot(pathlib.Path(d))
+    assert len(p) == 1 and "introuvable" in p[0], p
 
 
 @cas_test("le dépôt tel qu'il est passe")
