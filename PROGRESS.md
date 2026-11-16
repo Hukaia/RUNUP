@@ -7561,3 +7561,69 @@ finit à 847, la barre couvre 854 → 910, et le « 2/3 » reparaît à 942.
 Courir après cette limite est sans fin — il y aura toujours quelque chose au bord. La question
 est de savoir si ce qui est coupé doit être un BORD DE CARTE plutôt qu'un chiffre, et c'est une
 décision de direction artistique.
+
+## 16 novembre 2026 — le coach avait une icône d'application en guise de visage
+
+Point 3 du brief : « l'icône du coach devient le pictogramme des quatre barres en noir sur
+`#F3EEF4` ». Elle était restée la tuile en dégradé de marque.
+
+### Ce que le brief vise, et ce qu'il ne vise pas
+
+`AppMarkView` sert à **seize endroits** — lancement, connexion, bienvenue, cartes de partage,
+barre d'onglets, notifications, profil déconnecté, Club, amis, mur. Partout ailleurs, elle EST la
+signature de l'app, et un logo garde son dessin : c'est la décision du 16 novembre au matin.
+
+Le brief ne vise donc pas la marque. Il vise le seul endroit où elle ne signe rien : à côté de
+« Ton coach · Connaît ton programme », elle tient lieu de **portrait d'interlocuteur**. Une icône
+d'application en guise de visage, c'est ce qui fait lire « une app me parle » plutôt que
+« quelqu'un me répond ».
+
+### Deux endroits, pas un — et ce n'est pas un élargissement
+
+`RingsView` porte un bloc titré « Coach » qui affiche sa phrase du jour, avec la même tuile. Le
+brief ne le nomme pas, mais c'est le même interlocuteur : deux visages pour une seule personne
+serait exactement le défaut que la règle existe pour éviter.
+
+### `card2` et non `#F3EEF4`, et c'était déjà écrit
+
+`ChipView`, le 16 novembre : « la valeur est `card2`, pas `#F3EEF4`, et c'est une décision
+assumée — `#F3EEF4` est une lavande FROIDE, les fonds clairs de l'app sont chauds depuis le
+12 novembre, et `check_jetons_de_texte.py` tient la règle de la famille du fond ». `ProfileView`
+renvoie à la même raison. On garde la direction du brief — une surface déclarée, opaque — et la
+famille de la page.
+
+## 16 novembre 2026 — la moitié de la palette d'intensité n'était photographiée nulle part
+
+Compté sur les 27 captures de la passe claire de la campagne 218, pixel par pixel :
+
+| teinte | pixels |
+|---|---|
+| facile `#2FB37A` | 25 706 |
+| intervalles `#F0225F` | 2 419 128 |
+| sortie longue `#7B3FE4` | 71 540 |
+| **seuil `#F5A524`** | **0** |
+| **récupération `#5AA9E6`** | **0** |
+| **fonctionnel `#44506B`** | **0** |
+
+Trois des six teintes que Charlotte a choisies le 15 novembre n'avaient jamais été vues sur une
+image. Elles sont dans le code, `check_teintes.py` les tient — mais aucun garde ne sait si elles
+sont belles, lisibles, ou si elles jurent entre elles.
+
+### Pourquoi elles manquaient
+
+Le `fonctionnel` est le renforcement HYROX : le profil de démonstration vise un 10 km, il n'en
+fait pas. Légitimement absent.
+
+Les deux autres ne sont pas des teintes mortes : **le plan les produit, mais dans le bloc
+SPÉCIFIQUE**. L'écran du plan s'ouvre sur « Semaine 1 · Base », qui ne porte que de l'endurance
+et du fractionné léger. Trois semaines en avant suffisent à y entrer.
+
+### Une capture de diagnostic, pas une de plus sur la fiche
+
+`plan-specifique` ne part pas chez Apple. Elle existe pour qu'on puisse juger ces deux teintes
+sur une image au lieu de les croire sur parole — ce que la règle « l'image EST la vérification »
+demande pour tout ce qui a un visage.
+
+Le geste tape la flèche de semaine **en coordonnées**, comme le défilement juste à côté : le
+fichier s'interdit l'arbre d'accessibilité depuis que cette requête a tué le premier essai de ces
+captures.

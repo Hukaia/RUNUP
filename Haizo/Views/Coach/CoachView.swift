@@ -252,7 +252,9 @@ struct CoachView: View {
 
     private var header: some View {
         HStack(spacing: 12) {
-            AppMarkView(size: 40)
+            // LE PORTRAIT DU COACH, ET NON LA SIGNATURE DE L'APP. Voir `AppMarkView.fond` :
+            // c'est le seul emploi de cette tuile où elle tient lieu de visage.
+            AppMarkView(size: 40, color: RUColor.textPrimary, fond: RUColor.card2)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Ton coach").displayStyle(.subtitle).foregroundColor(RUColor.textPrimary)
                 // Honest subtitle — the old green "en ligne" dot measured nothing (it was

@@ -332,6 +332,23 @@ final class CapturesUITests: XCTestCase {
                 defilements: 1, libre: true)
     }
 
+    /// LE BLOC SPÉCIFIQUE, parce que la moitié de la palette d'intensité n'était photographiée
+    /// nulle part.
+    ///
+    /// Compté sur la campagne 218, sur les 27 captures de la passe claire : `#2FB37A`,
+    /// `#F0225F` et `#7B3FE4` sont là ; le seuil `#F5A524` et la récupération `#5AA9E6` à ZÉRO
+    /// pixel. Ce ne sont pas des teintes mortes — le plan les produit, mais dans le bloc
+    /// spécifique, et l'écran s'ouvre sur la semaine 1 du bloc Base, qui ne porte que de
+    /// l'endurance et du fractionné léger.
+    ///
+    /// Trois semaines en avant suffisent à y entrer. C'est une capture de DIAGNOSTIC : elle ne
+    /// part pas chez Apple, elle existe pour qu'on puisse juger ces deux teintes sur une image
+    /// au lieu de les croire sur parole.
+    func test37PlanSpecifique() {
+        prendre(rang: 37, ecran: "plan", nom: "plan-specifique", diagnostic: true,
+                semainesEnAvant: 3)
+    }
+
     func test23StatsGrandTexte() throws {
         try passeSombreSeulement()
         prendre(rang: 23, ecran: "stats", nom: "grand-texte/stats", diagnostic: true,
@@ -404,6 +421,7 @@ final class CapturesUITests: XCTestCase {
     private func prendre(rang: Int, ecran: String, nom: String, diagnostic: Bool = false,
                          profil: String? = nil, course: Bool = false,
                          sortie: Bool = false, onglet: String? = nil, defilements: Int = 0,
+                         semainesEnAvant: Int = 0,
                          inscription: Bool = false, paywall: Bool = false,
                          reglages: Bool = false, plusDeReglages: Bool = false,
                          cycle: Bool = false,
@@ -490,6 +508,23 @@ final class CapturesUITests: XCTestCase {
         //
         // Une pause après chaque geste : l'inertie du défilement continue après le doigt, et
         // photographier pendant qu'elle court donne une image floue ou à mi-chemin.
+        // LA FLÈCHE DE SEMAINE, EN COORDONNÉES ELLE AUSSI.
+        //
+        // Même règle que le défilement juste en dessous : on ne consulte pas l'arbre
+        // d'accessibilité, on s'adresse à la fenêtre. La flèche « semaine suivante » du plan est
+        // à droite du titre de semaine, mesurée sur la campagne 218 à 0,91 × 0,49 de la dalle.
+        //
+        // POURQUOI CE GESTE EXISTE. Trois des six teintes d'intensité du brief du 15 novembre —
+        // le seuil, la récupération et le fonctionnel — n'apparaissaient sur AUCUN pixel des 27
+        // captures de la passe claire. Mesuré, pas supposé. Le fonctionnel est propre à HYROX,
+        // donc légitimement absent d'un profil 10 km ; les deux autres vivent dans le bloc
+        // SPÉCIFIQUE, semaines 3 à 5, et l'écran du plan s'ouvre sur la semaine 1 du bloc Base.
+        // Une moitié de palette que Charlotte a choisie n'avait jamais été vue sur une image.
+        for _ in 0..<semainesEnAvant {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.91, dy: 0.49)).tap()
+            Thread.sleep(forTimeInterval: 0.5)
+        }
+
         for _ in 0..<defilements {
             let depart = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
             let arrivee = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))

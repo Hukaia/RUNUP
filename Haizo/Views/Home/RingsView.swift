@@ -180,7 +180,11 @@ struct RingsView: View {
                 if isToday {
                     if let coachNudge {
                         HStack(spacing: 12) {
-                            AppMarkView(size: 34)
+                            // LE MÊME COACH, DONC LE MÊME VISAGE. Le brief ne nomme que l'écran
+                            // Coach, mais ce bloc-ci est titré « Coach » et porte sa phrase du
+                            // jour : c'est le même interlocuteur, et deux visages pour une seule
+                            // personne serait le défaut que la règle existe pour éviter.
+                            AppMarkView(size: 34, color: RUColor.textPrimary, fond: RUColor.card2)
                             VStack(alignment: .leading, spacing: 4) {
                                 RUCardHeader(icon: "bubble.left.fill", title: "Coach")
                                 Text(coachNudge).font(RUFont.sans(.label)).foregroundColor(RUColor.textPrimary)

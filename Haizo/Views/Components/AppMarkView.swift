@@ -23,6 +23,29 @@ struct AppMarkView: View, Animatable {
         set { drawn = newValue }
     }
 
+    /// Le fond de la tuile. `nil` — le cas par défaut — rend le dégradé de marque.
+    ///
+    /// # Pourquoi ce paramètre existe
+    ///
+    /// Point 3 du brief du 15 novembre : « l'icône du coach devient le pictogramme des quatre
+    /// barres en noir sur `#F3EEF4` ». Il ne vise pas la marque — partout ailleurs, cette tuile
+    /// EST la signature de l'app, et un logo garde son dessin. Il vise le seul endroit où elle ne
+    /// signe rien : à côté de « Ton coach », elle sert de PORTRAIT D'INTERLOCUTEUR. Une icône
+    /// d'application en guise de visage, c'est ce qui fait lire « une app me parle » plutôt que
+    /// « quelqu'un me répond ».
+    ///
+    /// LA VALEUR EST `card2`, PAS `#F3EEF4`, et la décision est déjà écrite dans `ChipView` le
+    /// 16 novembre : `#F3EEF4` est une lavande FROIDE, les fonds clairs de l'app sont chauds
+    /// depuis le 12 novembre, et `check_jetons_de_texte.py` tient la règle « la famille du
+    /// fond ». On garde la direction du brief — une surface déclarée, opaque — et la famille de
+    /// la page.
+    var fond: Color? = nil
+
+    private var remplissage: AnyShapeStyle {
+        if let fond { return AnyShapeStyle(fond) }
+        return AnyShapeStyle(RUColor.brandGradient)
+    }
+
     private var cornerRadius: CGFloat { radius ?? size * 0.26 }
     private var glyphSize: CGFloat { size * 0.62 }
 
@@ -48,7 +71,7 @@ struct AppMarkView: View, Animatable {
 
     var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .fill(RUColor.brandGradient)
+            .fill(remplissage)
             .frame(width: size, height: size)
             .overlay(
                 ZStack {
