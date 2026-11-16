@@ -60,7 +60,7 @@ distance relevée au cadastre. Quatre tours = 1600 m.
 ### 2. Batterie — une heure, deux fois
 
 - Charger à 100 %, noter l'heure, courir ou marcher **60 minutes** écran éteint.
-- Relever le pourcentage restant, et la part attribuée à RUNUP dans Réglages → Batterie.
+- Relever le pourcentage restant, et la part attribuée à Haizo dans Réglages → Batterie.
 - **Attendu** : à comparer à Strava ou Runna sur le même téléphone, même jour, même parcours. Le
   chiffre absolu ne veut rien dire ; l'écart avec un concurrent, oui.
 - Refaire **avec la montre appairée** : c'est la configuration réelle de beaucoup de gens.

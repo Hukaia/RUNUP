@@ -2,10 +2,10 @@
 
 > Relevé le 16 octobre 2026, depuis <https://www.strava.com/legal/api_policy> (date d'effet
 > affichée : 1er juin 2026). Ce fichier n'est pas un avis juridique : c'est la lecture des
-> sections qui touchent ce que RUNUP fait aujourd'hui, pour que la décision soit prise en
+> sections qui touchent ce que Haizo fait aujourd'hui, pour que la décision soit prise en
 > connaissance de cause et pas découverte un matin par un e-mail de Strava.
 
-## Ce que RUNUP fait aujourd'hui
+## Ce que Haizo fait aujourd'hui
 
 `StravaService.importActivities` récupère les activités d'une athlète et les écrit dans la base
 de l'app comme des `RunRecord` ordinaires, avec `stravaActivityId` pour ne pas les importer deux

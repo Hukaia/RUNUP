@@ -370,7 +370,7 @@ def cmd_status(_):
     except SystemExit:
         products = []
     for product in products:
-        if not (product["attributes"].get("name") or "").upper().startswith("RUNUP"):
+        if not (product["attributes"].get("name") or "").upper().startswith("Haizo"):
             continue
         try:
             workflows = call("GET", f"ciProducts/{product['id']}/workflows?limit=20")["data"]
@@ -457,7 +457,7 @@ def cmd_ci(_):
                  "→ regarde directement dans App Store Connect → Xcode Cloud.")
 
     mine = [p for p in products
-            if (p["attributes"].get("name") or "").upper().startswith("RUNUP")] or products
+            if (p["attributes"].get("name") or "").upper().startswith("Haizo")] or products
     if not mine:
         print("Aucun produit Xcode Cloud sur ce compte.")
         return
@@ -528,7 +528,7 @@ def cmd_xcode_cloud(args):
                  "→ App Store Connect → Xcode Cloud, à la main.")
 
     miens = [p for p in produits
-             if (p["attributes"].get("name") or "").upper().startswith("RUNUP")] or produits
+             if (p["attributes"].get("name") or "").upper().startswith("Haizo")] or produits
     if not miens:
         _annoter("Aucun produit Xcode Cloud sur ce compte — rien à éteindre.")
         return
@@ -576,7 +576,7 @@ def cmd_xcode_cloud_on(args):
     """Rallume ce que `--off` a éteint."""
     produits = call("GET", "ciProducts?limit=20")["data"]
     miens = [p for p in produits
-             if (p["attributes"].get("name") or "").upper().startswith("RUNUP")] or produits
+             if (p["attributes"].get("name") or "").upper().startswith("Haizo")] or produits
     for produit in miens:
         for w in call("GET", f"ciProducts/{produit['id']}/workflows?limit=50")["data"]:
             if w["attributes"].get("isEnabled") or w["attributes"].get("isLockedForEditing"):
@@ -1139,7 +1139,7 @@ def cmd_list_screenshots(args):
 
 # LES FORMATS DE CAPTURE QUI N'ONT AUCUNE RAISON D'EXISTER SUR CETTE FICHE.
 #
-# RUNUP est une app iPhone : `TARGETED_DEVICE_FAMILY` vaut "1" pour l'app et pour le widget, et
+# Haizo est une app iPhone : `TARGETED_DEVICE_FAMILY` vaut "1" pour l'app et pour le widget, et
 # Apple ne demande donc aucune image d'iPad. La capture iPad de la fiche était une mise en page
 # iPhone étirée dans un cadre d'iPad, datée d'août, qu'aucune chaîne ne régénérait.
 #
@@ -1679,7 +1679,7 @@ def cmd_submit(args):
 #
 # DEUX FORMES, ET ELLES NE SE RESSEMBLENT PAS :
 #
-#   · un CODE PERSONNALISÉ — une seule chaîne, « RUNUPTEAM », qu'on distribue à qui l'on veut,
+#   · un CODE PERSONNALISÉ — une seule chaîne, « HaizoTEAM », qu'on distribue à qui l'on veut,
 #     utilisable N fois jusqu'à une date. C'est ce qu'on veut ici : un code à envoyer par message.
 #   · des codes À USAGE UNIQUE — un lot de chaînes tirées au hasard, à télécharger en CSV.
 #     Utile pour une campagne, inutile pour une poignée de testeurs.
@@ -1697,7 +1697,7 @@ OFFRES_PROMO = [
     # choisir, et deux codes pour la même chose est une source d'erreur au moment de les envoyer.
     # Une testeuse peut avoir déjà été abonnée, ou l'être encore : lui refuser le code pour ça
     # n'aurait aucun sens, d'où les trois éligibilités.
-    {"produit": ANNUEL, "nom": "Testeurs RUNUP", "code": "RUNUPTEAM",
+    {"produit": ANNUEL, "nom": "Testeurs Haizo", "code": "HaizoTEAM",
      "mode": "FREE_TRIAL", "duree": "ONE_YEAR", "periodes": 1, "remise": 1.0,
      # Mille, et non deux cents : Apple refuse les petits nombres pour un code personnalisé
      # (« Invalid number of codes »). C'est un PLAFOND d'utilisations, pas une quantité à
@@ -1706,10 +1706,10 @@ OFFRES_PROMO = [
     # LES NOUVELLES : la première année à moitié prix, puis le tarif plein. Un code appartient à
     # UNE offre, donc à UN produit — celui qui suit existe pour qui préfère payer au mois, sans
     # quoi la feuille d'Apple lui répondrait « non éligible » sans expliquer pourquoi.
-    {"produit": ANNUEL, "nom": "Bienvenue moitié prix (annuel)", "code": "RUNUP50",
+    {"produit": ANNUEL, "nom": "Bienvenue moitié prix (annuel)", "code": "Haizo50",
      "mode": "PAY_AS_YOU_GO", "duree": "ONE_YEAR", "periodes": 1,
      "eligibilites": ["NEW"], "codes": 10000, "remise": 0.5},
-    {"produit": MENSUEL, "nom": "Bienvenue moitié prix (mensuel)", "code": "RUNUP50M",
+    {"produit": MENSUEL, "nom": "Bienvenue moitié prix (mensuel)", "code": "Haizo50M",
      "mode": "PAY_AS_YOU_GO", "duree": "ONE_MONTH", "periodes": 3,
      "eligibilites": ["NEW"], "codes": 10000, "remise": 0.5},
 ]

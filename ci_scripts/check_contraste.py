@@ -29,7 +29,7 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-DOSSIERS = ["RunUp", "RunUpWidgets", "RunUpWatch"]
+DOSSIERS = ["Haizo", "HaizoWidgets", "HaizoWatch"]
 
 EMPLOI = re.compile(r"\.foregroundColor\(\s*[^)]*RUColor\.text4")
 
@@ -38,14 +38,14 @@ EMPLOI = re.compile(r"\.foregroundColor\(\s*[^)]*RUColor\.text4")
 TOLERES = [
     # Le point médian qui sépare « abonnés » de « abonnements ». Un signe de ponctuation
     # décoratif : il n'y a rien à y lire, et le lire à voix haute serait du bruit.
-    ("RunUp/Views/Club/FriendsView.swift", 'Text("·")'),
+    ("Haizo/Views/Club/FriendsView.swift", 'Text("·")'),
     # Les deux points médians entre les liens du pied du paywall. Même raison, et ils sont en
     # `Text(verbatim:)` précisément parce qu'il n'y a pas de mot dedans.
-    ("RunUp/Views/Paywall/PaywallView.swift", 'Text(verbatim: "·")'),
+    ("Haizo/Views/Paywall/PaywallView.swift", 'Text(verbatim: "·")'),
     # Le chevron d'un bouton de navigation DÉSACTIVÉ. Les commandes inactives sont hors du
     # critère de contraste (WCAG 1.4.3), et une flèche pâle est la façon dont iOS dit « pas
     # maintenant » — l'alternative serait de la retirer, ce qui n'apprend rien.
-    ("RunUp/Views/Home/PlanView.swift", "enabled ? RUColor.textPrimary : RUColor.text4"),
+    ("Haizo/Views/Home/PlanView.swift", "enabled ? RUColor.textPrimary : RUColor.text4"),
 ]
 
 

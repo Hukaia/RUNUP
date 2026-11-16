@@ -1,6 +1,6 @@
 # La porte de sortie
 
-Ce qu'il faut avoir fait, et avoir REGARDÉ, avant qu'une version de RUNUP parte chez quelqu'un.
+Ce qu'il faut avoir fait, et avoir REGARDÉ, avant qu'une version de Haizo parte chez quelqu'un.
 
 Ce fichier n'est pas une liste de bonnes intentions : chaque ligne renvoie à une commande qui
 s'exécute ou à une image qu'on ouvre. Et il dit aussi ce qu'aucune machine ne tient — la
@@ -182,7 +182,7 @@ Puis, sur la machine :
 - **La montre est photographiée depuis le 9 novembre 2026** par `.github/workflows/montre.yml`,
   dans les trois langues, et `check_requis.py` refuse une image qui ne montre plus l'app.
 - **L'iPad ne pose pas la question** — `TARGETED_DEVICE_FAMILY` vaut 1 dans les réglages de base
-  comme dans ceux du widget (seule la montre porte 4), donc RUNUP est une app iPhone et Apple ne
+  comme dans ceux du widget (seule la montre porte 4), donc Haizo est une app iPhone et Apple ne
   demande aucune image d'iPad. Ce dépôt en a pourtant FABRIQUÉ une pendant vingt-quatre heures,
   le 9 novembre, alors que ce paragraphe disait déjà le contraire. Elle est partie le 10.
   **Ce qui reste à faire une fois, à la main** : la fiche publiée porte encore la capture iPad
@@ -238,7 +238,7 @@ Elles tiennent en une page et elles ont toutes coûté quelque chose.
    dans le code, pas sur une image de l'écran.
 3. **Un contrôle qui ne tourne pas ne garde rien.** `test_deploiement.py`, `test_accent.py`,
    `test_session.py` existaient et aucun workflow ne les lançait. Un dossier listé au singulier —
-   `RunUpWidget` au lieu de `RunUpWidgets` — faisait relire un dossier inexistant en silence,
+   `HaizoWidget` au lieu de `HaizoWidgets` — faisait relire un dossier inexistant en silence,
    parce que `rglob` sur un chemin absent ne rend rien et ne dit rien.
 4. **Ce qui marche sur la machine des tests ne dit rien de ce qui tourne en ligne.** Node 22 fait
    marcher `require` d'un module ESM. Le Node de Vercel, peut-être pas. La seule mesure valable

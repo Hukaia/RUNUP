@@ -36,7 +36,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from swift import sans_commentaires  # noqa: E402
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CIBLES = ["RunUp", "RunUpWidgets", "RunUpWatch"]
+CIBLES = ["Haizo", "HaizoWidgets", "HaizoWatch"]
 
 REQUETE = re.compile(r"\bURLRequest\s*\(")
 #: Le délai doit être posé juste après la construction, pas trois écrans plus loin : c'est là

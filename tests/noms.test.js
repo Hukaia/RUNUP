@@ -3,7 +3,7 @@
 // LE DÉFAUT QUE CES TESTS EMPÊCHENT DE REVENIR. « Se connecter avec Apple » ne transmet
 // `fullName` qu'à la toute première autorisation d'un identifiant Apple pour cette app. Tous les
 // comptes créés autrement — réinstallation, second appareil, identifiant Apple qui avait déjà
-// ouvert RUNUP une fois — étaient rangés sous « Coureur », pour toujours : aucun écran ne
+// ouvert Haizo une fois — étaient rangés sous « Coureur », pour toujours : aucun écran ne
 // permettait de corriger le prénom. La recherche de « Mes amis » interroge
 // `name || ' ' || last_name`, donc leur vrai prénom ne les trouvait pas, et « Coureur » les
 // trouvait tous à la fois.

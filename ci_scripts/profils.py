@@ -44,15 +44,15 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # (créneau, bundle ID, entitlements de la cible, nom du profil chez Apple)
 #
-# Le nom est préfixé « RunUp CI » pour que ce script ne touche JAMAIS aux profils créés à la main
+# Le nom est préfixé « Haizo CI » pour que ce script ne touche JAMAIS aux profils créés à la main
 # dans le portail : il ne lit, ne supprime et ne refait que les siens.
 CIBLES = [
     ("APP",     "com.hicsuntco.runup",
-     "RunUp/RunUp.entitlements",               "RunUp CI app"),
+     "Haizo/Haizo.entitlements",               "Haizo CI app"),
     ("WIDGETS", "com.hicsuntco.runup.widgets",
-     "RunUpWidgets/RunUpWidgets.entitlements", "RunUp CI widgets"),
+     "HaizoWidgets/HaizoWidgets.entitlements", "Haizo CI widgets"),
     ("WATCH",   "com.hicsuntco.runup.watchkitapp",
-     "RunUpWatch/RunUpWatch.entitlements",     "RunUp CI montre"),
+     "HaizoWatch/HaizoWatch.entitlements",     "Haizo CI montre"),
 ]
 
 TYPE_PROFIL = "IOS_APP_STORE"

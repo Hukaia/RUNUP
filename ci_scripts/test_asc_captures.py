@@ -254,7 +254,7 @@ def avec_fiche(jeux, bloc):
     fiche = FausseFiche(jeux)
     vrai_call, vrai_app_id = asc.call, asc.app_id
     asc.call = fiche.call
-    asc.app_id = lambda: ("app-1", "RUNUP")
+    asc.app_id = lambda: ("app-1", "Haizo")
     try:
         bloc(fiche)
     finally:

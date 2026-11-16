@@ -91,7 +91,7 @@ async function handleApple(req, res) {
     //
     // Apple ne transmet `fullName` qu'à la toute première autorisation d'un identifiant Apple
     // pour cette app. Une réinstallation, un second appareil, ou un compte Apple qui avait déjà
-    // ouvert RUNUP une fois n'envoient rien : le compte a donc été créé sous `NOM_PAR_DEFAUT`,
+    // ouvert Haizo une fois n'envoient rien : le compte a donc été créé sous `NOM_PAR_DEFAUT`,
     // et il y serait resté pour toujours — la recherche de « Mes amis » interroge
     // `name || ' ' || last_name`, donc son vrai prénom ne le trouvait pas, et « Coureur » les
     // trouvait tous à la fois.

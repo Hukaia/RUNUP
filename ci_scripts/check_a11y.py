@@ -15,7 +15,7 @@ dans une feuille modale, et personne ne relira la liste.
 
 # CE QUI EST REGARDÉ
 
-Les couches visibles — `RunUp/Views`, le widget, la montre. Une commande n'est signalée que si
+Les couches visibles — `Haizo/Views`, le widget, la montre. Une commande n'est signalée que si
 TOUS ces points sont vrais, parce qu'un faux positif dans une barrière d'intégration continue
 coûte plus cher que le défaut qu'elle cherche :
 
@@ -39,7 +39,7 @@ vivante, il contient des accolades dans ses propres commentaires. `decouper` fai
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-DOSSIERS = ["RunUp/Views", "RunUpWidgets", "RunUpWatch"]
+DOSSIERS = ["Haizo/Views", "HaizoWidgets", "HaizoWatch"]
 COMMANDES = re.compile(r'\b(Button|NavigationLink)\b')
 A_UN_NOM = re.compile(r'\baccessibilityLabel\b|\baccessibilityHidden\b|\baccessibilityElement\b')
 PARLE = re.compile(r'\bText\s*\(|\bLabel\s*\(|\bLocalizedStringKey\s*\(')

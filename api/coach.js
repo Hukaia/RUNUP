@@ -1,4 +1,4 @@
-// Vercel serverless function — the only place RunUp's real Anthropic API key lives. The app
+// Vercel serverless function — the only place Haizo's real Anthropic API key lives. The app
 // calls this endpoint instead of api.anthropic.com directly, so no end user ever needs their own
 // key. See IOS_SETUP.md § "Coach backend" for the deploy/config steps.
 //
@@ -158,7 +158,7 @@ module.exports = withErrorHandling(async function handler(req, res) {
   //
   // Step 3 is not optional: the old value was committed in git and must be considered public, so
   // leaving it accepted indefinitely keeps the endpoint open to anyone who reads the history.
-  const secret = req.headers['x-runup-secret'];
+  const secret = req.headers['x-haizo-secret'];
   const accepted = [process.env.RUNUP_APP_SECRET, process.env.RUNUP_APP_SECRET_PREVIOUS].filter(Boolean);
   // `.some` over a fixed-size list of constant-time comparisons — every candidate is always
   // compared, so this leaks no more than the single comparison it replaces.

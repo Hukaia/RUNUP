@@ -3,7 +3,7 @@
 
 # LA QUESTION QUI A FAIT ÉCRIRE CE SCRIPT
 
-`RunUpWatch` n'embarque aucun `PrivacyInfo.xcprivacy`, là où l'app et le widget ont le leur. Je
+`HaizoWatch` n'embarque aucun `PrivacyInfo.xcprivacy`, là où l'app et le widget ont le leur. Je
 l'ai relevé le 9 novembre 2026 et j'ai REFUSÉ de trancher : je n'avais pas de source Apple disant
 si un paquet de montre embarqué doit porter le sien, et deviner sur un motif de rejet à l'envoi
 n'est pas une option.
@@ -14,14 +14,14 @@ La documentation d'Apple ne traite pas le cas d'un paquet watchOS imbriqué, et 
 publiques se contredisent. Mais la validation d'Apple, elle, répond — c'est elle qui émet
 ITMS-91053. Journal d'archive du 10 novembre 2026, Xcode 26.6 :
 
-    ValidateEmbeddedBinary …/RunUp.app/Watch/RunUpWatch.app
-    "com.hicsuntco.runup.watchkitapp" => "RunUp CI montre"
-    No errors uploading archive at '…/RunUp.ipa'.
+    ValidateEmbeddedBinary …/Haizo.app/Watch/HaizoWatch.app
+    "com.hicsuntco.runup.watchkitapp" => "Haizo CI montre"
+    No errors uploading archive at '…/Haizo.ipa'.
     UPLOAD SUCCEEDED with no errors
 
 Un paquet contenant la montre SANS manifeste passe donc la validation sans une erreur. Et c'est
 cohérent avec ce que la règle dit : ITMS-91053 s'appelle « Missing API declaration » et se
-déclenche sur l'USAGE d'une API à motif obligatoire sans motif déclaré. `RunUpWatch` n'en appelle
+déclenche sur l'USAGE d'une API à motif obligatoire sans motif déclaré. `HaizoWatch` n'en appelle
 aucune — ni `UserDefaults`, ni date de fichier, ni espace disque, ni heure de démarrage, ni
 claviers actifs. Il n'y a rien à déclarer, donc rien à refuser.
 

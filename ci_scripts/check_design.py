@@ -37,8 +37,8 @@ import couleurs
 
 RACINE = couleurs.RACINE
 DESIGN = RACINE / "DESIGN.md"
-TYPO = RACINE / "RunUp/DesignSystem/Typography.swift"
-MOTION = RACINE / "RunUp/DesignSystem/Motion.swift"
+TYPO = RACINE / "Haizo/DesignSystem/Typography.swift"
+MOTION = RACINE / "Haizo/DesignSystem/Motion.swift"
 
 # Les noms français des nuanciers, tels que `DESIGN.md` les présente, vers leur `id` Swift.
 NUANCIERS = {
@@ -60,7 +60,7 @@ ANCRES = [
     "s'y sent à sa place",
     "le trouve sérieux",
     "qu'il a été généré",
-    "reconnaissable comme RunUp",
+    "reconnaissable comme Haizo",
 ]
 
 MOTS_POUR_BLANC = {"blanc pur": 0xFFFFFF, "noir pur": 0x000000}

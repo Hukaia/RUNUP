@@ -139,7 +139,7 @@ async function handleAvatar(req, res, userId) {
 // it. Deleting the user row cascades (ON DELETE CASCADE in db/schema.sql) to their club
 // membership, posted activities, and kudos — nothing about them is left behind on the server.
 async function handleDelete(req, res, userId) {
-  // Revoke RunUp's Strava grant before the row (and its tokens) vanish — otherwise the app
+  // Revoke Haizo's Strava grant before the row (and its tokens) vanish — otherwise the app
   // stays authorized on her Strava account invisibly, with no way left to undo it from our side.
   try {
     const { rows } = await sql`SELECT access_token FROM strava_connections WHERE user_id = ${userId}`;

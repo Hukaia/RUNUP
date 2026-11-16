@@ -33,7 +33,7 @@ design.
 import re, sys, pathlib
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-SPACING = RACINE / "RunUp/DesignSystem/Spacing.swift"
+SPACING = RACINE / "Haizo/DesignSystem/Spacing.swift"
 PLAFOND = 24
 
 texte = SPACING.read_text()
@@ -56,9 +56,9 @@ if len(RAYONS) != len([n for n in mr.group(1).split(",") if n.strip()]):
 
 # Les rayons écrits à la main, fichier par fichier, avec leur raison.
 FORMES_DESSINEES = {
-    "RunUp/Views/Profile/SettingsView.swift":
+    "Haizo/Views/Profile/SettingsView.swift":
         (4, "l'aperçu d'habillage miniaturise un téléphone : coque 9, écran 5"),
-    "RunUp/Views/Home/PlanView.swift":
+    "Haizo/Views/Home/PlanView.swift":
         (3, "les marques de la frise de programme : 2, 3 et 4 points de large"),
 }
 

@@ -49,8 +49,8 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from swift import sans_commentaires
 
-COMPOSANT = RACINE / "RunUp/Views/Components/EmptyStateView.swift"
-VUES = RACINE / "RunUp/Views"
+COMPOSANT = RACINE / "Haizo/Views/Components/EmptyStateView.swift"
+VUES = RACINE / "Haizo/Views"
 
 GROSSE_ICONE = re.compile(r"RUFont\.icone\(\.(hero|xlarge)\b")
 STYLE_REPRIS = re.compile(r"\.(font|foregroundColor|foregroundStyle|multilineTextAlignment|lineSpacing)\(")

@@ -1,0 +1,384 @@
+import Foundation
+import Observation
+
+/// The signed-in user's identity as the server sees it — `xpTotal` is the account's real,
+/// server-side XP total (see `api/me.js`), the source of truth for the Club leaderboard once
+/// signed in (as opposed to `UserProfile.xp`, which stays purely local for the app's own
+/// gamification UI outside Club).
+struct AuthenticatedUser: Codable, Equatable, Nomme {
+    var id: String
+    var name: String
+    var xpTotal: Int
+    /// Nil until she sets one (`ClubService.updateProfile`) or Apple provided it at first sign-in
+    /// — neither signup nor onboarding asks for it. Exists so "Mes amis" search can disambiguate
+    /// "which Léo?" without relying on first name alone (see `api/friends/[action].js` search).
+    var lastName: String?
+    /// A chosen, unique handle — nil until she sets one. The only fully reliable way to find one
+    /// specific person by search, same reasoning as `lastName`.
+    var username: String?
+
+    var nomDeFamille: String? { lastName }
+    /// L'adresse du compte, telle que le SERVEUR la voit.
+    ///
+    /// L'app ne la connaît pas autrement : elle est saisie à l'inscription et jamais relue, et
+    /// « Se connecter avec Apple » peut créer le compte sous un `…@privaterelay.appleid.com`
+    /// que personne ne devine. La fiche admin l'affiche pour qu'on sache quelle adresse inscrire
+    /// dans la liste des comptes de la maison — voir `lib/admin.js`.
+    var email: String?
+    /// Un compte de la maison. DÉCIDÉ PAR LE SERVEUR, jamais ici.
+    ///
+    /// `= false` et décodé en tolérant : un serveur antérieur à ce champ ne le renvoie pas, et
+    /// un `decode` strict ferait échouer tout le décodage — donc déconnecterait tout le monde
+    /// pendant la fenêtre où l'app est déployée et le serveur pas encore.
+    var isAdmin: Bool = false
+    /// Y a-t-il seulement une liste de comptes de la maison ? « Tu n'es pas dedans » et « il n'y
+    /// en a pas » se ressemblent à l'écran et se corrigent à deux endroits différents.
+    var adminListConfigured: Bool = false
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, xpTotal, lastName, username, email, isAdmin, adminListConfigured
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        xpTotal = try c.decode(Int.self, forKey: .xpTotal)
+        lastName = try c.decodeIfPresent(String.self, forKey: .lastName)
+        username = try c.decodeIfPresent(String.self, forKey: .username)
+        email = try c.decodeIfPresent(String.self, forKey: .email)
+        isAdmin = try c.decodeIfPresent(Bool.self, forKey: .isAdmin) ?? false
+        adminListConfigured = try c.decodeIfPresent(Bool.self, forKey: .adminListConfigured) ?? false
+    }
+
+    init(id: String, name: String, xpTotal: Int,
+         lastName: String? = nil, username: String? = nil, email: String? = nil,
+         isAdmin: Bool = false, adminListConfigured: Bool = false) {
+        self.id = id
+        self.name = name
+        self.xpTotal = xpTotal
+        self.lastName = lastName
+        self.username = username
+        self.email = email
+        self.isAdmin = isAdmin
+        self.adminListConfigured = adminListConfigured
+    }
+}
+
+enum AuthServiceError: Error {
+    case network(Error)
+    case badResponse(Int, String)
+    case notSignedIn
+}
+
+/// Le nom de l'en-tête par lequel le serveur renvoie un jeton frais.
+///
+/// HORS de `AuthService`, et c'est délibéré : cette classe est isolée sur l'acteur principal,
+/// donc ses membres statiques le sont aussi, et `ClubService.send` — qui doit lire cet en-tête —
+/// vit volontairement en dehors pour garder le réseau hors du fil principal. Une constante au
+/// niveau du fichier n'appartient à aucun acteur et se lit de partout.
+///
+/// ÉCRIT DEUX FOIS, ici et dans `lib/auth.js`. Une divergence ne casserait rien de visible : le
+/// serveur renouvellerait dans le vide, le client ne verrait jamais le jeton neuf, et elle se
+/// ferait déconnecter tous les mois sans que personne ne puisse dire pourquoi. C'est
+/// `ci_scripts/check_session.py` qui tient les deux écritures ensemble.
+enum SessionRenewal {
+    static let header = "X-RunUp-Session-Renewed"
+}
+
+/// Talks to Haizo's account backend — the same Vercel project as the coach proxy (see
+/// `api/auth/*.js`, `api/me.js`, `api/account/[action].js`). Holds the signed-in user + session
+/// token (Keychain-backed, so it survives relaunches) so `ClubService` and `ClubView` can tell
+/// whether there's a real account behind the Club tab. Signing in is scoped to Club only — the
+/// rest of the app works fully offline, no account required.
+///
+/// `@MainActor` : `currentUser` et `token` sont observés par SwiftUI, et `onSignOut` ci-dessous
+/// est une fermeture fournie par `AppState` (lui-même isolé sur l'acteur principal). Sans cette
+/// annotation, `signOut()` pouvait appeler cette fermeture — donc muter l'état de l'app et son
+/// contexte SwiftData — depuis n'importe quel fil. Les `await URLSession` restent, eux, hors du
+/// fil principal ; seule la reprise après chaque `await` y revient.
+@MainActor
+@Observable
+final class AuthService {
+    private(set) var currentUser: AuthenticatedUser?
+    private(set) var token: String?
+
+    /// LE SERVEUR A REFUSÉ NOTRE JETON.
+    ///
+    /// L'app ne l'apprenait jamais. Les sessions durent trente jours et rien ne les renouvelle —
+    /// `refreshMe()` rafraîchit l'UTILISATRICE, pas le jeton — donc au bout d'un mois tout le
+    /// monde est déconnecté sans le savoir : l'app garde un jeton qu'elle croit valide,
+    /// `isSignedIn` reste vrai, chaque appel au Club rend 401, et rien ne le dit. L'écran Amis
+    /// accusait le réseau, la file de l'historique promettait de réessayer.
+    ///
+    /// CE DRAPEAU N'EFFACE RIEN. Il n'est qu'une observation, et c'est délibéré : effacer le
+    /// jeton d'office sur un 401 ferait déconnecter tout le monde le jour où le serveur en rend
+    /// un à tort, et la déconnexion vide la file des sorties en attente. Le pire cas ici est une
+    /// carte « reconnecte-toi » affichée pour rien.
+    private(set) var sessionRejected = false
+
+    /// Appelé quand une réponse 401/403 arrive alors qu'on croyait avoir une session.
+    ///
+    /// Sans jeton, un 401 est la réponse NORMALE et ne veut rien dire : on ne lève le drapeau que
+    /// lorsqu'on en avait un à présenter.
+    /// Adopte le jeton que le serveur vient de renvoyer, s'il en a renvoyé un.
+    ///
+    /// # LE RENOUVELLEMENT GLISSANT, VU DU TÉLÉPHONE
+    ///
+    /// Un jeton vit trente jours. Passé la moitié, toute requête authentifiée en rapporte un neuf
+    /// dans un en-tête : on le range, et la session ne s'interrompt jamais pour quelqu'un qui se
+    /// sert de l'app. Le serveur refuse de renouveler au-delà de quatre-vingt-dix jours de session
+    /// — c'est son affaire, le client n'a rien à décider là-dessus et n'a donc pas à le savoir.
+    ///
+    /// L'ANCIEN JETON RESTE VALABLE. On ne le révoque pas, on ne le remplace que localement : si
+    /// cette écriture-ci échoue, ou si l'app est tuée dans la seconde, l'ancien continue de
+    /// marcher jusqu'à son expiration. Un renouvellement manqué coûte un aller-retour de plus, pas
+    /// une déconnexion.
+    func adopt(renewedToken: String?) {
+        guard let renewedToken, !renewedToken.isEmpty, renewedToken != token else { return }
+        // Pas de `onAuthenticated` ici : l'utilisatrice est la MÊME, la session continue. Ce
+        // rappel sert à réconcilier un changement de compte, et le déclencher sur chaque
+        // renouvellement rejouerait cette réconciliation pour rien.
+        token = renewedToken
+        KeychainService.saveToken(renewedToken)
+    }
+
+    func markSessionRejected() {
+        guard token != nil else { return }
+        sessionRejected = true
+    }
+
+    /// Le serveur vient d'accepter notre jeton : le refus précédent n'a plus d'objet.
+    ///
+    /// Sans ce pendant, un seul 401 passager — un redéploiement du serveur, une panne d'une
+    /// seconde — laissait la carte « ta session a expiré » affichée pour toujours, alors que tout
+    /// remarchait. Un drapeau qu'on ne sait que lever est un drapeau qui finit par mentir.
+    func markSessionAccepted() {
+        guard sessionRejected else { return }
+        sessionRejected = false
+    }
+
+    /// Appelé juste avant que la session ne soit effacée, sur les DEUX chemins de déconnexion
+    /// (le bouton des réglages et la suppression de compte, qui appelle `signOut()`). Posé par
+    /// `AppState.init` pour vider la file d'activités en attente : sans ça, les sorties d'un
+    /// compte survivaient à sa déconnexion et étaient publiées sous le compte suivant connecté
+    /// sur le même téléphone.
+    ///
+    /// Un rappel plutôt qu'un appel direct à `AppState` : ce service ne connaît pas l'état de
+    /// l'app et n'a aucune raison de le connaître.
+    var onSignOut: (() -> Void)?
+
+    /// Appelé chaque fois qu'un compte devient le compte courant — connexion, inscription, et
+    /// aussi la reprise de session au lancement.
+    ///
+    /// La reprise en fait partie volontairement : c'est par là que les profils créés avant que
+    /// `UserProfile.ownerAccountID` n'existe se font adopter par leur compte, sans que personne
+    /// n'ait à se reconnecter. Sans ça, ils resteraient sans propriétaire jusqu'à la prochaine
+    /// déconnexion — c'est-à-dire précisément jusqu'au moment où l'on aurait eu besoin de savoir.
+    var onAuthenticated: ((AuthenticatedUser) -> Void)?
+
+    /// Le nom sous lequel le serveur range un compte qui n'en a reçu aucun — la seule valeur de
+    /// `users.name` qu'une correction a le droit de remplacer. Recopiée de `lib/noms.js`, où la
+    /// règle vit, et exposée ici parce que TROIS endroits de l'app la testaient : le champ
+    /// « Prénom » des réglages, la réparation au lancement (`AppState`), et cette comparaison-ci.
+    /// Trois chaînes littérales identiques sont trois endroits où l'une cesse de correspondre.
+    static let nomParDefaut = "Coureur"
+
+    private static let baseURL = URL(string: "https://runup-nu.vercel.app")!
+
+    /// L'hôte auquel cette installation parle, pour la fiche admin — et rien d'autre.
+    ///
+    /// `baseURL` reste privée : une URL exposée est une URL qu'on finit par utiliser pour
+    /// fabriquer une requête ailleurs, et toutes les requêtes de ce service passent par ici
+    /// précisément pour que l'en-tête d'autorisation ne puisse pas être oublié. Seul le NOM
+    /// sort, et il ne sert qu'à être lu.
+    static var hoteDuServeur: String { baseURL.host() ?? baseURL.absoluteString }
+
+    init() {
+        token = KeychainService.loadToken()
+    }
+
+    var isSignedIn: Bool { token != nil }
+
+    #if DEBUG
+    /// Une session de démonstration, pour les captures d'écran — et rien d'autre.
+    ///
+    /// Le jeton n'est PAS rangé dans le trousseau : il ne vaut que pour ce processus, et il ne
+    /// vaut rien face au serveur. C'est suffisant, parce que `ClubView` ne va justement pas
+    /// interroger le serveur quand `Demonstration.enCours` (voir `loadIfSignedIn`) : le club
+    /// qu'elle affiche est celui que `CaptureSeed` a posé en cache.
+    ///
+    /// Sans ça, l'écran du Club montrait « Le Club, c'est mieux à plusieurs » et un bouton SE
+    /// CONNECTER, sous une accroche qui promet « Tu ne cours jamais seule ».
+    func poserUneSessionDeDemonstration(_ utilisatrice: AuthenticatedUser) {
+        token = "demonstration"
+        currentUser = utilisatrice
+    }
+    #endif
+
+    /// `lastName` is sent separately from `name` (not pre-joined) so the server can store it as
+    /// real, structured `last_name` — Apple only ever provides both on this account's very first
+    /// sign-in, so this is the one chance to capture it at all.
+    func signInWithApple(identityToken: String, name: String?, lastName: String? = nil) async throws {
+        try await authenticate(path: "api/auth/apple", body: ["identityToken": identityToken, "name": name ?? "", "lastName": lastName ?? ""])
+    }
+
+    func signUp(email: String, password: String, name: String, lastName: String? = nil) async throws {
+        try await authenticate(path: "api/auth/signup", body: ["email": email, "password": password, "name": name, "lastName": lastName ?? ""])
+    }
+
+    func logIn(email: String, password: String) async throws {
+        try await authenticate(path: "api/auth/login", body: ["email": email, "password": password])
+    }
+
+    /// Refreshes `currentUser` (name, real `xpTotal`) from the server — call after sign-in and
+    /// whenever Club needs a fresh number, since the server (not this device) owns that total
+    /// once an account exists.
+    @discardableResult
+    func refreshMe() async throws -> AuthenticatedUser {
+        guard let token else { throw AuthServiceError.notSignedIn }
+        var request = URLRequest(url: Self.baseURL.appending(path: "api/me"))
+        request.timeoutInterval = Delais.interactif
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let decoded: MeResponse = try await send(request)
+        let user = AuthenticatedUser(
+            id: decoded.id, name: decoded.name, xpTotal: decoded.xpTotal,
+            lastName: decoded.lastName, username: decoded.username, email: decoded.email,
+            isAdmin: decoded.isAdmin ?? false,
+            adminListConfigured: decoded.adminListConfigured ?? false
+        )
+        currentUser = user
+        onAuthenticated?(user)
+        return user
+    }
+
+    /// Uploads (or clears, if `dataURI` is nil) her profile photo so other club members see it
+    /// too — a full data URI ("data:image/jpeg;base64,...."), already resized/compressed
+    /// client-side (see `ProfileView.setAvatar`). Local-only storage (`UserProfile.avatarImageData`)
+    /// covers the always-available case; this is purely additive for when Club is signed in.
+    func updateAvatar(dataURI: String?) async throws {
+        guard let token else { throw AuthServiceError.notSignedIn }
+        var request = URLRequest(url: Self.baseURL.appending(path: "api/account/avatar"))
+        request.timeoutInterval = Delais.televersement
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        // `dataURI as Any` AVEC UN nil FAISAIT PLANTER L'APP, PAS ÉCHOUER L'APPEL.
+        //
+        // `Optional<String>.none as Any` reste un optionnel vide emballé dans `Any` :
+        // `JSONSerialization` ne le reconnaît pas comme une valeur JSON et lève une exception
+        // Objective-C — qu'aucun `try` Swift n'attrape. Supprimer sa photo, connectée, terminait
+        // donc l'app. `NSNull()` est le `null` JSON, et le serveur le traite comme l'absence de
+        // clé (`avatarDataURI === null || === undefined`, voir api/account/[action].js).
+        let valeur: Any = dataURI.map { $0 as Any } ?? NSNull()
+        request.httpBody = try JSONSerialization.data(withJSONObject: ["avatarDataURI": valeur])
+        let _: OkResponse = try await send(request)
+    }
+
+    /// Deletes the account server-side (cascades to club membership/activities/kudos — see
+    /// `api/account/[action].js`) then signs out locally. Required by App Store guideline
+    /// 5.1.1(v): an app that offers account creation must offer in-app account deletion too.
+    func deleteAccount() async throws {
+        guard let token else { throw AuthServiceError.notSignedIn }
+        var request = URLRequest(url: Self.baseURL.appending(path: "api/account/delete"))
+        request.timeoutInterval = Delais.interactif
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let _: OkResponse = try await send(request)
+        signOut()
+    }
+
+    func signOut() {
+        // Fire-and-forget with the token captured NOW (the Keychain entry is deleted below,
+        // before the Task necessarily runs) — the device must stop receiving this account's
+        // pushes once she signs out, and the token itself must stop working server-side.
+        if let authToken = token {
+            Task { await NotificationService.shared.unregisterDeviceToken(authToken: authToken) }
+            Task { await Self.revokeSession(authToken: authToken) }
+        }
+        onSignOut?()
+        token = nil
+        currentUser = nil
+        // Plus de jeton, donc plus de jeton refusé : sans ça, la carte « ta session a expiré »
+        // survivait à la déconnexion et s'affichait à côté du bouton « SE CONNECTER ».
+        sessionRejected = false
+        KeychainService.deleteToken()
+    }
+
+    /// Revokes the session token server-side (`api/auth/signout` files its `jti` in
+    /// `revoked_tokens`). Deleting the local copy above was never enough on its own: the token
+    /// stayed valid for its full lifetime, so any copy of it that survived elsewhere (a shared
+    /// device, a device backup) kept full access to the account. Same token-passed-in reasoning as
+    /// `unregisterDeviceToken`. Failure is silent on purpose — signing out must always work
+    /// locally, offline included; the token then just expires on its own.
+    private static func revokeSession(authToken: String) async {
+        var request = URLRequest(url: baseURL.appending(path: "api/auth/signout"))
+        request.timeoutInterval = Delais.arrierePlan
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+        _ = try? await URLSession.shared.data(for: request)
+    }
+
+    // MARK: -
+
+    private func authenticate(path: String, body: [String: String]) async throws {
+        var request = URLRequest(url: Self.baseURL.appending(path: path))
+        request.timeoutInterval = Delais.interactif
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        let decoded: AuthResponse = try await send(request)
+        token = decoded.token
+        currentUser = decoded.user
+        KeychainService.saveToken(decoded.token)
+        // Un jeton frais : le refus précédent n'a plus d'objet. Noter qu'on arrive ici SANS être
+        // passé par `signOut()` — c'est ce qui permet de se reconnecter sans vider la file des
+        // sorties en attente.
+        sessionRejected = false
+        onAuthenticated?(decoded.user)
+    }
+
+    private func send<T: Decodable>(_ request: URLRequest) async throws -> T {
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await URLSession.shared.data(for: request)
+        } catch {
+            throw AuthServiceError.network(error)
+        }
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            let status = (response as? HTTPURLResponse)?.statusCode ?? -1
+            throw AuthServiceError.badResponse(status, String(data: data, encoding: .utf8) ?? "")
+        }
+        // Chaque réponse authentifiée peut rapporter un jeton frais. Les deux chemins réseau de
+        // l'app doivent le lire — celui-ci et celui de `ClubService` — sinon le renouvellement
+        // n'aurait lieu que sur une partie des appels, ce qui est la façon la plus confuse de
+        // marcher à moitié.
+        adopt(renewedToken: http.value(forHTTPHeaderField: SessionRenewal.header))
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+}
+
+private struct AuthResponse: Decodable {
+    var token: String
+    var user: AuthenticatedUser
+}
+
+private struct MeResponse: Decodable {
+    var id: String
+    var name: String
+    var xpTotal: Int
+    var clubId: String?
+    var lastName: String?
+    var username: String?
+    /// Optionnels, donc absents sans erreur sur un serveur antérieur à ces champs. La fenêtre
+    /// entre un déploiement de l'app et celui du serveur n'est jamais nulle, et un `decode`
+    /// strict y déconnecterait tout le monde.
+    var email: String?
+    var isAdmin: Bool?
+    var adminListConfigured: Bool?
+}
+
+private struct OkResponse: Decodable {
+    var ok: Bool
+}

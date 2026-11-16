@@ -23,24 +23,24 @@ def cas_test(nom):
 
 
 PROJECT_YML_TYPE = """\
-name: RunUp
+name: Haizo
 targets:
-  RunUp:
+  Haizo:
     sources:
-      - path: RunUp
-  RunUpWidgets:
+      - path: Haizo
+  HaizoWidgets:
     type: app-extension
     sources:
-      - path: RunUpWidgets
-      - path: RunUp/Shared
+      - path: HaizoWidgets
+      - path: Haizo/Shared
         excludes:
           - "RouteGeometry.swift"
     resources:
-      - path: RunUp/Resources/Fonts
-  RunUpWatch:
+      - path: Haizo/Resources/Fonts
+  HaizoWatch:
     sources:
-      - path: RunUpWatch
-      - path: RunUp/Shared/ColorHex.swift
+      - path: HaizoWatch
+      - path: Haizo/Shared/ColorHex.swift
 """
 
 
@@ -51,10 +51,10 @@ def depot(partage: dict, app: dict, widgets: dict = None, montre: dict = None,
     try:
         (racine / "project.yml").write_text(project_yml, encoding="utf-8")
         for dossier, fichiers in (
-            ("RunUp/Shared", partage),
-            ("RunUp/DesignSystem", app),
-            ("RunUpWidgets", widgets or {}),
-            ("RunUpWatch", montre or {}),
+            ("Haizo/Shared", partage),
+            ("Haizo/DesignSystem", app),
+            ("HaizoWidgets", widgets or {}),
+            ("HaizoWatch", montre or {}),
         ):
             (racine / dossier).mkdir(parents=True, exist_ok=True)
             for nom, source in fichiers.items():
@@ -78,7 +78,7 @@ def _():
     assert len(erreurs) == 1, erreurs
     assert "OnboardingViewModel" in erreurs[0]
     assert "PlanRecap.swift:2" in erreurs[0], erreurs[0]
-    assert "RunUpWidgets" in erreurs[0]
+    assert "HaizoWidgets" in erreurs[0]
 
 
 @cas_test("build 278 : AccentTheme.defaultID comme valeur par défaut d'un décodage")
@@ -149,7 +149,7 @@ def _():
         partage={"ColorHex.swift": "struct ColorHex {\n    let t: TypeDeLApp\n}\n"},
         app={"TypeDeLApp.swift": "struct TypeDeLApp {}\n"},
     )
-    cibles = sorted({"RunUpWatch" in e for e in erreurs})
+    cibles = sorted({"HaizoWatch" in e for e in erreurs})
     assert len(erreurs) == 2, erreurs  # widget ET montre compilent ColorHex.swift
     assert cibles == [False, True], erreurs
 
@@ -172,7 +172,7 @@ def _():
     erreurs = depot(
         partage={"A.swift": "struct A {}\n"},
         app={},
-        project_yml="name: RunUp\ntargets:\n  RunUp:\n    sources:\n      - path: RunUp\n",
+        project_yml="name: Haizo\ntargets:\n  Haizo:\n    sources:\n      - path: Haizo\n",
     )
     assert len(erreurs) == 1 and "aucune cible" in erreurs[0], erreurs
 

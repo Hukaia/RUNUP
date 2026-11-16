@@ -1,0 +1,349 @@
+import SwiftUI
+import SwiftData
+
+/// Run history — mirrors `HistoryScreen` in screensC.jsx. Uses a real `@Query` over `RunRecord`
+/// so newly completed runs appear automatically ahead of older ones (newest-first).
+struct HistoryView: View {
+    @Environment(AppState.self) private var appState
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \RunRecord.date, order: .reverse) private var runs: [RunRecord]
+    @State private var showAddRun = false
+    @State private var pendingDelete: RunRecord?
+    @State private var selectedRun: RunRecord?
+
+    var body: some View {
+        // A plain ScrollView/VStack can't do real swipe-to-delete — .swipeActions only works on
+        // List rows — so this is a List dressed up to look like the same card-based layout
+        // (clear row backgrounds, hidden separators/insets) rather than a stock List.
+        List {
+            header
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+
+            if appState.pendingActivityCount > 0 {
+                pendingSyncBanner
+                    .padding(.horizontal, RUSpacing.pagePadding)
+                    .padding(.bottom, 6)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
+
+            if runs.isEmpty {
+                RUEmpty(icone: "figure.run",
+                        titre: String(localized: "Pas encore de course"),
+                        message: String(localized: "Termine une sortie, ou ajoutes-en une à la main : l'historique se remplit tout seul ensuite."))
+                    .padding(.horizontal, RUSpacing.pagePadding)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
+
+            ForEach(runs) { run in
+                runCard(run)
+                    .contentShape(Rectangle())
+                    .onTapGesture { selectedRun = run }
+                    .listRowInsets(EdgeInsets(top: 4, leading: RUSpacing.pagePadding, bottom: 4, trailing: RUSpacing.pagePadding))
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .swipeActions(edge: .trailing) {
+                        Button("Supprimer", role: .destructive) { pendingDelete = run }
+                    }
+                    .contextMenu {
+                        if let url = GPXExporter.fileURL(for: run) {
+                            ShareLink(item: url) {
+                                Label("Exporter en GPX", systemImage: "square.and.arrow.up")
+                            }
+                        }
+                        Button("Supprimer", role: .destructive) { pendingDelete = run }
+                    }
+            }
+
+            Color.clear.frame(height: 130)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(RUColor.pageBackground)
+        .sheet(isPresented: $showAddRun) { AddRunSheet().haizoSheetStyle(detents: [.large]) }
+        .sheet(item: $selectedRun) { run in RecapView(historicalRun: run) }
+        .alert(
+            "Supprimer cette course ?",
+            isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } })
+        ) {
+            Button("Supprimer", role: .destructive) {
+                if let run = pendingDelete {
+                    // A deleted run that was today's "séance faite" shouldn't leave the daily
+                    // goals gauge claiming it's done with nothing left backing it — but only when
+                    // NO other run today remains (deleting a second short jog must not un-check a
+                    // séance the morning's real run still backs).
+                    let otherRunToday = runs.contains {
+                        $0 !== run && Calendar.current.isDateInToday($0.date)
+                    }
+                    if Calendar.current.isDateInToday(run.date) && !otherRunToday {
+                        AdaptivePlanEngine.undoTodaySessionCompletion(appState.profile)
+                    }
+                    // `runs` won't reflect the deletion until the next @Query update cycle, so
+                    // the remaining set is computed by hand rather than read back immediately.
+                    AdaptivePlanEngine.recomputeStreak(profile: appState.profile, currentRuns: runs.filter { $0 !== run })
+                    modelContext.delete(run)
+                    Haptics.warning()
+                }
+                pendingDelete = nil
+            }
+            Button("Annuler", role: .cancel) { pendingDelete = nil }
+        } message: {
+            Text("Cette action est définitive.")
+        }
+    }
+
+    private var header: some View {
+        // Le « s » recollé fabriquait la clé à l'exécution : « %lld sortie » et « %lld sorties »
+        // n'étaient donc ni l'une ni l'autre au catalogue, et cet eyebrow sortait en français
+        // pour tout le monde. Deux clés entières, les deux traduites.
+        let compte = Pluriel.choisir(runs.count,
+                                     String(localized: "\(runs.count) sortie"),
+                                     String(localized: "\(runs.count) sorties"))
+        return BackTitleHeaderView(eyebrow: compte, title: "Historique") {
+            appState.go(.stats)
+        } trailing: {
+            Button(action: { showAddRun = true }) {
+                Image(systemName: "plus")
+                    .font(RUFont.icone(.medium, weight: .semibold))
+                    .foregroundColor(RUColor.textPrimary)
+                    .frame(width: 36, height: 36)
+                    .background(RUColor.card, in: Circle())
+                    .overlay(Circle().stroke(RUColor.line, lineWidth: RUSpacing.hairline))
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(PressableStyle())
+            // « Une séance » : la feuille ajoute aussi des nages et des sorties vélo, et c'est
+            // la seule phrase que VoiceOver lise de ce bouton.
+            .accessibilityLabel("Ajouter une séance")
+        }
+        .padding(.horizontal, RUSpacing.pagePadding)
+        .padding(.top, 8)
+        .padding(.bottom, 8)
+    }
+
+    /// Surfaces `ClubActivityOutbox`'s real queue — before this, a run that failed to reach the
+    /// server (spotty connection right when it finished) silently never got its XP/feed entry
+    /// synced, with no visible sign anything was wrong; the outbox already retried opportunistically
+    /// in the background, but nothing ever told her that, or let her force it. Doesn't call out
+    /// which specific run is affected (the outbox tracks payloads, not a link back to a
+    /// `RunRecord`) — a single "N en attente" banner is the honest scope of what's knowable here.
+    /// Ce que la bannière a le droit de promettre.
+    ///
+    /// Elle disait « nouvelle tentative automatique bientôt » quelle que soit la panne. C'est vrai
+    /// pour un réseau coupé et faux pour une session expirée : là, toutes les tentatives du monde
+    /// échoueront, la file restera pleine, et la bannière ne partira jamais. Elle promettait donc
+    /// de régler toute seule la seule chose qu'elle ne pouvait pas régler — et taisait la seule
+    /// chose à faire.
+    private var raisonDeLAttente: String {
+        switch appState.pendingActivityBlocker {
+        case .session:
+            return String(localized: "Elles restent sur ton téléphone, rien n'est perdu — mais ta session a expiré : reconnecte-toi pour les publier.")
+        case .serveur:
+            return String(localized: "Elles restent sur ton téléphone, rien n'est perdu — Haizo ne répond pas, nouvelle tentative plus tard.")
+        case .reseau, .none:
+            return String(localized: "Elles restent sur ton téléphone, rien n'est perdu — nouvelle tentative automatique bientôt.")
+        }
+    }
+
+    private var pendingSyncBanner: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(RUFont.icone(.medium))
+                .foregroundColor(RUColor.amberText)
+                .frame(width: 26)
+                // Sans son disque teinté : l'ambre reste au glyphe.
+            VStack(alignment: .leading, spacing: 4) {
+                Text(Pluriel.choisir(appState.pendingActivityCount,
+                     String(localized: "\(appState.pendingActivityCount) course pas encore synchronisée"),
+                     String(localized: "\(appState.pendingActivityCount) courses pas encore synchronisées")))
+                    .font(RUFont.sans(.label, weight: .semibold))
+                    .foregroundColor(RUColor.textPrimary)
+                Text(raisonDeLAttente)
+                    .font(RUFont.sans(.small))
+                    .foregroundColor(RUColor.text2)
+                    .fixedSize(horizontal: false, vertical: true)
+                Button(action: {
+                    Haptics.selection()
+                    appState.retryPendingClubActivities()
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.triangle.2.circlepath").font(RUFont.icone(.small, weight: .semibold))
+                        Text("Réessayer maintenant")
+                    }
+                    .font(RUFont.sans(.small, weight: .semibold))
+                    .foregroundColor(RUColor.rose)
+                    .frame(minHeight: 30)
+                }
+                .buttonStyle(PressableStyle())
+                .padding(.top, 2)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(12)
+        // Surface neutre : l'accent reste au texte et à l'icône. Un amber
+        // dilué donne sa version sale, et le contour de la même couleur la redisait.
+        .background(RUColor.card2, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+    }
+
+    /// La `.hist-row` de la maquette : vignette du parcours à GAUCHE, puis date / titre / trois
+    /// chiffres en ligne, dans une carte nettement plus basse (12 pt de marge et rayon compact au
+    /// lieu de 16 pt et rayon standard).
+    ///
+    /// L'ancienne composition empilait trois `MetricColumn` de 20 pt surmontées de leurs
+    /// libellés en capitales (« KM », « TEMPS », « ALLURE MOY ») : trois fois plus haut, pour des
+    /// libellés qui se répètent à l'identique sur chaque ligne d'une liste qui n'affiche que ça —
+    /// « 6,4 km · 27:53 · 4:21/km » se lit sans eux. La vignette passe à gauche : sur une liste,
+    /// c'est la colonne d'images qui donne le rythme de balayage, et à droite elle se retrouvait
+    /// décalée d'une ligne à l'autre selon la longueur du titre.
+    private func runCard(_ run: RunRecord) -> some View {
+        HStack(spacing: 12) {
+            runThumbnail(run)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
+                    Text(run.date, format: .dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(Locale.current))
+                        .font(RUFont.sans(.small, weight: .semibold)).foregroundColor(RUColor.text3)
+                    Spacer(minLength: 0)
+                    // A manually-logged run has no real heart-rate reading — 0 would just be a
+                    // fake number dressed up as data, so the line is dropped entirely instead.
+                    if run.avgHeartRate > 0 {
+                        Text("FC moy \(run.avgHeartRate)").font(RUFont.sans(.small)).foregroundColor(RUColor.text3)
+                    }
+                }
+                // `titreAffiche` ET NON `title`, ET L'ACCESSEUR EXISTAIT DÉJÀ.
+                //
+                // `title` est le libellé FRANÇAIS de l'archétype, écrit à l'enregistrement : cette
+                // ligne sortait donc en français pour une anglophone, sur l'écran qui porte toute
+                // son histoire. `titreAffiche` lit le catalogue quand la sortie porte un
+                // `sessionKind`, et retombe sur le texte enregistré quand elle n'en a pas — ce qui
+                // est exactement le cas que le commentaire d'`AddRunSheet` protège, une sortie
+                // importée de Strava avec son titre libre.
+                //
+                // L'accesseur est documenté, utilisé par le bilan de course, la vidéo partagée et
+                // la carte du parcours. Il avait été oublié ici, et dans `WeeklyRecapView`.
+                Text(run.titreAffiche)
+                    .font(RUFont.sans(.emphasis, weight: .semibold)).foregroundColor(RUColor.textPrimary)
+                    .lineLimit(1).minimumScaleFactor(0.8)
+                HStack(spacing: 12) {
+                    Text(String(format: "%.1f km", locale: Locale.current, run.distanceKm))
+                    Text(PaceModel.formatDuration(Double(run.durationSeconds)))
+                    // Seule l'allure reste colorée : c'est le chiffre que la maquette met en
+                    // accent sur cette ligne, et le seul des trois qui dise quelque chose de la
+                    // performance plutôt que du volume.
+                    Text(run.avgPace + "/km").foregroundColor(RUColor.rose2)
+                    Spacer(minLength: 0)
+                }
+                .font(RUFont.sans(.body, weight: .semibold))
+                .foregroundColor(RUColor.text2)
+                .lineLimit(1).minimumScaleFactor(0.8)
+                .padding(.top, 2)
+
+                // LA SEULE PORTE DE RETOUR VERS UN RESSENTI PERDU.
+                //
+                // Tout ce qui compte est accroché au bouton VALIDER du débriefing : l'adaptation
+                // du plan, la série, les 120 XP, la publication au club. Une feuille GLISSÉE vers
+                // le bas ne déclenche rien de tout ça — et la feuille surgit sous le doigt quand
+                // une course arrive de la montre pendant qu'on fait défiler le fil. La course
+                // était bien dans l'historique, mais la série cassée, la sortie jamais publiée,
+                // et le programme ne l'avait pas vue. Aucun écran ne permettait d'y revenir :
+                // l'historique ouvre un récapitulatif où le bouton « DONNER MON RESSENTI » est
+                // justement masqué pour une course passée.
+                //
+                // Bornée à la semaine en cours, pour la raison que le récapitulatif documente
+                // déjà : un ressenti d'une semaine passée corromprait le palier courant.
+                if run.debriefedAt == nil, AdaptivePlanEngine.currentWeekRange().contains(run.date) {
+                    Button(action: { appState.pendingDebriefs.append(run) }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.uturn.backward")
+                                .font(RUFont.icone(.micro, weight: .semibold))
+                            Text("Ressenti manquant")
+                                .font(RUFont.sans(.micro, weight: .semibold))
+                        }
+                        .foregroundColor(RUColor.rose2)
+                        .frame(minHeight: 44)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(PressableStyle())
+                }
+            }
+        }
+        .padding(12)
+        .ruCard(radius: RUSpacing.radiusCard)
+        // The main screen for reviewing past training — without this, each run swiped through
+        // with VoiceOver was 8-9 disconnected stops (date, optional HR, title, then three
+        // separate value/label pairs) instead of one coherent "this run" element. Les libellés
+        // « km / temps / allure » ayant disparu de l'écran, ils sont réinjectés ici : sans eux,
+        // VoiceOver lisait « 6,4 km, 27:53, 4:21/km » sans dire ce que sont les deux derniers.
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(runAccessibilityLabel(run))
+    }
+
+    /// Une course saisie à la main (ou marquée faite sans GPS) n'a pas de tracé — on montre une
+    /// icône neutre sur fond de carte, jamais une courbe décorative qui ferait passer une absence
+    /// de données pour un parcours. La tuile reste là dans les deux cas : c'est elle qui aligne
+    /// toutes les lignes de la liste.
+    @ViewBuilder
+    private func runThumbnail(_ run: RunRecord) -> some View {
+        Group {
+            // ── UNE CARTE DE 52 POINTS NE DIT PAS OÙ, ET DOIT QUAND MÊME CITER SA SOURCE ──
+            //
+            // C'était `RunRouteMapView`, avec pour raison « on y cherche OÙ on a couru ». La
+            // première capture où le profil de démonstration a enfin des tracés montre ce que
+            // ça donne : MapKit imprime sa mention légale DANS la vignette, et à 52 points ça
+            // écrit « Mentions », « Perret », « ris » par-dessus la route. Illisible, et pas
+            // retirable — Apple l'exige.
+            //
+            // Le reste ne tient pas mieux : les noms de rue sont illisibles à cette taille, donc
+            // la carte ne répond pas à son propre « où », et ses tuiles beiges et vertes sont la
+            // seule chose de l'écran qui ne vienne pas de la palette de l'app.
+            //
+            // `RouteThumbnail` est écrit pour ce créneau exact — sa documentation dit « ~60
+            // points suffisent à 52 pt de côté » et « invisible à 52 points » à propos du départ.
+            // Il était là, et l'emplacement appelait une carte. La forme de la boucle, elle, se
+            // reconnaît parfaitement : c'est ce qui distingue seize sorties les unes des autres.
+            //
+            // La vraie carte reste où elle sert : en grand, dans le détail d'une sortie.
+            if run.route.count > 1 {
+                ZStack {
+                    RUColor.card2
+                    RouteThumbnail(route: run.route, lineWidth: 2)
+                        .padding(6)
+                }
+            } else {
+                Image(systemName: "figure.run")
+                    .font(RUFont.icone(.large, weight: .medium))
+                    .foregroundColor(RUColor.text3)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(RUColor.card2)
+            }
+        }
+        .frame(width: 52, height: 52)
+        .clipShape(RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous).stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
+        // Purely decorative for VoiceOver — the distance/time/pace it traces are already read
+        // from the row's own label, and an unlabeled thumbnail otherwise reads as a bare,
+        // meaningless "Map" stop.
+        .accessibilityHidden(true)
+    }
+
+    private func runAccessibilityLabel(_ run: RunRecord) -> String {
+        var parts: [String] = [
+            run.date.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale.current)),
+            run.titreAffiche,
+            String(localized: "\(String(format: "%.1f", locale: Locale.current, run.distanceKm)) kilomètres"),
+            String(localized: "durée \(PaceModel.formatDuration(Double(run.durationSeconds)))"),
+            String(localized: "allure moyenne \(run.avgPace) par kilomètre")
+        ]
+        if run.avgHeartRate > 0 { parts.append(String(localized: "fréquence cardiaque moyenne \(run.avgHeartRate)")) }
+        return parts.joined(separator: ", ")
+    }
+}

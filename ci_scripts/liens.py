@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Les pages publiées de RUNUP, déclarées une fois — côté outillage.
+"""Les pages publiées de Haizo, déclarées une fois — côté outillage.
 
-Le pendant de `RunUp/Models/Liens.swift`, qui raconte ce que neuf copies ont coûté. Les deux
+Le pendant de `Haizo/Models/Liens.swift`, qui raconte ce que neuf copies ont coûté. Les deux
 valeurs doivent être identiques, et `check_liens.py` le vérifie.
 """
 

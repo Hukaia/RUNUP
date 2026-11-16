@@ -43,11 +43,11 @@ SEUL = re.compile(r"^\s*@[A-Za-z_][A-Za-z0-9_]*\s*(\([^()]*\))?\s*$")
 
 #: Les dossiers relus. Tout le Swift du dépôt : le défaut n'a pas de couche de prédilection.
 #:
-#: LE NOM EXACT COMPTE, ET LE PREMIER JET L'AVAIT FAUX. « RunUpWidget » au singulier n'existe
-#: pas — le dossier est `RunUpWidgets` — et `rglob` sur un chemin absent ne rend rien, sans rien
+#: LE NOM EXACT COMPTE, ET LE PREMIER JET L'AVAIT FAUX. « HaizoWidget » au singulier n'existe
+#: pas — le dossier est `HaizoWidgets` — et `rglob` sur un chemin absent ne rend rien, sans rien
 #: dire. Le contrôle couvrait donc le widget en apparence et pas du tout en fait. `main` exige
 #: maintenant que chaque dossier existe.
-DOSSIERS = ("RunUp", "RunUpTests", "RunUpUITests", "RunUpWidgets", "RunUpWatch")
+DOSSIERS = ("Haizo", "HaizoTests", "HaizoUITests", "HaizoWidgets", "HaizoWatch")
 
 
 def egares(source: str) -> list[tuple[int, str]]:

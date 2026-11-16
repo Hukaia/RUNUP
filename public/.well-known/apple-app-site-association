@@ -5,7 +5,7 @@
         "appIDs": [
           "SW49TQ25NV.com.hicsuntco.runup"
         ],
-        "comment": "/club/<uuid> : la page publique d'un club. Sur un iPhone où l'app est installée, iOS ouvre le lien DANS l'app plutôt que dans Safari — un lien de bio Instagram mène donc directement à l'écran qui propose de rejoindre. Sans app, le même lien affiche la page web, qui est faite pour ça. Doit rester d'accord avec le droit `com.apple.developer.associated-domains` de project.yml (même domaine) et avec `.onOpenURL` dans RunUpApp.swift.",
+        "comment": "/club/<uuid> : la page publique d'un club. Sur un iPhone où l'app est installée, iOS ouvre le lien DANS l'app plutôt que dans Safari — un lien de bio Instagram mène donc directement à l'écran qui propose de rejoindre. Sans app, le même lien affiche la page web, qui est faite pour ça. Doit rester d'accord avec le droit `com.apple.developer.associated-domains` de project.yml (même domaine) et avec `.onOpenURL` dans HaizoApp.swift.",
         "components": [
           {
             "/": "/club/*"

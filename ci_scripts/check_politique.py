@@ -122,7 +122,7 @@ def premier_ecart(a: str, b: str) -> tuple:
 
 
 def telecharger(url: str) -> str:
-    requete = urllib.request.Request(url, headers={"User-Agent": "runup-ci"})
+    requete = urllib.request.Request(url, headers={"User-Agent": "haizo-ci"})
     with urllib.request.urlopen(requete, timeout=DELAI) as reponse:
         return reponse.read().decode("utf-8", errors="replace")
 

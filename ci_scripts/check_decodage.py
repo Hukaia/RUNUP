@@ -35,7 +35,7 @@ import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-SOURCES = RACINE / "RunUp"
+SOURCES = RACINE / "Haizo"
 
 # Les types que Swift décode lui-même, et qui n'ont donc pas d'`init(from:)` à nous.
 PRIMITIFS = {
@@ -213,7 +213,7 @@ def main() -> int:
         print(f"{len(griefs)} structure(s) enregistrée(s) au décodage fragile :\n")
         for g in griefs:
             print(f"  • {g}\n")
-        print("Voir l'en-tête de RunUp/Models/Session.swift.")
+        print("Voir l'en-tête de Haizo/Models/Session.swift.")
         return 1
     structures, _e, modeles = analyser(None)
     print(f"Décodage : {len(enregistrees(structures, modeles))} structure(s) enregistrée(s), "

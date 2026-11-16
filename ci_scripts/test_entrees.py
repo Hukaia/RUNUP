@@ -13,7 +13,7 @@ import check_entrees as ck
 
 MOTEUR = ck.MOTEUR
 RESTAURATION = ck.RESTAURATION
-AILLEURS = "RunUp/AppState.swift"
+AILLEURS = "Haizo/AppState.swift"
 
 cas = []
 
@@ -90,13 +90,13 @@ def _():
 @cas_test("le squelette vide de sept jours sans séance n'est pas un plan")
 def _():
     source = "        self.weekSessions = (0..<7).map { PlannedDay(weekday: $0, session: nil) }\n"
-    assert ck.ecarts_dans("RunUp/Models/UserProfile.swift", source) == []
+    assert ck.ecarts_dans("Haizo/Models/UserProfile.swift", source) == []
 
 
 @cas_test("une VRAIE séance au même endroit reste un défaut")
 def _():
     source = "        self.weekSessions = (0..<7).map { PlannedDay(weekday: $0, session: .reprise) }\n"
-    assert len(ck.ecarts_dans("RunUp/Models/UserProfile.swift", source)) == 1
+    assert len(ck.ecarts_dans("Haizo/Models/UserProfile.swift", source)) == 1
 
 
 # ── Ce qu'il ne doit pas inventer ────────────────────────────────────────────────────────────
@@ -159,7 +159,7 @@ def _():
     # `Sauvegarde.Profil` a sa propre propriété `weekSessions` : la décoder n'est pas écrire
     # dans la semaine de quelqu'un.
     source = "            weekSessions = c.lireTableau(PlannedDay.self, .weekSessions)\n"
-    assert ck.ecarts_dans("RunUp/Services/Sauvegarde.swift", source) == []
+    assert ck.ecarts_dans("Haizo/Services/Sauvegarde.swift", source) == []
 
 
 # ── Et le dépôt tel qu'il est ────────────────────────────────────────────────────────────────

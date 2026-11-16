@@ -16,7 +16,7 @@ machine, pas de la vigilance.
 
 # CE QUI EST REGARDÉ, ET CE QUI NE L'EST PAS
 
-Les couches VISIBLES seulement : les vues, le widget, la montre. `RunUp/Services` en est exclu à
+Les couches VISIBLES seulement : les vues, le widget, la montre. `Haizo/Services` en est exclu à
 dessein — il contient des dizaines de littéraux français volontaires (prompts du coach, libellés
 internes servant d'identifiants stables, voir `WorkoutSession.title`) qui n'ont rien à faire au
 catalogue. Les y inclure noierait les vrais défauts sous les faux.
@@ -44,13 +44,13 @@ absences franches, pas à valider des formats.
 import json, pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CATALOGUE = RACINE / "RunUp/Resources/Localizable.xcstrings"
-# TOUT `RunUp/`, ET PAS SEULEMENT LES VUES. La liste s'arrêtait à `Views` et `ViewModels`, donc
+CATALOGUE = RACINE / "Haizo/Resources/Localizable.xcstrings"
+# TOUT `Haizo/`, ET PAS SEULEMENT LES VUES. La liste s'arrêtait à `Views` et `ViewModels`, donc
 # une chaîne affichée écrite dans un service ou un modèle n'était pas contrôlée du tout —
 # `RestoreOutcome.message`, les libellés de `SessionKind`, les phrases de panne réseau. Elles
 # sortaient en français en anglais et en espagnol sans que rien ne le dise. Le trou ne coûtait
 # que quatre chaînes le jour où on l'a fermé ; il aurait grandi à chaque service nouveau.
-DOSSIERS = ["RunUp", "RunUpWidgets", "RunUpWatch"]
+DOSSIERS = ["Haizo", "HaizoWidgets", "HaizoWatch"]
 
 # Les ouvertures qui précèdent un littéral traduit. Le littéral lui-même est lu par `lire_litteral`
 # et non par une expression régulière : une interpolation peut contenir sa propre chaîne — par
@@ -524,7 +524,7 @@ def litteraux_des_puits(source: str):
 #
 # Dix types de séance viennent d'être ajoutés d'un coup. Aucune barrière ne regardait ça.
 
-FICHIER_SEANCES = "RunUp/Models/Session.swift"
+FICHIER_SEANCES = "Haizo/Models/Session.swift"
 _SEANCE = re.compile(r'^\s*case \w+ = "([^"]+)"', re.M)
 LANGUES_SEANCE = ("fr", "en", "es")
 
@@ -763,7 +763,7 @@ def main() -> int:
         court = cle if len(cle) <= 70 else cle[:67] + "…"
         print(f"  {ou}\n      « {court} »", file=sys.stderr)
     print("\nChacune sortira EN FRANÇAIS en anglais et en espagnol.", file=sys.stderr)
-    print("Ajoute-les à RunUp/Resources/Localizable.xcstrings avec leurs deux traductions.",
+    print("Ajoute-les à Haizo/Resources/Localizable.xcstrings avec leurs deux traductions.",
           file=sys.stderr)
     return 1
 

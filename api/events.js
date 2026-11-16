@@ -8,7 +8,7 @@
 //      exactly the events worth collecting and left the "where does onboarding leak" question as
 //      unanswerable as it was before.
 //   2. It takes a batch, not one event. The client buffers and flushes (see
-//      RunUp/Services/Analytics.swift) so a run never pays a network round trip per tap.
+//      Haizo/Services/Analytics.swift) so a run never pays a network round trip per tap.
 //
 // # CETTE FONCTION SERT DEUX ADRESSES, ET CE N'EST PAS UN CHOIX D'ARCHITECTURE
 //

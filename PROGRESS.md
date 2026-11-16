@@ -1,4 +1,4 @@
-# Où en est RunUp
+# Où en est Haizo
 
 Tenu par l'équipe produit et technique, mis à jour à chaque chantier terminé. Un chantier n'est
 « terminé » que quand la construction est verte, les tests sont verts, aucun avertissement nouveau
@@ -31,7 +31,7 @@ n'apparaît, l'avant/après est écrit ici, et les trois langues ont été véri
 | **La sixième teinte est l'ardoise `#44506B`**, pour le renforcement. Les cinq autres sont des couleurs de course ; celle-là n'en est pas une. | Charlotte | 15 novembre 2026 |
 | **L'avatar et le récap de fin de course gardent leur dégradé**, comme le logo. Tous les autres dégradés d'interface partent. | Charlotte | 15 novembre 2026 |
 | **L'en-tête d'accueil ne porte pas de photo** : c'est le tracé GPS en grand. | Charlotte | 15 novembre 2026 |
-| **Pas d'image iPad sur la fiche App Store.** « L'app iPad doit être différente, on ne va pas courir avec son iPad. » RUNUP est une app iPhone (`TARGETED_DEVICE_FAMILY` vaut 1) : Apple n'en demande aucune, et une mise en page iPhone étirée dans un cadre d'iPad n'est pas une app iPad. | Charlotte | 10 novembre 2026 |
+| **Pas d'image iPad sur la fiche App Store.** « L'app iPad doit être différente, on ne va pas courir avec son iPad. » Haizo est une app iPhone (`TARGETED_DEVICE_FAMILY` vaut 1) : Apple n'en demande aucune, et une mise en page iPhone étirée dans un cadre d'iPad n'est pas une app iPad. | Charlotte | 10 novembre 2026 |
 
 ## Ce qui attend une décision
 
@@ -41,7 +41,7 @@ n'apparaît, l'avant/après est écrit ici, et les trois langues ont été véri
 | Que faire des neuf commits de `claude/running-club-finance-wwuq46` | Mesurés le 9 novembre : ni sur `main` ni sur la branche de travail. Deux idées en ont été reprises (chantiers 16 et 17). Restent une direction artistique concurrente — **Oswald** en fonte d'affichage, quand la branche de travail a tranché pour Inter — et des retouches de profil dont l'équivalent existe. Rien ne presse ; la branche ne se supprime pas tant que ce n'est pas tranché. |
 | Que faire de `ef3ad89`, sur `claude/new-session-otcd8z` | « La lecture des agrégats rentre dans `api/events.js` : douze fonctions, pas treize ». Quelqu'un s'est battu contre le même plafond Vercel, sur une autre branche, pour une autre fonctionnalité. Le code n'est nulle part ailleurs. |
 | `main` et la branche de travail n'ont en commun que le commit initial | 853 commits d'un côté, 50 de l'autre, aucune fusion depuis le 13 juillet. Ça n'empêche rien, sauf pour `privacy.html` : la page dont l'adresse est sur la fiche App Store est servie par GitHub Pages **depuis `main`**, donc mise à jour à la main. `check_politique.py` compare la page publiée en ligne au dépôt. |
-| Cette branche doit-elle rester la production ? | Elle l'est, confirmé dans les réglages Vercel le 7 novembre : `Settings → Environments → Production → Branch Tracking` porte `claude/runup-ios-swiftui-app-5b1yv6`. Donc aucune relecture, aucune préproduction. Les aperçus, eux, sont maintenant éprouvables — voir le chantier 11. |
+| Cette branche doit-elle rester la production ? | Elle l'est, confirmé dans les réglages Vercel le 7 novembre : `Settings → Environments → Production → Branch Tracking` porte `claude/haizo-ios-swiftui-app-5b1yv6`. Donc aucune relecture, aucune préproduction. Les aperçus, eux, sont maintenant éprouvables — voir le chantier 11. |
 
 
 ## Au passage
@@ -70,7 +70,7 @@ C'était la deuxième fois : `AdaptivePlanEngine.swift` porte déjà le récit d
 `@discardableResult` resté douze fonctions plus haut. `ci_scripts/check_attributs.py` relit les
 281 fichiers Swift du dépôt et refuse ce motif ; il a trouvé un TROISIÈME cas le jour où il a été
 écrit (`ClubService.swift` : la documentation de `setRoutePhoto` avait glissé sur
-`setActivityPhoto`, avec son attribut). Son premier jet listait « RunUpWidget » au singulier — un
+`setActivityPhoto`, avec son attribut). Son premier jet listait « HaizoWidget » au singulier — un
 dossier qui n'existe pas, et `rglob` sur un chemin absent ne rend rien, sans rien dire : le
 contrôle couvrait le widget en apparence. Il exige maintenant que chaque dossier existe.
 
@@ -335,13 +335,13 @@ de savoir ce qui casse chez quelqu'un d'autre que nous. Le reste de l'ordre tien
 
 ## La page publique d'un club, regardée pour la première fois
 
-`public/club.html` est la seule surface de RUNUP qu'un inconnu voit **avant** d'avoir l'app :
+`public/club.html` est la seule surface de Haizo qu'un inconnu voit **avant** d'avoir l'app :
 c'est le lien qu'un crew met dans sa bio. Les vingt-cinq écrans de l'app sont photographiés à
 chaque commit, dans trois langues et deux thèmes. Celle-ci, jamais.
 
 ### Ce qu'on voyait en l'ouvrant
 
-1. **Le bouton ne menait nulle part.** « Rejoindre sur RUNUP » pointait sur `location.href`,
+1. **Le bouton ne menait nulle part.** « Rejoindre sur Haizo » pointait sur `location.href`,
    c'est-à-dire sur la page elle-même. Sur un iPhone où l'app est installée, iOS ouvre le lien
    dans l'app AVANT que la page ne s'affiche — personne de ce côté-là ne voyait jamais ce bouton.
    Pour tous les autres, c'est-à-dire exactement le public de cette page, il rechargeait la page.
@@ -465,7 +465,7 @@ construire. `MontreTests` ne liste donc que la cible de test.
 
 Et un avertissement qui ne nous concerne pas, vérifié plutôt que supposé : une construction non
 signée ferait planter une **extension de widget** de montre au premier lancement. Notre
-`RunUpWatch` n'en a pas.
+`HaizoWatch` n'en a pas.
 
 ### Les trois cas, et pourquoi ceux-là
 
@@ -620,7 +620,7 @@ TestFlight — pas un texte.
 
 ### Un détail vu en passant, et qui répond à une question ouverte
 
-Le `supportUrl` envoyé à Apple est `https://hicsuntco.github.io/RUNUP/privacy.html`. Autrement
+Le `supportUrl` envoyé à Apple est `https://hicsuntco.github.io/Haizo/privacy.html`. Autrement
 dit, le lien « Assistance » de la fiche App Store ouvre la politique de confidentialité. La
 question « que faire de `support.html`, que personne ne peut atteindre » traînait depuis le
 8 novembre : la réponse est qu'elle n'est pas seulement inatteignable, elle est **remplacée par la
@@ -1206,7 +1206,7 @@ servent encore, et aucun ne regarde ce qui vit dans une interpolation.
   l'être — l'étiquette d'argument, l'appel de membre avec un point, le nom déclaré deux fois, le
   nom dans un texte, le nom en commentaire, un suffixe. Cinq sur le lecteur de chaînes seul.
 - Mesuré sur les **301** fichiers Swift des quatre cibles, après correction : **zéro**.
-- Et le contrôle rendait vert depuis `ci_scripts/` tant qu'il lisait `RunUp/` en relatif — « aucun
+- Et le contrôle rendait vert depuis `ci_scripts/` tant qu'il lisait `Haizo/` en relatif — « aucun
   fichier Swift trouvé ». Il est ancré sur la racine du dépôt, et un cas le tient.
 
 ### Ce que ce contrôle ne voit pas
@@ -1714,7 +1714,7 @@ Calculée comme telle, elle redonne la table à un demi-seconde près au lieu de
 
 ### Ce que la mesure a dit des quatre coefficients
 
-| | RunUp | Daniels (rapport à l'allure du 10 km) | Verdict |
+| | Haizo | Daniels (rapport à l'allure du 10 km) | Verdict |
 | --- | --- | --- | --- |
 | footing | × 1,20 | 1,199 → 1,376 selon le niveau | **faux** : au bord le plus rapide de la plage facile à VDOT 30, **devant** pour tout le monde au-dessus |
 | marathon | × 1,08 | 1,076 → 1,094 | **juste** |
@@ -1723,7 +1723,7 @@ Calculée comme telle, elle redonne la table à un demi-seconde près au lieu de
 
 En secondes par kilomètre, pour de vraies personnes :
 
-| VDOT | 10 km | footing Daniels | footing RunUp | écart | VMA Daniels | VMA RunUp | écart |
+| VDOT | 10 km | footing Daniels | footing Haizo | écart | VMA Daniels | VMA Haizo | écart |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 30 | 1:03:49 | 8:01 | 7:39 | **−22 s** | 5:54 | 5:33 | **−21 s** |
 | 40 | 50:01 | 6:26 | 6:00 | **−25 s** | 4:41 | 4:21 | **−20 s** |
@@ -1835,7 +1835,7 @@ y arriver.
 
 ### Ce qui le garde
 
-`RunUpTests/VdotTests.swift`, 20 cas, et le premier ne teste pas notre code pour lui-même : il
+`HaizoTests/VdotTests.swift`, 20 cas, et le premier ne teste pas notre code pour lui-même : il
 vérifie que les deux équations d'*Oxygen Power* retrouvent le VDOT de chaque ligne depuis le temps
 de 10 km de cette même ligne. Si ce n'était pas vrai, la table recopiée serait une paraphrase et
 tous les autres cas vérifieraient une invention. Les suivants vérifient l'inversion, allure par
@@ -1924,13 +1924,13 @@ dise si le prix est le problème.
 
 ### Ce qui le garde
 
-`RunUpTests/PurchaseOutcomeTests.swift`, 10 cas, dont le premier est le défaut lui-même : une
+`HaizoTests/PurchaseOutcomeTests.swift`, 10 cas, dont le premier est le défaut lui-même : une
 transaction vérifiée sans droit n'est jamais un échec, et son message n'est jamais celui de
 l'échec.
 
 `ci_scripts/check_paiement.py` et ses **16 cas**. Trois règles : une fonction qui rend une issue de
 paiement n'a droit qu'à **un seul `return`**, et il appelle `<Issue>.decide(` ; chaque issue vit
-dans `RunUp/Models/`, sans `import StoreKit`, avec son fichier de cas ; et **chaque cas de chaque
+dans `Haizo/Models/`, sans `import StoreKit`, avec son fichier de cas ; et **chaque cas de chaque
 issue est nommé dans ses cas de test** — ajouter une issue sans la vérifier rouvrirait le trou par
 le haut.
 
@@ -2213,15 +2213,15 @@ watchOS imbriqué et les sources publiques se contredisent. **Mais la validation
 elle-même** — c'est elle qui émet ITMS-91053. Journal d'archive du 10 novembre, Xcode 26.6 :
 
 ```
-ValidateEmbeddedBinary …/RunUp.app/Watch/RunUpWatch.app
-"com.hicsuntco.runup.watchkitapp" => "RunUp CI montre"
-No errors uploading archive at '…/RunUp.ipa'.
+ValidateEmbeddedBinary …/Haizo.app/Watch/HaizoWatch.app
+"com.hicsuntco.runup.watchkitapp" => "Haizo CI montre"
+No errors uploading archive at '…/Haizo.ipa'.
 UPLOAD SUCCEEDED with no errors
 ```
 
 Un paquet contenant la montre **sans manifeste** passe la validation sans une erreur. Et c'est
 cohérent avec la règle : ITMS-91053 s'appelle « Missing API declaration » et se déclenche sur
-l'**usage** d'une API à motif obligatoire. `RunUpWatch` n'en appelle aucune.
+l'**usage** d'une API à motif obligatoire. `HaizoWatch` n'en appelle aucune.
 
 **Ce qui rendrait la réponse fausse tient en une ligne** : un `UserDefaults` écrit dans la montre
 pour y garder un réglage. Elle compile, les tests passent, et le refus tombe **à l'envoi**, après
@@ -2242,7 +2242,7 @@ Et l'item parlait des « deux pages qu'Apple affiche ». **Il n'y en a qu'une.**
 
 | | |
 | --- | --- |
-| URL de politique sur la fiche | `https://hicsuntco.github.io/RUNUP/privacy.html` |
+| URL de politique sur la fiche | `https://hicsuntco.github.io/Haizo/privacy.html` |
 | URL de support sur la fiche | `mailto:charlottegrudep@gmail.com` |
 | Dans l'app, « nous contacter » | le même `mailto:`, à deux endroits |
 | Ce qui pointe vers `support.html` | **rien** |
@@ -2345,11 +2345,11 @@ décision change le plus. La séance en cours, elle, reste sombre comme prévu :
 ### Ce que la mesure a donné
 
 `TARGETED_DEVICE_FAMILY` vaut **1** dans les réglages de base comme dans ceux du widget ; seule la
-montre porte 4. **RUNUP est une app iPhone**, et Apple ne demande donc aucune image d'iPad.
+montre porte 4. **Haizo est une app iPhone**, et Apple ne demande donc aucune image d'iPad.
 
 Et le dépôt le savait. `RELEASE.md` portait déjà cette phrase, mot pour mot :
 
-> « L'iPad, lui, ne pose pas la question — `TARGETED_DEVICE_FAMILY` vaut 1 […], donc RUNUP est une
+> « L'iPad, lui, ne pose pas la question — `TARGETED_DEVICE_FAMILY` vaut 1 […], donc Haizo est une
 > app iPhone et Apple ne demande aucune image d'iPad. »
 
 Et `asc.py` porte une commande écrite exprès pour la **retirer** de la fiche, dont le commentaire
@@ -2597,7 +2597,7 @@ jetée, sans erreur ni avertissement — ticket XcodeGen #1645, ouvert (XcodeGen
 
 ### Ce que ça coûtait, mesuré dans le paquet construit
 
-Sonde de `RunUpWatch.app` (workflow « Capture de la montre », commit `5cadd52`) :
+Sonde de `HaizoWatch.app` (workflow « Capture de la montre », commit `5cadd52`) :
 
 | attendu | présent |
 | --- | --- |
@@ -2611,19 +2611,19 @@ qui est française et parfaitement lisible — et **elle s'affichait dans la pol
 Inter**, malgré les trois fichiers enregistrés dans son `UIAppFonts`.
 
 **Le widget de l'écran d'accueil avait le même défaut**, pour la même raison : ses deux ressources
-partagées sont hors de `RunUpWidgets/`. « BOUCLÉS », « SÉANCE », « KCAL » en français chez une
+partagées sont hors de `HaizoWidgets/`. « BOUCLÉS », « SÉANCE », « KCAL » en français chez une
 anglophone, dans la police système, à côté d'une app correctement traduite. Celui-là n'était pas
 cherché : c'est le garde-fou écrit pour la montre qui l'a nommé.
 
-L'app iPhone n'a jamais été touchée : son unique entrée `sources: - path: RunUp` contient
-`RunUp/Resources/`. Sa clé `resources:` ne faisait rien non plus, elle redéclarait ce qui entrait
+L'app iPhone n'a jamais été touchée : son unique entrée `sources: - path: Haizo` contient
+`Haizo/Resources/`. Sa clé `resources:` ne faisait rien non plus, elle redéclarait ce qui entrait
 déjà — **retirer cette clé ne peut donc pas changer le binaire iPhone**.
 
 ### Pourquoi rien ne l'a signalé
 
 Le build était vert : aucune ressource ne manque à la compilation. `check_fonts.py` était vert, et
 il avait raison de l'être — il compare le code, l'`UIAppFonts` et les noms PostScript des fichiers ;
-« livrée » y veut dire « le fichier existe dans `RunUp/Resources/Fonts` », jamais « la cible
+« livrée » y veut dire « le fichier existe dans `Haizo/Resources/Fonts` », jamais « la cible
 l'embarque ». Les captures de la montre montraient un écran français, qu'on prenait pour la capture
 française. Et le commentaire de `project.yml` disait la chose **au passé** : « sans lui, la montre
 restait entièrement en français » — une correction qui n'avait jamais eu lieu.
@@ -2712,7 +2712,7 @@ ils attendent la phase 2 :
 
 ### Ce qui reste ouvert
 
-- **`RunUpWatch` n'embarque aucun `PrivacyInfo.xcprivacy`**, là où l'app et le widget ont le leur.
+- **`HaizoWatch` n'embarque aucun `PrivacyInfo.xcprivacy`**, là où l'app et le widget ont le leur.
   La cible montre n'appelle aucune API « à motif obligatoire » (vérifié : ni `UserDefaults`, ni
   `FileManager`) et n'envoie rien au serveur elle-même, donc l'absence se défend. Mais je n'ai pas
   de source Apple qui tranche pour un paquet de montre embarqué. **À décider avant le prochain
@@ -2954,7 +2954,7 @@ impossible à relire et impossible à éprouver ici, a été remplacée par un a
 
 ### CE QUI EST FAIT
 
-`RunUp/Services/Diagnostics.swift` s'abonne à MetricKit. iOS collecte la panne **hors** du
+`Haizo/Services/Diagnostics.swift` s'abonne à MetricKit. iOS collecte la panne **hors** du
 processus mort — le même mécanisme que les rapports de l'organiseur Xcode — et la rend au
 lancement suivant. Jumeau volontaire d'`Analytics` : même file privée, même tampon sur disque,
 même discipline d'endpoint. Ce n'est pas de la copie, c'est la même forme pour le même problème.
@@ -2966,7 +2966,7 @@ JAMAIS, et c'est pourtant ce qu'une utilisatrice appelle « ça plante ».
 
 | Pièce | Rôle |
 | --- | --- |
-| `RunUp/Services/Diagnostics.swift` | l'abonnement, la traduction d'un lot MetricKit en lignes, le tampon sur disque |
+| `Haizo/Services/Diagnostics.swift` | l'abonnement, la traduction d'un lot MetricKit en lignes, le tampon sur disque |
 | `lib/pannes.js` | ce qu'on accepte d'un rapport, seul et testé — 19 cas dans `tests/crashes.test.js` |
 | `api/crashes.js` | l'endpoint : jeton facultatif, lot borné, genre inconnu jeté ligne par ligne |
 | `crash_reports` dans `db/schema.sql` | la table, avec sa charge `jsonb` et ses deux index |
@@ -3042,7 +3042,7 @@ exactement ça. Ça n'a pas suffi — c'est la définition d'un travail de machi
 ### L'API UTILISÉE EST DÉPRÉCIÉE EN iOS 27, ET C'EST LE BON CHOIX QUAND MÊME
 
 `MXMetricManager` et les classes `MX*` sont remplacées en iOS 27 par `MetricManager` et sa suite
-asynchrone `diagnosticReports`. RUNUP vise iOS 17 : la nouvelle API n'existe pas pour la
+asynchrone `diagnosticReports`. Haizo vise iOS 17 : la nouvelle API n'existe pas pour la
 quasi-totalité du parc, et les classes `MX*` sont là depuis iOS 14. Le jour où le plancher passe à
 27, la migration est dans un seul fichier.
 
@@ -3084,7 +3084,7 @@ d'objectif. Les trois derniers sont des glyphes dans un cadre, et c'est justifi�
 
 `RUIconSize`, sept crans — 9, 11, 13, 15, 18, 22, 28 — et `RUFont.icone(_:weight:)`. Les 170
 appels sont convertis, et `ci_scripts/check_icones.py` refuse désormais une taille écrite à la
-main dans `RunUp/Views` : il en reste **deux** depuis que les chevrons « ‹ » sont devenus
+main dans `Haizo/Views` : il en reste **deux** depuis que les chevrons « ‹ » sont devenus
 `chevron.left`, toutes deux listées avec leur raison, et aucune n'est une icône (le repli qui
 affiche l'emoji d'une notification déjà en base, la coche typographique de l'assistant
 d'objectif). Le test, lui, RÉPÉTAIT le nombre quatre au lieu de le dériver de la liste : il est
@@ -3637,7 +3637,7 @@ discipline *affiche* : au kilomètre à pied, aux cent mètres en bassin, en km/
 
 Le calcul est sorti de la vue dans `BilanDeLaSemaine` — même raison que `PlanRecap`, et son
 en-tête l'explique : une vue SwiftUI ne se teste pas, une structure qui prend un historique et rend
-des nombres, oui. `RunUpTests/BilanDeLaSemaineTests.swift`, onze tests, dont « une sortie à vélo ne
+des nombres, oui. `HaizoTests/BilanDeLaSemaineTests.swift`, onze tests, dont « une sortie à vélo ne
 bat pas un record d'allure de course » et « la somme des barres est exactement le total affiché ».
 
 ## Chantier 5 — les données de démonstration
@@ -3730,7 +3730,7 @@ Un nom de symbole SF faux **ne dessine rien** : pas d'erreur, pas de journal, un
 bonne taille. Écrire neuf noms d'un coup sur le premier écran de l'app, c'était neuf occasions
 d'expédier une icône invisible.
 
-`RunUpTests/SymbolesTests.swift` demande donc à `UIImage(systemName:)` de résoudre chaque nom — la
+`HaizoTests/SymbolesTests.swift` demande donc à `UIImage(systemName:)` de résoudre chaque nom — la
 seule façon de poser la question, le catalogue appartenant au système. `check_symboles.py` est le
 pont qui garantit que la liste éprouvée est exactement celle que le code emploie.
 
@@ -3988,7 +3988,7 @@ en français chez une anglophone jusqu'à la régénération du lundi suivant.
 
 ### Ce qui le garde
 
-`RunUpTests/CycleTrackingTests.swift`, sept nouveaux tests : le jour d'ovulation sur des cycles de
+`HaizoTests/CycleTrackingTests.swift`, sept nouveaux tests : le jour d'ovulation sur des cycles de
 21, 28 et 35 jours ; la phase calculée pour un autre jour qu'aujourd'hui ; l'heure de saisie qui ne
 décale plus rien ; chaque note qui correspond à la phase de son propre jour ; la sortie longue qui
 ne dépend plus de la phase ; une semaine hors règles identique à celle de quelqu'un qui ne suit pas
@@ -4081,7 +4081,7 @@ ne viole la règle. Une première version ne regardait que le **premier** `=` de
 donc passer `if let v = p.weekSessions { profil.weekSessions = v }` — précisément la forme du fichier
 de restauration, donc une forme qu'on recopie.
 
-`RunUpTests/ContinuiteDuPlanTests.swift`, **12 cas** : le rejeu en entiers (échange, jour vide,
+`HaizoTests/ContinuiteDuPlanTests.swift`, **12 cas** : le rejeu en entiers (échange, jour vide,
 composition, réversibilité), le refus d'un déplacement portant sur une autre forme de semaine, le
 plafond de temps du jour d'arrivée, la note de phase du jour d'arrivée, la survie à une régénération,
 la non-inversion d'un allègement, l'oubli au passage de semaine, l'annulation du coach, et la bande
@@ -4125,7 +4125,7 @@ ensuite. Un allègement sur un motif juste mais incomplet vaut mieux que ces deu
 
 ### Ce qui le garde
 
-Trois cas dans `RunUpTests/ContinuiteDuPlanTests.swift` : une nuit pas encore écrite ne consomme pas
+Trois cas dans `HaizoTests/ContinuiteDuPlanTests.swift` : une nuit pas encore écrite ne consomme pas
 la journée et la décision se prend bien une fois la donnée versée ; une bonne nuit n'allège rien mais
 clôt la journée ; aucune source de sommeil clôt la journée tout de suite, pour que ce contrôle ne se
 relance pas à chaque ouverture chez quelqu'un qui n'a jamais connecté Apple Santé.
@@ -4409,7 +4409,7 @@ quatre divisions.
 
 ### Ce qui le garde
 
-`RunUpTests/ChargesHyroxTests.swift`, onze cas. Ils **recopient le tableau**, et c'est leur intérêt :
+`HaizoTests/ChargesHyroxTests.swift`, onze cas. Ils **recopient le tableau**, et c'est leur intérêt :
 ce sont des charges qu'une coureuse va pousser et soulever cent fois, et une faute de frappe — 120
 au lieu de 102 — ne casserait rien et ne se verrait pas à l'écran. Les nombres sont écrits à deux
 endroits qu'on ne modifie pas d'un même geste, ce qui force à rouvrir la source le jour où le
@@ -4566,8 +4566,8 @@ Le dépôt a changé de propriétaire. GitHub Pages suit le propriétaire, pas l
 
 | Adresse | Réponse |
 | --- | --- |
-| `hicsuntco.github.io/RUNUP/privacy.html` | **404** |
-| `hicsuntco.github.io/RUNUP/support.html` | **404** |
+| `hicsuntco.github.io/Haizo/privacy.html` | **404** |
+| `hicsuntco.github.io/Haizo/support.html` | **404** |
 | `hukaia.github.io/RUNUP/privacy.html` | 200 |
 | `hukaia.github.io/RUNUP/support.html` | 200 |
 
@@ -4579,7 +4579,7 @@ livrée, ouvrait une page d'erreur au moment précis où quelqu'un s'apprête à
 
 ### Ce qui a changé
 
-Une déclaration par langage — `RunUp/Models/Liens.swift` et `ci_scripts/liens.py` — et tous les
+Une déclaration par langage — `Haizo/Models/Liens.swift` et `ci_scripts/liens.py` — et tous les
 porteurs corrigés. Un renommage est maintenant **une ligne de chaque côté**.
 
 `asc.py push-metadata` **vérifie que les deux pages répondent** juste avant d'envoyer la fiche. Cette
@@ -4594,7 +4594,7 @@ existe comme fichier. Les deux premiers cas sont l'ancienne adresse recopiée te
 
 La première version du contrôle lisait **tout**, `node_modules` compris, et signalait **cinquante et
 un** liens de spécification des dépendances — « https://w3c.github.io/FileAPI/ » n'est pas une page
-de RUNUP mal adressée. Le motif vise maintenant le segment de projet, pris dans la déclaration : un
+de Haizo mal adressée. Le motif vise maintenant le segment de projet, pris dans la déclaration : un
 renommage le suit, et aucune liste d'exceptions n'est à tenir. Les journaux — PROGRESS, AUDIT,
 PHASE2 — gardent leurs anciennes adresses, parce qu'ils racontent ce qui a été fait.
 
@@ -4623,7 +4623,7 @@ Les deux **réparations de données** — renommer les sorties titrées « Repos
 dénivelé positif gonflé — ne dépendaient que du contexte de données. Mesuré avant de bouger : zéro
 référence à la navigation, aux feuilles, à la course en direct.
 
-Elles sont sorties dans `RunUp/Services/ReparationsAuLancement.swift`. `AppState` passe de **1 255 à
+Elles sont sorties dans `Haizo/Services/ReparationsAuLancement.swift`. `AppState` passe de **1 255 à
 1 155 lignes**, mais le compteur n'est pas le point : c'étaient deux méthodes **`private`** d'un
 objet qu'un test ne peut pas construire sans toute l'app derrière. C'est la même histoire que
 `LocationService.majDeLaDistance`, dont le commentaire raconte qu'une règle corrigeant une erreur de
@@ -4872,7 +4872,7 @@ Trouvées en cherchant l'ancienne valeur dans tout le dépôt après coup — c'
 et c'est bien le problème.
 
 **`DailyGoalsWidget.textPrimary`** portait sa propre copie, `#15151C`. La cible du widget ne
-compile pas `RunUp/DesignSystem` — frontière de processus, la raison est en tête de
+compile pas `Haizo/DesignSystem` — frontière de processus, la raison est en tête de
 `WidgetAccentPalette` — donc la copie est inévitable. Ce qui ne l'était pas : rien ne la tenait
 d'accord avec l'originale. **Le widget aurait porté l'ancienne encre violette sur l'écran d'accueil
 du téléphone, à côté d'une app chaude.**
@@ -5057,7 +5057,7 @@ après un délai fixe :
 | **le dévoilement** | 0,58 s | **1,38 s** |
 | *le fondu commence* | | *1,15 s* |
 
-**Personne n'a jamais vu la fin de l'animation d'ouverture de RunUp.** Chaque valeur était
+**Personne n'a jamais vu la fin de l'animation d'ouverture de Haizo.** Chaque valeur était
 raisonnable toute seule ; le défaut ne vivait que dans leur somme. Avec `glide` à 500 ms, le
 dernier mouvement finit à 1,08 s, 70 ms avant le fondu.
 
@@ -5119,7 +5119,7 @@ Et j'ai failli en laisser une de plus : ma première version portait un
 Aucun ne le voulait. **Une fonction gardée au cas où est du code mort qui a l'air d'une
 intention** — elle est partie, avec le `weeklyKm` de `HomeView` qui n'avait plus d'appelant.
 
-Six cas dans `RunUpTests/SemaineComparableTests.swift`, dont le défaut lui-même : un lundi midi,
+Six cas dans `HaizoTests/SemaineComparableTests.swift`, dont le défaut lui-même : un lundi midi,
 avec vingt kilomètres courus la semaine passée mais tous après le mercredi, l'écart doit valoir
 zéro — l'ancien calcul rendait vingt.
 
@@ -5306,7 +5306,7 @@ palette redeviendrait un interpréteur.
 ### Ce qui attend Charlotte
 
 **La Journée.** Un anneau de progression sur fond noir est le vocabulaire de l'app Activité
-d'Apple. Celui de RunUp en diffère réellement — une seule piste segmentée en trois arcs, et non
+d'Apple. Celui de Haizo en diffère réellement — une seule piste segmentée en trois arcs, et non
 trois anneaux concentriques, avec le compte au centre — mais la question 3 de la DA se pose là, et
 seulement là. C'est un jugement sur une image rendue, pas une mesure.
 
@@ -5316,8 +5316,8 @@ seulement là. C'est un jugement sur une image rendue, pas une mesure.
 arguments d'un appel suivent l'ordre des paramètres, et `defilements` est déclaré avant `reglages`.
 La cible ne compilait plus depuis `c6e1821`.
 
-**Pourquoi personne ne l'a vu.** `RunUpUITests` n'appartient qu'au schéma `Captures`. Le workflow
-de build lance `xcodebuild test -scheme RunUp` : il ne l'a jamais compilée. Pendant trois
+**Pourquoi personne ne l'a vu.** `HaizoUITests` n'appartient qu'au schéma `Captures`. Le workflow
+de build lance `xcodebuild test -scheme Haizo` : il ne l'a jamais compilée. Pendant trois
 campagnes — une heure chacune — le build restait vert et annonçait 886 tests passés, pendant que
 la chaîne qui produit les images mourait à sa troisième étape.
 
@@ -6103,7 +6103,7 @@ pour Instrument Sans.
 
 **Et General Sans était un piège juridique.** Sa licence (ITF Free Font License, pas OFL)
 autorise l'embarquement dans une app — §01 — mais interdit explicitement de la mettre à
-disposition « through […] a **repository** ». Le dépôt RUNUP est public, vérifié. La déposer
+disposition « through […] a **repository** ». Le dépôt Haizo est public, vérifié. La déposer
 aurait été une infraction livrée dans un commit. Instrument Sans et Space Grotesk sont sous
 **OFL 1.1**, vérifié sur leurs fichiers de licence : redistribuables, donc déposables comme Inter
 l'était.
@@ -6484,3 +6484,84 @@ Et une trouvaille en chemin, qui n'a rien à voir avec le chantier : **l'accueil
 lundi montre « 0,0 / 24 km » et une barre vide.** Voir la tâche correspondante — la graine pose
 son historique en jours en arrière, donc un lundi aucune sortie ne tombe dans la semaine en cours,
 et la fiche App Store montre une app vide une fois sur sept.
+
+---
+
+## 16 novembre 2026 — RunUp devient Haizo
+
+Décision de Charlotte. Le nom était écrit **1 415 fois dans 338 fichiers** : 174 fichiers Swift,
+100 scripts, 6 cibles Xcode, 6 dossiers, 26 clés de traduction et leurs 52 traductions, les
+documents, la fiche App Store. À cette échelle, un `sed` est un piège.
+
+### La seule question qui comptait : qu'est-ce qui est irréversible
+
+Quatre décisions prises avant la première ligne, et c'est ce qui protège l'app.
+
+**L'identifiant reste `com.hicsuntco.runup`.** Chez Apple, un identifiant différent est une app
+différente : nouvelle fiche, zéro avis, aucune mise à jour pour qui a déjà l'app. Et il porte
+`.plus.monthly` et `.plus.yearly`, **les produits d'abonnement** — les renommer aurait cessé de
+reconnaître tous les abonnements en cours. Personne ne voit jamais cet identifiant.
+
+**Le groupe applicatif reste.** `group.com.hicsuntco.runup` est le seul canal par lequel le widget
+et la montre lisent les données. Le renommer les vide.
+
+**Le domaine reste**, décision explicite : les liens de club et de parrainage déjà partagés
+continuent de marcher.
+
+**Et le dépôt GitHub ne change pas de nom.** C'est la trouvaille du chantier. L'adresse de la
+politique de confidentialité — celle qui est **sur la fiche App Store** — est
+`hukaia.github.io/RUNUP/privacy.html`, et elle contient le nom du dépôt. `Liens.swift` porte déjà
+la cicatrice du jour où le dépôt a changé de compte et où les neuf copies de cette adresse ont
+pointé vers un 404. Renommer le dépôt referait exactement ça.
+
+S'y ajoutent, trouvés en relisant : le schéma d'URL `runup://strava-callback`, **déclaré chez
+Strava, hors de notre portée** ; l'en-tête HTTP `X-RunUp-Session-Renewed`, qu'un garde tient
+d'accord entre client et serveur — le renommer des deux côtés aurait passé le garde et cassé
+quand même, parce que l'app se livre en jours quand le serveur se déploie en minutes ; et les
+**quatre variables d'environnement Vercel**, qui vivent dans le tableau de bord et dont le
+renommage dans le seul dépôt fait échouer `requireEnv` et coupe le serveur.
+
+### Trois fixtures cassées en silence par le même geste
+
+Un renommage en masse ne laisse pas seulement des oublis. Il **casse** des choses qui continuent
+de compiler.
+
+1. `ContactMatcherTests` vérifie que la casse ne change pas l'empreinte d'une adresse. Le
+   remplacement a transformé `TEST@RUNUP.APP` en `TEST@Haizo.APP` : le cas comparait désormais
+   deux adresses différentes. Toute la famille est passée sur un seul domaine, empreinte SHA-256
+   recalculée.
+2. `test_liens` épelle l'**ancienne adresse morte** pour prouver qu'elle est refusée.
+   `hicsuntco.github.io/RUNUP` est devenu `hicsuntco.github.io/Haizo`, qui n'est l'ancienne
+   adresse de personne : trois cas ont cessé de prouver quoi que ce soit. Elle est maintenant
+   DÉRIVÉE de l'adresse déclarée, en ne remplaçant que le compte — ce qui est d'ailleurs ce que
+   le défaut décrit.
+3. `check_liens.py` a refusé mon propre fichier de cas pour y avoir écrit une adresse publiée en
+   dur. Même réponse que la semaine dernière : pas d'exemption, on lit la source.
+
+### Le garde, et son angle mort
+
+`check_marque.py` : l'ancien nom ne subsiste QUE dans dix identifiants, chacun avec sa raison
+écrite, et `HAIZO` en capitales n'a sa place que dans les quatre fichiers qui portent le logo.
+Seize cas, dont un qui vérifie que chaque tolérance porte une vraie raison — il a refusé deux de
+mes propres entrées qui disaient « même raison ».
+
+**Et il a eu un angle mort, qu'il faut écrire parce qu'il est instructif.** Sa première liste
+d'extensions ne portait pas `.xcstrings`. Il annonçait donc « l'ancien nom ne subsiste nulle
+part » pendant que `InfoPlist.xcstrings` en gardait **dix-huit** occurrences, et la montre neuf —
+c'est-à-dire les textes des demandes d'autorisation iOS, « RunUp lit tes données Santé… », la
+première phrase que l'app adresse à quelqu'un. Le garde était vert et l'app portait l'ancien nom.
+Un garde qui choisit les fichiers qu'il regarde ne vaut que ce que vaut cette liste. `.gitignore`
+gardait six chemins de l'ancienne arborescence, pour la même raison.
+
+### Ce qui ne demande aucun travail
+
+**L'icône ne porte aucun mot** — quatre barres ascendantes sur le dégradé de marque. Elle survit
+sans être redessinée. Et les trois images de la montre, recomposées, sont identiques octet pour
+octet : leur empreinte de code avait bougé parce que le module a été renommé, pas parce que le
+dessin a changé.
+
+### Graphie
+
+`HAIZO` dans le logo et l'écran de lancement — quatre endroits, tous en `Text(verbatim:)`.
+`Haizo` partout ailleurs, parce que dans une phrase c'est un mot et non un cri. C'est ce que
+l'app faisait déjà sans l'avoir décidé, d'où les deux graphies `RunUp` et `RUNUP` mélangées.

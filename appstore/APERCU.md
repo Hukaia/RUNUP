@@ -28,7 +28,7 @@ bande, et aucune déformation.
 ## La machine le filme toute seule
 
 Depuis que les captures sont fabriquées par le harnais, l'aperçu l'est aussi. Le simulateur sait
-s'enregistrer, et `RunUpUITests/ApercuUITests` le pilote pendant ce temps-là : quatre onglets,
+s'enregistrer, et `HaizoUITests/ApercuUITests` le pilote pendant ce temps-là : quatre onglets,
 un défilement lent dans chacun, retour à l'accueil. Vingt-six secondes, trois langues, à chaque
 exécution de **Captures App Store**.
 

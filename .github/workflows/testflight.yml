@@ -69,7 +69,7 @@ on:
 
   push:
     branches:
-      - claude/runup-ios-swiftui-app-5b1yv6
+      - claude/haizo-ios-swiftui-app-5b1yv6
     # Rien de ce qui suit ne peut changer le binaire iOS d'un octet : le déclencher pour un
     # correctif d'API ou une phrase de politique de confidentialité, ce serait payer une machine
     # macOS pour reconstruire à l'identique.
@@ -99,7 +99,7 @@ on:
       # exige. Elle est maintenant des deux côtés ; cette ligne lui évite de payer une machine
       # macOS quand on y corrige une phrase.
       - "support.html"
-      - "design_handoff_runup_app/**"
+      - "design_handoff_haizo_app/**"
       # Les captures brutes, les accroches et le composeur qui les assemble : tout ce dossier
       # sert à FABRIQUER la fiche App Store, rien n'y entre dans le binaire. Déposer six photos
       # d'écran y payait une machine macOS pendant neuf minutes, pour reconstruire exactement la
@@ -260,9 +260,9 @@ jobs:
 
       # ET MAINTENANT : SONT-ELLES LIVRÉES À LA CIBLE QUI LES ENREGISTRE ? Le contrôle ci-dessus
       # compare le code, l'`UIAppFonts` de chaque cible et les noms PostScript des fichiers — il
-      # ne regarde jamais si la cible EMBARQUE le fichier. `RunUpWatch` et `RunUpWidgets`
+      # ne regarde jamais si la cible EMBARQUE le fichier. `HaizoWatch` et `HaizoWidgets`
       # déclaraient leurs ressources sous une clé `resources:` qui n'existe pas dans XcodeGen :
-      # elle est jetée sans un mot (ticket #1645). Résultat, mesuré dans `RunUpWatch.app` : aucun
+      # elle est jetée sans un mot (ticket #1645). Résultat, mesuré dans `HaizoWatch.app` : aucun
       # `.ttf`, aucun `Localizable.strings`. La montre et le widget de l'écran d'accueil étaient
       # donc français pour tout le monde, dans la police système, depuis le premier jour — avec
       # un build vert, le contrôle des polices vert, et des captures parfaitement lisibles.
@@ -282,9 +282,12 @@ jobs:
       # d'abord » — corriger les écrans sans corriger le jeton aurait tenu une semaine.
       #
       # Le contrôle compte les dégradés PAR FICHIER, contre une liste d'exceptions qui porte
-      # chacune sa raison écrite : la marque, une image produite (carte de partage, avatar), un
-      # voile qui rend un texte lisible sur un tracé, et l'anneau dont chaque arc vire vers la
-      # couleur de son voisin. Un de plus ou un de moins, et il parle.
+      # chacune sa raison écrite : la marque, une image produite (carte de partage, avatar) et un
+      # voile qui rend un texte lisible sur un tracé. Un de plus ou un de moins, et il parle.
+      #
+      # La quatrième catégorie — « la couleur porte une information » — est fermée depuis le
+      # 16 novembre : l'anneau est mono-accent et l'aire de la courbe est un aplat, donc ni l'un
+      # ni l'autre n'a plus de dégradé à justifier.
       - name: Vérifier qu'aucun dégradé décoratif n'est revenu
         run: |
           cd ci_scripts && python3 test_degrade.py
@@ -310,10 +313,10 @@ jobs:
       # UNE API « À MOTIF OBLIGATOIRE » SANS MANIFESTE EST UN REFUS À L'ENVOI.
       #
       # ITMS-91053 se déclenche sur l'USAGE d'une de ces API sans motif déclaré, et il tombe
-      # APRÈS l'archive — quinze minutes de machine macOS pour l'apprendre. `RunUpWatch`
+      # APRÈS l'archive — quinze minutes de machine macOS pour l'apprendre. `HaizoWatch`
       # n'embarque aucun `PrivacyInfo.xcprivacy`, et c'est licite tant qu'elle n'appelle rien :
       # vérifié le 10 novembre 2026 sur le journal d'envoi, « UPLOAD SUCCEEDED with no errors »
-      # pour une archive contenant `RunUp.app/Watch/RunUpWatch.app`.
+      # pour une archive contenant `Haizo.app/Watch/HaizoWatch.app`.
       #
       # Une seule ligne rendrait ça faux : un `UserDefaults` écrit dans la montre pour y garder
       # un réglage. Elle compile, les tests passent, et le refus arrive à l'envoi. Ce contrôle
@@ -589,6 +592,18 @@ jobs:
       - name: Vérifier que le nom de quelqu'un ne s'écrit qu'à un endroit
         run: python3 ci_scripts/check_nom.py
 
+      # L'APP S'APPELLE Haizo. Le 16 novembre, l'ancien nom était écrit 1 415 fois dans 338
+      # fichiers : à cette échelle, « j'ai bien regardé » n'est pas une réponse. Ce qui le garde
+      # encore est une liste fermée d'identifiants qu'une personne ne voit jamais — l'identifiant
+      # de l'app et ses produits d'abonnement, le groupe applicatif, le domaine, l'adresse de
+      # confidentialité qui est sur la fiche App Store, le schéma d'URL déclaré chez Strava,
+      # l'en-tête HTTP partagé avec le serveur, les variables d'environnement Vercel — et dont le
+      # renommage coûte une panne silencieuse. Chaque entrée porte sa raison.
+      - name: Vérifier que l'app s'appelle Haizo partout où ça se lit
+        run: |
+          cd ci_scripts && python3 test_marque.py
+          cd .. && python3 ci_scripts/check_marque.py
+
       - name: Vérifier que le compteur du Club ne compte que des gestes délibérés
         run: python3 ci_scripts/check_club_metrics.py
 
@@ -630,7 +645,7 @@ jobs:
 
       # La chaîne des captures ne part pas à chaque commit : sa liste de chemins est un jugement
       # écrit à la main, et elle s'est trompée DEUX FOIS par omission — `AppState.swift` le
-      # routeur, puis `RunUpApp.swift` qui porte la vue racine. Le défaut n'a aucun symptôme :
+      # routeur, puis `HaizoApp.swift` qui porte la vue racine. Le défaut n'a aucun symptôme :
       # la chaîne reste verte parce qu'elle ne tourne pas, et les images en ligne datent d'avant
       # la modification.
       - name: Éprouver le contrôle du déclencheur des captures
@@ -734,7 +749,7 @@ jobs:
           cd .. && python3 ci_scripts/check_etapes.py
 
       # Neuf feuilles sur trente-trois s'ouvraient avec l'habillage du SYSTÈME : fond clair dans
-      # une app sombre, coins à 10 points au lieu de 26, aucune poignée. `runUpSheetStyle`
+      # une app sombre, coins à 10 points au lieu de 26, aucune poignée. `haizoSheetStyle`
       # existait et vingt-quatre feuilles l'appliquaient ; c'est le propre d'un style qu'on pose
       # à la main de manquer là où personne n'a regardé.
       - name: Vérifier que toute feuille porte l'habillage de l'app
@@ -772,14 +787,14 @@ jobs:
           cd ci_scripts && python3 test_reseau.py
           cd .. && python3 ci_scripts/check_reseau.py
 
-      # `RunUp/Shared/` n'est pas une bibliothèque prêtée au widget : le dossier ENTIER est dans
-      # les sources de `RunUpWidgets`, qui ne compile rien d'autre de `RunUp/`. Un fichier posé là
+      # `Haizo/Shared/` n'est pas une bibliothèque prêtée au widget : le dossier ENTIER est dans
+      # les sources de `HaizoWidgets`, qui ne compile rien d'autre de `Haizo/`. Un fichier posé là
       # ne voit donc ni les modèles, ni le design system, ni les vues-modèles — mais tout compile
       # sous les yeux, parce que la cible iOS, elle, voit tout. L'erreur ne tombe que dans la passe
       # du widget, un quart d'heure après le push, et elle annule le build entier. C'est arrivé
       # deux fois : `PlanRecap` au build 250, `AccentTheme` au build 278. Ce contrôle refait le
       # calcul de visibilité depuis `project.yml` en une seconde.
-      - name: Vérifier que RunUp/Shared ne référence aucun type absent des cibles secondaires
+      - name: Vérifier que Haizo/Shared ne référence aucun type absent des cibles secondaires
         run: |
           cd ci_scripts && python3 test_cibles.py
           cd .. && python3 ci_scripts/check_cibles.py
@@ -916,7 +931,7 @@ jobs:
 
       # L'image de montre qu'Apple EXIGE en plus des six de l'iPhone a vieilli de trois mois sans
       # que rien ne rougisse, parce que rien ne la regardait. (Il y avait aussi une image d'iPad :
-      # elle n'aurait jamais dû exister — RUNUP est une app iPhone, voir `captures.yml`.) Le
+      # elle n'aurait jamais dû exister — Haizo est une app iPhone, voir `captures.yml`.) Le
       # contrôle est ici, qui tourne souvent, ET dans `appstore.yml`, juste avant la composition :
       # une capture refaite ne passe pas par ce workflow-ci (`appstore/**` est dans son
       # `paths-ignore`), et c'est précisément le moment où une image livrée se périme.
@@ -928,8 +943,8 @@ jobs:
 
       # ── LA CIBLE DES TESTS D'INTERFACE N'ÉTAIT COMPILÉE PAR PERSONNE ICI ────────────────────
       #
-      # `RunUpUITests` n'appartient qu'au schéma `Captures` (voir project.yml) ; l'étape
-      # ci-dessous construit `RunUp`, et ne l'a donc jamais vue. Résultat le 13 novembre : une
+      # `HaizoUITests` n'appartient qu'au schéma `Captures` (voir project.yml) ; l'étape
+      # ci-dessous construit `Haizo`, et ne l'a donc jamais vue. Résultat le 13 novembre : une
       # erreur d'ordre d'arguments dans `CapturesUITests.swift` a fait tomber TROIS campagnes de
       # captures d'affilée — une heure chacune — pendant que ce build-ci restait vert et annonçait
       # 886 tests passés.
@@ -948,7 +963,7 @@ jobs:
           fi
           set +e
           xcodebuild build-for-testing \
-            -project RunUp.xcodeproj \
+            -project Haizo.xcodeproj \
             -scheme Captures \
             -destination "id=$UDID" \
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee "$RUNNER_TEMP/ui.log"
@@ -977,8 +992,8 @@ jobs:
           # code 65 ». Deux corrections ont été poussées à l'aveugle avant qu'on s'en aperçoive.
           set +e
           xcodebuild test \
-            -project RunUp.xcodeproj \
-            -scheme RunUp \
+            -project Haizo.xcodeproj \
+            -scheme Haizo \
             -destination "id=$UDID" \
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee "$RUNNER_TEMP/tests.log"
           CODE=${PIPESTATUS[0]}
@@ -1019,7 +1034,7 @@ jobs:
           CERT_PASSWORD: ${{ secrets.APPLE_DIST_CERT_PASSWORD }}
         run: |
           set -euo pipefail
-          KEYCHAIN="$RUNNER_TEMP/runup-signing.keychain-db"
+          KEYCHAIN="$RUNNER_TEMP/haizo-signing.keychain-db"
           KEYCHAIN_PASSWORD=$(uuidgen)
           echo "KEYCHAIN=$KEYCHAIN" >> "$GITHUB_ENV"
 
@@ -1099,11 +1114,11 @@ jobs:
         run: |
           set -euo pipefail
           xcodebuild archive \
-            -project RunUp.xcodeproj \
-            -scheme RunUp \
+            -project Haizo.xcodeproj \
+            -scheme Haizo \
             -configuration Release \
             -destination "generic/platform=iOS" \
-            -archivePath "$RUNNER_TEMP/RunUp.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Haizo.xcarchive" \
             -allowProvisioningUpdates \
             -authenticationKeyPath "$ASC_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
@@ -1149,7 +1164,7 @@ jobs:
           echo "→ Options d'export :"
           plutil -p "$OPTS"
           xcodebuild -exportArchive \
-            -archivePath "$RUNNER_TEMP/RunUp.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Haizo.xcarchive" \
             -exportOptionsPlist "$OPTS" \
             -exportPath "$RUNNER_TEMP/export" \
             OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN"
@@ -1160,7 +1175,7 @@ jobs:
       - name: Conserver l'IPA
         uses: actions/upload-artifact@v4
         with:
-          name: RunUp-${{ steps.build.outputs.number }}.ipa
+          name: Haizo-${{ steps.build.outputs.number }}.ipa
           path: ${{ runner.temp }}/export/*.ipa
           retention-days: 14
           if-no-files-found: error
@@ -1186,5 +1201,5 @@ jobs:
       - name: Effacer les secrets de la machine
         if: always()
         run: |
-          security delete-keychain "$RUNNER_TEMP/runup-signing.keychain-db" 2>/dev/null || true
+          security delete-keychain "$RUNNER_TEMP/haizo-signing.keychain-db" 2>/dev/null || true
           rm -rf ~/.appstoreconnect/private_keys

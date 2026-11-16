@@ -1,4 +1,4 @@
-name: RunUp
+name: Haizo
 options:
   bundleIdPrefix: com.hicsuntco.runup
   deploymentTarget:
@@ -13,18 +13,18 @@ settings:
     ENABLE_PREVIEWS: YES
 
 targets:
-  RunUp:
+  Haizo:
     type: application
     platform: iOS
     deploymentTarget: "17.0"
     sources:
       # UNE SEULE ENTRÉE, ET ELLE PORTE AUSSI LES RESSOURCES.
       #
-      # `RunUp/Resources/` est sous ce chemin. XcodeGen classe chaque fichier qu'il y trouve selon
+      # `Haizo/Resources/` est sous ce chemin. XcodeGen classe chaque fichier qu'il y trouve selon
       # son extension, et les catalogues, les polices et le manifeste de confidentialité vont bien
       # dans la phase « Copy Bundle Resources » : il n'y a rien à redéclarer. Il y avait ici une
       # clé `resources:` qui les relistait — elle ne servait à rien, et pire que rien : voir le
-      # bloc sur les ressources de `RunUpWatch` plus bas, cette clé n'existe pas dans XcodeGen et
+      # bloc sur les ressources de `HaizoWatch` plus bas, cette clé n'existe pas dans XcodeGen et
       # ce qu'on y écrit est jeté sans un mot.
       #
       # Les trois fichiers de ce dossier qu'il faut savoir présents, et pourquoi :
@@ -43,7 +43,7 @@ targets:
       #
       # `ci_scripts/check_spec.py` vérifie que les polices enregistrées et les traductions sont
       # réellement livrées à chaque cible qui les déclare — c'est ce contrôle qui manquait.
-      - path: RunUp
+      - path: Haizo
         excludes:
           - "Resources/Fonts/*.md"
     # Build settings that can't be committed with their real values (the coach's shared secret)
@@ -54,15 +54,15 @@ targets:
       Debug: Config.xcconfig
       Release: Config.xcconfig
     info:
-      path: RunUp/Info.plist
+      path: Haizo/Info.plist
       properties:
-        CFBundleDisplayName: RunUp
+        CFBundleDisplayName: Haizo
         # Shared app↔server secret for the coach proxy, substituted at build time from the
         # RUNUP_APP_SECRET build setting (Config.xcconfig → Secrets.xcconfig) instead of living as
         # a string literal in CoachService.swift, where it was committed in plain text. Read back
         # at runtime by `CoachService.appSecret` — see the comment there on why an embedded secret
         # is a deterrent against casual abuse, not a real boundary.
-        RUNUPAppSecret: "$(RUNUP_APP_SECRET)"
+        HaizoAppSecret: "$(RUNUP_APP_SECRET)"
         # Trilingue, et cette fois pour de vrai.
         #
         # Ces trois langues avaient été ramenées au seul français parce que la couverture
@@ -103,22 +103,22 @@ targets:
         # "Authorization Callback Domain"/redirect URI once she creates her Strava API application.
         CFBundleURLTypes:
           - CFBundleURLSchemes:
-              - runup
+              - haizo
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         # Portrait-only design (see DesignSystem/); without this, Apple's App Store validation
         # rejects the bundle for not supporting iPad Split View multitasking's full 4-orientation
         # set. This opts the app out of that requirement instead of adding rotation support.
         UIRequiresFullScreen: true
-        NSHealthShareUsageDescription: "RunUp lit tes données Santé (les courses enregistrées par ta montre ou une autre app, leur parcours, fréquence cardiaque, nombre de pas, calories actives, sommeil) pour faire compter tes sorties dans ton programme, calculer ta forme du jour et suivre tes objectifs quotidiens."
-        NSHealthUpdateUsageDescription: "RunUp enregistre tes séances de course dans Santé après chaque sortie."
-        NSLocationWhenInUseUsageDescription: "RunUp utilise ta position pour suivre ta distance, ton allure et ton tracé pendant une course."
-        NSMicrophoneUsageDescription: "RunUp utilise le micro pour t'écouter quand tu poses une question à voix haute à ton coach pendant une course."
+        NSHealthShareUsageDescription: "Haizo lit tes données Santé (les courses enregistrées par ta montre ou une autre app, leur parcours, fréquence cardiaque, nombre de pas, calories actives, sommeil) pour faire compter tes sorties dans ton programme, calculer ta forme du jour et suivre tes objectifs quotidiens."
+        NSHealthUpdateUsageDescription: "Haizo enregistre tes séances de course dans Santé après chaque sortie."
+        NSLocationWhenInUseUsageDescription: "Haizo utilise ta position pour suivre ta distance, ton allure et ton tracé pendant une course."
+        NSMicrophoneUsageDescription: "Haizo utilise le micro pour t'écouter quand tu poses une question à voix haute à ton coach pendant une course."
         # Le carnet d'adresses ne quitte JAMAIS le téléphone : l'app hache les adresses e-mail sur
         # l'appareil et n'envoie que les empreintes (voir `ContactMatcher`). La phrase le dit, parce
         # que c'est la seule chose que la personne veut savoir au moment où iOS lui pose la question.
-        NSContactsUsageDescription: "RunUp compare tes contacts aux comptes existants pour te dire qui utilise déjà l'app. Les adresses sont transformées en empreintes illisibles sur ton téléphone avant l'envoi — ton carnet d'adresses n'en sort jamais, et rien n'est conservé."
-        NSSpeechRecognitionUsageDescription: "RunUp transcrit ce que tu dis pour que ton coach puisse te répondre à voix haute pendant une course."
+        NSContactsUsageDescription: "Haizo compare tes contacts aux comptes existants pour te dire qui utilise déjà l'app. Les adresses sont transformées en empreintes illisibles sur ton téléphone avant l'envoi — ton carnet d'adresses n'en sort jamais, et rien n'est conservé."
+        NSSpeechRecognitionUsageDescription: "Haizo transcrit ce que tu dis pour que ton coach puisse te répondre à voix haute pendant une course."
         # `location` only — the run tracker really does keep GPS alive with the screen off.
         # `remote-notification` used to be listed too, but the server only ever sends visible
         # alert pushes (lib/apns.js), which need no background mode, and no silent-push handler
@@ -136,7 +136,7 @@ targets:
           - com.hicsuntco.runup.weather-refresh
         # Lets `LiveRunViewModel` start a Live Activity (Lock Screen + Dynamic Island) for the
         # in-progress run — see `RunActivityAttributes` (Shared/) and `RunActivityWidget`
-        # (RunUpWidgets/). `FrequentUpdates` avoids the system throttling `Activity.update` calls
+        # (HaizoWidgets/). `FrequentUpdates` avoids the system throttling `Activity.update` calls
         # down to roughly once a minute — a run updates its own Live Activity every 5s.
         NSSupportsLiveActivities: true
         NSSupportsLiveActivitiesFrequentUpdates: true
@@ -150,12 +150,12 @@ targets:
           - DMMono-Regular.ttf
           - DMMono-Medium.ttf
     dependencies:
-      - target: RunUpWidgets
+      - target: HaizoWidgets
         embed: true
-      - target: RunUpWatch
+      - target: HaizoWatch
         embed: true
     entitlements:
-      path: RunUp/RunUp.entitlements
+      path: Haizo/Haizo.entitlements
       properties:
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.access: []
@@ -176,7 +176,7 @@ targets:
         # Le quota gratuit est de 500 000 appels par mois avec un compte développeur. Cette
         # fonctionnalité en fait UN par jour et par personne, au plus.
         com.apple.developer.weatherkit: true
-        # Shares today's goals/streak/theme with the Home Screen widget (`RunUpWidgets` target) —
+        # Shares today's goals/streak/theme with the Home Screen widget (`HaizoWidgets` target) —
         # the widget runs in its own process with no other way to reach `UserProfile`. Needs a real
         # App Group created under her Apple Developer account (Certificates, Identifiers & Profiles
         # → Identifiers → App Groups) before this entitlement can actually provision — Xcode's
@@ -210,31 +210,31 @@ targets:
     # première ouverture du projet — invisible sur ta machine, mais fabriqué par une heuristique
     # sur laquelle on n'a aucune prise, et refabriqué à chaque `xcodegen generate` sur une machine
     # de CI qui, elle, part d'un dépôt sans `.xcodeproj`. Le déclarer, c'est garantir que la
-    # commande d'archivage du workflow trouve toujours la même chose, et que `RunUpTests` est bien
+    # commande d'archivage du workflow trouve toujours la même chose, et que `HaizoTests` est bien
     # attaché à l'action « Test » — sinon la CI construit sans jamais exécuter les tests de
     # confidentialité des itinéraires, ce qui est exactement le contraire du but.
     scheme:
       testTargets:
-        - RunUpTests
+        - HaizoTests
 
   # Home Screen widget — shows the same single-ring 3-goal widget as `DailyGoalsBarsView`/streak,
   # fed by `DailyGoalsSnapshot` over the shared App Group rather than any live in-app state (a
   # widget extension is a separate process, restarted on its own schedule by the system — it can
-  # never hold a live reference to `AppState`). Reuses `RunUp/Shared`'s `Color(hex:)`/`.darkened(_:)`
+  # never hold a live reference to `AppState`). Reuses `Haizo/Shared`'s `Color(hex:)`/`.darkened(_:)`
   # (pure, target-agnostic math) and the app's real brand fonts (bundled + declared below, same as
-  # the main target), but not the rest of `RunUp/DesignSystem` — `RUColor`/`ThemeStore` are
+  # the main target), but not the rest of `Haizo/DesignSystem` — `RUColor`/`ThemeStore` are
   # in-memory singletons the app's process keeps live and this one can't, so
   # `WidgetAccentPalette.swift` mirrors just the handful of theme values needed.
-  RunUpWidgets:
+  HaizoWidgets:
     type: app-extension
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: RunUpWidgets
-      - path: RunUp/Shared
+      - path: HaizoWidgets
+      - path: Haizo/Shared
         excludes:
           # `RouteGeometry` travaille sur des `RunRecord.RoutePoint`, et `RunRecord` vit dans
-          # `RunUp/Models`, qui n'est PAS compilé dans cette extension — ce fichier y provoquait
+          # `Haizo/Models`, qui n'est PAS compilé dans cette extension — ce fichier y provoquait
           # donc une erreur « cannot find type 'RunRecord' in scope » depuis son introduction.
           # Le widget dessine des anneaux et des objectifs, jamais un parcours : l'exclure est la
           # bonne réponse, plutôt que de tirer tout le modèle de données dans l'extension.
@@ -242,18 +242,18 @@ targets:
       # ─── LES RESSOURCES PARTAGÉES PASSENT PAR `sources:` ──────────────────────────────────────
       #
       # Elles étaient sous une clé `resources:`, qui n'existe pas. Le pourquoi, la mesure et la
-      # citation sont écrits une seule fois, dans la cible `RunUpWatch` ci-dessous ; la même cause
+      # citation sont écrits une seule fois, dans la cible `HaizoWatch` ci-dessous ; la même cause
       # frappait les deux extensions, et pour la même raison : ces deux chemins sont HORS de
-      # `RunUpWidgets/`, donc rien d'autre ne les faisait entrer.
+      # `HaizoWidgets/`, donc rien d'autre ne les faisait entrer.
       #
       # Ce que ça coûtait ici : le widget de l'écran d'accueil affichait « BOUCLÉS », « SÉANCE »,
       # « KCAL » en français à tout le monde, dans la police système au lieu d'Inter — à côté
       # d'une app, elle, correctement traduite et correctement composée.
       #
-      # `PrivacyInfo.xcprivacy` n'est pas relisté : il est dans `RunUpWidgets/`, donc l'entrée
+      # `PrivacyInfo.xcprivacy` n'est pas relisté : il est dans `HaizoWidgets/`, donc l'entrée
       # ci-dessus le porte déjà. L'extension est signée et livrée séparément de l'app, le
       # manifeste de l'app ne la couvre pas, il lui faut le sien — et elle l'a.
-      - path: RunUp/Resources/Fonts
+      - path: Haizo/Resources/Fonts
         buildPhase: resources
         excludes:
           - "*.md"
@@ -264,14 +264,14 @@ targets:
           - "InstrumentSans-Italic.ttf"
           - "DMMono-Regular.ttf"
           - "DMMono-Medium.ttf"
-      - path: RunUp/Resources/Localizable.xcstrings
+      - path: Haizo/Resources/Localizable.xcstrings
         buildPhase: resources
     info:
-      path: RunUpWidgets/Info.plist
+      path: HaizoWidgets/Info.plist
       properties:
-        CFBundleDisplayName: RunUp
+        CFBundleDisplayName: Haizo
         # App Store validation requires an extension's version to match its host app's — keep
-        # these two in step with `RunUp`'s `CFBundleShortVersionString`/`CFBundleVersion` above.
+        # these two in step with `Haizo`'s `CFBundleShortVersionString`/`CFBundleVersion` above.
         CFBundleShortVersionString: "3.4"
         CFBundleVersion: "14"
         NSExtension:
@@ -284,7 +284,7 @@ targets:
           - InstrumentSans-Bold.ttf
           - InstrumentSans-SemiBold.ttf
     entitlements:
-      path: RunUpWidgets/RunUpWidgets.entitlements
+      path: HaizoWidgets/HaizoWidgets.entitlements
       properties:
         com.apple.security.application-groups:
           - group.com.hicsuntco.runup
@@ -299,38 +299,38 @@ targets:
   # HKLiveWorkoutBuilder (live wrist heart rate, distance, active calories — sensor data the
   # iPhone app alone never had), today's session pushed from the phone over WatchConnectivity,
   # and each finished run transferred back to the phone, which inserts the RunRecord and runs the
-  # debrief/adaptive-plan mechanic (that engine stays phone-side on purpose). Reuses RunUp/Shared
-  # (Color(hex:)/darkened — pure, target-agnostic) the same way RunUpWidgets does.
-  RunUpWatch:
+  # debrief/adaptive-plan mechanic (that engine stays phone-side on purpose). Reuses Haizo/Shared
+  # (Color(hex:)/darkened — pure, target-agnostic) the same way HaizoWidgets does.
+  HaizoWatch:
     type: application
     platform: watchOS
     deploymentTarget: "10.0"
     sources:
       # Ce chemin porte le code de la montre ET ses deux ressources propres :
-      # `RunUpWatch/Assets.xcassets`, et `RunUpWatch/InfoPlist.xcstrings` — un catalogue distinct
+      # `HaizoWatch/Assets.xcassets`, et `HaizoWatch/InfoPlist.xcstrings` — un catalogue distinct
       # de celui de l'iPhone, parce que la montre a ses propres textes d'autorisation (« au
       # poignet », « depuis la montre ») : les mêmes clés y portent d'autres phrases.
-      - path: RunUpWatch
+      - path: HaizoWatch
       # Only the hex/darken color math — the rest of Shared/ is widget/Live Activity plumbing
       # (RunActivityAttributes imports ActivityKit, which doesn't exist on watchOS).
-      - path: RunUp/Shared/ColorHex.swift
-      # La montre ne prend de `RunUp/Shared` que les fichiers dont elle a besoin, un par un —
+      - path: Haizo/Shared/ColorHex.swift
+      # La montre ne prend de `Haizo/Shared` que les fichiers dont elle a besoin, un par un —
       # le dossier entier y ferait entrer du code qui dépend de modèles absents de cette cible.
-      - path: RunUp/Shared/DisplayFont.swift
+      - path: Haizo/Shared/DisplayFont.swift
       # La disposition de l'écran de course, choisie sur le téléphone et poussée ici. Le type est
       # partagé pour que les deux bouts du canal ne puissent pas diverger sur le format.
-      - path: RunUp/Shared/WatchRunLayout.swift
+      - path: Haizo/Shared/WatchRunLayout.swift
       # Les tailles de l'écran de course, dérivées de la hauteur que le système donne. Partagé
       # pour que `WatchRunMetricsTests` puisse vérifier le budget vertical depuis la cible iOS —
       # la cible montre, elle, n'a pas de tests.
-      - path: RunUp/Shared/WatchRunMetrics.swift
+      - path: Haizo/Shared/WatchRunMetrics.swift
       # La mise en forme des durées. La montre en avait deux copies écrites à la main ; l'une
       # d'elles, celle du widget, avait raté la correction du « 95:00 ». Une seule règle pour les
       # trois cibles, et testée depuis la cible iOS.
-      - path: RunUp/Shared/TimeFormat.swift
+      - path: Haizo/Shared/TimeFormat.swift
       # `TimeFormat` référence `Discipline` pour choisir entre allure et vitesse : sans ce
       # fichier, la montre ne compile pas.
-      - path: RunUp/Shared/Discipline.swift
+      - path: Haizo/Shared/Discipline.swift
 
       # ─── LES RESSOURCES PARTAGÉES PASSENT PAR `sources:`, PAS PAR `resources:` ───────────────
       #
@@ -342,7 +342,7 @@ targets:
       # XcodeGen #1645, ouvert et non corrigé à ce jour (XcodeGen 2.46.0).
       #
       # CE QUE ÇA COÛTAIT, MESURÉ DANS LE PAQUET CONSTRUIT. Sonde du workflow « Capture de la
-      # montre » sur le commit 5cadd52 : `RunUpWatch.app` portait bien `fr.lproj`, `en.lproj` et
+      # montre » sur le commit 5cadd52 : `HaizoWatch.app` portait bien `fr.lproj`, `en.lproj` et
       # `es.lproj`, mais chacun ne contenait QUE `InfoPlist.strings` — aucun `Localizable.strings`
       # — et il n'y avait AUCUN fichier `.ttf` dans le paquet. Donc, pour tout le monde et depuis
       # le premier jour de la cible montre :
@@ -361,8 +361,8 @@ targets:
       # même « sans lui, la montre restait entièrement en français » : la phrase était au passé,
       # alors que la cause n'avait jamais été corrigée.
       #
-      # CE QUI ATTERRISSAIT QUAND MÊME n'y arrivait pas par cette clé : `RunUpWatch/Assets.xcassets`
-      # et `RunUpWatch/InfoPlist.xcstrings` entrent par l'entrée `path: RunUpWatch` tout en haut,
+      # CE QUI ATTERRISSAIT QUAND MÊME n'y arrivait pas par cette clé : `HaizoWatch/Assets.xcassets`
+      # et `HaizoWatch/InfoPlist.xcstrings` entrent par l'entrée `path: HaizoWatch` tout en haut,
       # qui les contient. D'où la confusion : la cible avait trois `.lproj`, donc elle avait l'air
       # trilingue. J'avais regardé le contenant, pas le contenu.
       #
@@ -370,7 +370,7 @@ targets:
       # la seconde approche documentée sur le même ticket, et elle dit ce qu'on veut au lieu de
       # l'espérer. `ci_scripts/check_spec.py` refuse désormais toute clé de cible inconnue, et
       # vérifie que les polices enregistrées et les traductions déclarées sont bien livrées.
-      - path: RunUp/Resources/Fonts
+      - path: Haizo/Resources/Fonts
         buildPhase: resources
         excludes:
           - "*.md"
@@ -383,12 +383,12 @@ targets:
           - "DMMono-Medium.ttf"
       # Le MÊME catalogue de chaînes que l'app iPhone. Le partager plutôt que d'en créer un second
       # évite d'avoir à traduire deux fois les libellés communs (KM, TEMPS, KCAL, EN PAUSE…).
-      - path: RunUp/Resources/Localizable.xcstrings
+      - path: Haizo/Resources/Localizable.xcstrings
         buildPhase: resources
     info:
-      path: RunUpWatch/Info.plist
+      path: HaizoWatch/Info.plist
       properties:
-        CFBundleDisplayName: RunUp
+        CFBundleDisplayName: Haizo
         # Must track the iOS app's version pair exactly — App Store validation requires it.
         CFBundleShortVersionString: "3.4"
         CFBundleVersion: "14"
@@ -403,15 +403,15 @@ targets:
         # the wrist drops — the HKWorkoutSession stops collecting mid-run.
         WKBackgroundModes:
           - workout-processing
-        NSHealthShareUsageDescription: "RunUp lit ta fréquence cardiaque pendant la course pour l'afficher en direct au poignet."
-        NSHealthUpdateUsageDescription: "RunUp enregistre ta course comme une vraie séance dans Santé — elle compte dans tes anneaux."
-        NSLocationWhenInUseUsageDescription: "RunUp utilise ta position pour mesurer distance et allure pendant une course depuis la montre."
+        NSHealthShareUsageDescription: "Haizo lit ta fréquence cardiaque pendant la course pour l'afficher en direct au poignet."
+        NSHealthUpdateUsageDescription: "Haizo enregistre ta course comme une vraie séance dans Santé — elle compte dans tes anneaux."
+        NSLocationWhenInUseUsageDescription: "Haizo utilise ta position pour mesurer distance et allure pendant une course depuis la montre."
         UIAppFonts:
           - InstrumentSans-Medium.ttf
           - InstrumentSans-Bold.ttf
           - InstrumentSans-SemiBold.ttf
     entitlements:
-      path: RunUpWatch/RunUpWatch.entitlements
+      path: HaizoWatch/HaizoWatch.entitlements
       properties:
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.access: []
@@ -421,7 +421,7 @@ targets:
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: SW49TQ25NV
         TARGETED_DEVICE_FAMILY: "4"
-        # Single 1024×1024 source icon, same as the RunUp target — Xcode generates every required
+        # Single 1024×1024 source icon, same as the Haizo target — Xcode generates every required
         # watch size at build/App Store processing time and auto-populates CFBundleIconName. Its
         # absence is exactly what the upload rejection (missing CFBundleIconName + "no icons found
         # for watch application") flagged.
@@ -434,14 +434,14 @@ targets:
   # uncapped tier inflating the taper). These tests encode the safety invariants those fixes
   # established, so a future refactor of the engine fails the build instead of quietly shipping an
   # injury-risk plan again.
-  RunUpTests:
+  HaizoTests:
     type: bundle.unit-test
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: RunUpTests
+      - path: HaizoTests
     dependencies:
-      - target: RunUp
+      - target: Haizo
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hicsuntco.runup.tests
@@ -450,7 +450,7 @@ targets:
   # Les captures de la fiche App Store, prises par la machine sur un simulateur.
   #
   # CIBLE SÉPARÉE ET SURTOUT SCHÉMA SÉPARÉ (voir `schemes:` en bas de ce fichier). L'attacher au
-  # schéma `RunUp` aurait fait tourner six lancements de simulateur à CHAQUE envoi sur TestFlight :
+  # schéma `Haizo` aurait fait tourner six lancements de simulateur à CHAQUE envoi sur TestFlight :
   # quelques minutes de plus par build, et surtout un test d'interface — la catégorie de test la
   # plus capricieuse qui soit — capable de bloquer une livraison parce qu'une animation a mis une
   # demi-seconde de trop. Les captures se demandent, elles ne s'imposent pas.
@@ -468,38 +468,38 @@ targets:
   #
   # `TEST_TARGET_NAME` désigne l'app que `XCUIApplication()` lance. Sans lui, la cible compile et
   # ne lance rien.
-  RunUpWatchUITests:
+  HaizoWatchUITests:
     type: bundle.ui-testing
     platform: watchOS
     deploymentTarget: "10.0"
     sources:
-      - path: RunUpWatchUITests
+      - path: HaizoWatchUITests
     dependencies:
-      - target: RunUpWatch
+      - target: HaizoWatch
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hicsuntco.runup.watchkitapp.uitests
         GENERATE_INFOPLIST_FILE: YES
-        TEST_TARGET_NAME: RunUpWatch
+        TEST_TARGET_NAME: HaizoWatch
 
-  RunUpUITests:
+  HaizoUITests:
     type: bundle.ui-testing
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: RunUpUITests
+      - path: HaizoUITests
     dependencies:
-      - target: RunUp
+      - target: Haizo
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hicsuntco.runup.uitests
         GENERATE_INFOPLIST_FILE: YES
-        TEST_TARGET_NAME: RunUp
+        TEST_TARGET_NAME: Haizo
 
 # Le schéma des captures, à part.
 #
 # `xcodebuild test -scheme Captures` ne construit et ne lance QUE ce qu'il faut pour photographier
-# l'app. Le schéma `RunUp`, lui, ne connaît que `RunUpTests` et continue de livrer sur TestFlight
+# l'app. Le schéma `Haizo`, lui, ne connaît que `HaizoTests` et continue de livrer sur TestFlight
 # sans jamais démarrer un simulateur de plus.
 schemes:
   # LA MONTRE A SON PROPRE SCHÉMA, et c'est ce qui permet de la PHOTOGRAPHIER.
@@ -520,9 +520,9 @@ schemes:
   Montre:
     build:
       targets:
-        RunUpWatch: [run]
+        HaizoWatch: [run]
 
-  # LE SCHÉMA DE TEST NE LISTE PAS `RunUpWatch` EN CIBLE DE BUILD, et c'est une précaution prise
+  # LE SCHÉMA DE TEST NE LISTE PAS `HaizoWatch` EN CIBLE DE BUILD, et c'est une précaution prise
   # sur un retour public plutôt que sur une supposition : lister l'app de la montre dans le
   # schéma de ses tests d'interface a empêché Xcode de créer le schéma de l'app elle-même, celui
   # dont la commande de build se sert. La dépendance déclarée sur la cible suffit à la faire
@@ -530,23 +530,23 @@ schemes:
   MontreTests:
     build:
       targets:
-        RunUpWatchUITests: [test]
+        HaizoWatchUITests: [test]
     test:
       # Debug, comme partout ailleurs : c'est la configuration dans laquelle l'app est éprouvée.
       config: Debug
       targets:
-        - RunUpWatchUITests
+        - HaizoWatchUITests
   Captures:
     build:
       targets:
         # `run` en plus de `test` : un test d'interface INSTALLE puis LANCE l'app, ce n'est pas
         # une cible qu'on se contente de compiler.
-        RunUp: [run, test]
-        RunUpUITests: [test]
+        Haizo: [run, test]
+        HaizoUITests: [test]
     test:
       # Debug, et c'est la condition de tout : `CaptureSeed` vit sous `#if DEBUG`, donc une
       # construction Release ne contient pas le faux profil et photographierait l'écran
       # d'inscription.
       config: Debug
       targets:
-        - RunUpUITests
+        - HaizoUITests

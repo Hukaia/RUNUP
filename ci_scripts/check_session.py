@@ -25,7 +25,7 @@ fuite de trente jours en fuite définitive. Le retirer doit être un acte délib
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CLIENT = RACINE / "RunUp" / "Services" / "AuthService.swift"
+CLIENT = RACINE / "Haizo" / "Services" / "AuthService.swift"
 SERVEUR = RACINE / "lib" / "auth.js"
 
 _CLIENT = re.compile(r'enum SessionRenewal\s*\{\s*static let header\s*=\s*"([^"]+)"')

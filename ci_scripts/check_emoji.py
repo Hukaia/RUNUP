@@ -32,7 +32,7 @@ import couleurs
 import swift
 
 RACINE = couleurs.RACINE
-CATALOGUE = RACINE / "RunUp/Resources/Localizable.xcstrings"
+CATALOGUE = RACINE / "Haizo/Resources/Localizable.xcstrings"
 
 #: Les plans entiers où tout est emoji : pictogrammes, transports, symboles, drapeaux.
 PLANS = [(0x1F000, 0x1FAFF), (0x1F1E6, 0x1F1FF)]
@@ -96,7 +96,7 @@ def ecarts() -> list:
     #
     # Un emoji dans un commentaire ne s'affiche pas — celui-ci en cite d'ailleurs. Un emoji dans
     # un littéral, si.
-    for chemin in sorted((RACINE / "RunUp").rglob("*.swift")):
+    for chemin in sorted((RACINE / "Haizo").rglob("*.swift")):
         source = swift.sans_commentaires_seuls(chemin.read_text(encoding="utf-8"))
         for numero, ligne in enumerate(source.split("\n"), 1):
             for emoji in emojis(ligne):

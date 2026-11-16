@@ -1,0 +1,378 @@
+import SwiftUI
+import SwiftData
+import UIKit
+
+@main
+struct HaizoApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    /// LE conteneur partagé, et non un neuf : le réveil météo en arrière-plan lit et écrit le même
+    /// profil depuis le même processus. Deux conteneurs sur le même fichier, ce sont deux
+    /// contextes qui s'ignorent et une écriture qui écrase l'autre en silence.
+    let container = PersistenceController.partage
+
+    var body: some Scene {
+        WindowGroup {
+            RootView()
+                .modelContainer(container)
+                .preferredColorScheme(RUColor.colorScheme)
+        }
+    }
+}
+
+/// Real APNs device tokens only ever arrive through this UIKit callback — there's no SwiftUI
+/// equivalent — so this stays a thin pass-through into `NotificationService` rather than growing
+/// any app logic of its own.
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    /// L'enregistrement de la tâche d'arrière-plan doit se faire AVANT la fin du lancement —
+    /// Apple l'exige, et le manquer fait tomber le processus. C'est la seule raison pour laquelle
+    /// cette ligne est ici et pas dans une vue : aucune vue n'est garantie d'avoir paru à temps,
+    /// et sur un lancement EN ARRIÈRE-PLAN aucune ne paraît du tout.
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        WeatherBackgroundRefresh.enregistrer()
+        return true
+    }
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationService.shared.handleDeviceToken(deviceToken)
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        // No APNs entitlement yet, Simulator (which can't receive real push), or a transient
+        // registration failure — none of these should be user-facing; local reminders still work
+        // either way.
+    }
+}
+
+/// Bootstraps `AppState` once a `modelContext` is available from the environment, then hands
+/// off to `ContentRouterView`.
+private struct RootView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var appState: AppState?
+    /// True only on this process's cold launch — `RootView` is created once per launch (SwiftUI
+    /// doesn't recreate it on background/foreground), so this never re-shows the splash just from
+    /// backgrounding the app, only from a real relaunch.
+    @State private var showSplash = true
+    /// L'écran d'ouverture est SAUTÉ pour les captures.
+    ///
+    /// Il dure le temps qu'il faut pour être joli, et c'est précisément le temps pendant lequel
+    /// un test d'interface croit l'app prête et photographie un logo. Attendre sa disparition
+    /// dans le test marcherait aussi, et ferait dépendre dix-huit captures d'une animation.
+    private static var sauteLOuverture: Bool {
+        #if DEBUG
+        return CaptureSeed.demande
+        #else
+        return false
+        #endif
+    }
+    /// Raised once, after the splash, when the on-disk SwiftData store refused to open and
+    /// `PersistenceController` fell back to a throwaway in-memory one (see `StoreState` there).
+    /// Deliberately an alert rather than an `appState.toast` — the toast auto-dismisses in 2.2s
+    /// and would be covered by the splash anyway, and "nothing you do right now is being saved"
+    /// isn't a message she can afford to blink and miss.
+    @State private var storeFailureAlertPresented = false
+
+    var body: some View {
+        ZStack {
+            RUColor.bg.ignoresSafeArea()
+            if let appState {
+                ContentRouterView()
+                    .environment(appState)
+            }
+            if showSplash && !Self.sauteLOuverture {
+                SplashView(onFinished: {
+                    showSplash = false
+                    storeFailureAlertPresented = PersistenceController.isUsingFallbackStore
+                })
+            }
+        }
+        // UNE PHOTO MONTRE UN ÉCRAN POSÉ, PAS UNE ANIMATION EN VOL.
+        //
+        // Une seule `transaction`, à la racine : elle vide l'animation de TOUT ce qui passe en
+        // dessous. L'app compte 22 appels à `RUMotion` et une cinquantaine d'animations écrites à
+        // la main dans les vues — les corriger une par une aurait laissé la cinquante et unième
+        // dehors, sans que rien ne le dise. Voir `Demonstration.animationsFigees` pour l'image
+        // livrée à Apple qui a fait écrire ceci.
+        .transaction { if Demonstration.animationsFigees { $0.animation = nil } }
+        .alert("Tes données n'ont pas pu être ouvertes", isPresented: $storeFailureAlertPresented) {
+            Button("Continuer", role: .cancel) {}
+        } message: {
+            // Says the two things that actually matter, in that order: nothing is being saved this
+            // session, and nothing has been lost. The old "delete the store and carry on" behaviour
+            // would have made the second half a lie.
+            Text("L'app fonctionne, mais rien de cette session ne sera enregistré. Tes courses, ton programme et tes messages sont toujours sur ton téléphone — ils n'ont pas été supprimés — et devraient réapparaître après une mise à jour de l'app.")
+        }
+        .onAppear {
+            if appState == nil {
+                // LES CAPTURES DE L'APP STORE, ET RIEN D'AUTRE.
+                //
+                // Le drapeau pose un état de démonstration AVANT que `AppState` ne lise le
+                // profil — sinon `AppState.init` en créerait un vide, et le poser après aurait
+                // laissé l'écran d'inscription paraître une fraction de seconde, assez pour
+                // qu'une capture la prenne.
+                //
+                // Tout le mécanisme est sous `#if DEBUG` : la construction envoyée à l'App Store
+                // ne contient pas une ligne de ce bloc, donc aucun argument de lancement ne peut
+                // y réveiller un faux profil. Voir `CaptureSeed`.
+                #if DEBUG
+                if CaptureSeed.demande {
+                    // En PREMIER, avant la moindre vue : trois services consultent ce drapeau
+                    // dès leur première question. Voir `Demonstration`.
+                    Demonstration.commencer()
+                    // On filme ? Alors les animations jouent. Voir `Demonstration.animationsFigees`.
+                    if CaptureSeed.filmDemande { Demonstration.filmer() }
+                    // Santé est coupée AVANT que quoi que ce soit ne la touche : la construction
+                    // des captures n'est pas signée, donc elle n'a pas le droit HealthKit, et le
+                    // premier appel tuait le processus. Voir `HealthKitService.desactiver()`.
+                    HealthKitService.desactiver()
+                    // SAUF POUR L'INSCRIPTION, QUI DEMANDE UN DRAPEAU DE MOINS.
+                    //
+                    // `UserProfile.onboarded` vaut `false` à la création : ne pas poser la graine
+                    // suffit donc à ouvrir sur `OnboardingContainerView`. Le mode démonstration
+                    // reste allumé — c'est lui qui coupe le réseau et Santé, et une inscription
+                    // qui appellerait un serveur absent se bloquerait au premier écran.
+                    if CaptureSeed.inscriptionDemandee {
+                        // VIDER, ET PAS SEULEMENT S'ABSTENIR DE POSER. Le stock SwiftData survit
+                        // d'un lancement à l'autre dans le même simulateur : les dix-huit tests
+                        // qui tournent avant celui-ci ont déjà écrit un profil complet, et la
+                        // capture nommée « inscription » montrait l'accueil de Charlotte.
+                        CaptureSeed.viderLeStock(dans: modelContext)
+                    } else {
+                        CaptureSeed.poser(dans: modelContext)
+                    }
+                }
+                #endif
+                appState = AppState(modelContext: modelContext)
+                #if DEBUG
+                if CaptureSeed.demande, let etat = appState {
+                    // Le club vit dans un cache EN MÉMOIRE sur `AppState`, donc il ne peut être
+                    // posé qu'une fois celui-ci construit — contrairement au reste, qui est en
+                    // base et doit y être avant.
+                    CaptureSeed.poserLeClub(dans: etat)
+                }
+                // AVANT `go` : `SocialView` lit ce drapeau dans son `onAppear`, donc il doit
+                // être posé avant que l'écran n'apparaisse.
+                if CaptureSeed.coursesDemandees { appState?.openRacesTabOnNextVisit = true }
+                if let ecran = CaptureSeed.ecranDemande {
+                    appState?.go(ecran)
+                }
+                // APRÈS l'écran : la page de profil se présente par-dessus celui-ci, et poser
+                // les deux dans l'autre ordre la refermerait aussitôt.
+                if let profil = CaptureSeed.profilDemande {
+                    appState?.ouvrirLeProfil(profil)
+                }
+                // UNE COURSE EN COURS, pour photographier l'écran de course. Il n'y aura pas de
+                // distance dessus : le simulateur n'a pas de GPS, donc la capture montre l'état
+                // des premières secondes d'une vraie course, bandeau de recherche compris. Voir
+                // `CaptureSeed.courseEnCoursDemandee`.
+                if CaptureSeed.courseEnCoursDemandee {
+                    appState?.startRun()
+                }
+                // Même ordre, même raison : la page d'une sortie se présente par-dessus l'écran.
+                if CaptureSeed.sortieDemandee, let id = appState?.cachedActivityDetail?.id {
+                    appState?.ouvrirLaSortie(id)
+                }
+                // ET LA FEUILLE DE LA SÉANCE DU JOUR, qui n'était photographiée nulle part.
+                //
+                // Même ordre et même raison que les deux au-dessus : c'est une feuille, elle se
+                // présente par-dessus l'écran demandé. Rien à choisir dedans — elle lit
+                // `profile.todaySession`. Voir `CaptureSeed.seanceDemandee`.
+                if CaptureSeed.seanceDemandee {
+                    appState?.openSessionDetail()
+                }
+                #endif
+            }
+            // Cold launch never fires the `scenePhase` handler below (there's no previous phase to
+            // transition from), so this is the only place a launch-time open is counted.
+            Analytics.shared.trackAppOpenedIfNewSession()
+            // LE RAPPORT DE PANNE, ET C'EST LE SEUL ENDROIT POSSIBLE.
+            //
+            // Une panne arrive au lancement SUIVANT : l'app était morte, iOS a collecté le
+            // rapport hors du processus, et MetricKit le rend à l'abonné dès qu'il y en a un. Si
+            // personne ne s'abonne au démarrage à froid, le rapport est perdu — il n'y a pas de
+            // deuxième occasion. D'où ici, et pas dans le gestionnaire de `scenePhase` plus bas,
+            // qui ne tire jamais au démarrage à froid.
+            //
+            // `demarrer()` envoie aussi ce qu'un lancement précédent n'a pas pu poster, pour la
+            // même raison : le cas normal est que l'app soit morte avant la fin de la requête.
+            Diagnostics.shared.demarrer()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                appState?.refreshProgramForCurrentDate()
+                appState?.retryPendingClubActivities()
+                // Qui est connectée, et avec quels droits. Voir `AppState.rafraichirLeCompte`.
+                appState?.rafraichirLeCompte()
+                // Redemandé à chaque passage au premier plan : une tâche d'arrière-plan ne se
+                // répète pas d'elle-même, et une demande remplace la précédente plutôt que de
+                // s'empiler. C'est la deuxième des deux seules façons de la réarmer, l'autre
+                // étant la fin de son exécution.
+                WeatherBackgroundRefresh.programmerLaProchaine()
+                // Debounced to one per real session inside `Analytics` — glancing at a
+                // notification and coming back is not a second visit.
+                Analytics.shared.trackAppOpenedIfNewSession()
+            }
+        }
+        .onOpenURL { url in
+            // `runup://live` : le widget de l'écran d'accueil pendant une course. Toucher le
+            // chrono doit ramener à l'écran de course, et nulle part ailleurs — c'est la seule
+            // raison de toucher un widget qui affiche une course en cours.
+            //
+            // Le seul lien que l'app sache recevoir depuis le retrait du parrainage : celui que
+            // la Live Activity pose sur l'écran verrouillé pour revenir à la course en cours.
+            if url.scheme == "haizo", url.host == "live" {
+                appState?.go(.live)
+                return
+            }
+            // LE LIEN D'UN CLUB : `runup-nu.vercel.app/club/<uuid>`, celui qu'un crew met dans
+            // sa bio. iOS l'ouvre DANS l'app quand elle est installée (voir
+            // `.well-known/apple-app-site-association`) ; sinon la page web s'affiche, et c'est
+            // elle qui fait le travail.
+            //
+            // On va chercher le NOM avant d'ouvrir l'écran : il n'existe pas d'écran « club de
+            // quelqu'un d'autre », et ce qu'on veut en arrivant par ce lien c'est rejoindre —
+            // donc la recherche préremplie, qui mène au bouton « Rejoindre » en un geste.
+            if url.host == "runup-nu.vercel.app",
+               url.pathComponents.count >= 3, url.pathComponents[1] == "club" {
+                let identifiant = url.pathComponents[2]
+                Task { @MainActor in
+                    guard let club = await ClubService.clubPublic(id: identifiant) else { return }
+                    appState?.clubDepuisUnLien = club.name
+                    appState?.go(.club)
+                }
+            }
+        }
+    }
+}
+
+/// Aiguillage de premier niveau : inscription → app.
+///
+/// # Pourquoi le paywall n'est PLUS ici
+///
+/// Il occupait cette place parce que le modèle verrouillait l'app entière après sept jours. La
+/// construction était juste pour ce modèle — au même niveau que l'inscription, sans aucun geste
+/// pour passer outre — et c'est le modèle qui a changé.
+///
+/// Le mur enfermait le Club, le fil d'amis, les classements et les itinéraires partagés avec le
+/// reste. Une fonctionnalité sociale sans monde ne vaut rien : personne ne paye pour rejoindre un
+/// club vide, donc le club restait vide, donc personne ne payait. Le suivi, l'historique et tout
+/// le social sont désormais gratuits pour toujours ; ce qui se vend est le programme et le coach
+/// (voir `PlusFeature`), et le paywall s'ouvre depuis la fonctionnalité qu'on vient de vouloir —
+/// au moment où l'on sait ce qu'on achète, plutôt qu'au septième jour devant une porte fermée.
+private struct ContentRouterView: View {
+    @Environment(AppState.self) private var appState
+    @State private var subscriptions = SubscriptionService()
+
+    /// L'offre montrée une fois, juste après l'inscription.
+    ///
+    /// Sans le mur, plus rien ne présentait spontanément l'abonnement : on perdrait les gens qui
+    /// viennent de répondre à six questions sur leur objectif, c'est-à-dire précisément ceux qui
+    /// sont le plus disposés à écouter. La différence avec l'ancien modèle n'est pas qu'on ne
+    /// demande plus — c'est qu'on accepte un non. L'écran se ferme, et l'app derrière fonctionne.
+    @AppStorage("paywall.introShown.v1") private var introShown = false
+    @State private var showIntro = false
+
+    var body: some View {
+        Group {
+            if !appState.profile.onboarded {
+                OnboardingContainerView()
+            } else {
+                RootTabView()
+            }
+        }
+        .toastHost(appState.toastCenter)
+        // Posée à la racine, au-dessus de TOUT — intégration et paywall compris. Un compte peut se
+        // connecter depuis n'importe où, et la question « à qui sont ces données » ne peut pas
+        // attendre qu'on soit passé par un écran d'abonnement.
+        .sheet(isPresented: Binding(
+            get: { appState.profileOwnerConflict != nil },
+            set: { if !$0 { appState.profileOwnerConflict = nil } }
+        )) {
+            // `.large` ET NON `.medium` : la feuille porte une icône, un titre en 26, deux
+            // paragraphes et deux boutons, dans un `VStack` sans défilement. À mi-écran, le
+            // paragraphe qui nomme ce que « Repartir à neuf » détruit passait sous le bord —
+            // et rien ne permettait d'aller le chercher.
+            AccountSwitchSheet()
+                .haizoSheetStyle(detents: [.large])
+        }
+        // Une seule présentation du paywall, à la racine — au-dessus des onglets, donc il
+        // survit à un changement d'onglet, et aucun écran verrouillé n'a à savoir comment on
+        // présente une feuille. Les verrous se contentent de poser `appState.plusPrompt`.
+        .sheet(item: Binding(
+            get: { appState.plusPrompt },
+            set: { appState.plusPrompt = $0 }
+        )) { feature in
+            PaywallView(subscriptions: subscriptions,
+                        highlighted: feature,
+                        onClose: { appState.plusPrompt = nil })
+                .haizoSheetStyle(detents: [.large], gereSonBas: true)
+        }
+        // Plein écran, et non une feuille : c'est l'offre d'ouverture, elle mérite la place. Une
+        // présentation distincte de celle des verrous ci-dessus, pour que les deux ne se
+        // disputent jamais la même source — deux `sheet(item:)` sur la même vue est le genre de
+        // construction qui marche jusqu'au jour où les deux se déclenchent ensemble.
+        .fullScreenCover(isPresented: $showIntro) {
+            PaywallView(subscriptions: subscriptions, onClose: { showIntro = false })
+        }
+        // LA PAGE DE QUELQU'UN, POSÉE UNE SEULE FOIS POUR TOUTE L'APP.
+        //
+        // Un nom apparaît au fil, au classement du club, sur une page de course, sous un
+        // commentaire, dans une liste d'abonnés. Demander à chacun de ces écrans de porter sa
+        // propre présentation, c'est accepter qu'un sur six l'oublie — et c'est toujours celui-là
+        // qu'on remarque. Ici, ils se contentent d'appeler `appState.ouvrirLeProfil(id)`.
+        //
+        // Plein écran et non feuille : c'est une destination, pas une parenthèse — la même raison
+        // que pour la page d'une course.
+        .fullScreenCover(item: Binding(
+            get: { appState.profilOuvert },
+            set: { appState.profilOuvert = $0 }
+        )) { ouvert in
+            PublicProfileView(userId: ouvert.id)
+        }
+        // La sortie déroulée, présentée exactement comme la page de quelqu'un et pour les mêmes
+        // raisons : une destination atteinte depuis quatre écrans, donc une présentation unique.
+        .fullScreenCover(item: Binding(
+            get: { appState.sortieOuverte },
+            set: { appState.sortieOuverte = $0 }
+        )) { ouverte in
+            ActivityDetailView(activityId: ouverte.id)
+        }
+        .fullScreenCover(item: Binding(
+            get: { appState.courseOuverte },
+            set: { appState.courseOuverte = $0 }
+        )) { course in
+            RacePageView(race: course)
+        }
+        .onChange(of: appState.profile.onboarded) { _, onboarded in
+            guard onboarded, !introShown else { return }
+            introShown = true
+            showIntro = true
+        }
+        #if DEBUG
+        // LE MUR D'ABONNEMENT, POUR LE HARNAIS DE CAPTURES.
+        //
+        // Il ne se montre spontanément qu'UNE fois dans la vie de l'app — à la sortie de
+        // l'inscription, et `introShown` s'en souvient pour toujours. C'est exactement pour ça
+        // qu'il n'avait jamais été photographié : on ne le revoit jamais soi-même. Le drapeau
+        // contourne `introShown` sans y toucher, donc il ne consomme pas la présentation réelle.
+        .onAppear { if CaptureSeed.paywallDemande { showIntro = true } }
+        #endif
+        .environment(subscriptions)
+        .task { await subscriptions.start() }
+        // LE DROIT DE LA MAISON SUIT LE COMPTE CONNECTÉ, ET SEULEMENT LUI.
+        //
+        // `AuthService` apprend qui est là — au lancement par `api/me`, et à chaque connexion —
+        // et c'est la seule source. Le service d'abonnement ne va pas le chercher : il le reçoit,
+        // pour ne pas faire dépendre tout le paywall de l'état de connexion (hors ligne,
+        // `currentUser` est nil alors que le droit, lui, n'a pas changé).
+        //
+        // `onChange` et pas seulement au lancement : la connexion arrive après, et une
+        // déconnexion doit refermer la porte dans la seconde.
+        .onChange(of: appState.auth.currentUser?.isAdmin) { _, estAdmin in
+            subscriptions.appliquerAdmin(estAdmin ?? false)
+        }
+        .task { subscriptions.appliquerAdmin(appState.auth.currentUser?.isAdmin ?? false) }
+    }
+
+}

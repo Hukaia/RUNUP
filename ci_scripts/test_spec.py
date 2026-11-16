@@ -102,7 +102,7 @@ def _():
 
 @cas_de("`InfoPlist.xcstrings` seul ne compte pas pour un catalogue d'interface")
 def _():
-    # C'est EXACTEMENT ce que portait `RunUpWatch.app` : trois `.lproj`, et dans chacun le seul
+    # C'est EXACTEMENT ce que portait `HaizoWatch.app` : trois `.lproj`, et dans chacun le seul
     # `InfoPlist.strings`. La cible avait l'air trilingue et ne traduisait que ses autorisations.
     p = plaintes({"Montre": cible(
         sources=[{"path": "Montre"}],
@@ -158,7 +158,7 @@ def _():
 @cas_de("toutes les clés documentées d'une cible sont acceptées")
 def _():
     # Un garde-fou qui refuse une clé valide bloque le dépôt sur rien. Celui-ci doit connaître
-    # toute la liste, pas seulement celles que RunUp utilise aujourd'hui.
+    # toute la liste, pas seulement celles que Haizo utilise aujourd'hui.
     toutes = {c: {} for c in ck.CLES_CIBLE}
     toutes.update({"type": "bundle.unit-test", "platform": "iOS", "sources": [{"path": "App"}]})
     p = plaintes({"App": toutes}, ["App/A.swift"])

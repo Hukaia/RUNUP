@@ -27,7 +27,7 @@ def main() -> int:
             echecs.append(nom)
 
     # ── Le plist se lit à travers l'enveloppe, sans `security cms` (absent hors macOS) ──
-    contenu = enveloppe({"UUID": "ABCD-1234", "Name": "RunUp CI app",
+    contenu = enveloppe({"UUID": "ABCD-1234", "Name": "Haizo CI app",
                          "Entitlements": {"com.apple.developer.weatherkit": True,
                                           "application-identifier": "TEAM.com.hicsuntco.runup"}})
     verifier("les entitlements se lisent à travers l'enveloppe",

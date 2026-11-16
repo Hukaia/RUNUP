@@ -38,9 +38,9 @@ import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-VUES = RACINE / "RunUp/Views/Onboarding"
+VUES = RACINE / "Haizo/Views/Onboarding"
 CONTENEUR = VUES / "OnboardingContainerView.swift"
-MODELE = RACINE / "RunUp/ViewModels/OnboardingViewModel.swift"
+MODELE = RACINE / "Haizo/ViewModels/OnboardingViewModel.swift"
 
 
 def sans_commentaires(source: str) -> str:

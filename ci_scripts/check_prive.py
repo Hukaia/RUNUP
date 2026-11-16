@@ -13,7 +13,7 @@ pas un qui le fasse — ça demanderait un compilateur. Mais ce défaut-là, pr�
 rien compiler : un nom déclaré `private` dans un seul fichier, appelé nu depuis un autre, ne peut
 pas se résoudre. Ce n'est pas une suspicion, c'est une erreur de compilation certaine.
 
-Mesuré sur les 225 fichiers Swift de `RunUp/` après correction : **zéro**. Le contrôle part donc
+Mesuré sur les 225 fichiers Swift de `Haizo/` après correction : **zéro**. Le contrôle part donc
 d'un arbre propre, et le seul cas qu'il ait jamais eu à signaler est celui qui l'a fait écrire.
 
 # CE QU'IL REGARDE, ET POURQUOI SI ÉTROIT
@@ -41,13 +41,13 @@ les appels de membre (`objet.daysLeft(…)`, qui se résout sur le type de `obje
 · tout le reste de ce que fait un compilateur. Ce script constate UNE impossibilité, pas la
   compilabilité d'un fichier.
 
-Les cibles sont comparées séparément (`RunUp`, `RunUpWatch`, les tests) : ce sont des modules
+Les cibles sont comparées séparément (`Haizo`, `HaizoWatch`, les tests) : ce sont des modules
 distincts, où n'importe quel appel entre fichiers échoue pour une autre raison que `private`.
 """
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CIBLES = ["RunUp", "RunUpWatch", "RunUpTests", "RunUpUITests"]
+CIBLES = ["Haizo", "HaizoWatch", "HaizoTests", "HaizoUITests"]
 DECLARATION = r"(?:func|var|let|struct|enum|class|typealias|actor|protocol|case)"
 
 
@@ -150,7 +150,7 @@ def defauts(textes):
 def lire(cible):
     """Les fichiers d'une cible, lus depuis la racine du dépôt — pas depuis le dossier courant.
 
-    Les cas de `test_prive.py` tournent depuis `ci_scripts/`, où `RunUp/` n'existe pas en
+    Les cas de `test_prive.py` tournent depuis `ci_scripts/`, où `Haizo/` n'existe pas en
     relatif : le contrôle y rendait « aucun fichier Swift trouvé » et passait pour vert.
     """
     dossier = RACINE / cible

@@ -8,13 +8,13 @@ app sombre, coins à 10 points au lieu de 26, aucune poignée de glissement. Ajo
 une paire de chaussures, une course à la main, ouvrir les réglages ou les commentaires d'une
 activité — à chaque fois, une page blanche montait de l'écran.
 
-Rien ne cassait. `runUpSheetStyle` existait, vingt-quatre feuilles l'appliquaient, et personne
+Rien ne cassait. `haizoSheetStyle` existait, vingt-quatre feuilles l'appliquaient, et personne
 n'avait de raison de remarquer les neuf autres une par une. C'est le propre d'un style qu'on
 applique à la main : il manque là où personne n'a regardé.
 
 # CE QUE LE SCRIPT VÉRIFIE
 
-Chaque `.sheet(…) { … }` doit poser `runUpSheetStyle` dans sa fermeture de contenu — ou
+Chaque `.sheet(…) { … }` doit poser `haizoSheetStyle` dans sa fermeture de contenu — ou
 présenter une vue qui se style elle-même, ce que font `RecapView` et `MoreSettingsView`.
 
 Les `fullScreenCover` sont hors sujet : ils occupent l'écran entier, il n'y a ni coin ni poignée
@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-VUES = RACINE / "RunUp"
+VUES = RACINE / "Haizo"
 
 
 def sans_commentaires(source: str) -> str:
@@ -92,7 +92,7 @@ def problemes(sources=None):
     # Les vues qui portent leur style elles-mêmes.
     autonomes = set()
     for source in propres.values():
-        if "runUpSheetStyle" in source or "presentationDetents" in source:
+        if "haizoSheetStyle" in source or "presentationDetents" in source:
             autonomes |= set(re.findall(r"\bstruct\s+([A-Z]\w*)\s*:\s*View\b", source))
 
     griefs = []
@@ -100,14 +100,14 @@ def problemes(sources=None):
     for nom, source in propres.items():
         for ligne, bloc in fermetures_de_contenu(source):
             total += 1
-            if "runUpSheetStyle" in bloc or "presentationDetents" in bloc:
+            if "haizoSheetStyle" in bloc or "presentationDetents" in bloc:
                 continue
             vues = set(re.findall(r"\b([A-Z]\w*)\s*\(", bloc))
             if vues & autonomes:
                 continue
             presentee = ", ".join(sorted(vues)) or "?"
             griefs.append(
-                f"{nom}:{ligne} présente {presentee} sans `runUpSheetStyle`.\n"
+                f"{nom}:{ligne} présente {presentee} sans `haizoSheetStyle`.\n"
                 f"      Elle s'ouvrira avec l'habillage du système : fond clair dans une app\n"
                 f"      sombre, coins à 10 points, aucune poignée."
             )
@@ -126,9 +126,9 @@ def main() -> int:
         print(f"{len(griefs)} feuille(s) sans l'habillage de l'app :\n")
         for g in griefs:
             print(f"  • {g}\n")
-        print("Voir `runUpSheetStyle` dans RunUp/Views/Components/SheetPresentationModifier.swift.")
+        print("Voir `haizoSheetStyle` dans Haizo/Views/Components/SheetPresentationModifier.swift.")
         return 1
-    print("Feuilles : toutes passent par `runUpSheetStyle`.")
+    print("Feuilles : toutes passent par `haizoSheetStyle`.")
     return 0
 
 

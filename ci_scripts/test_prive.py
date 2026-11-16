@@ -24,16 +24,16 @@ class Atelier(unittest.TestCase):
 
     def setUp(self):
         self.d = pathlib.Path(tempfile.mkdtemp())
-        (self.d / "RunUp").mkdir(parents=True)
+        (self.d / "Haizo").mkdir(parents=True)
 
     def tearDown(self):
         shutil.rmtree(self.d, ignore_errors=True)
 
     def verdict(self, hote, appelant):
-        (self.d / "RunUp/Hote.swift").write_text(hote)
-        (self.d / "RunUp/Appelant.swift").write_text(appelant)
+        (self.d / "Haizo/Hote.swift").write_text(hote)
+        (self.d / "Haizo/Appelant.swift").write_text(appelant)
         textes = {str(f): cp.sans_commentaires(f.read_text())
-                  for f in sorted((self.d / "RunUp").rglob("*.swift"))}
+                  for f in sorted((self.d / "Haizo").rglob("*.swift"))}
         return [nom for nom, _, _ in cp.defauts(textes)]
 
     # ── ce qui doit être signalé ───────────────────────────────────────────────
@@ -134,14 +134,14 @@ class Atelier(unittest.TestCase):
             [])
 
     def test_deux_cibles_distinctes_ne_se_comparent_pas(self):
-        """`RunUp` et `RunUpWatch` sont deux modules : un appel entre eux échoue pour une autre
+        """`Haizo` et `HaizoWatch` sont deux modules : un appel entre eux échoue pour une autre
         raison que `private`, et ce script ne prétend pas la dire."""
-        (self.d / "RunUp").mkdir(parents=True, exist_ok=True)
-        (self.d / "RunUpWatch").mkdir(parents=True, exist_ok=True)
-        (self.d / "RunUp/Hote.swift").write_text("struct A { private func calcul() -> Int { 1 } }")
-        (self.d / "RunUpWatch/B.swift").write_text("struct B { var n: Int { calcul() } }")
+        (self.d / "Haizo").mkdir(parents=True, exist_ok=True)
+        (self.d / "HaizoWatch").mkdir(parents=True, exist_ok=True)
+        (self.d / "Haizo/Hote.swift").write_text("struct A { private func calcul() -> Int { 1 } }")
+        (self.d / "HaizoWatch/B.swift").write_text("struct B { var n: Int { calcul() } }")
         trouves = []
-        for cible in ("RunUp", "RunUpWatch"):
+        for cible in ("Haizo", "HaizoWatch"):
             textes = {str(f): cp.sans_commentaires(f.read_text())
                       for f in sorted((self.d / cible).rglob("*.swift"))}
             trouves += cp.defauts(textes)

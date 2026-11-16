@@ -36,9 +36,9 @@ appareil en anglais — celui du développeur comme celui du simulateur de CI �
 import json, pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CATALOGUE = RACINE / "RunUp" / "Resources" / "InfoPlist.xcstrings"
+CATALOGUE = RACINE / "Haizo" / "Resources" / "InfoPlist.xcstrings"
 PROJET = RACINE / "project.yml"
-CIBLE = "RunUp"
+CIBLE = "Haizo"
 # En dessous, une phrase n'explique rien. Le seuil est bas exprès : il attrape « Contacts » et
 # « Accès micro », pas une formulation courte mais réelle.
 LONGUEUR_MINIMALE = 25
@@ -70,7 +70,7 @@ def cles_declarees() -> set:
     return cles
 
 
-SOURCE_TACHE = RACINE / "RunUp" / "Services" / "WeatherBackgroundRefresh.swift"
+SOURCE_TACHE = RACINE / "Haizo" / "Services" / "WeatherBackgroundRefresh.swift"
 
 
 def identifiants_de_taches_incoherents() -> list:

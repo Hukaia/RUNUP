@@ -16,7 +16,7 @@ occasions d'écrire une icône invisible sur le premier écran que voit quelqu'u
 
 Un script Python n'a aucun moyen de savoir si « mountain.2.fill » existe : le catalogue des
 symboles appartient au système, pas au dépôt. La vérification se fait donc là où le système est
-présent — dans `RunUpTests/SymbolesTests.swift`, qui demande à `UIImage(systemName:)` de résoudre
+présent — dans `HaizoTests/SymbolesTests.swift`, qui demande à `UIImage(systemName:)` de résoudre
 chaque nom, et qui tourne à chaque construction.
 
 Ce script-ci est le PONT : il garantit que la liste éprouvée par le test est exactement celle que
@@ -32,8 +32,8 @@ ancien. La parade n'est pas mécanique : elle est de préférer des noms anciens
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-DOSSIERS = ["RunUp", "RunUpWidgets", "RunUpWatch"]
-TEST = RACINE / "RunUpTests/SymbolesTests.swift"
+DOSSIERS = ["Haizo", "HaizoWidgets", "HaizoWatch"]
+TEST = RACINE / "HaizoTests/SymbolesTests.swift"
 
 # ── CE QUI EST LU, ET POURQUOI PAS SEULEMENT `systemName: "…"` ────────────────────────────────
 #
@@ -199,7 +199,7 @@ def main() -> int:
     utilises = symboles_utilises()
     eprouves = symboles_eprouves()
     if eprouves is None:
-        print("RunUpTests/SymbolesTests.swift ne porte pas de `static let tous: [String] = [...]`.",
+        print("HaizoTests/SymbolesTests.swift ne porte pas de `static let tous: [String] = [...]`.",
               file=sys.stderr)
         return 1
     manquants = sorted(utilises - eprouves)

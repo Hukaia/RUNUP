@@ -13,7 +13,7 @@ elle montrait l'app du mois d'AOÛT. Trois mois de retard sur la seule surface q
 avant d'installer.
 
 IL Y AVAIT AUSSI UNE IMAGE D'iPAD, et elle n'aurait jamais dû exister. `TARGETED_DEVICE_FAMILY`
-vaut 1 : RUNUP est une app iPhone, et Apple n'en demande aucune. Ce qui restait sur la fiche était
+vaut 1 : Haizo est une app iPhone, et Apple n'en demande aucune. Ce qui restait sur la fiche était
 une mise en page iPhone étirée dans un cadre d'iPad, héritée d'une version précédente — App Store
 Connect recopie les captures de la version d'avant, tous formats confondus. Elle ne se corrige
 pas, elle se RETIRE : `asc.py prune-screenshots <version> --retirer APP_IPAD_PRO_3GEN_129`.

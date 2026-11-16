@@ -18,7 +18,7 @@ Trois mois de retard sur la seule surface que les gens voient avant d'installer.
 Ce script composait aussi une image iPad : une mise en page iPhone posée dans un cadre d'iPad.
 Elle est partie, et ce n'est pas une simplification — c'était une erreur.
 
-**RUNUP est une app iPhone.** `TARGETED_DEVICE_FAMILY` vaut 1 dans les réglages de base comme
+**Haizo est une app iPhone.** `TARGETED_DEVICE_FAMILY` vaut 1 dans les réglages de base comme
 dans ceux du widget ; seule la montre porte 4. Apple ne demande donc AUCUNE image d'iPad, et
 `RELEASE.md` l'écrivait déjà noir sur blanc pendant que ce script en fabriquait une.
 
@@ -27,7 +27,7 @@ Store Connect recopie les captures de la version d'avant, tous formats confondus
 corrige pas, elle se RETIRE : c'est à ça que sert `asc.py prune-screenshots`.
 
 Et la raison de fond est une décision produit, pas une question d'outillage : **on ne court pas
-avec son iPad.** Une app iPad de RunUp ne serait pas la même app — elle n'aurait pas d'écran de
+avec son iPad.** Une app iPad de Haizo ne serait pas la même app — elle n'aurait pas d'écran de
 séance en cours — donc elle ne se photographie pas en étirant celle de l'iPhone.
 
 # CE QU'IL FAIT
@@ -116,7 +116,7 @@ def main() -> int:
             largeur, hauteur = taille_png(dest)
             print(f"{dest.relative_to(RACINE)} — {largeur} × {hauteur}")
             datee(str(dest.relative_to(RACINE / "appstore/requis")),
-                  f"{MONTRE_BRUTE}/{langue}/{MONTRE_NOM}", code="RunUpWatch")
+                  f"{MONTRE_BRUTE}/{langue}/{MONTRE_NOM}", code="HaizoWatch")
     if faits == 0:
         print("Aucune capture de montre trouvée : rien n'a été posé.")
         return 1

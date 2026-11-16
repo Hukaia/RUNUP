@@ -257,7 +257,7 @@ def _():
         c = arborescence(tmp, ["check_a.py"], [], dispenses={})
         faux = c.parent.parent / ".github" / "workflows" / "faux.yml"
         faux.write_text(faux.read_text()
-                        + '      - run: echo "#RUNUP" && python3 ci_scripts/check_a.py\n')
+                        + '      - run: echo "#Haizo" && python3 ci_scripts/check_a.py\n')
         code, sortie = lancer(c)
         assert code == 0, (f"la ligne a été coupée sur le # d'une chaîne, et le câblage "
                            f"perdu :\n{sortie}")

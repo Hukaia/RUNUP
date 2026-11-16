@@ -23,7 +23,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from swift import sans_commentaires, sans_commentaires_seuls  # noqa: E402,F401
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-COULEURS = RACINE / "RunUp/DesignSystem/Colors.swift"
+COULEURS = RACINE / "Haizo/DesignSystem/Colors.swift"
 
 # `melange(rose, sur: neutre, part:)` dans `RUColor.fond(pour:)` — une trace, pas un aplat.
 PART_TEINTE = {"clair": 0.035, "sombre": 0.10}
@@ -138,7 +138,7 @@ def accents(chemin: pathlib.Path = None) -> dict:
     gardes qui ont besoin du fond clair teinté en prennent une BORNE — voir
     `check_jetons_de_texte.py`.
     """
-    chemin = chemin or (RACINE / "RunUp/DesignSystem/AccentTheme.swift")
+    chemin = chemin or (RACINE / "Haizo/DesignSystem/AccentTheme.swift")
     # `sans_commentaires_seuls` et non `sans_commentaires` : l'identité d'un nuancier est dans une
     # chaîne (`id: "rose"`), et la variante stricte l'efface — le lecteur ne saurait plus de quel
     # nuancier il lit les trois valeurs.

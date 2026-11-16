@@ -25,7 +25,7 @@ exactement une fois — un `Geste` jamais utilisé est une mesure qu'on croit av
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-FICHIER = RACINE / "RunUp/Services/ClubService.swift"
+FICHIER = RACINE / "Haizo/Services/ClubService.swift"
 
 DOIVENT_COMPTER = {
     "createChallenge": "defi",

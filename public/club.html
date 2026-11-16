@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B0B10">
-<title>Un club sur RUNUP</title>
+<title>Un club sur Haizo</title>
 <!--
   LA PAGE PUBLIQUE D'UN CLUB.
 
@@ -22,7 +22,7 @@
 
   ─── TROIS DÉFAUTS CORRIGÉS LE 7 NOVEMBRE 2026, ET AUCUN NE SE VOYAIT SANS REGARDER LA PAGE ───
 
-  1. LE BOUTON NE MENAIT NULLE PART. « Rejoindre sur RUNUP » pointait sur la page elle-même
+  1. LE BOUTON NE MENAIT NULLE PART. « Rejoindre sur Haizo » pointait sur la page elle-même
      (`location.href`). Sur un iPhone où l'app est installée, iOS ouvre le lien dans l'app avant
      que la page ne s'affiche — donc personne de ce côté-là ne voyait le bouton. Pour TOUS LES
      AUTRES, c'est-à-dire exactement le public de cette page, le bouton rechargeait la page. Il
@@ -119,7 +119,7 @@
         <line x1="69.25" y1="88" x2="85.75" y2="12" stroke-width="19" opacity="1"/>
       </g>
     </svg>
-    <span class="mot">RUNUP</span>
+    <span class="mot">Haizo</span>
   </div>
   <div id="corps">
     <p class="etat" id="etat">Chargement…</p>
@@ -136,7 +136,7 @@
       absent: "Ce club n'existe pas, ou n'est pas ouvert aux nouvelles arrivées.",
       membre: 'membre', membres: 'membres', seances: 'Les prochaines séances',
       aucuneSeance: "Aucune séance annoncée pour l'instant.",
-      repete: 'chaque semaine', depart: 'au départ', cta: 'Télécharger RUNUP',
+      repete: 'chaque semaine', depart: 'au départ', cta: 'Télécharger Haizo',
       note: "Tu as déjà l'app ? Ouvre ce lien depuis ton iPhone.",
       confidentialite: 'Confidentialité'
     },
@@ -145,7 +145,7 @@
       absent: "This club doesn't exist, or isn't open to newcomers.",
       membre: 'member', membres: 'members', seances: 'Upcoming sessions',
       aucuneSeance: 'No sessions announced yet.',
-      repete: 'every week', depart: 'going', cta: 'Download RUNUP',
+      repete: 'every week', depart: 'going', cta: 'Download Haizo',
       note: 'Already have the app? Open this link on your iPhone.',
       confidentialite: 'Privacy'
     },
@@ -154,7 +154,7 @@
       absent: 'Este club no existe, o no está abierto a nuevas incorporaciones.',
       membre: 'miembro', membres: 'miembros', seances: 'Próximas sesiones',
       aucuneSeance: 'Todavía no hay sesiones anunciadas.',
-      repete: 'cada semana', depart: 'en la salida', cta: 'Descargar RUNUP',
+      repete: 'cada semana', depart: 'en la salida', cta: 'Descargar Haizo',
       note: '¿Ya tienes la app? Abre este enlace desde tu iPhone.',
       confidentialite: 'Privacidad'
     }
@@ -230,7 +230,7 @@
       return r.json();
     })
     .then(function (club) {
-      document.title = club.name + ' — RUNUP';
+      document.title = club.name + ' — Haizo';
       var html = '';
       if (club.coverUrl) {
         html += '<img class="cover" alt="" src="' + echappe(club.coverUrl) + '">';

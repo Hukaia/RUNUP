@@ -70,7 +70,7 @@ def corps(texte: str, debut: int) -> str:
 
 def main() -> int:
     fautes = []
-    for chemin in sorted((RACINE / "RunUp").rglob("*.swift")):
+    for chemin in sorted((RACINE / "Haizo").rglob("*.swift")):
         if chemin.name in EXEMPTS:
             continue
         texte = chemin.read_text(encoding="utf-8")
@@ -81,7 +81,7 @@ def main() -> int:
                 ligne = texte[: m.start()].count("\n") + 1
                 fautes.append(
                     f"{relatif}:{ligne} — {quoi}.\n"
-                    f"    Écrire `nomComplet` (voir RunUp/Shared/Nomme.swift)."
+                    f"    Écrire `nomComplet` (voir Haizo/Shared/Nomme.swift)."
                 )
 
         for m in REDEFINITION.finditer(texte):

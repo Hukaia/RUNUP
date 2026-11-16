@@ -40,11 +40,11 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 DRAPEAU = "--film"
 
 FICHIERS = {
-    "film": RACINE / "RunUpUITests/ApercuUITests.swift",
-    "photos": RACINE / "RunUpUITests/CapturesUITests.swift",
-    "app": RACINE / "RunUp/RunUpApp.swift",
-    "mode": RACINE / "RunUp/Shared/Demonstration.swift",
-    "lecture": RACINE / "RunUp/Services/CaptureSeed.swift",
+    "film": RACINE / "HaizoUITests/ApercuUITests.swift",
+    "photos": RACINE / "HaizoUITests/CapturesUITests.swift",
+    "app": RACINE / "Haizo/HaizoApp.swift",
+    "mode": RACINE / "Haizo/Shared/Demonstration.swift",
+    "lecture": RACINE / "Haizo/Services/CaptureSeed.swift",
 }
 
 
@@ -91,7 +91,7 @@ def controler():
 
     if "Demonstration.filmer()" not in sources["app"]:
         plaintes.append(
-            "RunUpApp n'allume plus le mode film : le drapeau est posé mais personne ne l'écoute.")
+            "HaizoApp n'allume plus le mode film : le drapeau est posé mais personne ne l'écoute.")
 
     if "filmDemande" not in sources["lecture"]:
         plaintes.append("CaptureSeed ne lit plus `--film`.")

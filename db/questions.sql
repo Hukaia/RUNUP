@@ -269,7 +269,7 @@ ORDER BY 1, 2;
 --
 -- « Se connecter avec Apple » ne transmet le nom qu'à la TOUTE PREMIÈRE autorisation d'un
 -- identifiant Apple pour cette app. Une réinstallation, un second appareil, ou un identifiant
--- qui avait déjà ouvert RUNUP une fois n'envoient rien : le compte était alors créé sous
+-- qui avait déjà ouvert Haizo une fois n'envoient rien : le compte était alors créé sous
 -- « Coureur ». La recherche de « Mes amis » interroge `name || ' ' || last_name`, donc le vrai
 -- prénom de ces personnes ne les trouvait pas — et « Coureur » les trouvait toutes à la fois.
 --

@@ -9,7 +9,7 @@ de traductions. Cette clé N'EXISTE PAS. `Docs/ProjectSpec.md` § Target ne la l
 ne regarde que `target.sources` : la valeur est lue, puis jetée, sans erreur ni avertissement
 (ticket XcodeGen #1645, ouvert — XcodeGen 2.46.0).
 
-Conséquence mesurée dans le paquet construit (`RunUpWatch.app`, commit 5cadd52) : aucun
+Conséquence mesurée dans le paquet construit (`HaizoWatch.app`, commit 5cadd52) : aucun
 `Localizable.strings`, aucun `.ttf`. La montre parlait français à tout le monde et s'affichait
 dans la police système. Le widget de l'écran d'accueil aussi, pour la même raison. Pendant ce
 temps le build était vert, `check_fonts.py` était vert, et les captures montraient un écran
@@ -40,7 +40,7 @@ dans la documentation, et deviner reviendrait à refuser une clé valide.
 
 Il ne vérifie pas non plus le PAQUET CONSTRUIT. Il lit le fichier, donc il attrape la cause et
 non le symptôme — mais une erreur d'XcodeGen qu'il ne connaît pas lui échapperait. La sonde qui
-ouvre `RunUpWatch.app` et y cherche les fichiers, elle, vit dans `.github/workflows/montre.yml`.
+ouvre `HaizoWatch.app` et y cherche les fichiers, elle, vit dans `.github/workflows/montre.yml`.
 """
 import fnmatch
 import pathlib

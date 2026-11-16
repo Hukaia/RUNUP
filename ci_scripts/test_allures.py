@@ -55,12 +55,12 @@ class Atelier(unittest.TestCase):
 
     def setUp(self):
         self.d = pathlib.Path(tempfile.mkdtemp())
-        (self.d / "RunUp/Services").mkdir(parents=True)
-        (self.d / "RunUp/Models").mkdir(parents=True)
-        (self.d / "RunUpTests").mkdir(parents=True)
-        self.pace = self.d / "RunUp/Services/PaceModel.swift"
-        self.vdot = self.d / "RunUp/Models/Vdot.swift"
-        self.cas = self.d / "RunUpTests/VdotTests.swift"
+        (self.d / "Haizo/Services").mkdir(parents=True)
+        (self.d / "Haizo/Models").mkdir(parents=True)
+        (self.d / "HaizoTests").mkdir(parents=True)
+        self.pace = self.d / "Haizo/Services/PaceModel.swift"
+        self.vdot = self.d / "Haizo/Models/Vdot.swift"
+        self.cas = self.d / "HaizoTests/VdotTests.swift"
         self.pace.write_text(PACE_SAIN)
         self.vdot.write_text(VDOT_SAIN)
         self.cas.write_text(CAS_SAINS)

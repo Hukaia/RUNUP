@@ -43,7 +43,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from swift import sans_commentaires  # noqa: E402
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CIBLES = ["RunUp", "RunUpWatch", "RunUpWidgets"]
+CIBLES = ["Haizo", "HaizoWatch", "HaizoWidgets"]
 
 # `.gradient` est le raccourci de SwiftUI (`Color.rose.gradient`), et il est TOUJOURS précédé
 # d'un identifiant — une première version excluait justement ce cas-là par une anti-recherche
@@ -56,30 +56,30 @@ DEGRADE = re.compile(
 #: fichier → (nombre de dégradés autorisés, pourquoi)
 PERMIS = {
     # ── 1. LA MARQUE ──────────────────────────────────────────────────────────────────────────
-    "RunUp/DesignSystem/Colors.swift": (
+    "Haizo/DesignSystem/Colors.swift": (
         1, "`brandGradient` — le seul dégradé que la direction artistique nomme : l'icône, le "
            "splash et le logo. `AppMarkView` est son unique appelant."),
 
     # ── 2. UNE IMAGE PRODUITE, PAS UN ÉCRAN ───────────────────────────────────────────────────
-    "RunUp/Views/Club/BadgeShareCardView.swift": (
+    "Haizo/Views/Club/BadgeShareCardView.swift": (
         1, "La carte qu'on partage quand on décroche un badge. C'est une image qu'on poste "
            "ailleurs, pas un écran de l'app : elle porte la marque comme le logo la porte."),
-    "RunUp/Views/Live/RunShareCardView.swift": (
-        1, "La carte qu'on partage après une course, style « RunUp ». Même raison."),
-    "RunUp/Views/Live/RunVideoFrameView.swift": (
+    "Haizo/Views/Live/RunShareCardView.swift": (
+        1, "La carte qu'on partage après une course, style « Haizo ». Même raison."),
+    "Haizo/Views/Live/RunVideoFrameView.swift": (
         3, "Les images d'une vidéo de course, destinées à être publiées. Deux halos et un titre."),
-    "RunUp/Views/Components/AvatarView.swift": (
+    "Haizo/Views/Components/AvatarView.swift": (
         2, "L'avatar fabriqué pour quelqu'un qui n'a pas mis de photo. Il REMPLACE une image, "
            "donc c'en est une — et deux lueurs décalées lui donnent une matière qu'un disque "
            "uni n'a pas."),
 
     # ── 3. UN VOILE QUI SERT À LIRE ───────────────────────────────────────────────────────────
-    "RunUp/Views/Components/CarteDeNuit.swift": (
+    "Haizo/Views/Components/CarteDeNuit.swift": (
         1, "Le voile noir sous les chiffres posés SUR un dessin. Sans lui, ils tombent sur une "
            "forme claire ou sombre selon la donnée, et deviennent illisibles une fois sur deux. "
            "Il était dans HomeView tant qu'un seul écran portait une carte de nuit ; il vit ici "
            "depuis que cinq écrans en portent une, et l'exception a suivi le code."),
-    "RunUp/Views/Live/RecapView.swift": (
+    "Haizo/Views/Live/RecapView.swift": (
         1, "Le fondu en bas du défilement : le contenu s'efface sous le bord au lieu d'y être "
            "coupé net."),
 

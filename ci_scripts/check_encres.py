@@ -8,7 +8,7 @@ les encres ont suivi. Toutes celles que `RUColor` déclare, du moins. Deux autre
 froides, et aucune barrière ne pouvait le dire :
 
   • `DailyGoalsWidget.textPrimary` — le widget a sa PROPRE copie, parce que sa cible ne compile
-    pas `RunUp/DesignSystem` (la raison est en tête de `WidgetAccentPalette`). Il aurait porté
+    pas `Haizo/DesignSystem` (la raison est en tête de `WidgetAccentPalette`). Il aurait porté
     l'ancienne encre violette sur l'écran d'accueil du téléphone, à côté d'une app chaude.
   • `RUColor.onAccent` — l'encre posée sur un aplat d'accent, écrite en dur parce qu'elle ne peut
     PAS lire `textPrimary` : ce jeton suit le thème, alors qu'un bouton rose vif porte la même
@@ -34,14 +34,14 @@ RACINE = couleurs.RACINE
 # (fichier, motif de la valeur locale, jeton de RUColor, thème, raison de la copie)
 CORRESPONDANCES = [
     (
-        "RunUpWidgets/DailyGoalsWidget.swift",
+        "HaizoWidgets/DailyGoalsWidget.swift",
         r"private var textPrimary: Color \{ isLight \? Color\(hex: (0x[0-9A-Fa-f]{6})\)",
         "textPrimary", "clair",
-        "La cible du widget ne compile pas RunUp/DesignSystem — frontière de processus, voir "
+        "La cible du widget ne compile pas Haizo/DesignSystem — frontière de processus, voir "
         "WidgetAccentPalette.",
     ),
     (
-        "RunUp/DesignSystem/Colors.swift",
+        "Haizo/DesignSystem/Colors.swift",
         r"return luminance > 0\.6 \? Color\(hex: (0x[0-9A-Fa-f]{6})\) : \.white",
         "textPrimary", "clair",
         "`onAccent` ne peut pas lire `textPrimary`, qui suit le thème : l'encre sur un aplat "

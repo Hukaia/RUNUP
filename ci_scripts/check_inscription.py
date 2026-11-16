@@ -38,7 +38,7 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-INSCRIPTION = RACINE / "RunUp/Views/Onboarding"
+INSCRIPTION = RACINE / "Haizo/Views/Onboarding"
 
 # Le fichier qui DÉFINIT les composants n'est pas un écran.
 DEFINITIONS = {"OnboardingComponents.swift"}
@@ -70,7 +70,7 @@ def sans_commentaires(source: str) -> str:
 
 def problemes() -> list:
     if not INSCRIPTION.is_dir():
-        return ["RunUp/Views/Onboarding a disparu — le contrôle ne vérifie plus rien"]
+        return ["Haizo/Views/Onboarding a disparu — le contrôle ne vérifie plus rien"]
     erreurs, ecrans = [], 0
     for fichier in sorted(INSCRIPTION.glob("*.swift")):
         if fichier.name in DEFINITIONS:
@@ -82,7 +82,7 @@ def problemes() -> list:
         if DEFILEMENT.search(source):
             continue
         erreurs.append(
-            f"RunUp/Views/Onboarding/{fichier.name} emploie `ObScreen` sans `ScrollView` "
+            f"Haizo/Views/Onboarding/{fichier.name} emploie `ObScreen` sans `ScrollView` "
             f"ni `ObCorps` — à deux fois la taille de texte, son bouton sort de l'écran "
             f"et rien ne permet d'aller le chercher"
         )

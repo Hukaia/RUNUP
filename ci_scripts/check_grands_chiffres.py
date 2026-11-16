@@ -37,7 +37,7 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-DOSSIERS = ["RunUp", "RunUpWidgets", "RunUpWatch"]
+DOSSIERS = ["Haizo", "HaizoWidgets", "HaizoWatch"]
 
 # `displayStyle(.hero)`, `RUFont.display(.banner)`, `displayStyle(horsEchelle: 52)`.
 GRAND = re.compile(

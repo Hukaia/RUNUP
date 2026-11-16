@@ -39,7 +39,7 @@ def _ecarts_sur(declarations: str, nom_du_jeton: str, theme: str) -> list:
 
     Le garde lit le fichier du dépôt ; on rejoue donc sa logique sur la valeur fournie plutôt que
     d'écrire un faux `Colors.swift` sur le disque — c'est la même arithmétique, et un test qui
-    écrit dans `RunUp/` serait un test qui peut casser le dépôt.
+    écrit dans `Haizo/` serait un test qui peut casser le dépôt.
     """
     valeur = _jetons(declarations)[nom_du_jeton][theme]
     problemes = []

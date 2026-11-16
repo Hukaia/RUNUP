@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""`RunUp/Shared/` est compilé dans l'extension widget : ce dossier n'a pas droit aux types de l'app.
+"""`Haizo/Shared/` est compilé dans l'extension widget : ce dossier n'a pas droit aux types de l'app.
 
 # LA PANNE, DEUX FOIS
 
-`RunUp/Shared/` n'est pas une bibliothèque que la cible iOS prêterait au widget : le dossier
-ENTIER est listé dans les sources de `RunUpWidgets`, qui ne compile rien d'autre de `RunUp/`.
-Un fichier posé là voit donc `RunUpWidgets/` et les autres fichiers de `Shared/` — et RIEN de
-`RunUp/Models`, `RunUp/DesignSystem`, `RunUp/ViewModels`, `RunUp/Services`.
+`Haizo/Shared/` n'est pas une bibliothèque que la cible iOS prêterait au widget : le dossier
+ENTIER est listé dans les sources de `HaizoWidgets`, qui ne compile rien d'autre de `Haizo/`.
+Un fichier posé là voit donc `HaizoWidgets/` et les autres fichiers de `Shared/` — et RIEN de
+`Haizo/Models`, `Haizo/DesignSystem`, `Haizo/ViewModels`, `Haizo/Services`.
 
 Le piège est qu'en écrivant du code pour l'app, tout compile sous les yeux : la cible iOS, elle,
 voit bien tout. L'erreur ne tombe que dans la passe du widget, donc après le push, donc un quart
@@ -23,7 +23,7 @@ local, avant le push.
 1. Il lit `project.yml` pour savoir quels fichiers de `Shared/` chaque cible compile réellement
    (le dossier moins ses `excludes` pour le widget ; des fichiers nommés un par un pour la
    montre). Il ne devine pas : si le `project.yml` change, le périmètre change avec lui.
-2. Il relève les types déclarés dans `RunUp/` HORS `Shared/` — ceux qui n'existent pas dans ces
+2. Il relève les types déclarés dans `Haizo/` HORS `Shared/` — ceux qui n'existent pas dans ces
    cibles — et les types déclarés dans `Shared/` et dans les dossiers propres aux cibles.
 3. Dans chaque fichier partagé, commentaires et chaînes retirés, il cherche les références aux
    premiers. Chacune est une erreur de compilation garantie dans cette cible.
@@ -42,9 +42,9 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
 
-# Les dossiers de `RunUp/` qui ne sont PAS compilés dans les cibles secondaires.
-APP_SEULEMENT = "RunUp"
-PARTAGE = "RunUp/Shared"
+# Les dossiers de `Haizo/` qui ne sont PAS compilés dans les cibles secondaires.
+APP_SEULEMENT = "Haizo"
+PARTAGE = "Haizo/Shared"
 
 DECLARATION = re.compile(
     r"^\s*(?:public\s+|internal\s+|private\s+|fileprivate\s+|final\s+|@\w+\s+)*"
@@ -104,10 +104,10 @@ def sans_commentaires_ni_chaines(source: str) -> str:
 
 
 def fichiers_partages_par_cible(project_yml: str) -> dict:
-    """Quels fichiers de `RunUp/Shared` chaque cible secondaire compile, d'après `project.yml`.
+    """Quels fichiers de `Haizo/Shared` chaque cible secondaire compile, d'après `project.yml`.
 
-    Deux formes dans le fichier : `- path: RunUp/Shared` (le dossier, avec d'éventuels
-    `excludes:`) et `- path: RunUp/Shared/X.swift` (un fichier nommé).
+    Deux formes dans le fichier : `- path: Haizo/Shared` (le dossier, avec d'éventuels
+    `excludes:`) et `- path: Haizo/Shared/X.swift` (un fichier nommé).
     """
     cibles = {}
     cible = None
@@ -166,9 +166,9 @@ def types_declares(dossier: Path, recursif: bool = True) -> dict:
 def verifier() -> list:
     project_yml = (RACINE / "project.yml").read_text(encoding="utf-8")
     cibles = fichiers_partages_par_cible(project_yml)
-    cibles.pop("RunUp", None)  # La cible iOS voit tout : elle n'est pas concernée.
+    cibles.pop("Haizo", None)  # La cible iOS voit tout : elle n'est pas concernée.
     if not cibles:
-        return ["project.yml : aucune cible secondaire ne compile RunUp/Shared — "
+        return ["project.yml : aucune cible secondaire ne compile Haizo/Shared — "
                 "le script ne vérifie plus rien, ce n'est sûrement pas voulu"]
 
     partages = types_declares(RACINE / PARTAGE, recursif=False)
@@ -196,7 +196,7 @@ def verifier() -> list:
                         continue
                     ou = app_seulement[nom].relative_to(RACINE)
                     erreurs.append(
-                        f"RunUp/Shared/{nom_fichier}:{numero} référence « {nom} », "
+                        f"Haizo/Shared/{nom_fichier}:{numero} référence « {nom} », "
                         f"déclaré dans {ou} — ce dossier est compilé dans {cible}, "
                         f"qui ne voit pas ce fichier : erreur de compilation garantie"
                     )
@@ -206,12 +206,12 @@ def verifier() -> list:
 def main() -> int:
     erreurs = verifier()
     if erreurs:
-        print("RunUp/Shared : des types absents des cibles secondaires sont référencés\n")
+        print("Haizo/Shared : des types absents des cibles secondaires sont référencés\n")
         for erreur in erreurs:
             print(f"  ✗ {erreur}")
         print("\nOu le fichier n'a rien à faire dans Shared/, ou la référence doit sauter.")
         return 1
-    print("RunUp/Shared : aucun type de l'app référencé depuis les cibles secondaires ✓")
+    print("Haizo/Shared : aucun type de l'app référencé depuis les cibles secondaires ✓")
     return 0
 
 

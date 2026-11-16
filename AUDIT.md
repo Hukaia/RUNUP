@@ -1,6 +1,6 @@
 # Phase 1 — état des lieux
 
-Relevé le 9 novembre 2026, sur `claude/runup-ios-swiftui-app-5b1yv6` (la branche qui EST la
+Relevé le 9 novembre 2026, sur `claude/haizo-ios-swiftui-app-5b1yv6` (la branche qui EST la
 production Vercel et la source des builds TestFlight).
 
 **Rien n'a été modifié.** Tout ce qui suit est mesuré, pas estimé. Quand je n'ai pas pu mesurer,
@@ -146,7 +146,7 @@ Je ne sais pas si tu as changé d'avis ou si le brief est simplement le document
 
 | le brief dit | tu avais tranché (D1–D4, 9 novembre) |
 | --- | --- |
-| « une seule couleur d'accent RunUp » | **D1** — les huit thèmes d'accent restent |
+| « une seule couleur d'accent Haizo » | **D1** — les huit thèmes d'accent restent |
 | « fond blanc chaud `#FBF9F7` » | **D2** — fond clair oui, mais le froid actuel peut rester |
 | « barre basse à trois entrées » | **D3** — la barre garde ses cinq entrées |
 | « onboarding en trois questions » | **D4** — l'inscription reste longue |
@@ -394,7 +394,7 @@ gardé par un relevé daté.
 
 | Point du brief | Ce que l'app fait | Écart |
 | --- | --- | --- |
-| **Une seule couleur d'accent RunUp** | **Huit thèmes d'accent au choix** dans Profil → Apparence | Structurel |
+| **Une seule couleur d'accent Haizo** | **Huit thèmes d'accent au choix** dans Profil → Apparence | Structurel |
 | Accent `#F0225F` | `#FF0A78` | Teinte proche, valeur différente |
 | Fond de consultation `#FBF9F7` chaud | `#F4F3F8` froid, et **le sombre est le thème par défaut** | Direction inverse |
 | Clair en consultation, sombre en séance, automatique | **La personne choisit son thème** ; seule la séance force le sombre | Modèle différent |
@@ -496,7 +496,7 @@ avertissement** — c'est le ticket XcodeGen #1645, ouvert et non corrigé (Xcod
 
 ### Ce que ça coûtait, mesuré
 
-Sonde du paquet construit `RunUpWatch.app` (workflow « Capture de la montre », commit `5cadd52`) :
+Sonde du paquet construit `HaizoWatch.app` (workflow « Capture de la montre », commit `5cadd52`) :
 
 | attendu dans le paquet | présent |
 |---|---|
@@ -514,13 +514,13 @@ Donc, **pour tout le monde et depuis le premier jour de la cible montre** :
   SwiftUI retombe sur la police système en silence.
 
 **Le widget de l'écran d'accueil avait exactement le même défaut**, pour exactement la même
-raison — ses deux ressources partagées sont hors de `RunUpWidgets/`. « BOUCLÉS », « SÉANCE »,
+raison — ses deux ressources partagées sont hors de `HaizoWidgets/`. « BOUCLÉS », « SÉANCE »,
 « KCAL » en français chez une anglophone, dans la police système, à côté d'une app correctement
 traduite et correctement composée. Celui-là n'était pas cherché : c'est le garde-fou écrit pour la
 montre qui l'a nommé.
 
-L'app iPhone, elle, n'a jamais été touchée : son unique entrée `sources: - path: RunUp` contient
-`RunUp/Resources/`, donc XcodeGen y trouvait tout. Sa clé `resources:` ne faisait rien non plus —
+L'app iPhone, elle, n'a jamais été touchée : son unique entrée `sources: - path: Haizo` contient
+`Haizo/Resources/`, donc XcodeGen y trouvait tout. Sa clé `resources:` ne faisait rien non plus —
 elle redéclarait ce qui entrait déjà. **Retirer cette clé ne peut donc pas changer le binaire
 iPhone**, et c'est ce qui rend la correction sans risque de ce côté.
 
@@ -529,7 +529,7 @@ iPhone**, et c'est ce qui rend la correction sans risque de ce côté.
 - **Le build était vert** : aucune ressource ne manque à la compilation.
 - **`check_fonts.py` était vert, et il avait raison de l'être.** Il compare le code, l'`UIAppFonts`
   de chaque cible et les noms PostScript des fichiers. « Livrée » y veut dire « le fichier existe
-  dans `RunUp/Resources/Fonts` », jamais « la cible l'embarque ». Ce n'était pas sa question.
+  dans `Haizo/Resources/Fonts` », jamais « la cible l'embarque ». Ce n'était pas sa question.
 - **Les captures de la montre montraient un écran français**, qu'on prenait pour la capture
   française.
 - **Le commentaire de `project.yml` disait la chose au passé** : « sans lui, la montre restait
@@ -589,7 +589,7 @@ de l'app. Elle est à refaire.
 
 ### Ce qui reste ouvert, et que je n'ai pas touché
 
-- **`RunUpWatch` n'embarque aucun `PrivacyInfo.xcprivacy`**, là où l'app et le widget ont le leur.
+- **`HaizoWatch` n'embarque aucun `PrivacyInfo.xcprivacy`**, là où l'app et le widget ont le leur.
   La cible montre n'appelle aucune API « à motif obligatoire » (ni `UserDefaults`, ni
   `FileManager`) et n'envoie rien au serveur elle-même, donc l'absence se défend. Mais je n'ai pas
   de source Apple qui dise si un paquet de montre embarqué doit porter le sien. **À trancher avant

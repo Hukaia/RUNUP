@@ -34,7 +34,7 @@ DOIT_PASSER = [
     'Text("Se connecter avec Apple")',
     'Text("Connexion avec Apple")',
     # Une vraie phrase de panne, mais qui ne nomme pas le réseau.
-    'Text("RUNUP ne répond pas pour l\'instant — réessaie dans un moment.")',
+    'Text("Haizo ne répond pas pour l\'instant — réessaie dans un moment.")',
     'Text("Ta session a expiré — reconnecte-toi.")',
     # En commentaire, la tournure est licite : c'est ainsi qu'on explique le défaut qu'on répare.
     '// affichait « vérifie ta connexion » pour une session expirée',
@@ -48,10 +48,10 @@ def lance(ligne: str) -> int:
     """Le contrôle, lancé sur un faux projet d'un seul fichier."""
     with tempfile.TemporaryDirectory() as tmp:
         racine = pathlib.Path(tmp)
-        (racine / "RunUp" / "Views").mkdir(parents=True)
-        (racine / "RunUp" / "Views" / "Faux.swift").write_text(ligne + "\n", encoding="utf-8")
+        (racine / "Haizo" / "Views").mkdir(parents=True)
+        (racine / "Haizo" / "Views" / "Faux.swift").write_text(ligne + "\n", encoding="utf-8")
         vraie_racine, vrais_dossiers = cs.RACINE, cs.DOSSIERS
-        cs.RACINE, cs.DOSSIERS = racine, ["RunUp"]
+        cs.RACINE, cs.DOSSIERS = racine, ["Haizo"]
         try:
             return len(ck.fautes())
         finally:

@@ -49,8 +49,8 @@ CLAMEURS = [
 
 # Les deux seuls fichiers qui ont le droit de nommer le réseau. Voir l'en-tête.
 AUTORISES = {
-    "RunUp/Services/PanneReseau.swift",
-    "RunUp/Models/RestoreOutcome.swift",
+    "Haizo/Services/PanneReseau.swift",
+    "Haizo/Models/RestoreOutcome.swift",
 }
 
 

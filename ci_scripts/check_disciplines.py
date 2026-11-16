@@ -27,7 +27,7 @@ l'absence de décision. Voir `Discipline` pour le raisonnement complet.
 import json, pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-DOSSIERS = ["RunUp/Views", "RunUp/Services", "RunUp/Models", "RunUp/ViewModels", "RunUp/Shared"]
+DOSSIERS = ["Haizo/Views", "Haizo/Services", "Haizo/Models", "Haizo/ViewModels", "Haizo/Shared"]
 # Le fichier qui DÉFINIT la règle en parle forcément.
 EXEMPTS = {"Discipline.swift"}
 
@@ -115,7 +115,7 @@ def lignes_fautives(source):
 
 # ── Les drapeaux de `Discipline` : un `switch`, jamais un `==` ─────────────────────────────────
 
-FICHIER_DISCIPLINE = "RunUp/Shared/Discipline.swift"
+FICHIER_DISCIPLINE = "Haizo/Shared/Discipline.swift"
 
 # `var nomDuDrapeau: Bool {` — seules les propriétés booléennes calculées sont regardées.
 _DRAPEAU = re.compile(r"^\s*var\s+(\w+)\s*:\s*Bool\s*\{")
@@ -185,7 +185,7 @@ def drapeaux_fautifs(source):
 # et reste le défaut que `drapeaux_fautifs` décrit — faux en silence à la discipline suivante.
 # Cette règle ne regarde que l'exhaustivité, et laisse l'autre dire ce qu'elle a à dire.
 
-DOSSIERS_SWITCH = ["RunUp", "RunUpWidgets", "RunUpWatch"]
+DOSSIERS_SWITCH = ["Haizo", "HaizoWidgets", "HaizoWatch"]
 _CAS_ENUM = re.compile(r"^\s*case\s+(\w+)\s*=", re.M)
 
 
@@ -277,7 +277,7 @@ def switchs_non_exhaustifs(source, cas_connus):
 # au milieu d'une app en anglais. C'est le défaut exact que `check_strings` existe pour empêcher,
 # qui passe par la seule porte qu'il ne peut pas garder.
 
-CATALOGUE = "RunUp/Resources/Localizable.xcstrings"
+CATALOGUE = "Haizo/Resources/Localizable.xcstrings"
 LANGUES = ("en", "es")
 # `var typesDeSeanceSaisis: [String] { ... }` — le tableau est pris en entier, puis ses chaînes.
 _LISTE_TYPES = re.compile(r"var\s+typesDeSeanceSaisis\s*:\s*\[String\]\s*\{(.+?)\n    \}", re.S)

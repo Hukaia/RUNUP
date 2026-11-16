@@ -27,31 +27,31 @@ def signale(relatif: str, extrait: str) -> bool:
 
 @cas_test("la ligne d'indice des Stats, telle qu'elle était")
 def _():
-    assert signale("RunUp/Views/Stats/StatsView.swift",
+    assert signale("Haizo/Views/Stats/StatsView.swift",
                    '.font(RUFont.sans(.small)).foregroundColor(RUColor.text4)')
 
 
 @cas_test("la même ligne corrigée en text3 passe")
 def _():
-    assert not signale("RunUp/Views/Stats/StatsView.swift",
+    assert not signale("Haizo/Views/Stats/StatsView.swift",
                        '.font(RUFont.sans(.small)).foregroundColor(RUColor.text3)')
 
 
 @cas_test("un remplissage de forme n'est pas un contraste de texte")
 def _():
-    assert not signale("RunUp/Views/Live/RecapView.swift",
+    assert not signale("Haizo/Views/Live/RecapView.swift",
                        'Circle().fill(RUColor.text4).frame(width: 5, height: 5)')
-    assert not signale("RunUp/Views/Race/RaceGoalView.swift",
+    assert not signale("Haizo/Views/Race/RaceGoalView.swift",
                        'RoundedRectangle(cornerRadius: 2).fill(isLast ? RUColor.rose : RUColor.text4)')
 
 
 @cas_test("les trois emplois justifiés passent")
 def _():
-    assert not signale("RunUp/Views/Club/FriendsView.swift",
+    assert not signale("Haizo/Views/Club/FriendsView.swift",
                        'Text("·").font(RUFont.sans(.body)).foregroundColor(RUColor.text4)')
-    assert not signale("RunUp/Views/Paywall/PaywallView.swift",
+    assert not signale("Haizo/Views/Paywall/PaywallView.swift",
                        'Text(verbatim: "·").foregroundColor(RUColor.text4)')
-    assert not signale("RunUp/Views/Home/PlanView.swift",
+    assert not signale("Haizo/Views/Home/PlanView.swift",
                        '.foregroundColor(enabled ? RUColor.textPrimary : RUColor.text4)')
 
 
@@ -59,13 +59,13 @@ def _():
 def _():
     # Le même point médian ailleurs doit redemander sa justification : rien ne garantit qu'il
     # soit décoratif dans un écran qu'on n'a pas regardé.
-    assert signale("RunUp/Views/Home/HomeView.swift",
+    assert signale("Haizo/Views/Home/HomeView.swift",
                    'Text("·").font(RUFont.sans(.body)).foregroundColor(RUColor.text4)')
 
 
 @cas_test("un exemple en commentaire ne déclenche rien")
 def _():
-    assert not signale("RunUp/Views/Stats/StatsView.swift",
+    assert not signale("Haizo/Views/Stats/StatsView.swift",
                        '// Avant : .foregroundColor(RUColor.text4)')
 
 

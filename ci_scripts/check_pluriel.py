@@ -39,12 +39,12 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CATALOGUE = RACINE / "RunUp/Resources/Localizable.xcstrings"
-PLURIEL = RACINE / "RunUp/Shared/Pluriel.swift"
-DOSSIERS = ["RunUp", "RunUpWidgets", "RunUpWatch"]
+CATALOGUE = RACINE / "Haizo/Resources/Localizable.xcstrings"
+PLURIEL = RACINE / "Haizo/Shared/Pluriel.swift"
+DOSSIERS = ["Haizo", "HaizoWidgets", "HaizoWatch"]
 
 # `Pluriel` lui-même compare bien un nombre à 1 : c'est sa raison d'être.
-HORS_PERIMETRE = {"RunUp/Shared/Pluriel.swift"}
+HORS_PERIMETRE = {"Haizo/Shared/Pluriel.swift"}
 
 # Comparer un nombre à 1 n'est pas toujours un pluriel. Ensemble FERMÉ, une raison par ligne : une
 # tolérance sans raison est une tolérance qu'on ne saura pas relire.
@@ -57,10 +57,10 @@ TOLEREES = {
     # et la tolérance, accrochée au texte pour ne pas dériver avec les numéros de ligne, a
     # dérivé avec le texte. C'est le prix de ce choix, et il est le bon : une tolérance qui
     # survit à une réécriture couvrirait une ligne que plus personne n'a relue.
-    ("RunUp/ViewModels/LiveRunViewModel.swift", "consigne = n == 1"),
+    ("Haizo/ViewModels/LiveRunViewModel.swift", "consigne = n == 1"),
     # `progress >= 1` est un SEUIL d'avancement (l'objectif est atteint), pas un compte : « ✓ »
     # contre « À faire ».
-    ("RunUpWidgets/DailyGoalsWidget.swift", "(snapshot.progress[safe: 0] ?? 0) >= 1 ?"),
+    ("HaizoWidgets/DailyGoalsWidget.swift", "(snapshot.progress[safe: 0] ?? 0) >= 1 ?"),
 }
 
 
@@ -143,7 +143,7 @@ def problemes() -> list:
 
     # --- Les langues livrées sont-elles toutes connues de `Pluriel` ? -----------------------------
     if not PLURIEL.exists():
-        erreurs.append("RunUp/Shared/Pluriel.swift a disparu — plus rien ne porte la règle")
+        erreurs.append("Haizo/Shared/Pluriel.swift a disparu — plus rien ne porte la règle")
         return erreurs
 
     m = LANGUES.search(PLURIEL.read_text(encoding="utf-8"))

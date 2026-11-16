@@ -51,7 +51,7 @@ INTERDITS = [
 
 # Les fichiers dont TOUT le contenu est dessiné sur la nuit.
 FICHIERS_DE_NUIT = [
-    "RunUp/Views/Components/DrawnRoute.swift",
+    "Haizo/Views/Components/DrawnRoute.swift",
 ]
 
 # `RubanDeSemaine` y a figuré du 13 au 14 novembre. Il en est sorti le jour où l'accueil a
@@ -108,7 +108,7 @@ def ecarts() -> list:
                               f"`RUColor.{trouve.group(1)}` suit le thème de la page, et ce "
                               f"fichier ne dessine que sur la nuit."))
 
-    for chemin in sorted((RACINE / "RunUp").rglob("*.swift")):
+    for chemin in sorted((RACINE / "Haizo").rglob("*.swift")):
         relatif = str(chemin.relative_to(RACINE))
         if relatif in FICHIERS_DE_NUIT:
             continue

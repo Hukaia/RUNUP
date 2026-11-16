@@ -16,7 +16,7 @@ Une police livrée mais non enregistrée est inerte ; une police enregistrée da
 pas dans les autres. Les trois listes doivent coïncider, cible par cible.
 
 CE QU'IL NE VOIT PAS, ET QUI A COÛTÉ CHER. « Livrée » veut dire ici « le fichier existe dans
-`RunUp/Resources/Fonts` » — jamais « la cible l'embarque ». `RunUpWatch` et `RunUpWidgets`
+`Haizo/Resources/Fonts` » — jamais « la cible l'embarque ». `HaizoWatch` et `HaizoWidgets`
 enregistraient trois Inter dans leur `UIAppFonts` et n'en embarquaient AUCUNE : leurs ressources
 étaient déclarées sous une clé `resources:` qui n'existe pas dans XcodeGen. Ce script était vert
 pendant tout ce temps, et il avait raison de l'être — ce n'est pas sa question.
@@ -25,7 +25,7 @@ C'est celle de `check_spec.py`.
 import re, struct, sys, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-FONT_DIR = ROOT / "RunUp/Resources/Fonts"
+FONT_DIR = ROOT / "Haizo/Resources/Fonts"
 #: Où un script peut légitimement aller chercher une police : celles livrées avec l'app, et
 #: celles de la fiche App Store, qui ne sont pas embarquées mais servent à composer les images.
 DOSSIERS_DE_POLICES = [FONT_DIR, ROOT / "appstore" / "polices"]
@@ -61,12 +61,12 @@ def postscript_name(path):
 def constants():
     """Les familles nommées une seule fois dans le code, à résoudre dans les interpolations."""
     out = {}
-    src = (ROOT / "RunUp/Shared/DisplayFont.swift").read_text(encoding="utf-8")
+    src = (ROOT / "Haizo/Shared/DisplayFont.swift").read_text(encoding="utf-8")
     m = re.search(r'static let family\s*=\s*"([^"]+)"', src)
     if m:
         out["DisplayFont.family"] = m.group(1)
         out["family"] = m.group(1)
-    typo = (ROOT / "RunUp/DesignSystem/Typography.swift").read_text(encoding="utf-8")
+    typo = (ROOT / "Haizo/DesignSystem/Typography.swift").read_text(encoding="utf-8")
     m = re.search(r'bodyFamily\s*=\s*(?:DisplayFont\.family|"([^"]+)")', typo)
     if m:
         out["bodyFamily"] = m.group(1) or out.get("DisplayFont.family", "")
@@ -169,7 +169,7 @@ def main():
         """Les chemins que CETTE cible compile, lus dans project.yml plutôt que devinés.
 
         Les deviner est précisément l'erreur que ce script existe pour attraper : la montre ne
-        prend de `RunUp/Shared` que deux fichiers nommés un par un, et le widget n'y prend pas
+        prend de `Haizo/Shared` que deux fichiers nommés un par un, et le widget n'y prend pas
         `DesignSystem` du tout. Une liste écrite à la main ici finirait par diverger du projet
         réel, et ce script se mettrait à valider une cible qui n'existe pas.
         """

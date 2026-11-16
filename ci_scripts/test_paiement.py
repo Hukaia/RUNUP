@@ -50,19 +50,19 @@ class Atelier(unittest.TestCase):
 
     def setUp(self):
         self.dossier = pathlib.Path(tempfile.mkdtemp())
-        (self.dossier / "RunUp/Services").mkdir(parents=True)
-        (self.dossier / "RunUp/Models").mkdir(parents=True)
-        (self.dossier / "RunUpTests").mkdir(parents=True)
-        self.service = self.dossier / "RunUp/Services/SubscriptionService.swift"
+        (self.dossier / "Haizo/Services").mkdir(parents=True)
+        (self.dossier / "Haizo/Models").mkdir(parents=True)
+        (self.dossier / "HaizoTests").mkdir(parents=True)
+        self.service = self.dossier / "Haizo/Services/SubscriptionService.swift"
         self.service.write_text(SERVICE_SAIN)
         for issue in cp.ISSUES:
-            (self.dossier / f"RunUp/Models/{issue}.swift").write_text(MODELE % (issue, issue))
-            (self.dossier / f"RunUpTests/{issue}Tests.swift").write_text(
+            (self.dossier / f"Haizo/Models/{issue}.swift").write_text(MODELE % (issue, issue))
+            (self.dossier / f"HaizoTests/{issue}Tests.swift").write_text(
                 "XCTAssertEqual(x, .subscribed)\nXCTAssertEqual(y, .failed)\n")
         self.anciens = (cp.SERVICE, cp.MODELES, cp.CAS)
         cp.SERVICE = self.service
-        cp.MODELES = self.dossier / "RunUp/Models"
-        cp.CAS = self.dossier / "RunUpTests"
+        cp.MODELES = self.dossier / "Haizo/Models"
+        cp.CAS = self.dossier / "HaizoTests"
 
     def tearDown(self):
         cp.SERVICE, cp.MODELES, cp.CAS = self.anciens
@@ -127,12 +127,12 @@ class LaDelegation(Atelier):
 class LeTypePur(Atelier):
 
     def test_un_modele_absent_est_signale(self):
-        (self.dossier / "RunUp/Models/RestoreOutcome.swift").unlink()
+        (self.dossier / "Haizo/Models/RestoreOutcome.swift").unlink()
         d = self.defauts()
         self.assertTrue(any("n'a pas de modèle" in x for x in d), d)
 
     def test_un_modele_sans_decide_est_signale(self):
-        m = self.dossier / "RunUp/Models/OfferCodeOutcome.swift"
+        m = self.dossier / "Haizo/Models/OfferCodeOutcome.swift"
         m.write_text(m.read_text().replace("static func decide(", "func autreChose("))
         d = self.defauts()
         self.assertTrue(any("n'expose pas" in x for x in d), d)
@@ -140,13 +140,13 @@ class LeTypePur(Atelier):
     def test_un_modele_qui_importe_storekit_est_signale(self):
         """Tout l'intérêt du type séparé est de se construire dans un test. Avec StoreKit dedans,
         il ne se construit plus, et le fichier de cas devient décoratif."""
-        m = self.dossier / "RunUp/Models/PurchaseOutcome.swift"
+        m = self.dossier / "Haizo/Models/PurchaseOutcome.swift"
         m.write_text("import StoreKit\n" + m.read_text())
         d = self.defauts()
         self.assertTrue(any("importe StoreKit" in x for x in d), d)
 
     def test_un_fichier_de_cas_absent_est_signale(self):
-        (self.dossier / "RunUpTests/PurchaseOutcomeTests.swift").unlink()
+        (self.dossier / "HaizoTests/PurchaseOutcomeTests.swift").unlink()
         d = self.defauts()
         self.assertTrue(any("n'a pas de cas" in x for x in d), d)
 
@@ -155,7 +155,7 @@ class LesCasCouverts(Atelier):
 
     def test_un_cas_jamais_nomme_est_signale(self):
         """Ajouter une issue sans la vérifier, c'est rouvrir le trou par le haut."""
-        m = self.dossier / "RunUp/Models/PurchaseOutcome.swift"
+        m = self.dossier / "Haizo/Models/PurchaseOutcome.swift"
         m.write_text(m.read_text().replace("    case failed", "    case failed\n    case purchasedAwaitingUnlock"))
         d = self.defauts()
         self.assertTrue(any("purchasedAwaitingUnlock" in x for x in d), d)
@@ -164,7 +164,7 @@ class LesCasCouverts(Atelier):
         """`case a, b, c` est la forme qu'avait `PurchaseOutcome` avant d'être extraite. Ne pas la
         lire laisserait passer trois cas non testés d'un coup — le cas « vert pour la mauvaise
         raison » numéro deux."""
-        m = self.dossier / "RunUp/Models/PurchaseOutcome.swift"
+        m = self.dossier / "Haizo/Models/PurchaseOutcome.swift"
         m.write_text(m.read_text().replace("    case subscribed\n    case failed",
                                            "    case subscribed, failed, jamaisTeste"))
         d = self.defauts()
@@ -173,7 +173,7 @@ class LesCasCouverts(Atelier):
     def test_une_enumeration_illisible_est_signalee(self):
         """Le cas « vert pour la mauvaise raison » numéro trois : si la forme du fichier change et
         qu'aucun cas n'est lu, le contrôle doit le DIRE au lieu de féliciter une liste vide."""
-        m = self.dossier / "RunUp/Models/RestoreOutcome.swift"
+        m = self.dossier / "Haizo/Models/RestoreOutcome.swift"
         m.write_text(m.read_text().replace("    case subscribed\n    case failed", ""))
         d = self.defauts()
         self.assertTrue(any("aucun cas lu" in x for x in d), d)
@@ -182,7 +182,7 @@ class LesCasCouverts(Atelier):
         """`PurchaseOutcome.StoreKitResult` décrit ce que StoreKit a répondu : ce sont les ENTRÉES
         de la décision, pas ses issues. Les compter gonflait le total de 11 à 17 et aurait exigé
         qu'on les « teste » comme des réponses."""
-        m = self.dossier / "RunUp/Models/PurchaseOutcome.swift"
+        m = self.dossier / "Haizo/Models/PurchaseOutcome.swift"
         m.write_text(m.read_text().replace(
             "    case failed",
             "    case failed\n    enum StoreKitResult { case verified, jamaisTesteNonPlus }"))

@@ -12,7 +12,26 @@ import sys
 import check_liens as ck
 import liens
 
-ANCIENNE = "https://hicsuntco.github.io/RUNUP/privacy.html"
+def _chez(proprietaire: str) -> str:
+    """L'adresse de la politique, servie par le compte `proprietaire` au lieu du nôtre.
+
+    DÉRIVÉE, ET PLUS ÉCRITE EN DUR — correction du 16 novembre. Elle l'était, et le changement de
+    nom de l'app l'a réécrite en masse avec tout le reste : son chemin a pris le nouveau nom, et
+    elle a cessé d'être l'ancienne adresse de qui que ce soit. Les trois cas bâtis dessus ont
+    continué de tourner en ne prouvant plus rien — le garde ne reconnaissait plus l'adresse qu'on
+    lui donnait, donc il ne la signalait pas, donc le cas échouait. Il a échoué, et c'est la
+    seule raison pour laquelle on le sait.
+
+    Le défaut que ces cas décrivent n'est pas « cette chaîne-là » : c'est « le compte change,
+    l'adresse reste ». On la fabrique donc à partir de celle qui est déclarée, en ne remplaçant
+    que le compte.
+    """
+    _, _, suite = liens.CONFIDENTIALITE.partition("://")
+    return f"https://{proprietaire}.github.io/{suite.split('/', 1)[1]}"
+
+
+#: L'ancienne, celle qui répond 404 depuis que le dépôt a changé de compte.
+ANCIENNE = _chez("hicsuntco")
 
 cas = []
 
@@ -36,7 +55,7 @@ def _ecarts(relatif: str, texte: str):
 
 @cas_test("l'ancienne adresse de la politique est signalée")
 def _():
-    trouves = _ecarts("RunUp/Views/Paywall/PaywallView.swift",
+    trouves = _ecarts("Haizo/Views/Paywall/PaywallView.swift",
                       f'    private let privacyURL = URL(string: "{ANCIENNE}")!\n')
     assert len(trouves) == 1, trouves
     assert trouves[0][2] == ANCIENNE, trouves
@@ -65,7 +84,7 @@ def _():
 @cas_test("une page de notre projet chez un autre propriétaire est signalée")
 def _():
     # Le cœur du défaut : le dépôt change de compte, GitHub Pages suit, l'adresse reste.
-    trouves = _ecarts("x.md", "https://quelquun-dautre.github.io/RUNUP/privacy.html\n")
+    trouves = _ecarts("x.md", f"{_chez('quelquun-dautre')}\n")
     assert len(trouves) == 1, trouves
 
 
@@ -73,7 +92,7 @@ def _():
 def _():
     lus = {relatif for relatif, _ in ck.fichiers()}
     assert not any(r.startswith("node_modules/") for r in lus), "node_modules est relu"
-    assert any(r.startswith("RunUp/") for r in lus), "le code de l'app n'est pas relu"
+    assert any(r.startswith("Haizo/") for r in lus), "le code de l'app n'est pas relu"
 
 
 @cas_test("les journaux gardent leurs anciennes adresses")

@@ -68,7 +68,7 @@ def _():
 
 @cas_de("les sept crans existent et sont ordonnés")
 def _():
-    typo = (ICI.parent / "RunUp/DesignSystem/Typography.swift").read_text(encoding="utf-8")
+    typo = (ICI.parent / "Haizo/DesignSystem/Typography.swift").read_text(encoding="utf-8")
     import re
     crans = [float(x) for x in re.findall(r"case \w+ = ([0-9.]+)",
                                           typo.split("enum RUIconSize")[1].split("}")[0])]

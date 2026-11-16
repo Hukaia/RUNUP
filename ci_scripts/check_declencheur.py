@@ -10,10 +10,10 @@ revérifié.
 
 Elle s'est trompée deux fois, et chaque fois de la même façon : par omission silencieuse.
 
-  · `RunUp/AppState.swift`, le routeur de l'app, n'y était pas. Le commentaire du fichier le
+  · `Haizo/AppState.swift`, le routeur de l'app, n'y était pas. Le commentaire du fichier le
     raconte lui-même : « le correctif de la transition d'écran n'a touché que lui : les captures
     ne se sont pas relancées, et je n'ai donc pas pu mesurer ce que le correctif changeait ».
-  · `RunUp/RunUpApp.swift`, qui porte `RootView`, n'y était pas non plus. Le commit du rapport de
+  · `Haizo/HaizoApp.swift`, qui porte `RootView`, n'y était pas non plus. Le commit du rapport de
     panne l'a touché le 8 novembre 2026. Aucune capture ne s'est relancée.
 
 Le défaut n'a aucun symptôme : la chaîne reste verte, puisqu'elle ne tourne pas. On croit avoir
@@ -21,7 +21,7 @@ des images à jour, et on en a d'avant la modification.
 
 # CE QUI EST MESURÉ — DEUX RÈGLES
 
-PREMIÈRE RÈGLE. Tout fichier Swift de `RunUp/` qui contient une vue SwiftUI — un `some View` —
+PREMIÈRE RÈGLE. Tout fichier Swift de `Haizo/` qui contient une vue SwiftUI — un `some View` —
 doit être couvert par au moins un chemin du déclencheur. Pas « devrait » : une vue est précisément la chose dont le
 défaut ne se lit que sur l'image, et c'est la raison d'être de toute la chaîne.
 
@@ -52,7 +52,7 @@ import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 WORKFLOW = RACINE / ".github/workflows/captures.yml"
-APP = RACINE / "RunUp"
+APP = RACINE / "Haizo"
 
 #: Ce qui fait d'un fichier une vue. `some View` est le seul marqueur fiable : une `struct X: View`
 #: sans corps n'existe pas, et un corps de vue SwiftUI s'écrit toujours `-> some View` ou
@@ -185,7 +185,7 @@ def main():
             print(f"  · {vue}")
         print("\n    Le défaut n'a aucun symptôme : la chaîne reste verte parce qu'elle ne tourne")
         print("    pas, et les images en ligne datent d'avant la modification. Ajoute le chemin")
-        print(f"    au bloc `paths:` de {WORKFLOW.name}, ou déplace le fichier sous RunUp/Views/.")
+        print(f"    au bloc `paths:` de {WORKFLOW.name}, ou déplace le fichier sous Haizo/Views/.")
         return 1
 
     print(f"Déclencheur des captures : {len(vues)} fichiers de vues et "

@@ -94,7 +94,7 @@ change.
 
 ## Le fond du cadre vient de la palette, et non d'ici
 
-Le dégradé derrière le téléphone est lu dans `RunUp/DesignSystem/AccentTheme.swift`, nuancier
+Le dégradé derrière le téléphone est lu dans `Haizo/DesignSystem/AccentTheme.swift`, nuancier
 « rose ». Il ne l'était pas : `screenshots.py` portait deux jeux de constantes de marque, écrits
 deux fois avec deux valeurs différentes, et **aucun des deux n'était lu** — le dégradé réellement
 dessiné était trois littéraux réglés à la main le jour où le châssis est né.

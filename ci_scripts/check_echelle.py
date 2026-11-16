@@ -24,27 +24,27 @@ qu'il complète. Les sorties se comptent ici de la même façon.
 import re, sys, pathlib
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-TYPO = "RunUp/DesignSystem/Typography.swift"
+TYPO = "Haizo/DesignSystem/Typography.swift"
 
 # fichier → (nombre de sorties attendu, la raison) — pour le TITRAGE
 AUTORISE = {
-    "RunUp/Views/Live/RunShareCardView.swift":
+    "Haizo/Views/Live/RunShareCardView.swift":
         (2, "carte d'export : géométrie de pixels fixe pour une image partagée"),
-    "RunUp/Views/Live/RunVideoFrameView.swift":
+    "Haizo/Views/Live/RunVideoFrameView.swift":
         (3, "image de la vidéo d'export : même raison"),
-    "RunUp/Views/Club/BadgeShareCardView.swift":
+    "Haizo/Views/Club/BadgeShareCardView.swift":
         (2, "carte d'export d'un badge : même raison"),
-    "RunUp/Views/Components/AvatarView.swift":
+    "Haizo/Views/Components/AvatarView.swift":
         (3, "initiales à 0,4 × le diamètre de l'avatar : une suite continue, pas un cran"),
-    "RunUp/Views/Live/LiveRunView.swift":
+    "Haizo/Views/Live/LiveRunView.swift":
         (2, "le chronomètre de la course en cours : 96 pt au décompte, 52/64 au temps écoulé"),
 }
 
 # fichier → (nombre de sorties attendu, la raison) — pour le MONOSPACE
 AUTORISE_MONO = {
-    "RunUp/Views/Live/RunShareCardView.swift":
+    "Haizo/Views/Live/RunShareCardView.swift":
         (2, "carte d'export : géométrie de pixels fixe pour une image partagée"),
-    "RunUp/Views/Club/BadgeShareCardView.swift":
+    "Haizo/Views/Club/BadgeShareCardView.swift":
         (1, "carte d'export d'un badge : même raison"),
 }
 

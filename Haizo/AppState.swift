@@ -1,0 +1,1155 @@
+import Foundation
+import SwiftData
+import Observation
+// Pour `withAnimation` seul, dans `go(_:)`. Le fichier n'importait pas SwiftUI alors que
+// son propre en-tête dit qu'il « n'existe que pour être lu par SwiftUI » — l'import
+// manquait simplement parce qu'aucune ligne n'en avait eu besoin jusqu'ici.
+import SwiftUI
+import WidgetKit
+import CoreLocation
+import ActivityKit
+
+/// Central app store + router — mirrors the `store`/`ctx` object threaded through the
+/// prototype via React context. Held once at the root and read via `@Environment(AppState.self)`.
+///
+/// `@MainActor` sur la classe entière, et non plus méthode par méthode. Cet objet n'existe que
+/// pour être lu par SwiftUI : chacune de ses propriétés observables est rendue à l'écran, et il
+/// possède des objets SwiftData (`profile`, `modelContext`) qui appartiennent au contexte du fil
+/// principal. Les annotations éparpillées sur trois méthodes laissaient tout le reste — dont
+/// `startRun()`, `endLiveRun()` et `toast()` — accessible depuis n'importe quel fil, ce que le
+/// compilateur ne pouvait ni vérifier ni empêcher. C'est la même famille de défaut que
+/// `ToastCenter`, `LiveRunViewModel` et `VoiceCoachController`, corrigée de la même façon.
+///
+/// Conséquence pratique : les rares appelants qui ne sont PAS sur le fil principal (les callbacks
+/// `WCSessionDelegate` de `WatchSessionService`, l'observateur `NSCalendarDayChanged`) doivent
+/// désormais sauter explicitement sur l'acteur principal — ce qu'ils faisaient déjà, mais par
+/// convention plutôt que sous garantie du compilateur.
+@MainActor
+@Observable
+final class AppState {
+    let modelContext: ModelContext
+    let healthKit = HealthKitService()
+    /// Les prévisions horaires, pour le conseil « il va pleuvoir, cours plutôt à tel moment ».
+    let weather = RunWeatherService()
+    let toastCenter = ToastCenter()
+    let auth = AuthService()
+
+    var profile: UserProfile
+    private(set) var screen: AppScreen = .home
+    /// Real activities queued in `ClubActivityOutbox` waiting to reach the server (a spotty
+    /// connection at the exact moment a run finished, or the server briefly unreachable) — kept in
+    /// sync by `ClubActivityOutbox` itself on every enqueue/success/retry so History can show a
+    /// real "still syncing" banner instead of a run's XP/feed entry silently never arriving with
+    /// no visible sign anything went wrong.
+    /// Ce que le bouton RUN lancera. Appui long dessus pour basculer, appui long pour revenir.
+    ///
+    /// DANS LES RÉGLAGES SYSTÈME, PAS DANS LE PROFIL. C'est un mode d'interface, pas une donnée
+    /// d'entraînement : il n'a rien à faire dans la base, il n'a pas à être sauvegardé ni
+    /// synchronisé, et le profil est un `@Model` — y ajouter une propriété de type personnalisé
+    /// est précisément ce qui a fait planter le build 1177 au lancement.
+    ///
+    /// Il PERSISTE quand même d'un lancement à l'autre : quelqu'un qui part à vélo trois fois
+    /// par semaine ne doit pas re-basculer à chaque fois.
+    ///
+    /// Écrite par `setRunDiscipline(_:)` et pas par un `didSet` : les propriétés d'un type
+    /// `@Observable` sont réécrites par la macro, et faire dépendre une écriture sur disque d'un
+    /// observateur dans ce contexte est le genre d'hypothèse qu'on ne vérifie qu'en production.
+    /// Une méthode fait les deux, et aucun appelant ne peut en oublier la moitié.
+    private(set) var runDiscipline: Discipline = .run
+    private static let runDisciplineKey = "run.discipline.v1"
+
+    func setRunDiscipline(_ discipline: Discipline) {
+        runDiscipline = discipline
+        UserDefaults.standard.set(discipline.rawValue, forKey: Self.runDisciplineKey)
+    }
+
+    var pendingActivityCount: Int = 0
+    /// POURQUOI la file ne part pas, quand elle ne part pas.
+    ///
+    /// La bannière de l'historique promettait « nouvelle tentative automatique bientôt » dans
+    /// tous les cas, parce que `attemptPost` attrapait toutes les erreurs sans jamais regarder
+    /// laquelle. Or il y en a une où aucune tentative ne peut aboutir : un jeton expiré ne
+    /// guérit pas en réessayant. La file rejouait donc indéfiniment, la bannière restait, et la
+    /// seule chose à faire — se reconnecter — n'était écrite nulle part.
+    var pendingActivityBlocker: BlocageEnvoi?
+
+    enum BlocageEnvoi: Equatable {
+        /// Le jeton est refusé. Rien ne partira tant qu'elle ne s'est pas reconnectée.
+        case session
+        /// Pas de réseau. Réessayer finira par marcher.
+        case reseau
+        /// Le serveur a répondu autre chose qu'un oui. Plus tard, peut-être.
+        case serveur
+    }
+    /// Consumed once by `SocialView.onAppear` then reset — lets `ProfileView`'s "Amis" card land
+    /// directly on the Friends segment instead of `SocialView`'s own default ("Mon club"), without
+    /// giving `mode` a second, competing source of truth (`@AppStorage`/a `UserProfile` field)
+    /// for what's a one-shot navigation intent, not a real persisted preference.
+    var openFriendsTabOnNextVisit = false
+    /// Même mécanique que ci-dessus pour la carte « Itinéraires » du Profil : une intention de
+    /// navigation à usage unique, pas une préférence à persister.
+    var openRoutesTabOnNextVisit = false
+    /// Et pour les pages de course — ouvert aussi bien par la carte « Courses » du Profil que par
+    /// l'écran de l'objectif, qui propose d'aller voir qui prépare la même.
+    var openRacesTabOnNextVisit = false
+
+    /// LA PAGE DE QUELQU'UN, OUVRABLE DE PARTOUT.
+    ///
+    /// Posée ici plutôt que dans chaque écran, et c'est ce qui permet à « chaque nom est une
+    /// porte » d'être vrai : un nom apparaît au fil, au classement, sur une page de course, sous
+    /// un commentaire, dans une liste d'abonnés. Demander à chacun de ces écrans de porter sa
+    /// propre présentation, c'est accepter qu'un sur six l'oublie — et c'est toujours celui-là
+    /// qu'on remarque. La présentation vit à la racine (voir `ContentRouterView`), les écrans se
+    /// contentent d'appeler `ouvrirLeProfil`.
+    var profilOuvert: ProfilOuvert?
+
+    /// `fullScreenCover(item:)` demande un `Identifiable` ; un identifiant de compte est une
+    /// chaîne. Ce minuscule emballage évite de poser un `Identifiable` sur `String`, ce qui
+    /// vaudrait pour toute l'app.
+    struct ProfilOuvert: Identifiable, Hashable {
+        var id: String
+    }
+
+    func ouvrirLeProfil(_ userId: String) {
+        guard !userId.isEmpty else { return }
+        profilOuvert = ProfilOuvert(id: userId)
+    }
+
+    /// LA SORTIE OUVERTE, posée ici pour la même raison que le profil : une sortie se touche
+    /// depuis le fil, depuis le club, depuis les amis et depuis la page de quelqu'un. Demander à
+    /// chacun de ces écrans de porter sa propre présentation, c'est accepter qu'un sur quatre
+    /// l'oublie — et c'est toujours celui-là qu'on remarque.
+    struct SortieOuverte: Identifiable, Hashable {
+        var id: String
+    }
+    var sortieOuverte: SortieOuverte?
+
+    func ouvrirLaSortie(_ activityId: String) {
+        guard !activityId.isEmpty else { return }
+        sortieOuverte = SortieOuverte(id: activityId)
+    }
+
+    /// Et la page d'une course. Troisième porte posée ici pour la même raison que les deux
+    /// autres : une course se touche depuis sa liste ET depuis l'aperçu du club, et le jour où
+    /// un troisième écran y mènera, il n'aura rien à savoir de la présentation.
+    var courseOuverte: RaceEvent?
+
+    func ouvrirLaCourse(_ course: RaceEvent) {
+        courseOuverte = course
+    }
+
+    /// LE CLUB QU'UN LIEN DEMANDE D'OUVRIR.
+    ///
+    /// Posé par `.onOpenURL` quand on arrive depuis `runup-nu.vercel.app/club/<id>` — le lien
+    /// qu'un crew met dans sa bio Instagram. L'écran du Club le lit à son apparition et
+    /// préremplit la recherche avec le nom, puisqu'il n'existe pas d'écran « club de quelqu'un
+    /// d'autre » : ce qu'on veut en arrivant par ce lien, c'est le rejoindre.
+    var clubDepuisUnLien: String?
+    /// Phone↔watch bridge — receives runs finished on the wrist, mirrors today's session out.
+    /// Optional only because it needs `self` (created at the end of `init`); never nil after.
+    @ObservationIgnored private(set) var watchSession: WatchSessionService?
+    @ObservationIgnored private var lastPublishedSnapshot: DailyGoalsSnapshot?
+
+    // Sheets
+    var sessionDetailPresented = false
+    var moveSessionPresented = false
+    var programSettingsPresented = false
+    var notificationsPresented = false
+    /// The same "nouvel objectif" wizard `ChoiceView` presents at the end of a program — hoisted
+    /// here so Profil's "Refaire un programme" can open it directly too, without going through
+    /// recovery/choice first. Replaces the old "Refaire l'onboarding" action, which re-asked her
+    /// name/sexe/date de naissance/blessures — everything, not just the goal — to get a new plan.
+    var newGoalWizardPresented = false
+    /// Runs waiting for their RPE debrief — a session logged by hand (`markTodaySessionDone`,
+    /// depuis la feuille « Séance déjà faite ») or a run
+    /// delivered from the Watch (`WatchSessionService.handleCompletedRun`) appends here rather
+    /// than overwriting a single slot. Two runs finishing in quick succession (e.g. the Watch
+    /// queuing several while the phone was out of range, then delivering them together on
+    /// reconnect) used to silently drop the first one's RPE/streak/XP credit forever — the second
+    /// arrival just overwrote the one slot before its sheet was ever shown. `RootTabView` presents
+    /// `pendingDebriefs.first` and pops it once that debrief is dismissed, so a second arrival
+    /// while one is already showing queues behind it instead of replacing it.
+    var pendingDebriefs: [RunRecord] = []
+
+    /// The last board/feed `ClubView` successfully loaded — held here, not in `ClubView`'s own
+    /// `@State`, because `RootTabView` keys `currentScreen` on `.id(appState.screen)` and tears
+    /// down/recreates the whole view on every tab switch (see that file for why). Without this,
+    /// leaving Club and coming back always re-paid the full network round-trip and a blank
+    /// loading spinner before showing anything again, even seconds after the last visit — this
+    /// lets a re-visit render the last known state immediately while a fresh fetch still runs
+    /// underneath to catch up.
+    var cachedClubBoard: ClubBoard?
+    var cachedClubFeed: [FeedItem]?
+    /// Les deux caches que le PROFIL consulte en démonstration. Sans eux, l'écran du Profil est
+    /// le seul des captures à interroger vraiment le serveur — avec un jeton de démonstration,
+    /// donc un 401, donc `sessionRejected`, donc « Session expirée » à la place de toute la
+    /// section Communauté. Voir `CaptureSeed.poserLeClub`.
+    var cachedFriendsList: FriendsList?
+    var cachedNextRace: RaceEvent?
+    /// Et la page de quelqu'un, pour la même raison : sans serveur en face, elle n'afficherait
+    /// qu'une erreur dans la capture.
+    var cachedPublicProfile: PublicProfilePage?
+    /// Et le fil. Troisième cache de démonstration du même genre : tout écran qui parle au serveur
+    /// en demande un, faute de serveur dans un simulateur.
+    var cachedWall: WallPage?
+    /// Et la page d'une course — la quatrième, et celle qui porte le plus de mise en page : des
+    /// coureurs, un mur, un avertissement. C'est exactement l'écran qu'on ne veut pas juger de
+    /// mémoire.
+    var cachedRacePage: RacePage?
+    /// Et la sortie déroulée — la cinquième. Celle qui porte le plus de CHIFFRES : six mesures,
+    /// une dizaine de barres de splits, un profil de terrain. Autant d'occasions qu'un détail
+    /// soit faux sans que rien ne plante, donc autant de raisons de la photographier.
+    var cachedActivityDetail: ActivityDetail?
+    /// Et les deux sections de l'aperçu du Club : ce qu'il prépare, ce qu'il a fait de mieux.
+    var cachedClubHighlights: ClubHighlights?
+    /// Et le mur du club : ce qu'on s'y dit entre deux sorties.
+    var cachedClubPosts: [ClubPost]?
+
+    // Live run (ephemeral, survives navigating away from the Live screen)
+    var liveRun: LiveRunViewModel?
+    var isRunActive: Bool { liveRun != nil }
+    /// The most recently completed run, shown on the Recap screen. Transient — not persisted
+    /// on `UserProfile` itself, just a navigation hand-off (the `RunRecord` is already inserted
+    /// into `modelContext` and lives on independently via the History query). Unrelated to
+    /// `pendingDebriefs` above — Recap embeds its own `DebriefSheet` inline for the live-GPS-run
+    /// flow, which can't race with the manual/Watch flow the way two Watch deliveries can race
+    /// each other.
+    var lastRun: RunRecord?
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+        var descriptor = FetchDescriptor<UserProfile>()
+        descriptor.fetchLimit = 1
+        if let existing = try? modelContext.fetch(descriptor).first {
+            self.profile = existing
+        } else {
+            let fresh = UserProfile()
+            modelContext.insert(fresh)
+            self.profile = fresh
+        }
+        AdaptivePlanEngine.refreshProgramForCurrentDate(self.profile)
+        AdaptivePlanEngine.resetDailyGoalsIfNewDay(self.profile)
+        // Au lancement À FROID aussi, et pas seulement au retour au premier plan : `scenePhase`
+        // ne transite pas vers `.active` sur un démarrage, donc sans cette ligne la toute
+        // première course de la journée partirait avec la séance de la veille.
+        self.rafraichirLaCourseLibre()
+        // The scenePhase→active hook in HaizoApp only catches a real background/foreground
+        // transition — an app left open and awake (screen never locked, e.g. plugged in
+        // overnight) crosses midnight without ever backgrounding, so the week strip/weekNumber
+        // stayed frozen on the old day indefinitely until the next real relaunch. This fires the
+        // instant the system clock actually rolls over to a new calendar day, foreground or not.
+        // `MainActor.assumeIsolated` plutôt qu'un `Task` : `queue: .main` garantit déjà que ce bloc
+        // s'exécute sur le fil principal, donc on l'affirme au compilateur au lieu de replanifier
+        // le travail un tour de boucle plus tard. Un `Task` ferait basculer le rafraîchissement
+        // après le passage à minuit au tour suivant, ce qui n'apporte rien.
+        NotificationCenter.default.addObserver(forName: .NSCalendarDayChanged, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refreshProgramForCurrentDate() }
+        }
+        // Le genre, miroité comme le thème et pour la même raison : les phrases qui s'accordent
+        // vivent dans des vues, des services et des modèles, et faire descendre le profil
+        // jusqu'à chacune n'aurait servi qu'à ça. Voir `Accord`.
+        AccordStore.shared.appliquer(Genre.depuis(sexe: self.profile.sex))
+        ThemeStore.shared.appliquer(themeID: self.profile.accentThemeID,
+                                    isLightMode: self.profile.isLightMode,
+                                    habillage: Habillage.depuis(self.profile.habillageID))
+        NotificationService.shared.rescheduleDailyReminder(for: self.profile)
+        NotificationService.shared.rescheduleInactivityReminder(for: self.profile)
+        NotificationService.shared.scheduleWeeklyRecapReminder(for: self.profile)
+        // When HealthKit is connected, `syncDailyGoalsFromHealthKit` below publishes once itself
+        // with fresh numbers — publishing here too would just be an immediately-stale extra
+        // reload against WidgetKit's per-day budget for no visible benefit.
+        if !self.profile.connectedSources.contains(.apple) { publishWidgetSnapshot() }
+        // Created last: the service holds `unowned self` and activates WCSession immediately, so
+        // a queued watch run (finished while the phone app was closed) is delivered right away.
+        self.watchSession = WatchSessionService(appState: self)
+        Task { await self.syncDailyGoalsFromHealthKit() }
+        // Cold launch never fires RootView's `onChange(of: scenePhase)` (there's no PRIOR phase to
+        // transition from), so `refreshProgramForCurrentDate()` — the only other call site — never
+        // runs on a fresh launch. Without this, same-day adjustment only ever kicked in once she'd
+        // backgrounded/foregrounded the app at least once, which for a lot of real days never
+        // happens at all.
+        Task { await self.checkSameDayAdjustment() }
+        // Le lancement à froid ne passe pas par `onChange(of: scenePhase)`, pour la même raison
+        // que la ligne au-dessus : il n'y a pas de phase précédente d'où venir.
+        rafraichirLeCompte()
+        // A Live Activity left over from a killed/crashed app is an orphan by definition
+        // (`liveRun` doesn't survive relaunch) — end it instead of leaving a frozen "in-progress"
+        // run on the Lock Screen for hours.
+        Task {
+            for activity in Activity<RunActivityAttributes>.activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+        }
+        // Reflects whatever's still queued from a previous session that got killed before it
+        // could retry — without this, `pendingActivityCount` would silently start at its `= 0`
+        // default and stay there until the next successful post/retry touched it.
+        // Différé d'un tour de boucle plutôt qu'appelé directement : le compte n'est lu que par
+        // une vue, donc arriver au tour suivant est invisible, et cela évite de faire une lecture
+        // SwiftData de plus sur le chemin critique du lancement à froid.
+        Task { self.refreshPendingActivityCount() }
+        // Les sorties encore en file appartiennent au compte qui les a produites. À la
+        // déconnexion elles deviennent impubliables (leur jeton disparaît) et dangereuses (le
+        // compte suivant les publierait sous son nom), donc on les abandonne. Posé ici plutôt
+        // que dans `AuthService`, qui n'a pas à connaître l'état de l'app.
+        auth.onSignOut = { [weak self] in
+            Task { self?.discardPendingClubActivities() }
+        }
+        auth.onAuthenticated = { [weak self] user in
+            self?.reconcileProfileOwner(with: user)
+            self?.reparerLeNomDuCompte(user)
+            self?.pousserLaPhotoSiJamaisMontee(user)
+        }
+        // Avant toute chose dans l'interface : le bouton RUN doit s'afficher d'emblée dans la
+        // discipline choisie la dernière fois, pas basculer sous les yeux après coup.
+        if let brut = UserDefaults.standard.string(forKey: Self.runDisciplineKey),
+           let reprise = Discipline(rawValue: brut) {
+            runDiscipline = reprise
+        }
+        Task { self.recoverInterruptedRunIfNeeded() }
+        Task { ReparationsAuLancement.renommerLesCoursesDuJourDeRepos(self.modelContext) }
+        Task { ReparationsAuLancement.recalculerLeDenivelePositif(self.modelContext) }
+    }
+
+    // MARK: - À qui appartient ce téléphone
+
+    /// Le compte qui vient de se connecter n'est pas celui dont les données sont affichées.
+    ///
+    /// Non nil déclenche une feuille qui bloque tout : il n'y a pas de bonne façon de continuer
+    /// sans avoir demandé. Effacer d'office détruirait le programme de quelqu'un qui s'est
+    /// simplement trompé de compte ; ne rien faire montrerait son nom et sa photo à quelqu'un
+    /// d'autre. Les deux sont pires que la question.
+    var profileOwnerConflict: AuthenticatedUser?
+
+    /// La fonctionnalité Plus qu'on vient de vouloir, et qui fait ouvrir l'écran d'abonnement.
+    ///
+    /// Un seul point de présentation, à la racine, plutôt qu'une feuille par écran verrouillé :
+    /// le paywall peut se demander depuis n'importe où — un verrou dans les statistiques, le
+    /// micro du coach pendant une course, l'onglet Programme — et aucun de ces endroits n'a à
+    /// savoir comment on présente une feuille modale. Retenir LAQUELLE a été demandée permet en
+    /// plus à l'écran de vente de parler de ce qu'elle voulait, et à l'analytique de dire quelle
+    /// porte fait vraiment vendre.
+    var plusPrompt: PlusFeature?
+
+    /// Confronte le propriétaire du profil au compte qui se connecte.
+    ///
+    /// Appelé à chaque authentification, reprise de session au lancement comprise — c'est par là
+    /// que les profils antérieurs à `ownerAccountID` se font adopter, sans rien demander à
+    /// personne : ils appartiennent bien à qui utilise ce téléphone depuis toujours.
+    func reconcileProfileOwner(with user: AuthenticatedUser) {
+        switch ProfileOwnership.decide(currentOwner: profile.ownerAccountID, signingIn: user.id) {
+        case .adopt:
+            profile.ownerAccountID = user.id
+        case .alreadyOwned:
+            break
+        case .conflict:
+            profileOwnerConflict = user
+        }
+    }
+
+    /// SON PROPRE CLUB L'APPELAIT « Coureur ».
+    ///
+    /// # CE QU'ON VOIT
+    ///
+    /// Les trois records du club portent un nom et un visage. Sur un compte créé sans nom, ils
+    /// affichent tous les trois « Coureur » derrière une pastille à la lettre C — y compris
+    /// quand les trois records sont les SIENS. La page du club ressemble alors à une page dont
+    /// les données ne sont pas arrivées.
+    ///
+    /// # POURQUOI CE COMPTE N'A PAS DE NOM
+    ///
+    /// « Se connecter avec Apple » ne transmet le nom qu'à la TOUTE PREMIÈRE autorisation d'un
+    /// identifiant Apple pour cette app. Une réinstallation, un second appareil, un identifiant
+    /// qui avait déjà ouvert Haizo : Apple se tait, et le serveur range le compte sous
+    /// `AuthService.nomParDefaut` (voir `lib/noms.js`).
+    ///
+    /// # POURQUOI ICI, ET PAS À LA CONNEXION
+    ///
+    /// La connexion sait déjà se rattraper : `SignInView` envoie le prénom de l'inscription
+    /// quand Apple ne dit rien, et le serveur répare le compte. Mais ça ne vaut que pour une
+    /// connexion À VENIR — les comptes déjà rangés sous ce nom ne repasseront jamais par là, et
+    /// la seule issue était d'aller trouver le champ « Prénom » dans Plus de réglages.
+    ///
+    /// `onAuthenticated` part à chaque rafraîchissement de `currentUser`, donc à la prochaine
+    /// ouverture du Club : la correction arrive sans qu'on ait rien à chercher.
+    ///
+    /// C'est le jumeau exact de la photo, que `SignInView` pousse déjà au serveur quand elle a
+    /// été choisie avant que le compte n'existe — même situation, même rattrapage.
+    ///
+    /// UNE SEULE FOIS PAR LANCEMENT, et le drapeau n'est pas une précaution de style : le
+    /// `refreshMe()` final rappelle `onAuthenticated`. Si l'envoi a échoué (hors ligne), le nom
+    /// du compte est toujours celui par défaut, et sans ce drapeau on repartirait pour un tour,
+    /// indéfiniment.
+    private var nomDuCompteDejaRepare = false
+
+    private func reparerLeNomDuCompte(_ user: AuthenticatedUser) {
+        guard !nomDuCompteDejaRepare, user.name == AuthService.nomParDefaut else { return }
+        let prenom = profile.name.trimmingCharacters(in: .whitespaces)
+        guard !prenom.isEmpty, prenom != AuthService.nomParDefaut else { return }
+        nomDuCompteDejaRepare = true
+        let nom = profile.lastName.trimmingCharacters(in: .whitespaces)
+        let service = ClubService(auth: auth)
+        Task { [auth] in
+            // `try?` des deux côtés : c'est une réparation de confort, pas une étape dont
+            // dépend quoi que ce soit. Hors ligne, elle retentera au prochain lancement.
+            try? await service.updateProfile(name: prenom, lastName: nom.isEmpty ? nil : nom)
+            // `_ =` : `refreshMe()` rend le compte rafraîchi, dont on n'a rien à faire ici — on
+            // ne voulait que l'effet de bord. Le laisser nu faisait avertir le compilateur à
+            // l'endroit même où `try?` dit déjà « et tant pis si ça échoue ».
+            _ = try? await auth.refreshMe()
+        }
+    }
+
+    /// LE NOM EST MONTÉ AU SERVEUR, LA PHOTO EST RESTÉE SUR LE TÉLÉPHONE.
+    ///
+    /// La réparation ci-dessus a été écrite en disant qu'elle était « le jumeau exact de la
+    /// photo, que `SignInView` pousse déjà quand elle a été choisie avant que le compte
+    /// n'existe ». C'était vrai de la connexion, et faux de tout le reste : ce rattrapage-là
+    /// n'arrive QUE pendant `runAuth`, donc jamais pour un compte déjà connecté depuis
+    /// longtemps. Résultat visible dans le fil et dans les records du club : le prénom s'est
+    /// réparé, et les trois lignes portaient toujours une pastille à la lettre.
+    ///
+    /// # POURQUOI UNE CLÉ DANS `UserDefaults` ET PAS UN CHAMP
+    ///
+    /// Il faut savoir si cette photo est déjà montée, et `AuthenticatedUser` ne porte rien de
+    /// tel — l'ajouter demanderait un champ de plus à `api/me`, à son modèle décodable et à sa
+    /// règle d'optionalité. Pour un envoi qu'on veut faire UNE fois par compte et par appareil,
+    /// une clé locale dit exactement ce qu'on a besoin de savoir : « l'ai-je déjà fait, pour ce
+    /// compte-ci, depuis ce téléphone-ci ».
+    ///
+    /// L'identifiant du compte EST la valeur stockée, et pas un booléen : un téléphone qui
+    /// change de compte doit repousser la photo du nouveau profil.
+    ///
+    /// Ça ne remplace pas `ProfileView.setAvatar`, qui pousse déjà à chaque changement de photo
+    /// quand la session est ouverte. Ça ne couvre que le trou : une photo choisie avant que ce
+    /// chemin-là n'existe, ou avant que le compte n'existe.
+    private static let cleAvatarPousse = "haizo.avatarPousseVers"
+
+    private func pousserLaPhotoSiJamaisMontee(_ user: AuthenticatedUser) {
+        guard let jpeg = profile.avatarImageData, !jpeg.isEmpty else { return }
+        let deja = UserDefaults.standard.string(forKey: Self.cleAvatarPousse)
+        guard deja != user.id else { return }
+        let dataURI = "data:image/jpeg;base64,\(jpeg.base64EncodedString())"
+        Task { [auth] in
+            do {
+                try await auth.updateAvatar(dataURI: dataURI)
+                // La clé n'est posée qu'APRÈS un envoi réussi : la poser avant transformerait
+                // une panne de réseau en photo définitivement absente du serveur.
+                UserDefaults.standard.set(user.id, forKey: Self.cleAvatarPousse)
+            } catch {
+                // Silencieux, et réessayé au prochain rafraîchissement du compte.
+            }
+        }
+    }
+
+    /// Efface les données de la personne précédente et repart d'un profil neuf, rattaché au
+    /// nouveau compte.
+    ///
+    /// Tout part : le profil, l'historique des courses, la conversation avec le coach, les
+    /// notifications, les chaussures. Effacer le seul profil laisserait derrière lui un historique
+    /// et des messages qui n'appartiennent pas au compte qui arrive — c'est-à-dire exactement la
+    /// fuite qu'on répare, déplacée d'un écran.
+    ///
+    /// Le profil neuf a `onboarded == false` : l'app repart sur l'intégration, comme après une
+    /// première installation. C'est bien ce qu'on veut dire par « repartir à neuf ».
+    func startFreshForNewAccount() {
+        guard let user = profileOwnerConflict else { return }
+
+        // LES SUPPRESSIONS SONT VÉRIFIÉES, ET LA FEUILLE NE SE REFERME QUE SI ELLES ONT EU LIEU.
+        //
+        // Elles passaient par `try?`, erreur avalée, et la fonction continuait quoi qu'il
+        // arrive : si l'une des quatre échouait, le nouveau compte arrivait sur un historique
+        // rempli des courses de l'ancien propriétaire et sur une conversation qui n'était pas la
+        // sienne. Sans message, sans trace — et l'analytique affirmait que la remise à zéro avait
+        // eu lieu. C'est précisément la fuite que cette fonction existe pour réparer, déplacée
+        // d'un cran.
+        //
+        // Le `save()` explicite compte autant : sans lui, on refermait l'écran bloquant avant
+        // d'avoir la moindre confirmation que le magasin avait suivi.
+        do {
+            try modelContext.delete(model: RunRecord.self)
+            try modelContext.delete(model: ChatMessage.self)
+            try modelContext.delete(model: AppNotification.self)
+            try modelContext.delete(model: Shoe.self)
+            modelContext.delete(profile)
+            try modelContext.save()
+        } catch {
+            // On ne se déconnecte pas tout seul : la personne a demandé à repartir à neuf, pas à
+            // perdre sa session. On lui dit, et on la laisse décider — `cancelAccountSwitch`
+            // reste à portée sur la même feuille.
+            toast(String(localized: "Les anciennes données n'ont pas pu être effacées. Réessaie, ou redémarre l'app."))
+            return
+        }
+
+        let fresh = UserProfile()
+        fresh.ownerAccountID = user.id
+        modelContext.insert(fresh)
+        profile = fresh
+
+        profileOwnerConflict = nil
+        go(.home)
+        Analytics.shared.track(.accountSwitchedFresh)
+    }
+
+    /// L'autre issue : ce n'était pas le bon compte. On se déconnecte, et rien n'est touché.
+    func cancelAccountSwitch() {
+        profileOwnerConflict = nil
+        auth.signOut()
+    }
+
+    /// Récupère une course que l'app a perdue en étant tuée en plein effort.
+    ///
+    /// `LiveRunViewModel` écrit un instantané toutes les dix secondes ; `stop()` l'efface. Un
+    /// instantané encore présent au lancement signifie donc exactement une chose : une course a
+    /// commencé et ne s'est jamais terminée proprement. Avant, elle disparaissait sans laisser la
+    /// moindre trace — ni entrée d'historique, ni écriture dans Santé, ni message.
+    ///
+    /// On propose de l'ENREGISTRER, pas de la reprendre. Reprendre supposerait de décider ce qui
+    /// s'est passé entre la mort de l'app et sa réouverture — a-t-elle continué à courir, s'est
+    /// elle arrêtée, quand ? — et aucune de ces réponses n'est dans les données. Ce qui a été
+    /// mesuré jusqu'à la coupure, en revanche, est réel : c'est ça qu'on lui rend.
+    ///
+    /// Le chemin est celui, déjà éprouvé, d'une course reçue de la montre : insérer le relevé,
+    /// l'empiler dans `pendingDebriefs`, et laisser la feuille de debrief s'ouvrir depuis la
+    /// racine. Elle valide son ressenti et la course entre dans le programme comme n'importe
+    /// quelle autre.
+
+    private func recoverInterruptedRunIfNeeded() {
+        guard let snapshot = LiveRunSnapshotStore.loadRecoverable() else { return }
+        // Consommé tout de suite : quoi qu'il advienne ensuite, cette course ne doit pas être
+        // reproposée au prochain lancement.
+        LiveRunSnapshotStore.clear()
+
+        // Garde-fou contre un doublon : si un relevé couvre déjà ce départ, l'instantané est un
+        // reliquat (arrêt normal dont l'effacement n'a pas abouti) et non une course perdue.
+        //
+        // IL COMPARAIT UNE FIN À UN DÉPART. `RunRecord.date` portait l'instant du `stop()` pour
+        // une course GPS, `snapshot.startedAt` porte un départ : au-delà de cinq minutes de
+        // course — donc toujours, le plancher de récupération étant de deux minutes — l'écart
+        // dépassait la tolérance et le garde-fou ne pouvait PAS se déclencher. Un instantané
+        // survivant à un arrêt normal réinsérait la course entière au lancement suivant, avec sa
+        // notification et une feuille de ressenti qui recréditait 120 XP et la série. Les deux
+        // grandeurs sont désormais de même nature (voir `LiveRunViewModel.stop()`).
+        //
+        // Et la fenêtre est passée dans la requête. Sans prédicat, SwiftData matérialisait TOUT
+        // l'historique — chaque relevé portant son tracé GPS stocké en ligne, soit des dizaines
+        // de mégaoctets après quelques centaines de courses — pour tester un écart de dix
+        // minutes autour d'une seule date, au lancement à froid.
+        let debut = snapshot.startedAt.addingTimeInterval(-300)
+        let fin = snapshot.startedAt.addingTimeInterval(300)
+        var descriptor = FetchDescriptor<RunRecord>(
+            predicate: #Predicate { $0.date > debut && $0.date < fin })
+        descriptor.fetchLimit = 1
+        if let existing = try? modelContext.fetch(descriptor), !existing.isEmpty {
+            return
+        }
+
+        let record = AdaptivePlanEngine.buildRunRecord(
+            title: snapshot.sessionTitle,
+            elapsedSeconds: snapshot.elapsedSeconds,
+            distanceKm: snapshot.distanceMeters / 1000,
+            kcal: 0,
+            avgHeartRate: 0,
+            elevationGainM: Int(snapshot.elevationGainMeters.rounded()),
+            realSplitSeconds: snapshot.splitSecondsPerKm,
+            route: snapshot.route,
+            sessionKind: snapshot.sessionKind
+        )
+        record.date = snapshot.startedAt
+        modelContext.insert(record)
+        // La course EXISTE : la séance est faite, que le ressenti soit donné ou non. Voir
+        // `AdaptivePlanEngine.markSessionDone`.
+        AdaptivePlanEngine.markSessionDone(for: record, profile: profile)
+        pendingDebriefs.append(record)
+
+        let distance = String(format: "%.1f", locale: Locale.current, record.distanceKm)
+        notify(
+            icon: "lifepreserver.fill",
+            colorHex: 0x38E0D0,
+            title: String(localized: "Course récupérée"),
+            text: String(localized: "L'app s'est fermée pendant ta sortie — \(distance) km avaient été enregistrés. Valide ton ressenti pour les garder.")
+        )
+    }
+
+
+    // MARK: - Les courses faites ailleurs
+
+    /// Récupère dans Apple Santé les courses que Haizo n'a pas enregistrées elle-même.
+    ///
+    /// # Ce que ça répare
+    ///
+    /// L'app savait ÉCRIRE une course dans Santé et n'a jamais su en LIRE une. Pour qui court
+    /// avec une Garmin, une Coros, une Polar, ou avec l'app Exercice d'une Apple Watch, le
+    /// programme n'avançait donc jamais : la sortie avait bien eu lieu, elle était dans Santé, et
+    /// l'app la regardait sans la voir. Une semaine affichait « 1/4 séances » à quelqu'un qui en
+    /// avait couru quatre.
+    ///
+    /// # La course importée passe par le debrief, comme toutes les autres
+    ///
+    /// Elle est empilée dans `pendingDebriefs` plutôt qu'insérée en silence. Le ressenti n'est pas
+    /// une formalité : c'est lui qui nourrit l'accumulateur que le moteur moyenne au changement de
+    /// semaine, et donc l'ajustement de la suivante. Une sortie entrée sans ressenti compterait
+    /// dans l'historique sans peser sur le programme — la moitié du travail.
+    ///
+    /// # Deux garde-fous contre le doublon
+    ///
+    /// L'identifiant Santé d'abord, qui ne change pas. L'horaire ensuite, à cinq minutes près :
+    /// une même sortie peut être écrite dans Santé par deux sources différentes — la montre et
+    /// l'application du fabricant — et aucune des deux n'est Haizo, donc le filtre par source du
+    /// service ne les écarte pas.
+    /// « Il va pleuvoir demain soir, prévois ta séance demain midi. »
+    ///
+    /// Le corps est parti dans `WeatherAdviceService`, et pour une raison précise : il a
+    /// maintenant DEUX appelants, et un seul des deux a un `AppState`. `WeatherBackgroundRefresh`
+    /// est réveillé par iOS sans interface, or `AppState` est construit dans l'`onAppear` de
+    /// `RootView`, qui ne se produit pas dans ce cas-là. Une méthode privée d'ici aurait été
+    /// inatteignable depuis le seul chemin qui fait arriver la notification sans qu'on ouvre
+    /// l'app — c'est-à-dire depuis le chemin qui tient la promesse.
+    private func conseillerUnAutreCreneauSiPluie() async {
+        let service = WeatherAdviceService(modelContext: modelContext, weather: weather)
+        await service.conseiller(profile: profile, source: .app)
+    }
+
+    private func importRunsFromHealth() async {
+        guard profile.connectedSources.contains(.apple) else { return }
+
+        let since = HealthRunImport.window(lastImport: profile.lastHealthRunImport)
+        let found = await healthKit.seancesImportables(since: since)
+        // Écrite même quand rien n'est trouvé : sinon la fenêtre du premier passage recommencerait
+        // à sept jours à chaque ouverture, pour rien.
+        profile.lastHealthRunImport = .now
+        guard !found.isEmpty else { return }
+
+        // Bornée à la fenêtre d'import. Sans prédicat, c'était TOUT l'historique — tracés GPS
+        // compris, stockés en ligne — chargé pour comparer des dates à sept jours au plus. Une
+        // marge d'un jour de chaque côté couvre la proximité de cinq minutes que teste
+        // `HealthRunImport.selecting`, qui ne regarde jamais plus loin.
+        let borne = since.addingTimeInterval(-86_400)
+        let existing = (try? modelContext.fetch(
+            FetchDescriptor<RunRecord>(predicate: #Predicate { $0.date > borne }))) ?? []
+        let selected = HealthRunImport.selecting(
+            found,
+            knownIDs: Set(existing.compactMap(\.healthWorkoutID)),
+            // La discipline voyage avec la date : le dédoublonnage est par discipline depuis
+            // qu'un enchaînement peut poser deux séances à cinq minutes d'intervalle.
+            deja: existing.map { HealthRunImport.Deja(date: $0.date, discipline: $0.discipline) }
+        )
+
+        var imported: [RunRecord] = []
+        for run in selected {
+            let record = AdaptivePlanEngine.buildRunRecord(
+                title: run.discipline == .swim
+                    ? String(localized: "Nage importée")
+                    : String(localized: "Course importée"),
+                elapsedSeconds: run.durationSeconds,
+                distanceKm: run.distanceKm,
+                kcal: run.kcal,
+                avgHeartRate: run.avgHeartRate,
+                elevationGainM: run.elevationGainM ?? 0,
+                // Le tracé de la sortie, lu dans Santé. C'est lui qui fait la différence entre une
+                // carte de fil avec une image et une carte sans : une course venue d'une Garmin
+                // arrivait jusqu'ici sans dessin, alors que le parcours était bien là, rangé à
+                // côté de la séance.
+                route: run.route,
+                discipline: run.discipline
+            )
+            record.date = run.start
+            record.healthWorkoutID = run.id
+            modelContext.insert(record)
+            AdaptivePlanEngine.markSessionDone(for: record, profile: profile)
+            imported.append(record)
+        }
+
+        guard !imported.isEmpty else { return }
+        pendingDebriefs.append(contentsOf: imported)
+
+        // LES KILOMÈTRES COURUS, ET SEULEMENT S'IL Y EN A. Le texte annonçait un kilométrage
+        // tiré de `onFoot`, qui exclut la natation à juste titre — mais un import ne ramenant que
+        // des nages aurait donc annoncé « 0,0 km qui ne comptaient pas encore », sur une
+        // notification déclenchée par des séances bien réelles.
+        let courus = imported.onFoot.reduce(0) { $0 + $1.distanceKm }
+        let distance = String(format: "%.1f", locale: Locale.current, courus)
+        notify(
+            icon: "heart.fill",
+            colorHex: 0xFF3B6B,
+            title: Pluriel.choisir(imported.count,
+                String(localized: "Sortie récupérée dans Santé"),
+                String(localized: "\(imported.count) sorties récupérées dans Santé")),
+            text: courus > 0
+                ? String(localized: "\(distance) km qui ne comptaient pas encore dans ton programme. Valide ton ressenti pour les y faire entrer.")
+                : String(localized: "Elles ne comptaient pas encore dans ton programme. Valide ton ressenti pour les y faire entrer.")
+        )
+    }
+
+    // MARK: - Sauvegarder, restaurer
+
+    /// La photographie complète de ce que l'app détient. Voir `Sauvegarde.swift` pour ce qui y
+    /// entre, ce qui n'y entre pas, et pourquoi.
+    ///
+    /// Construite ici et pas dans la vue : c'est `AppState` qui tient le contexte, et une vue qui
+    /// irait chercher trois collections elle-même le ferait à chaque recomposition.
+    func construireLaSauvegarde() -> Sauvegarde {
+        let courses = (try? modelContext.fetch(FetchDescriptor<RunRecord>())) ?? []
+        let messages = (try? modelContext.fetch(
+            FetchDescriptor<ChatMessage>(sortBy: [SortDescriptor(\.timestamp)]))) ?? []
+        let chaussures = (try? modelContext.fetch(FetchDescriptor<Shoe>())) ?? []
+        return SauvegardeService.construire(profil: profile, courses: courses,
+                                            messages: messages, chaussures: chaussures)
+    }
+
+    /// Ce qu'une tentative de restauration a donné. Trois issues, trois phrases différentes :
+    /// « le fichier ne se lit pas » et « tes données sont déjà là » demandent deux gestes
+    /// opposés, et les confondre en un « ça n'a pas marché » laisse sans issue.
+    enum IssueDeRestauration: Equatable {
+        case faite(courses: Int, messages: Int, chaussures: Int)
+        case fichierIllisible
+        case baseNonVide
+        /// Tout a été relu, rien n'a pu être écrit — disque plein. Le fichier est intact.
+        case enregistrementImpossible
+    }
+
+    func restaurer(depuis url: URL) -> IssueDeRestauration {
+        // Un fichier choisi dans l'app Fichiers arrive hors du bac à sable : sans ces deux
+        // appels, la lecture échoue et la sauvegarde se présenterait comme illisible alors
+        // qu'elle est intacte.
+        let ouvert = url.startAccessingSecurityScopedResource()
+        defer { if ouvert { url.stopAccessingSecurityScopedResource() } }
+
+        guard let sauvegarde = SauvegardeService.lire(url) else { return .fichierIllisible }
+        let dejaLa = (try? modelContext.fetchCount(FetchDescriptor<RunRecord>())) ?? 0
+        do {
+            let compte = try SauvegardeService.restaurer(
+                sauvegarde, dans: modelContext, profil: profile, nombreDeCourses: dejaLa)
+            // Les mêmes suites qu'au lancement, et pour la même raison : le profil restauré
+            // porte un programme, un thème, un genre et des rappels qui ne sont pas ceux que
+            // ces trois services ont en mémoire depuis l'ouverture de l'app.
+            AdaptivePlanEngine.refreshProgramForCurrentDate(profile)
+            rafraichirLaCourseLibre()
+            AccordStore.shared.appliquer(Genre.depuis(sexe: profile.sex))
+            ThemeStore.shared.appliquer(themeID: profile.accentThemeID,
+                                        isLightMode: profile.isLightMode,
+                                        habillage: Habillage.depuis(profile.habillageID))
+            NotificationService.shared.rescheduleDailyReminder(for: profile)
+            go(.home)
+            return .faite(courses: compte.courses, messages: compte.messages,
+                          chaussures: compte.chaussures)
+        } catch SauvegardeService.Echec.baseNonVide {
+            return .baseNonVide
+        } catch SauvegardeService.Echec.enregistrementImpossible {
+            return .enregistrementImpossible
+        } catch {
+            return .fichierIllisible
+        }
+    }
+
+    /// Re-checks the program week/phase against the real calendar date — call whenever the app
+    /// returns to the foreground so a skipped week or program completion is picked up even if the
+    /// user didn't open the app on the exact day it happened.
+    func refreshProgramForCurrentDate() {
+        // Les courses faites ailleurs d'abord, le programme ensuite : une sortie importée doit
+        // pouvoir compter dans la semaine que ce même appel s'apprête à évaluer.
+        Task { await importRunsFromHealth() }
+        Task { await conseillerUnAutreCreneauSiPluie() }
+        let previousWeek = profile.weekNumber
+        AdaptivePlanEngine.refreshProgramForCurrentDate(profile)
+        AdaptivePlanEngine.resetDailyGoalsIfNewDay(profile)
+        rafraichirLaCourseLibre()
+        if profile.weekNumber != previousWeek {
+            let title = String(localized: "Nouvelle semaine")
+            let text = String(localized: "Semaine \(profile.weekNumber) prête, ajustée d'après ta forme de la semaine passée.")
+            notify(icon: "mark", colorHex: 0xFF3B6B, title: title, text: text, coachOnly: true)
+            // `notify` above already no-ops the bell entry when this toggle is off (`coachOnly:
+            // true`) — mirror that here so the real notification doesn't fire when the in-app one
+            // didn't either.
+            if profile.coachNotificationsEnabled {
+                NotificationService.shared.postImmediateNotification(title: title, body: text)
+            }
+        }
+        NotificationService.shared.rescheduleDailyReminder(for: profile)
+        NotificationService.shared.rescheduleInactivityReminder(for: profile)
+        NotificationService.shared.scheduleWeeklyRecapReminder(for: profile)
+        if !profile.connectedSources.contains(.apple) { publishWidgetSnapshot() }
+        Task { await syncDailyGoalsFromHealthKit() }
+        Task { await checkSameDayAdjustment() }
+    }
+
+    /// LA SÉANCE DU JOUR EN COURSE LIBRE, POSÉE SUR LE PROFIL.
+    ///
+    /// L'accueil calcule sa suggestion lui-même (voir `CourseLibre`), mais il n'est pas le seul
+    /// à la lire : `LiveRunViewModel.start()` prend `profile.todaySession`, et c'est de LÀ que
+    /// sort le type de séance écrit dans le relevé de la course.
+    ///
+    /// Sans cette ligne, la boucle ne se refermait pas. Course libre posait une séance une fois
+    /// pour toutes en entrant dans le mode, donc chaque sortie enregistrée portait le même type,
+    /// pour toujours — et le lendemain, le moteur relisant cet historique n'aurait jamais vu
+    /// passer une seule séance dure. La règle « hier c'était dur, aujourd'hui on récupère » ne
+    /// se serait donc jamais déclenchée, en silence : la suggestion aurait tourné sur ses
+    /// variantes sans jamais répondre à ce qui avait été fait.
+    ///
+    /// Appelée au lancement et à chaque retour au premier plan, c'est-à-dire exactement quand la
+    /// date peut avoir changé — la suggestion, elle, ne bouge pas dans la journée.
+    ///
+    /// La MÊME fonction pure que l'accueil, avec les mêmes entrées : les deux rendent donc la
+    /// même séance, sans qu'aucune des deux n'ait à lire l'autre.
+    private func rafraichirLaCourseLibre() {
+        guard profile.programPhase == .freerun else { return }
+        let borne = Calendar.current.date(byAdding: .day, value: -CourseLibre.fenetreJours, to: .now)
+            ?? .distantPast
+        var descripteur = FetchDescriptor<RunRecord>(
+            predicate: #Predicate { $0.date >= borne },
+            sortBy: [SortDescriptor(\RunRecord.date, order: .reverse)]
+        )
+        descripteur.fetchLimit = 60
+        let courses = (try? modelContext.fetch(descripteur)) ?? []
+        profile.todaySession = CourseLibre.duJour(profil: profile, courses: courses).seance
+    }
+
+    /// Same-day reactive lightening — a short night or yesterday's brutal RPE eases TODAY's
+    /// session instead of only ever showing up in next week's plan (see
+    /// `AdaptivePlanEngine.applySameDayAdjustmentIfNeeded`). Deliberately its own call, not folded
+    /// into `syncDailyGoalsFromHealthKit` below: the RPE half of the check needs no HealthKit
+    /// connection at all, and nesting it inside that HealthKit-gated function would have silently
+    /// denied it to anyone who's never connected Apple Santé.
+    ///
+    /// Le sommeil est lu ici, et son absence est QUALIFIÉE : pas de source connectée, ou une
+    /// source qui n'a pas encore versé la nuit. Les deux arrivaient confondues sous un `nil`, et
+    /// le contrôle du jour se consommait dans les deux cas — une ouverture à 6 h 30, avant que la
+    /// montre ait écrit, brûlait la journée. Voir `AdaptivePlanEngine.SommeilDeLaNuit`.
+    private func checkSameDayAdjustment() async {
+        let today = Calendar.current.startOfDay(for: .now)
+        guard profile.lastSameDayAdjustmentCheckDay != today else { return }
+        // Les trois cas sont distingués ICI, parce que c'est ici qu'on sait lequel : une absence
+        // de source n'est pas une nuit qui n'est pas encore écrite. Voir
+        // `AdaptivePlanEngine.SommeilDeLaNuit` pour ce que leur confusion coûtait.
+        let sommeil: AdaptivePlanEngine.SommeilDeLaNuit
+        if !profile.connectedSources.contains(.apple) {
+            sommeil = .aucuneSource
+        } else if let heures = await healthKit.lastNightSleepHours() {
+            sommeil = .lu(heures)
+        } else {
+            sommeil = .pasEncoreEcrit
+        }
+        guard AdaptivePlanEngine.applySameDayAdjustmentIfNeeded(profile, sommeil: sommeil) else { return }
+        // La mention est lue sur l'allègement lui-même, et non sur `todaySession.adjustment` :
+        // c'est la source, le champ de la séance n'en est qu'une copie posée par le générateur.
+        // En course libre il n'y a pas de semaine régénérée, donc pas de copie — la notification
+        // retombait sur « récupération » alors que la raison était connue.
+        let reason = profile.allegementDuJour?.raison ?? String(localized: "récupération")
+        // `displayTitle`, pas `title` : `title` reste le libellé français interne (voir
+        // `WorkoutSession`) — l'afficher tel quel remettait du français dans une notification
+        // par ailleurs traduite.
+        let sessionName = profile.todaySession.displayTitle
+        notify(icon: "moon.zzz.fill", colorHex: 0x8A6CFF, title: String(localized: "Séance allégée aujourd'hui"), text: "\(sessionName) · \(reason).")
+        if profile.coachNotificationsEnabled {
+            NotificationService.shared.postImmediateNotification(
+                title: String(localized: "Séance allégée aujourd'hui"),
+                body: String(localized: "On lève un peu le pied sur « \(sessionName) » — le programme s'ajuste à ta forme du jour.")
+            )
+        }
+        publishWidgetSnapshot()
+    }
+
+    /// Mirrors today's goals/streak/theme into the shared App Group container and asks WidgetKit
+    /// to redraw the Home Screen widget — call anywhere `dailyGoalsProgress`, `streak`, or the
+    /// accent/light-mode theme could have just changed, since the widget's own process has no way
+    /// to observe `profile` directly (see `DailyGoalsSnapshot`).
+    func publishWidgetSnapshot() {
+        // Le `let today` qui vivait ici ne servait plus à rien : la pastille du jour du widget se
+        // calcule maintenant chez le widget, depuis la date de son entrée de chronologie (voir
+        // `WidgetWeekDay.rangDuJour`), parce qu'un rang publié vieillit à minuit alors que le
+        // widget, lui, continue de se redessiner.
+        let snapshot = DailyGoalsSnapshot(
+            progress: profile.dailyGoalsProgress,
+            streak: profile.streak,
+            accentThemeID: profile.accentThemeID,
+            isLightMode: profile.isLightMode,
+            dailyGoalsDone: profile.dailyGoalsDone,
+            dailyGoalsTotal: profile.dailyGoalsTotal,
+            activeCaloriesRemaining: max(0, Int((profile.activeCaloriesGoal - profile.activeCaloriesToday).rounded())),
+            stepsRemaining: max(0, Int((profile.stepsGoal - profile.stepsToday).rounded())),
+            weekStrip: profile.weekStrip.map { WidgetWeekDay(letter: $0.letter, isDone: $0.state == .done, isToday: $0.state == .today) },
+            // `isRestDayToday`, et non une troisième définition du repos. Celle d'ici regardait
+            // `session == nil` : elle ratait les repos exprimés par une séance de zéro minute,
+            // et surtout elle ignorait qu'une course efface le repos. Le widget affichait donc
+            // deux objectifs quand l'app en comptait trois, sur le même écran d'accueil.
+            isRestDay: profile.isRestDayToday,
+            // Les objectifs, pour que le widget écrive « 240/600 » comme l'app et non « -360 ».
+            activeCaloriesGoal: max(0, Int(profile.activeCaloriesGoal.rounded())),
+            stepsGoal: max(0, Int(profile.stepsGoal.rounded()))
+        )
+        // Only burn a WidgetKit reload (daily budget ~40-70) when something the widget shows
+        // actually changed — browsing the color nuancier used to exhaust it and silently freeze
+        // the widget for the rest of the day.
+        if snapshot != lastPublishedSnapshot {
+            lastPublishedSnapshot = snapshot
+            DailyGoalsSnapshot.save(snapshot)
+            WidgetCenter.shared.reloadAllTimelines()
+        }
+        // Same trigger points work for the watch: anywhere the plan/session could have changed,
+        // this already fires — the service itself skips the send when nothing session-related moved.
+        watchSession?.pushTodaySession()
+    }
+
+    /// Pulls today's step count and active calories from Apple Santé, if connected — the
+    /// "Calories actives" and "Pas" daily goals are HealthKit-sourced, not something logged inside
+    /// the app.
+    // Isolé sur l'acteur principal (via la classe) : ceci tournait autrefois sur l'exécuteur où
+    // la `Task` atterrissait, puis mutait le profil SwiftData et insérait des notifications depuis
+    // un fil de fond — plantages intermittents et écritures perdues à chaque synchro. Les `await`
+    // HealthKit, eux, continuent de s'exécuter hors du fil principal.
+    /// Redemande au serveur QUI est connectée.
+    ///
+    /// # LE TROU QU'ELLE BOUCHE
+    ///
+    /// `AuthService.init` ne lit que le JETON, dans le trousseau. `currentUser` — le nom,
+    /// l'adresse, le pseudo, les droits de la maison — n'est jamais persisté : il
+    /// vaut `nil` à chaque lancement, et seules trois choses le remplissaient, toutes
+    /// déclenchées par un geste précis. Ouvrir l'onglet Club. Se connecter. Enregistrer son
+    /// pseudo.
+    ///
+    /// Autrement dit : qui lançait l'app et allait droit dans Profil → Plus de réglages lisait
+    /// une carte « Compte » sans nom ni adresse, et ne voyait NI la section « Inviter un ami »
+    /// — qui a besoin du compte — NI celle de la maison. Pas une panne, pas un message : deux
+    /// sections simplement absentes, qui réapparaissaient si on était passé par le Club d'abord.
+    ///
+    /// # POURQUOI À CHAQUE RETOUR AU PREMIER PLAN, ET PAS SEULEMENT AU LANCEMENT
+    ///
+    /// Parce que la réponse change sans que l'app y soit pour quelque chose : le XP bouge quand
+    /// le club bouge, et `isAdmin` bascule le jour où une variable est posée côté serveur. Une
+    /// requête GET de quelques centaines d'octets, au même moment que les trois autres choses
+    /// que cette transition déclenche déjà.
+    ///
+    /// Silencieuse en cas d'échec, et c'est délibéré : hors ligne, l'app garde ce qu'elle avait
+    /// et n'a rien à dire. Un 401, lui, est déjà traité par `AuthService` — voir
+    /// `sessionRejected`, qui n'efface rien et se contente d'observer.
+    func rafraichirLeCompte() {
+        // Le harnais des captures pose une session factice, qu'aucun serveur ne reconnaît :
+        // cette requête rendrait 401 et ferait lever le drapeau « reconnecte-toi » au milieu
+        // d'une capture d'écran. Voir `Demonstration`.
+        guard !Demonstration.enCours, auth.isSignedIn else { return }
+        Task { _ = try? await auth.refreshMe() }
+    }
+
+    private func syncDailyGoalsFromHealthKit() async {
+        guard profile.connectedSources.contains(.apple) else { return }
+        // Santé connectée mais injoignable : on ne touche à RIEN. Les deux lignes plus bas
+        // ÉCRIVENT dans le profil ce que HealthKit répond, et un service inerte répond zéro —
+        // les deux anneaux du jour seraient remis à plat par une synchro qui n'a rien lu. Lire
+        // zéro et « ne pas pouvoir lire » ne sont pas la même chose, et seule la première mérite
+        // d'être enregistrée.
+        guard HealthKitService.isHealthDataAvailable else { return }
+        // Idempotent (only the first call registers) — placed here, on the sync path itself, so
+        // observation starts whenever Santé is connected: at launch, and right after she connects
+        // it in onboarding/Profil. The observer fires on new steps/calories samples — including
+        // hourly background deliveries — and re-runs this same sync, which republishes the
+        // widget. `[weak self]` because the closure outlives any single call.
+        healthKit.startObservingDailyGoals { @Sendable [weak self] in
+            guard let self else { return }
+            // `Task` créée depuis un contexte NON isolé (HealthKit appelle depuis sa file) : elle
+            // n'hérite donc d'aucun acteur, et c'est l'`await` ci-dessous qui saute sur le
+            // principal — ce qui est précisément ce qu'on veut ici.
+            Task { await self.syncDailyGoalsFromHealthKit() }
+        }
+        async let steps = healthKit.stepsToday()
+        async let calories = healthKit.activeCaloriesToday()
+        profile.stepsToday = await steps
+        profile.activeCaloriesToday = await calories
+        if AdaptivePlanEngine.checkDailyGoalsBonus(profile) {
+            postClubActivity(type: "badge", text: String(localized: "a bouclé ses 3 objectifs du jour"), xpEarned: 120, contentKey: "daily_goals")
+            notify(icon: "sparkles", colorHex: 0xC9FF3B, title: String(localized: "Journée bouclée"), text: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
+            NotificationService.shared.postImmediateNotification(title: String(localized: "Journée bouclée"), body: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
+            toast(String(localized: "Journée bouclée · +120 XP"))
+        }
+        // The sole publish for this event when HealthKit is connected — `init`/
+        // `refreshProgramForCurrentDate` skip their own synchronous publish in that case so this
+        // one (with fresh step/calorie numbers) is the only one that fires.
+        publishWidgetSnapshot()
+    }
+
+    /// Inserts a real bell-icon notification — replaces what used to be a purely decorative UI
+    /// (the bell/badge/sheet existed and read from `AppNotification`, but nothing ever created
+    /// one). `coachOnly` gates it on the "Notifications du coach" toggle in Profil, for
+    /// program-related updates specifically; social/gamification ones (kudos, daily goals) always
+    /// post regardless of that toggle.
+    func notify(icon: String, colorHex: Int, title: String, text: String, coachOnly: Bool = false) {
+        if coachOnly && !profile.coachNotificationsEnabled { return }
+        modelContext.insert(AppNotification(icon: icon, colorHex: colorHex, title: title, text: text))
+    }
+
+    // `postClubActivity`/`retryPendingClubActivities` live in ClubActivityOutbox.swift — a local
+    // outbox now backs the post so a failed network call doesn't silently drop it forever.
+
+    /// Le SEUL chemin pour changer d'écran, et c'est ce qui le rend animable une fois pour
+    /// toutes. Les six autres affectations de `screen` passent par ici ; `private(set)` interdit
+    /// qu'une septième se glisse ailleurs et reparte sans animation, ce qui ramènerait le trou
+    /// de trois images décrit dans `RUMotion.ecran`.
+    func go(_ screen: AppScreen) {
+        withAnimation(RUMotion.ecran) { self.screen = screen }
+    }
+
+    /// `discipline` par défaut `.run` : les deux autres entrées — la carte de séance de
+    /// l'accueil et la feuille de détail — lancent la séance PRÉVUE, qui est toujours une course.
+    /// Seul le bouton RUN de la barre d'onglets est une entrée libre, et c'est lui qui passe
+    /// autre chose.
+    func startRun(_ discipline: Discipline = .run) {
+        // Guard here (not per call site) so every entry point — Home's session card, the session
+        // detail sheet, the tab bar's resume pill — is protected from silently overwriting an
+        // in-progress run's LiveRunViewModel (which would orphan its timer/location task with no
+        // RunRecord ever produced for it).
+        guard !isRunActive else {
+            go(.live)
+            return
+        }
+        let vm = LiveRunViewModel(profile: profile, healthKit: healthKit, discipline: discipline)
+        liveRun = vm
+        // `demarrer()` et non `start()` : trois secondes de décompte, pendant lesquelles le GPS
+        // cherche déjà sa position. Voir `LiveRunViewModel.demarrer`.
+        vm.demarrer()
+        // Placed after the guard above, so a tap on an already-running session (the tab bar's
+        // resume pill) doesn't count as a second run started. `trackOnce` is what makes the first
+        // one the activation metric — an install that never reaches this line is an install that
+        // never became a runner, and nothing else in the app could tell us that.
+        Analytics.shared.trackOnce(.firstRunStarted)
+        // La discipline part avec l'événement : sans elle, le jour où des gens roulent, « combien
+        // de sorties démarrées » cesse de vouloir dire quelque chose — c'est la même panne
+        // silencieuse que les agrégations, un étage plus loin.
+        Analytics.shared.track(.runStarted, ["session": .string(profile.todaySession.title),
+                                             "discipline": .string(discipline.rawValue)])
+        go(.live)
+    }
+
+    func endLiveRun() -> RunRecord? {
+        guard let vm = liveRun else { return nil }
+        let record = vm.stop()
+        liveRun = nil
+        // An accidental start (a pocket tap killed 40 s later, under 100 m moved) is not a run —
+        // recording it would put a fabricated-looking "0,05 km" entry in History/Stats forever,
+        // and (since the HealthKit write only fires below, after this guard) it won't create a
+        // phantom workout in Apple Health either.
+        guard record.distanceKm >= 0.1 || record.durationSeconds >= 120 else {
+            toast(String(localized: "Course trop courte — rien n'a été enregistré."))
+            go(.home)
+            return nil
+        }
+        vm.saveToHealthKit(record)
+        modelContext.insert(record)
+        AdaptivePlanEngine.markSessionDone(for: record, profile: profile)
+        lastRun = record
+        go(.recap)
+        return record
+    }
+
+    /// Déplace une séance d'un jour à l'autre de la semaine en cours.
+    ///
+    /// Le déplacement est ENREGISTRÉ comme entrée du générateur, puis la semaine est régénérée
+    /// autour de lui — il n'est plus écrit à la main dans `weekSessions`. Deux choses en
+    /// dépendent, et aucune des deux ne marchait avant :
+    ///
+    /// - il SURVIT. `applyProgramSettingsChange` reconstruit la semaine de zéro à chaque
+    ///   changement de réglage, et même sans qu'elle demande rien : l'allègement du coach expire
+    ///   tout seul au lancement et déclenche la régénération. Un déplacement posé mardi
+    ///   n'existait plus jeudi matin, sans un mot ;
+    /// - les règles du jour se calculent sur le jour d'ARRIVÉE. Sa sortie longue du dimanche
+    ///   déplacée au mardi gardait ses 95 minutes alors qu'elle avait répondu « 45 minutes en
+    ///   semaine », et une séance de qualité déplacée de quatre jours annonçait « phase lutéale
+    ///   estimée » un jour en phase menstruelle.
+    ///
+    /// Les semaines suivantes ne sont pas concernées : elles sont régénérées à chaque affichage,
+    /// et le déplacement porte son numéro de semaine pour ne pas s'y rejouer (voir
+    /// `DeplacementDeSeance`). Une semaine qui n'est pas encore arrivée se change par ses jours
+    /// de course, pas séance par séance.
+    ///
+    /// Rend `false` quand le déplacement est refusé, pour que l'appelant n'affiche pas une
+    /// confirmation d'une chose qui n'a pas eu lieu.
+    @discardableResult
+    func moveSession(from: Int, to: Int) -> Bool {
+        guard AdaptivePlanEngine.enregistrerDeplacement(de: from, vers: to, profile: profile) else { return false }
+        Haptics.success()
+        toast(String(localized: "Séance déplacée"))
+        Analytics.shared.track(.sessionMoved, ["from": .int(from), "to": .int(to)])
+        return true
+    }
+
+    /// Logs today's planned session as done without going through the GPS Live Run flow — for a
+    /// strength day, a treadmill session, or simply forgetting to hit record. Builds a synthetic
+    /// `RunRecord` from the session's own planned duration/pace (no real heart-rate reading, so
+    /// `avgHeartRate` is 0 — `HistoryView` already knows to hide that line rather than show a
+    /// fake number) and opens the same RPE debrief every other run goes through, so streak/XP/
+    /// plan-adaptation all work identically either way.
+    /// - Parameters:
+    ///   - distanceKm: la distance réellement parcourue, 0 si elle n'a pas de sens (renfo, tapis
+    ///     sans compteur). Elle est SAISIE, jamais déduite : l'ancienne version calculait une
+    ///     distance depuis la durée prévue et l'allure cible, ce qui fabriquait un « 5,2 km à
+    ///     5:30/km » d'apparence précise pour une sortie qui avait pu se courir à n'importe quelle
+    ///     allure. Zéro était honnête ; un chiffre saisi l'est tout autant et vaut bien mieux.
+    ///   - durationMinutes: la durée réelle, pré-remplie avec celle du plan mais modifiable.
+    func markTodaySessionDone(distanceKm: Double, durationMinutes: Int) {
+        let session = profile.todaySession
+        // LA SÉANCE DU JOUR N'EST PLUS UNE CONDITION. Le garde-fou exigeait
+        // `session.durationMinutes > 0`, c'est-à-dire qu'une séance soit prévue au plan
+        // aujourd'hui. Un jour de repos, `todaySession` vaut `restSession`, sa durée vaut zéro —
+        // et la fonction sortait EN SILENCE. Concrètement : sans abonnement, la carte pose le
+        // « + » tous les jours ; elle court 6 km sur un tapis un mardi de repos, saisit sa durée
+        // et sa distance, tape « Enregistrer », la feuille se ferme, et rien n'est écrit nulle
+        // part. Aucun message, aucune course dans l'historique — découvert le dimanche devant un
+        // bilan faux.
+        //
+        // Une course faite existe, qu'il y ait eu ou non une séance au plan ce jour-là. Seule la
+        // durée SAISIE reste obligatoire : c'est elle qui fait l'enregistrement.
+        guard durationMinutes > 0 else { return }
+        // `displayTitle` et non `title` : `title` est le libellé français interne. Et le repli
+        // « Séance libre » n'est plus écrit ici — `buildRunRecord` le pose pour les quatre
+        // chemins, à partir du `kind`. Celui-ci reste parce qu'une séance sans durée n'a pas non
+        // plus de titre à donner, même quand son `kind` n'est pas `.rest` (HYROX, renfo).
+        let titre = session.durationMinutes > 0 ? session.displayTitle : String(localized: "Séance libre")
+        let elapsedSeconds = Double(durationMinutes * 60)
+        // Voir `Calories`, où la règle vit seule : la distance quand elle est connue, la durée
+        // en dernier recours.
+        let kcal = Calories.estimate(distanceKm: distanceKm, durationMinutes: durationMinutes)
+        let record = AdaptivePlanEngine.buildRunRecord(
+            title: titre,
+            elapsedSeconds: elapsedSeconds,
+            distanceKm: distanceKm,
+            kcal: kcal,
+            avgHeartRate: 0,
+            // Le type de la séance suit la course : c'est ce qui permet au fil du club de
+            // refabriquer sa phrase dans la langue de qui la lit (voir `FeedItem.localizedText`).
+            // Nil pour un plan enregistré avant `SessionKind`.
+            sessionKind: session.kind
+        )
+        // Deliberately NOT inserted into SwiftData here — `DebriefSheet` inserts it on VALIDER.
+        // Inserting up front meant dismissing the debrief sheet without validating left a phantom
+        // synthetic run in History/Stats for a session that was never actually confirmed done.
+        pendingDebriefs.append(record)
+    }
+
+    var logSessionPresented = false
+
+    func openSessionDetail() { sessionDetailPresented = true }
+    func openLogSession() { logSessionPresented = true }
+    func openMoveSession() { moveSessionPresented = true }
+    func openProgramSettings() { programSettingsPresented = true }
+    func openNotifications() { notificationsPresented = true }
+
+    func toast(_ message: String) {
+        toastCenter.show(message)
+    }
+
+    /// Real, deliberate gating for Apple's review prompt — never a fixed schedule or every
+    /// launch, only right after a genuinely positive moment (a run that felt easy/good) at a
+    /// meaningful progress milestone, and never more than once every 90 days from this app's own
+    /// side (on top of whatever StoreKit itself already throttles system-wide).
+    func shouldRequestReview(rpe: RPE) -> Bool {
+        guard rpe == .facile || rpe == .justeBien else { return false }
+        let milestones: Set<Int> = [3, 10, 25, 50, 100]
+        guard milestones.contains(profile.completedDebriefsCount) else { return false }
+        if let last = profile.lastReviewPromptDate,
+           (Calendar.current.dateComponents([.day], from: last, to: .now).day ?? 999) < 90 {
+            return false
+        }
+        return true
+    }
+
+    func recordReviewPromptShown() {
+        profile.lastReviewPromptDate = .now
+    }
+}

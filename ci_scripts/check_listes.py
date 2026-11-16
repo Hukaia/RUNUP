@@ -43,7 +43,7 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from swift import sans_commentaires
 
-DOSSIERS = ["RunUp", "RunUpWidgets", "RunUpWatch"]
+DOSSIERS = ["Haizo", "HaizoWidgets", "HaizoWatch"]
 
 OUVRE_DEFILEMENT = re.compile(r"\bScrollView\s*[({]")
 OUVRE_PARESSEUX = re.compile(r"\bLazy[HV](Stack|Grid)\b")

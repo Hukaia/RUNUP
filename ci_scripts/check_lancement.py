@@ -31,8 +31,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from swift import sans_commentaires  # noqa: E402
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-SPLASH = RACINE / "RunUp/Views/Components/SplashView.swift"
-MOTION = RACINE / "RunUp/DesignSystem/Motion.swift"
+SPLASH = RACINE / "Haizo/Views/Components/SplashView.swift"
+MOTION = RACINE / "Haizo/DesignSystem/Motion.swift"
 
 # La marge qu'on exige entre la fin du dernier mouvement et le début du fondu. Zéro suffirait en
 # arithmétique ; 50 ms laisse de quoi ne pas dépendre de l'image près.
@@ -91,7 +91,7 @@ def ecarts() -> list:
         fin = delai + duree
         if fin > fondu - MARGE:
             problemes.append((
-                "RunUp/Views/Components/SplashView.swift", nom,
+                "Haizo/Views/Components/SplashView.swift", nom,
                 f"Démarre à {delai:.2f} s, dure {duree:.2f} s, donc finit à {fin:.2f} s — alors "
                 f"que le fondu commence à {fondu:.2f} s. "
                 f"{100 * (fin - fondu) / duree:.0f} % du mouvement se joue pendant que l'écran "

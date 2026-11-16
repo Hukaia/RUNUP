@@ -23,7 +23,7 @@ def cas_de(nom):
     return decorateur
 
 
-def depot(contenu, nom="RunUp/Services/X.swift"):
+def depot(contenu, nom="Haizo/Services/X.swift"):
     racine = pathlib.Path(tempfile.mkdtemp())
     f = racine / nom
     f.parent.mkdir(parents=True, exist_ok=True)
@@ -61,7 +61,7 @@ def _():
 
 @cas_de("`Delais.swift` lui-même n'est pas regardé")
 def _():
-    g = ck.problemes(depot("let x = URLRequest(url: u)\n", nom="RunUp/Services/Delais.swift"))
+    g = ck.problemes(depot("let x = URLRequest(url: u)\n", nom="Haizo/Services/Delais.swift"))
     assert g == [], g
 
 

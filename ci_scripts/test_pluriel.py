@@ -80,7 +80,7 @@ def _():
     # `>= 1` sur une progression de 0 à 1 : c'est l'objectif atteint, pas « un objectif ».
     extrait = '(snapshot.progress[safe: 0] ?? 0) >= 1 ? "✓" : String(localized: "À faire")'
     assert signale(extrait), "la règle brute le voit…"
-    assert ck.est_toleree("RunUpWidgets/DailyGoalsWidget.swift", extrait, extrait.index(">= 1")), \
+    assert ck.est_toleree("HaizoWidgets/DailyGoalsWidget.swift", extrait, extrait.index(">= 1")), \
         "…et la tolérance doit le reconnaître"
 
 
@@ -90,13 +90,13 @@ def _():
     # affichée ET dite à voix haute — et la tolérance avec, puisqu'elle s'accroche au texte.
     extrait = '            consigne = n == 1\n                ? String(localized: "Échauffement terminé.")\n                : String(localized: "Répétition \\(n)/\\(reps)")'
     position = extrait.index("== 1")
-    assert ck.est_toleree("RunUp/ViewModels/LiveRunViewModel.swift", extrait, position)
+    assert ck.est_toleree("Haizo/ViewModels/LiveRunViewModel.swift", extrait, position)
 
 
 @cas_test("une tolérance ne vaut que pour SON fichier")
 def _():
     extrait = 'showCue(n == 1'
-    assert not ck.est_toleree("RunUp/Views/Home/HomeView.swift", extrait, extrait.index("== 1"))
+    assert not ck.est_toleree("Haizo/Views/Home/HomeView.swift", extrait, extrait.index("== 1"))
 
 
 @cas_test("un exemple en commentaire ne déclenche rien")

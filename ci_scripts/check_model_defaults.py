@@ -41,7 +41,7 @@ aucun appelant ne manipule d'optionnel. Voir `RunRecord.disciplineRaw` / `RunRec
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-DOSSIERS = ["RunUp/Models"]
+DOSSIERS = ["Haizo/Models"]
 
 # Ce que SwiftData sait doter d'un vrai défaut en base.
 PRIMITIVES = {

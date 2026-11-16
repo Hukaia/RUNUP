@@ -71,7 +71,7 @@ def _():
 @cas_test("un chrono, une date de fichier, un jeton hexadécimal")
 def _():
     assert not signale('"\\(total / 60):\\(String(format: "%02d", total % 60))"')
-    assert not signale('String(format: "RUNUP-sauvegarde-%04d-%02d-%02d", a, m, j)')
+    assert not signale('String(format: "Haizo-sauvegarde-%04d-%02d-%02d", a, m, j)')
     assert not signale('data.map { String(format: "%02x", $0) }.joined()')
 
 

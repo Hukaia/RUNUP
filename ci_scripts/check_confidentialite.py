@@ -3,9 +3,9 @@
 
 # POURQUOI CE CONTRÔLE EXISTE
 
-Trois endroits disent ce que RUNUP collecte, et ils doivent dire la même chose :
+Trois endroits disent ce que Haizo collecte, et ils doivent dire la même chose :
 
-  1. `RunUp/Resources/PrivacyInfo.xcprivacy` — le manifeste, livré DANS le binaire ;
+  1. `Haizo/Resources/PrivacyInfo.xcprivacy` — le manifeste, livré DANS le binaire ;
   2. la politique publiée — gardée par `check_politique.py` depuis le 8 novembre 2026 ;
   3. la fiche « App Privacy » d'App Store Connect, remplie à la main dans un navigateur.
 
@@ -60,7 +60,7 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-MANIFESTE = RACINE / "RunUp/Resources/PrivacyInfo.xcprivacy"
+MANIFESTE = RACINE / "Haizo/Resources/PrivacyInfo.xcprivacy"
 FICHE = RACINE / "APP_STORE_LISTING.md"
 
 DEBUT = "<!-- confidentialité: début (tableau dérivé du manifeste par check_confidentialite.py) -->"

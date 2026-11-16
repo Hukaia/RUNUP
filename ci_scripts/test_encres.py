@@ -43,7 +43,7 @@ def _avec(relatif: str, source: str) -> list:
 @cas_test("le widget resté à l'ancienne encre est refusé (le défaut du 12 novembre)")
 def _():
     src = "private var textPrimary: Color { isLight ? Color(hex: 0x15151C) : .white }"
-    problemes = _avec("RunUpWidgets/DailyGoalsWidget.swift", src)
+    problemes = _avec("HaizoWidgets/DailyGoalsWidget.swift", src)
     assert problemes, "le garde n'a rien vu"
     assert "15151C" in problemes[0][2], problemes
 
@@ -52,12 +52,12 @@ def _():
 def _():
     attendu = couleurs.declarations()["textPrimary"]["clair"]
     src = f"private var textPrimary: Color {{ isLight ? Color(hex: 0x{attendu:06X}) : .white }}"
-    assert _avec("RunUpWidgets/DailyGoalsWidget.swift", src) == []
+    assert _avec("HaizoWidgets/DailyGoalsWidget.swift", src) == []
 
 
 @cas_test("une correspondance qui ne trouve plus sa valeur crie au lieu de dormir")
 def _():
-    problemes = _avec("RunUpWidgets/DailyGoalsWidget.swift", "// plus aucune encre ici\n")
+    problemes = _avec("HaizoWidgets/DailyGoalsWidget.swift", "// plus aucune encre ici\n")
     assert problemes, "un garde qui ne trouve rien doit le dire"
     assert "ne se lit plus" in problemes[0][2], problemes
 
@@ -67,7 +67,7 @@ def _():
     attendu = couleurs.declarations()["textPrimary"]["clair"]
     src = ("// Elle valait Color(hex: 0x15151C) avant le 12 novembre.\n"
            f"private var textPrimary: Color {{ isLight ? Color(hex: 0x{attendu:06X}) : .white }}")
-    assert _avec("RunUpWidgets/DailyGoalsWidget.swift", src) == []
+    assert _avec("HaizoWidgets/DailyGoalsWidget.swift", src) == []
 
 
 @cas_test("chaque fichier surveillé existe vraiment")

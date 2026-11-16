@@ -1,0 +1,160 @@
+import ActivityKit
+import WidgetKit
+import SwiftUI
+
+/// Lock Screen + Dynamic Island UI for an in-progress run (`RunActivityAttributes`, updated live
+/// from `LiveRunViewModel`). Same reasoning as `DailyGoalsWidget` for not reusing
+/// `Haizo/DesignSystem`: this runs in the widget extension's own process, so it can't read the
+/// live `ThemeStore`/accent color anyway — fixed dark + the app's rose brand color, same as
+/// `RunShareCardView`'s deliberately-fixed palette for a similar reason (a system surface outside
+/// her in-app theme choice).
+///
+/// Lock Screen redone flat and high-contrast to match `DailyGoalsWidget`'s pass: true black, no
+/// gradient, the real brand fonts instead of the system rounded design, and a progress bar toward
+/// the session's *planned duration* — the one real "how far in am I" number a `WorkoutSession`
+/// actually tracks (there's no distance target to show honestly; sessions are duration-based).
+struct RunActivityWidget: Widget {
+    private static let accent = Color(hex: 0xFF0A78)
+    private static let bg = Color.black
+
+    var body: some WidgetConfiguration {
+        ActivityConfiguration(for: RunActivityAttributes.self) { context in
+            lockScreenView(context: context)
+        } dynamicIsland: { context in
+            DynamicIsland {
+                DynamicIslandExpandedRegion(.leading) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(TimeFormat.distance(km: context.state.distanceKm))
+                            .font(DisplayFont.font(24))
+                            .foregroundColor(.white)
+                        Text(verbatim: "km").font(.custom("\(DisplayFont.family)-Bold", size: 10.5)).tracking(0.2).foregroundColor(.white.opacity(0.55))
+                    }
+                }
+                DynamicIslandExpandedRegion(.trailing) {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(context.state.paceLabel).font(DisplayFont.font(18)).foregroundColor(.white)
+                        Text(verbatim: context.attributes.discipline.rythmeUnite).font(.custom("\(DisplayFont.family)-Bold", size: 10.5)).tracking(0.2).foregroundColor(.white.opacity(0.55))
+                    }
+                }
+                DynamicIslandExpandedRegion(.bottom) {
+                    HStack(spacing: 6) {
+                        Image(systemName: statusIcon(context.state))
+                        Text(context.attributes.sessionTitle).font(.custom("\(DisplayFont.family)-SemiBold", size: 12)).lineLimit(1).minimumScaleFactor(0.7)
+                        Spacer()
+                        elapsedText(context.state)
+                            .font(.custom("\(DisplayFont.family)-Bold", size: 13))
+                            .monospacedDigit()
+                    }
+                    .foregroundColor(.white.opacity(0.85))
+                }
+            } compactLeading: {
+                Image(systemName: "figure.run").foregroundColor(Self.accent)
+            } compactTrailing: {
+                elapsedText(context.state)
+                    .font(.custom("\(DisplayFont.family)-Bold", size: 13))
+                    .monospacedDigit()
+                    .foregroundColor(.white)
+                    .frame(maxWidth: 52)
+            } minimal: {
+                Image(systemName: "figure.run").foregroundColor(Self.accent)
+            }
+            .keylineTint(Self.accent)
+        }
+    }
+
+    private func lockScreenView(context: ActivityViewContext<RunActivityAttributes>) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Run")
+                    .font(DisplayFont.font(17))
+                    .tracking(0.2)
+                    .foregroundColor(Self.accent)
+                Spacer()
+                HStack(spacing: 6) {
+                    Text(context.attributes.sessionTitle)
+                        .font(.custom("\(DisplayFont.family)-SemiBold", size: 12))
+                        .foregroundColor(.white.opacity(0.55))
+                        .lineLimit(1)
+                    statusBadge(context.state)
+                }
+            }
+
+            HStack {
+                metric(value: TimeFormat.distance(km: context.state.distanceKm), label: "km")
+                Spacer(minLength: 8)
+                // « Allure » était écrit en dur, sous un chiffre qui est des kilomètres-heure dès
+                // qu'on roule. `Discipline` décide, et c'est la même décision que l'écran de
+                // course prend — elle vit dans `Shared`, que cette extension compile aussi.
+                metric(value: context.state.paceLabel, label: context.attributes.discipline.rythmeLabel)
+                Spacer(minLength: 8)
+                VStack(alignment: .trailing, spacing: 2) {
+                    elapsedText(context.state)
+                        .font(DisplayFont.font(26))
+                        .foregroundColor(.white)
+                    Text("Temps").font(.custom("\(DisplayFont.family)-Bold", size: 10)).tracking(0.2).foregroundColor(.white.opacity(0.45))
+                }
+            }
+
+            if context.attributes.plannedDurationMinutes > 0 {
+                let plannedSeconds = Double(context.attributes.plannedDurationMinutes * 60)
+                let fraction = max(0, min(1, context.state.elapsedSeconds / plannedSeconds))
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Séance").font(.custom("\(DisplayFont.family)-Bold", size: 10)).tracking(0.2).foregroundColor(.white.opacity(0.45))
+                        Spacer()
+                        // La clé est en minuscules et la capitalisation est un style, pas du
+                        // texte : « MIN PRÉVUES » en dur donnait une clé introuvable dans le
+                        // catalogue, donc du français affiché à tout le monde.
+                        Text("\(context.attributes.plannedDurationMinutes) min prévues")
+                            .textCase(.uppercase)
+                            .font(.custom("\(DisplayFont.family)-Bold", size: 10)).tracking(0.2).foregroundColor(.white.opacity(0.45))
+                    }
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(Color.white.opacity(0.12))
+                            Capsule().fill(Self.accent).frame(width: geo.size.width * fraction)
+                        }
+                    }
+                    .frame(height: 5)
+                }
+            }
+        }
+        .padding(18)
+        .activityBackgroundTint(Self.bg)
+        .activitySystemActionForegroundColor(.white)
+    }
+
+    private func metric(value: String, label: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(value)
+                .font(DisplayFont.font(26))
+                .foregroundColor(.white)
+            // Idem : sans `LocalizedStringKey`, ces libellés restent français pour tout le monde.
+            Text(LocalizedStringKey(label)).font(.custom("\(DisplayFont.family)-Bold", size: 10)).tracking(0.2).foregroundColor(.white.opacity(0.45))
+        }
+    }
+
+    private func statusBadge(_ state: RunActivityAttributes.ContentState) -> some View {
+        Image(systemName: statusIcon(state))
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundColor(state.isPaused ? .white.opacity(0.5) : Self.accent)
+    }
+
+    private func statusIcon(_ state: RunActivityAttributes.ContentState) -> String {
+        if state.isEnded { return "checkmark.circle.fill" }
+        return state.isPaused ? "pause.circle.fill" : "figure.run"
+    }
+
+    /// Self-ticking chrono while running (`Text(timerInterval:)` updates every second with zero
+    /// pushes from the app — the state only carries the reference date); frozen static label when
+    /// paused/ended, which is exactly when the clock shouldn't move.
+    @ViewBuilder
+    private func elapsedText(_ state: RunActivityAttributes.ContentState) -> some View {
+        if let reference = state.timerReference, !state.isPaused, !state.isEnded {
+            Text(timerInterval: reference...Date.distantFuture, countsDown: false)
+        } else {
+            Text(TimeFormat.horloge(state.elapsedSeconds))
+        }
+    }
+
+}

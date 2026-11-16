@@ -1,0 +1,262 @@
+import Foundation
+import WatchConnectivity
+
+/// The iPhone's half of the phone↔watch bridge (the watch half is
+/// `HaizoWatch/WatchConnectivityManager`). Two flows:
+/// - Outbound: today's session (title, target pace, duration) via `updateApplicationContext` —
+///   latest-state semantics, so the watch always has the current session even if it was
+///   unreachable when the plan changed. Pushed from `AppState.publishWidgetSnapshot()`, which
+///   already fires on every plan/theme/goal change.
+/// - Inbound: a run finished on the wrist arrives via `didReceiveUserInfo` (queued — survives
+///   airplane mode, delivered when the devices reconnect). The phone builds the `RunRecord`,
+///   inserts it, and opens the same RPE debrief every other run goes through, so streak/XP/
+///   plan-adaptation work identically whether the run was tracked from pocket or wrist.
+///
+/// `@MainActor` : ce service lit et écrit `AppState` (contexte SwiftData, file de débriefs,
+/// toasts). Les callbacks `WCSessionDelegate` en bas, eux, arrivent sur une file système — ils
+/// sont donc explicitement `nonisolated` et sautent sur l'acteur principal, ce qui est ce que le
+/// code faisait déjà mais que rien ne garantissait.
+@MainActor
+final class WatchSessionService: NSObject {
+    private unowned let appState: AppState
+    /// Last context actually handed to WCSession — `publishWidgetSnapshot` fires on plenty of
+    /// changes that don't touch the session (theme, steps), and re-sending an identical context
+    /// would just burn the transfer budget. Nil (not `[:]`) until the first send of this launch:
+    /// a rest day's context IS the empty dictionary, and seeding with `[:]` made the "unchanged"
+    /// guard skip that first send — the watch kept showing yesterday's séance all rest day.
+    private var lastSentContext: [String: String]?
+
+    private static let seenClientIdsKey = "watchRunSeenClientIds"
+
+    init(appState: AppState) {
+        self.appState = appState
+        super.init()
+        guard WCSession.isSupported() else { return }
+        WCSession.default.delegate = self
+        WCSession.default.activate()
+    }
+
+    /// Mirrors today's session to the watch. Rest days send an empty context — the watch then
+    /// shows its "course libre" framing instead of yesterday's stale séance.
+    func pushTodaySession() {
+        guard WCSession.isSupported(), WCSession.default.activationState == .activated else { return }
+        let profile = appState.profile
+        let today = AdaptivePlanEngine.currentWeekdayIndex()
+        let isRestDay = profile.weekSessions.first(where: { $0.weekday == today }).map { $0.session == nil } ?? false
+        // Le programme fait partie de Haizo Plus, et la montre n'a aucun moyen de le savoir : elle
+        // affiche ce qu'on lui envoie. Sans abonnement, on ne lui envoie donc rien de la séance —
+        // elle retombe alors sur son écran « pas de séance aujourd'hui », qui est exactement la
+        // vérité, et la course libre au poignet continue de fonctionner.
+        //
+        // `Entitlement.hasPlusCached` : ce service tourne hors de tout écran, `SubscriptionService`
+        // vit dans l'environnement SwiftUI.
+        let hidePlan = !Entitlement.hasPlusCached
+
+        // Two parallel dictionaries: the [String: String] one exists only because [String: Any]
+        // isn't Equatable — it's what makes the "did anything change?" guard possible.
+        var context: [String: String] = [:]
+        var payload: [String: Any] = [:]
+        if !isRestDay && !hidePlan {
+            let session = profile.todaySession
+            // `sessionKind` accompagne le titre sans le remplacer : le titre est ce que la montre
+            // AFFICHE, le type est ce qu'elle RENVOIE une fois la course finie. Sans lui, une
+            // course lancée au poignet revient sans rien qui identifie la séance, et son post de
+            // club reste figé dans la langue de son autrice — voir `activities.content_key`.
+            context = [
+                // `displayTitle`, PAS `title` : ce dernier est un identifiant interne, toujours
+                // français quelle que soit la langue de l'appareil — c'est écrit dans son propre
+                // commentaire. La montre l'affichait brut au milieu d'une interface anglaise,
+                // puis le renvoyait tel quel à la fin de la course : le relevé restait en
+                // français dans l'historique, dans l'en-tête du débriefing et dans le texte du
+                // post de club. `sessionKind` voyage à côté, donc rien ne dépend du titre pour
+                // identifier la séance.
+                "sessionTitle": session.displayTitle,
+                "sessionPace": session.pace,
+                "sessionDurationMinutes": String(session.durationMinutes),
+            ]
+            payload = [
+                "sessionTitle": session.displayTitle,
+                "sessionPace": session.pace,
+                "sessionDurationMinutes": session.durationMinutes,
+            ]
+            // Absent des plans enregistrés avant l'introduction de `SessionKind` : la clé est
+            // alors omise, et la course revient sans type — comme avant, plutôt qu'avec une
+            // chaîne vide qui aurait l'air d'un type.
+            if let kind = session.kind {
+                context["sessionKind"] = kind.rawValue
+                payload["sessionKind"] = kind.rawValue
+            }
+        }
+
+        // HORS du bloc ci-dessus, et c'est le point : la disposition de l'écran de course est un
+        // réglage, pas une donnée de séance. L'envoyer à l'intérieur la ferait disparaître les
+        // jours de repos — où le contexte est vide — et la montre repasserait à la disposition
+        // par défaut un jour sur deux.
+        //
+        // Elle voyage aussi quand rien d'autre ne change : c'est ce qui fait que le garde
+        // « quelque chose a-t-il bougé ? » juste en dessous voit un changement de réglage.
+        let layout = profile.watchRunLayout ?? .standard
+        context["runLayout"] = layout.wireValue
+        payload["runLayout"] = layout.wireValue
+
+        guard context != lastSentContext else { return }
+        do {
+            try WCSession.default.updateApplicationContext(payload)
+            lastSentContext = context
+        } catch {
+            // Not paired / watch app not installed — nothing to do, next call retries.
+        }
+    }
+
+    // MARK: Inbound completed run
+
+    private func handleCompletedRun(_ payload: CompletedRunPayload) {
+        // Idempotency — transferUserInfo can re-deliver (and the watch could retry): the same
+        // wrist run must never become two RunRecords.
+        var seen = UserDefaults.standard.stringArray(forKey: Self.seenClientIdsKey) ?? []
+        guard !seen.contains(payload.clientId) else { return }
+
+        // A tap-started-tap-stopped accident on the wrist (a few seconds, no distance) shouldn't
+        // pollute History — same spirit as the Live screen's own minimum. Placé AVANT l'écriture
+        // du marqueur : une livraison trop courte ne doit pas consommer l'identifiant, sinon une
+        // vraie course qui réutiliserait le même ne serait jamais reçue.
+        guard payload.elapsedSeconds >= 60, payload.distanceKm >= 0.1 else { return }
+
+        let record = AdaptivePlanEngine.buildRunRecord(
+            title: payload.title,
+            elapsedSeconds: payload.elapsedSeconds,
+            distanceKm: payload.distanceKm,
+            kcal: payload.kcal,
+            avgHeartRate: payload.avgHeartRate,
+            sessionKind: payload.sessionKind.flatMap(SessionKind.init(rawValue:))
+        )
+        // Dated when she actually ran, not when the queued transfer finally arrived — a run
+        // finished Saturday in airplane mode must not appear as a Sunday run in History.
+        if let startedAtEpoch = payload.startedAtEpoch {
+            record.date = Date(timeIntervalSince1970: startedAtEpoch)
+        }
+        // Inserted right away — like a GPS run, it really happened (DebriefSheet sees
+        // `modelContext != nil` and won't re-insert). The debrief only adds the RPE on top.
+        // Queued rather than assigned to a single slot — two runs delivered together on
+        // reconnect (a real case: the Watch queues delivery through airplane mode/out-of-range)
+        // must not have the second silently overwrite the first's pending debrief.
+        appState.modelContext.insert(record)
+        // LA COURSE EXISTE, DONC LA SÉANCE EST FAITE — que le ressenti soit donné ou non.
+        //
+        // Les trois autres chemins qui insèrent un relevé tout de suite le font déjà
+        // (`endLiveRun`, `recoverInterruptedRunIfNeeded`, `importRunsFromHealth`) ; celui de la
+        // montre était le seul à l'oublier. Conséquence : elle court avec sa montre, balaie la
+        // feuille de ressenti qui s'ouvre — un appel, une notification, un geste réflexe — et la
+        // semaine affiche toujours « 1/4 séances » pour une course qui est dans son historique.
+        //
+        // `markSessionDone` est idempotent : la validation du ressenti le rappellera sans rien
+        // compter deux fois.
+        AdaptivePlanEngine.markSessionDone(for: record, profile: appState.profile)
+
+        // LE MARQUEUR EST POSÉ APRÈS L'ENREGISTREMENT, ET PAS AVANT.
+        //
+        // Il l'était avant l'insertion, et aucun `save()` ne suivait : la persistance reposait
+        // sur l'enregistrement automatique de SwiftData. Si le processus mourait entre les deux
+        // — iOS qui récupère de la mémoire pendant une livraison —, l'identifiant restait
+        // durablement marqué « déjà vu », la montre ne redélivrait jamais, et la course était
+        // perdue définitivement.
+        //
+        // C'est la règle que les deux réparations de données énoncent déjà : « une réparation
+        // interrompue doit pouvoir recommencer ». Une livraison interrompue aussi.
+        //
+        // ET UN ÉCHEC D'ENREGISTREMENT EST UNE INTERRUPTION, EXACTEMENT COMME UN PROCESSUS TUÉ.
+        //
+        // Le `try?` qui était ici avalait cet échec et laissait TOUT LE RESTE se dérouler :
+        // l'identifiant entrait dans `seen` — donc la montre ne redélivrait plus jamais —, la
+        // feuille de ressenti s'ouvrait, et l'app annonçait « Course reçue de ta montre ⌚ ».
+        // Elle affirmait donc avoir reçu une course qui n'existait que dans la mémoire du
+        // processus, et qui disparaissait au lancement suivant sans que rien ne puisse la
+        // ramener. C'est le défaut que le paragraphe ci-dessus décrit, dans la seule branche
+        // qu'il ne couvrait pas.
+        //
+        // On défait donc l'insertion et on sort SANS consommer l'identifiant : la montre
+        // redélivrera. La séance marquée faite juste au-dessus n'est pas défaite — elle n'est
+        // pas enregistrée non plus, et `markSessionDone` est idempotent, donc la redélivrance
+        // la repose proprement.
+        guard (try? appState.modelContext.save()) != nil else {
+            appState.modelContext.delete(record)
+            appState.toast(String(localized: "La course de ta montre n'a pas pu être enregistrée. Elle sera renvoyée."))
+            return
+        }
+        seen.append(payload.clientId)
+        if seen.count > 100 { seen.removeFirst(seen.count - 100) }
+        UserDefaults.standard.set(seen, forKey: Self.seenClientIdsKey)
+
+        appState.pendingDebriefs.append(record)
+        let distance = String(format: "%.1f", locale: Locale.current, record.distanceKm)
+        appState.notify(icon: "applewatch", colorHex: 0xFF3B6B, title: String(localized: "Course reçue de ta montre"), text: String(localized: "\(record.title) · \(distance) km — valide ton ressenti pour mettre à jour le programme."))
+        // Sans emoji : la règle 7 les interdit, et celui-ci ne disait rien que la notification
+        // juste au-dessus ne dise déjà — elle porte le symbole `applewatch`. `check_emoji.py`
+        // l'a trouvé à sa première exécution, dans les trois langues.
+        appState.toast(String(localized: "Course reçue de ta montre"))
+    }
+}
+
+// `nonisolated` sur chacun : WatchConnectivity appelle ces méthodes depuis sa propre file, jamais
+// depuis le fil principal. Les déclarer telles quelles sur une classe `@MainActor` reviendrait à
+// promettre au compilateur quelque chose de faux ; le saut vers l'acteur principal est donc écrit
+// explicitement là où il a lieu.
+extension WatchSessionService: WCSessionDelegate {
+    nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        guard activationState == .activated else { return }
+        Task { @MainActor in self.pushTodaySession() }
+    }
+
+    // iOS-only requirements — fire when the user switches to a different paired watch.
+    // Re-activating hands the session over to the newly active watch.
+    nonisolated func sessionDidBecomeInactive(_ session: WCSession) {}
+
+    nonisolated func sessionDidDeactivate(_ session: WCSession) {
+        session.activate()
+    }
+
+    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        // Décodé ICI, sur la file de WatchConnectivity, pour que seul un type `Sendable` traverse.
+        guard let payload = CompletedRunPayload(userInfo) else { return }
+        Task { @MainActor in self.handleCompletedRun(payload) }
+    }
+}
+
+/// La charge utile d'une course reçue de la montre, une fois extraite du `[String: Any]`.
+///
+/// Ce type existe pour une raison précise : `[String: Any]` n'est pas `Sendable`, donc le passer
+/// tel quel du callback `WCSessionDelegate` (file système) à l'acteur principal est exactement le
+/// franchissement d'isolation que Swift 6 interdit. On lit donc les valeurs là où elles arrivent
+/// — elles sont toutes de simples scalaires — et on ne fait traverser qu'une structure immuable
+/// et `Sendable`.
+///
+/// Déclaré au niveau du fichier et non imbriqué dans `WatchSessionService` : un type imbriqué
+/// dans une classe `@MainActor` en hérite l'isolation, ce qui rendrait son `init` inappelable
+/// depuis le callback `nonisolated` qui en a précisément besoin.
+private struct CompletedRunPayload: Sendable {
+    var clientId: String
+    var title: String
+    var elapsedSeconds: Double
+    var distanceKm: Double
+    var kcal: Double
+    var avgHeartRate: Int
+    var startedAtEpoch: Double?
+    /// Le type de la séance courue, renvoyé par la montre tel que le téléphone le lui avait
+    /// donné. Absent pour une course libre, et pour une montre pas encore mise à jour.
+    var sessionKind: String?
+
+    init?(_ userInfo: [String: Any]) {
+        guard userInfo["kind"] as? String == "completedRun",
+              let clientId = userInfo["clientId"] as? String
+        else { return nil }
+        self.clientId = clientId
+        self.title = userInfo["title"] as? String ?? String(localized: "Course libre")
+        self.elapsedSeconds = userInfo["elapsedSeconds"] as? Double ?? 0
+        self.distanceKm = userInfo["distanceKm"] as? Double ?? 0
+        self.kcal = userInfo["kcal"] as? Double ?? 0
+        self.avgHeartRate = userInfo["avgHeartRate"] as? Int ?? 0
+        self.startedAtEpoch = userInfo["startedAt"] as? Double
+        // Pas la clé "kind" : celle-là porte déjà le type du MESSAGE ("completedRun").
+        self.sessionKind = userInfo["sessionKind"] as? String
+    }
+}

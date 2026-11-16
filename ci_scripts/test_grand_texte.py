@@ -122,7 +122,7 @@ def _():
 
 @cas_de("chaque paire vise des captures que le harnais prend vraiment")
 def _():
-    test = (ICI.parent / "RunUpUITests/CapturesUITests.swift").read_text(encoding="utf-8")
+    test = (ICI.parent / "HaizoUITests/CapturesUITests.swift").read_text(encoding="utf-8")
     for grand, ordinaire in ck.PAIRES.items():
         nom = grand[len("diagnostic/"):-len(".png")]
         assert f'nom: "{nom}"' in test, f"aucun test ne prend « {nom} »"

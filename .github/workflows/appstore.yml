@@ -78,7 +78,7 @@ on:
         description: "Branche où lire la fiche et le script"
         required: true
         type: string
-        default: "claude/runup-ios-swiftui-app-5b1yv6"
+        default: "claude/haizo-ios-swiftui-app-5b1yv6"
 
 # Deux exécutions en parallèle écriraient la même fiche depuis deux états différents.
 concurrency: appstore

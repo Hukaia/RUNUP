@@ -51,36 +51,36 @@ UN = "Circle().fill(LinearGradient(colors: [a, b], startPoint: .top, endPoint: .
 
 @cas_de("un dégradé dans un fichier non listé sonne")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": UN}, {})
+    p = plaintes({"Haizo/Views/Ecran.swift": UN}, {})
     assert any("Ecran.swift" in m and "règle 7" in m for m in p), p
 
 
 @cas_de("le même dégradé, listé avec sa raison, ne sonne pas")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": UN},
-                 {"RunUp/Views/Ecran.swift": (1, "le voile qui rend le titre lisible")})
+    p = plaintes({"Haizo/Views/Ecran.swift": UN},
+                 {"Haizo/Views/Ecran.swift": (1, "le voile qui rend le titre lisible")})
     assert p == [], p
 
 
 @cas_de("un de plus que ce que la raison couvre sonne")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": UN * 2},
-                 {"RunUp/Views/Ecran.swift": (1, "une raison pour un seul")})
+    p = plaintes({"Haizo/Views/Ecran.swift": UN * 2},
+                 {"Haizo/Views/Ecran.swift": (1, "une raison pour un seul")})
     assert any("2 dégradé(s), 1 autorisé(s)" in m for m in p), p
 
 
 @cas_de("un de moins sonne aussi : l'exception a cessé de servir")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": UN},
-                 {"RunUp/Views/Ecran.swift": (2, "deux raisons")})
+    p = plaintes({"Haizo/Views/Ecran.swift": UN},
+                 {"Haizo/Views/Ecran.swift": (2, "deux raisons")})
     assert any("Retire-la" in m for m in p), p
 
 
 @cas_de("un fichier listé qui n'en porte plus aucun sonne")
 def _():
     # Une exception qui dort est une porte ouverte sur un fichier que plus personne ne relit.
-    p = plaintes({"RunUp/Views/Ecran.swift": "let x = 1\n"},
-                 {"RunUp/Views/Ecran.swift": (1, "une raison périmée")})
+    p = plaintes({"Haizo/Views/Ecran.swift": "let x = 1\n"},
+                 {"Haizo/Views/Ecran.swift": (1, "une raison périmée")})
     assert any("encore dans `PERMIS`" in m for m in p), p
 
 
@@ -89,32 +89,32 @@ def _():
 @cas_de("un dégradé nommé dans un commentaire // ne compte pas")
 def _():
     src = "// C'était un LinearGradient(colors: [rose, violet]) et il est parti.\nlet x = 1\n"
-    assert plaintes({"RunUp/Views/Ecran.swift": src}, {}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": src}, {}) == []
 
 
 @cas_de("un dégradé nommé dans un commentaire de documentation /// ne compte pas")
 def _():
     src = "/// `accentGradient` était un LinearGradient(...). Règle 7.\nlet x = 1\n"
-    assert plaintes({"RunUp/Views/Ecran.swift": src}, {}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": src}, {}) == []
 
 
 @cas_de("un dégradé nommé dans un bloc /* */ ne compte pas")
 def _():
     src = "/* RadialGradient(colors: []) vivait ici */\nlet x = 1\n"
-    assert plaintes({"RunUp/Views/Ecran.swift": src}, {}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": src}, {}) == []
 
 
 @cas_de("un dégradé nommé dans une chaîne ne compte pas")
 def _():
     src = 'let message = "LinearGradient(colors: [])"\n'
-    assert plaintes({"RunUp/Views/Ecran.swift": src}, {}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": src}, {}) == []
 
 
 @cas_de("un commentaire ne masque pas le code de la ligne suivante")
 def _():
     # Le piège inverse : un effaceur de commentaires trop gourmand rendrait le script aveugle.
     src = "// un LinearGradient( de commentaire\n" + UN
-    p = plaintes({"RunUp/Views/Ecran.swift": src}, {})
+    p = plaintes({"Haizo/Views/Ecran.swift": src}, {})
     assert any("1 dégradé" in m or "règle 7" in m for m in p), p
 
 
@@ -123,14 +123,14 @@ def _():
     # `DailyGoalsWidget` lit `seg.gradientStartDegrees`. Le compter ferait sonner le fichier
     # pour un nombre de degrés.
     src = "let a = seg.gradientStartDegrees\nlet b = seg.gradientEndDegrees\n"
-    assert plaintes({"RunUp/Views/Ecran.swift": src}, {}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": src}, {}) == []
 
 
 @cas_de("le raccourci `.gradient` de SwiftUI compte")
 def _():
     # Une première version excluait ce cas par une anti-recherche arrière sur `[\\w.]` — or il
     # est TOUJOURS précédé d'un identifiant. Elle ne voyait donc que ce qui n'existe pas.
-    p = plaintes({"RunUp/Views/Ecran.swift": "Circle().fill(RUColor.rose.gradient)\n"}, {})
+    p = plaintes({"Haizo/Views/Ecran.swift": "Circle().fill(RUColor.rose.gradient)\n"}, {})
     assert any("règle 7" in m for m in p), p
 
 
@@ -138,13 +138,13 @@ def _():
 def _():
     for forme in ["RadialGradient", "AngularGradient", "EllipticalGradient", "MeshGradient"]:
         src = f"Circle().fill({forme}(colors: []))\n"
-        p = plaintes({"RunUp/Views/Ecran.swift": src}, {})
+        p = plaintes({"Haizo/Views/Ecran.swift": src}, {})
         assert any("règle 7" in m for m in p), f"{forme} est passé : {p}"
 
 
 @cas_de("un fichier sans aucun dégradé ne sonne pas")
 def _():
-    assert plaintes({"RunUp/Views/Ecran.swift": "Circle().fill(RUColor.rose)\n"}, {}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": "Circle().fill(RUColor.rose)\n"}, {}) == []
 
 
 # ─── SUR LE VRAI DÉPÔT ─────────────────────────────────────────────────────────────────────────

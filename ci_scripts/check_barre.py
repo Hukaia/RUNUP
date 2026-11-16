@@ -38,9 +38,9 @@ import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-BARRE = RACINE / "RunUp/Views/Components/TabBarView.swift"
-ESPACEMENT = RACINE / "RunUp/DesignSystem/Spacing.swift"
-TYPO = RACINE / "RunUp/DesignSystem/Typography.swift"
+BARRE = RACINE / "Haizo/Views/Components/TabBarView.swift"
+ESPACEMENT = RACINE / "Haizo/DesignSystem/Spacing.swift"
+TYPO = RACINE / "Haizo/DesignSystem/Typography.swift"
 
 # Majorant de la hauteur de ligne d'Inter, en multiples de la taille de police.
 LIGNE = 1.30

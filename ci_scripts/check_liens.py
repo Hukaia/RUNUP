@@ -35,7 +35,7 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 JOURNAUX = {"PROGRESS.md", "AUDIT.md", "PHASE2.md"}
 
 # La déclaration elle-même, et le contrôle qui la lit.
-DECLARATIONS = {"RunUp/Models/Liens.swift", "ci_scripts/liens.py", "ci_scripts/check_liens.py",
+DECLARATIONS = {"Haizo/Models/Liens.swift", "ci_scripts/liens.py", "ci_scripts/check_liens.py",
                 "ci_scripts/test_liens.py"}
 
 EXTENSIONS = {".swift", ".py", ".html", ".md", ".yml", ".yaml", ".json", ".js"}
@@ -44,7 +44,7 @@ EXTENSIONS = {".swift", ".py", ".html", ".md", ".yml", ".yaml", ".json", ".js"}
 #
 # La première version lisait tout, `node_modules` compris, et signalait cinquante et un liens de
 # spécification dans les dépendances — « https://w3c.github.io/FileAPI/ » n'est pas une page de
-# RUNUP mal adressée. Un contrôle qui noie son rapport sous des lignes étrangères ne se lit plus.
+# Haizo mal adressée. Un contrôle qui noie son rapport sous des lignes étrangères ne se lit plus.
 IGNORES = {"node_modules", ".build", "DerivedData", "vendor", ".git", "__pycache__", "Pods"}
 
 # LA RÈGLE PORTE SUR NOS PAGES, PAS SUR TOUT GITHUB PAGES.
@@ -84,13 +84,13 @@ def ecarts():
                     ))
 
     # Les deux déclarations disent-elles la même chose ?
-    swift = (RACINE / "RunUp/Models/Liens.swift").read_text(encoding="utf-8")
+    swift = (RACINE / "Haizo/Models/Liens.swift").read_text(encoding="utf-8")
     base = re.search(r'static let base = "([^"]+)"', swift)
     if not base:
-        problemes.append(("RunUp/Models/Liens.swift", "—", "`base` est introuvable."))
+        problemes.append(("Haizo/Models/Liens.swift", "—", "`base` est introuvable."))
     elif base.group(1) != liens.BASE:
         problemes.append((
-            "RunUp/Models/Liens.swift", base.group(1),
+            "Haizo/Models/Liens.swift", base.group(1),
             f"Diffère de `ci_scripts/liens.py`, qui dit {liens.BASE}. Les deux doivent "
             "s'accorder, sinon l'app et la fiche n'annoncent pas la même page.",
         ))
@@ -110,7 +110,7 @@ def main() -> int:
         for ou, url, raison in problemes:
             print(f"  • {ou} — {url}")
             print(f"      {raison}\n")
-        print("Voir l'en-tête de RunUp/Models/Liens.swift.")
+        print("Voir l'en-tête de Haizo/Models/Liens.swift.")
         return 1
     print("Adresses publiées : une seule par page, les deux déclarations s'accordent, "
           "et chaque page existe.")

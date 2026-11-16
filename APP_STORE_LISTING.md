@@ -1,9 +1,9 @@
-# Fiche App Store — RUNUP
+# Fiche App Store — Haizo
 
 Contenu prêt à copier-coller dans App Store Connect (App Information / Fiche de l'app).
 
 L'app est livrée avec trois localisations réelles (`CFBundleLocalizations: fr, en, es` dans
-project.yml, adossées à 1 119 clés traduites dans `RunUp/Resources/Localizable.xcstrings`) — la fiche
+project.yml, adossées à 1 119 clés traduites dans `Haizo/Resources/Localizable.xcstrings`) — la fiche
 doit donc exister dans les trois, sinon App Store Connect n'expose l'app qu'en français et les
 recherches anglophones/hispanophones ne la trouvent jamais. Chaque locale a sa propre section
 ci-dessous ; les sections communes (catégorie, âge, URLs, copyright) ne se saisissent qu'une fois.
@@ -18,7 +18,7 @@ ci-dessous ; les sections communes (catégorie, âge, URLs, copyright) ne se sai
 > réellement. Une promesse non tenue dans la fiche est un motif de rejet (App Review Guideline 2.3
 > — "Accurate Metadata"), et c'est exactement ce qui s'était glissé dans la version précédente de ce
 > fichier (un VO2max estimé, retiré du code depuis — voir le commentaire en tête de
-> `RunUp/Views/Stats/StatsView.swift` — un verrouillage d'écran qui n'existe plus, et un programme
+> `Haizo/Views/Stats/StatsView.swift` — un verrouillage d'écran qui n'existe plus, et un programme
 > annoncé fixe à 9 semaines quand `AdaptivePlanEngine.ProgramShape` en calcule 4 à 20 selon la date
 > de course, ou aucun terme du tout pour les objectifs sans date).
 
@@ -28,7 +28,7 @@ ci-dessous ; les sections communes (catégorie, âge, URLs, copyright) ne se sai
 
 ## Nom de l'app (30 caractères max)
 ```
-RUNUP : Coach de Course
+Haizo : Coach de Course
 ```
 
 ## Sous-titre (30 caractères max)
@@ -53,31 +53,31 @@ Enregistre tes courses, rejoins le Club, garde tes stats — gratuitement, sans 
 
 ## Description (4000 caractères max)
 ```
-Enregistre tes courses, retrouve tes amis, suis tes progrès — gratuitement, sans limite de temps. Et quand tu veux un vrai programme, RUNUP le construit sur mesure et l'ajuste après chaque sortie selon ta forme et ton ressenti.
+Enregistre tes courses, retrouve tes amis, suis tes progrès — gratuitement, sans limite de temps. Et quand tu veux un vrai programme, Haizo le construit sur mesure et l'ajuste après chaque sortie selon ta forme et ton ressenti.
 
 GRATUIT, POUR TOUJOURS
 Le suivi GPS de tes courses : distance, allure, tracé, dénivelé, fréquence cardiaque. Ton historique complet et tes statistiques. Tes trois objectifs du jour et ta série. Ton bilan de la semaine. Apple Santé, l'Apple Watch, les widgets et l'écran verrouillé. Et tout le Club : classements, défis, fil d'activité, amis, itinéraires partagés. Sans compte à rebours et sans publicité.
 
-RUNUP PLUS — 7 JOURS OFFERTS
+Haizo PLUS — 7 JOURS OFFERTS
 Le programme périodisé et son adaptation, le coach écrit et vocal, la préparation d'une date de course, tes temps prévus et ta charge d'entraînement.
 
-UN VRAI COACH, PAS UN CHATBOT — RUNUP PLUS
+UN VRAI COACH, PAS UN CHATBOT — Haizo PLUS
 Un vrai coach personnel qui connaît ton objectif, ton historique et ta forme du jour. Pose-lui une question avant ta séance, demande un conseil nutrition, ou fais-toi rassurer après une sortie difficile. Pendant l'effort, tu peux même lui parler : tu appuies, tu poses ta question à voix haute, il te répond dans les écouteurs.
 
-UN PROGRAMME QUI VIT AVEC TOI — RUNUP PLUS
+UN PROGRAMME QUI VIT AVEC TOI — Haizo PLUS
 Après chaque course, donne ton ressenti (RPE) — le programme ajuste la difficulté des semaines suivantes. Base, spécifique, affûtage : un vrai plan périodisé calé sur la date de ta course, de 4 à 20 semaines selon le temps qu'il te reste. Sans date de course (progresser, perdre du poids, reprendre en douceur, rester en forme), il tourne en continu avec ses semaines de décharge. Nuit trop courte ou séance de la veille trop dure ? La séance du jour s'allège d'elle-même.
 
-HYROX, ULTRA, TRIATHLON — RUNUP PLUS
+HYROX, ULTRA, TRIATHLON — Haizo PLUS
 Trois préparations entières, pas des variantes du plan de course. HYROX : les huit stations et leurs transitions. Ultra : dénivelé, marche rapide, nuit. Triathlon : natation, vélo et enchaînements, du sprint à la longue distance.
 
 SUIVI DE COURSE EN DIRECT
 Carte et tracé en temps réel, allure, fréquence cardiaque, calories. Chaque sortie part dans Apple Santé, s'exporte en GPX, et se partage en carte avec ton tracé.
 
 APPLE WATCH
-Lance ta course depuis ta montre, sans emporter ton iPhone : fréquence cardiaque au poignet, distance et calories en direct. Chaque course terminée au poignet revient sur le téléphone avec son bilan. Avec RUNUP Plus, ta séance du jour est poussée sur la montre.
+Lance ta course depuis ta montre, sans emporter ton iPhone : fréquence cardiaque au poignet, distance et calories en direct. Chaque course terminée au poignet revient sur le téléphone avec son bilan. Avec Haizo Plus, ta séance du jour est poussée sur la montre.
 
 STATS QUI COMPTENT VRAIMENT
-Tendance d'allure, records personnels, carte de tes parcours, usure des chaussures. Avec RUNUP Plus : prédictions sur 5 km, 10 km, semi et marathon, et charge d'entraînement sur 8 semaines.
+Tendance d'allure, records personnels, carte de tes parcours, usure des chaussures. Avec Haizo Plus : prédictions sur 5 km, 10 km, semi et marathon, et charge d'entraînement sur 8 semaines.
 
 OÙ COURIR QUAND TU NE CONNAIS PAS L'ENDROIT
 Tu débarques dans une ville et tu ne sais pas où courir ? La carte montre les itinéraires publiés autour de toi, avec distance, dénivelé et souvent une photo. Partage les tiennes en deux gestes : les 300 premiers et derniers mètres sont retirés avant l'envoi, personne ne verra d'où tu pars ni où tu rentres.
@@ -85,13 +85,13 @@ Tu débarques dans une ville et tu ne sais pas où courir ? La carte montre les 
 CLUB & COMMUNAUTÉ
 Classements de la semaine et général, défis de club, sorties de groupe, fil d'activité et badges. Et si tu préfères suivre quelques personnes plutôt qu'un club entier, un fil d'amis fait exactement ça.
 
-FIN DE PROGRAMME, PAS FIN DE L'HISTOIRE — RUNUP PLUS
+FIN DE PROGRAMME, PAS FIN DE L'HISTOIRE — Haizo PLUS
 À la fin : récupération encadrée, puis nouvel objectif ou course libre sans plan fixe.
 
 La connexion à Apple Santé est optionnelle, mais affine la forme du jour. Le Club demande un compte ; tout le reste de l'app fonctionne sans.
 
-ABONNEMENT RUNUP PLUS
-RUNUP fonctionne sans abonnement. RUNUP Plus débloque le programme et le coach, après 7 jours d'essai gratuit.
+ABONNEMENT Haizo PLUS
+Haizo fonctionne sans abonnement. Haizo Plus débloque le programme et le coach, après 7 jours d'essai gratuit.
 • Mensuel — 6,99 € par mois
 • Annuel — 39,99 € par an (soit 3,33 € par mois)
 Renouvellement automatique, résiliable à tout moment depuis les réglages de ton compte Apple.
@@ -137,7 +137,7 @@ running,entrainement,fractionné,gratuit,marathon,semi,10km,trail,ultra,hyrox,de
 Aucun de ces mots n'apparaît dans le nom ni dans le sous-titre : Apple indexe déjà tous les mots du
 titre et du sous-titre, et les répéter ici ne fait que consommer des caractères sans ajouter une
 seule requête. C'est ce que faisait l'ancienne liste — `course`, `coach` et `coureuse` (même racine
-que `course`) y étaient tous déjà couverts par « RUNUP : Coach de Course » / « Ton coach personnel
+que `course`) y étaient tous déjà couverts par « Haizo : Coach de Course » / « Ton coach personnel
 de course ». Les caractères récupérés servent à des termes réellement nouveaux. Séparateur : virgule
 seule, sans espace — un espace après la virgule compte dans les 100 caractères et n'apporte rien.
 
@@ -164,7 +164,7 @@ nulle : personne ne la cherche par hasard.
 
 ## App name (30 characters max)
 ```
-RUNUP: Running Coach
+Haizo: Running Coach
 ```
 
 ## Subtitle (30 characters max)
@@ -179,31 +179,31 @@ Track your runs, join the Club, keep your stats — free, with no time limit. Th
 
 ## Description (4000 characters max)
 ```
-Track your runs, find your friends, follow your progress — free, with no time limit. And when you want a real plan, RUNUP builds it around your goal and reshapes it after every run based on how you actually felt.
+Track your runs, find your friends, follow your progress — free, with no time limit. And when you want a real plan, Haizo builds it around your goal and reshapes it after every run based on how you actually felt.
 
 FREE, FOREVER
 GPS tracking for every run: distance, pace, route, elevation, heart rate. Your full history and your stats. Today's three goals and your streak. Your weekly recap. Apple Health, Apple Watch, widgets and the Lock Screen. And the whole Club: leaderboards, challenges, activity feed, friends, shared routes. No countdown, no ads.
 
-RUNUP PLUS — 7 DAYS FREE
+Haizo PLUS — 7 DAYS FREE
 The periodised plan and its adaptation, the coach by text and by voice, race-day preparation, your predicted times and your training load.
 
-A REAL COACH, NOT A CHATBOT — RUNUP PLUS
+A REAL COACH, NOT A CHATBOT — Haizo PLUS
 A personal coach who knows your goal, your history and how today is going. Ask a question before a session, get nutrition advice, or talk it through after a run that hurt. Mid-run you can even talk to it: press, ask out loud, hear the answer in your headphones.
 
-A PLAN THAT LIVES WITH YOU — RUNUP PLUS
+A PLAN THAT LIVES WITH YOU — Haizo PLUS
 After every run, rate how hard it felt (RPE) — the plan adjusts the difficulty of the weeks ahead. Base, specific, taper: a genuinely periodised plan built around your race date, 4 to 20 weeks depending on how long you have. With no race date (getting faster, losing weight, easing back in, staying fit), it runs continuously with built-in cutback weeks. Short night, or yesterday's session too brutal? Today's session eases off on its own.
 
-HYROX, ULTRA, TRIATHLON — RUNUP PLUS
+HYROX, ULTRA, TRIATHLON — Haizo PLUS
 Three full preparations, not variations on the running plan. HYROX: the eight stations and their transitions. Ultra: elevation, fast hiking, running at night. Triathlon: swimming, cycling and brick sessions, from sprint to long distance.
 
 LIVE RUN TRACKING
 Real-time map and route, pace, heart rate, calories. Every run is saved to Apple Health, exports as GPX, and shares as a card with your route on it.
 
 APPLE WATCH
-Start a run from your watch and leave your iPhone at home: wrist heart rate, live distance and calories. Every run you finish on your wrist comes back to the phone with its debrief. With RUNUP Plus, today's session is pushed to the watch.
+Start a run from your watch and leave your iPhone at home: wrist heart rate, live distance and calories. Every run you finish on your wrist comes back to the phone with its debrief. With Haizo Plus, today's session is pushed to the watch.
 
 STATS THAT ACTUALLY MEAN SOMETHING
-Pace trend, personal records, a map of every route you've run, and shoe mileage tracking. With RUNUP Plus: finish-time predictions for 5K, 10K, half and marathon, and eight weeks of training load.
+Pace trend, personal records, a map of every route you've run, and shoe mileage tracking. With Haizo Plus: finish-time predictions for 5K, 10K, half and marathon, and eight weeks of training load.
 
 WHERE TO RUN WHEN YOU DON'T KNOW THE PLACE
 New city, no idea where to run? The map shows routes published by other runners around you, with distance, elevation and often a photo of the spot. Filter by length, keep the ones you like, open the start in Maps. Sharing your own runs takes two taps — and the first and last 300 metres are stripped before anything is sent, so nobody sees where you set off from or came home to.
@@ -211,13 +211,13 @@ New city, no idea where to run? The map shows routes published by other runners 
 CLUB & COMMUNITY
 Weekly and all-time leaderboards, club challenges, group runs, an activity feed and badges. And if you'd rather follow a handful of people than a whole club, a friends feed does exactly that.
 
-THE END OF A PLAN ISN'T THE END — RUNUP PLUS
+THE END OF A PLAN ISN'T THE END — Haizo PLUS
 When your plan finishes: a guided recovery block, then a new goal or free-run mode with no fixed plan at all.
 
 Connecting Apple Health is optional but recommended for a more accurate daily readiness score. The Club needs an account; everything else works without one.
 
-RUNUP PLUS SUBSCRIPTION
-RUNUP works without a subscription, with no time limit. RUNUP Plus unlocks the plan and the coach, after a 7-day free trial.
+Haizo PLUS SUBSCRIPTION
+Haizo works without a subscription, with no time limit. Haizo Plus unlocks the plan and the coach, after a 7-day free trial.
 • Monthly — €6.99 per month
 • Yearly — €39.99 per year (€3.33 per month)
 Auto-renewing, cancellable at any time from your Apple account settings.
@@ -269,7 +269,7 @@ so repeating them here spends characters and buys nothing.
 
 ## Nombre de la app (30 caracteres máx.)
 ```
-RUNUP: Entrenador Running
+Haizo: Entrenador Running
 ```
 
 ## Subtítulo (30 caracteres máx.)
@@ -284,31 +284,31 @@ Registra tus carreras, únete al Club y guarda tus estadísticas: gratis y sin l
 
 ## Descripción (4000 caracteres máx.)
 ```
-Registra tus carreras, encuentra a tus amigos, sigue tu progreso: gratis y sin límite de tiempo. Y cuando quieras un plan de verdad, RUNUP lo construye a partir de tu objetivo y lo reajusta después de cada salida según cómo te sentiste.
+Registra tus carreras, encuentra a tus amigos, sigue tu progreso: gratis y sin límite de tiempo. Y cuando quieras un plan de verdad, Haizo lo construye a partir de tu objetivo y lo reajusta después de cada salida según cómo te sentiste.
 
 GRATIS, PARA SIEMPRE
 El seguimiento GPS de cada carrera: distancia, ritmo, recorrido, desnivel y frecuencia cardiaca. Tu historial completo y tus estadísticas. Tus tres objetivos del día y tu racha. Tu resumen semanal. Apple Salud, Apple Watch, widgets y pantalla bloqueada. Y todo el Club: clasificaciones, retos, muro de actividad, amigos y rutas compartidas. Sin cuenta atrás y sin publicidad.
 
-RUNUP PLUS — 7 DÍAS GRATIS
+Haizo PLUS — 7 DÍAS GRATIS
 El plan periodizado y su adaptación, el entrenador por escrito y por voz, la preparación de una carrera, tus tiempos previstos y tu carga de entrenamiento.
 
-UN ENTRENADOR DE VERDAD, NO UN CHATBOT — RUNUP PLUS
+UN ENTRENADOR DE VERDAD, NO UN CHATBOT — Haizo PLUS
 Un entrenador personal que conoce tu objetivo, tu historial y cómo llevas el día. Pregúntale antes de la sesión, pídele consejo de nutrición, o desahógate después de una salida dura. Mientras corres puedes incluso hablarle: pulsas, preguntas en voz alta y te responde en los auriculares.
 
-UN PLAN QUE VIVE CONTIGO — RUNUP PLUS
+UN PLAN QUE VIVE CONTIGO — Haizo PLUS
 Después de cada salida, valora lo dura que te resultó (RPE) — el plan ajusta la dificultad de las semanas siguientes. Base, específico, puesta a punto: un plan realmente periodizado alrededor de la fecha de tu carrera, de 4 a 20 semanas según el tiempo que te quede. Sin fecha de carrera (progresar, perder peso, volver poco a poco, mantenerte en forma), sigue de forma continua con sus semanas de descarga. ¿Mala noche, o sesión de ayer demasiado dura? La sesión de hoy se aligera sola.
 
-HYROX, ULTRA, TRIATLÓN — RUNUP PLUS
+HYROX, ULTRA, TRIATLÓN — Haizo PLUS
 Tres preparaciones enteras, no variantes del plan de carrera. HYROX: las ocho estaciones y sus transiciones. Ultra: desnivel, marcha rápida, noche. Triatlón: natación, ciclismo y transiciones, del sprint a la larga distancia.
 
 SEGUIMIENTO EN DIRECTO
 Mapa y recorrido en tiempo real, ritmo, frecuencia cardíaca y calorías. Cada salida se guarda en Apple Salud, se exporta en GPX y se comparte como tarjeta con tu recorrido.
 
 APPLE WATCH
-Empieza a correr desde el reloj y deja el iPhone en casa: frecuencia cardíaca en la muñeca, distancia y calorías en directo. Cada carrera que termines en la muñeca vuelve al teléfono con su balance. Con RUNUP Plus, tu sesión del día se envía al reloj.
+Empieza a correr desde el reloj y deja el iPhone en casa: frecuencia cardíaca en la muñeca, distancia y calorías en directo. Cada carrera que termines en la muñeca vuelve al teléfono con su balance. Con Haizo Plus, tu sesión del día se envía al reloj.
 
 ESTADÍSTICAS QUE SIRVEN PARA ALGO
-Tendencia de ritmo, récords personales, un mapa con todos tus recorridos y control del desgaste de tus zapatillas. Con RUNUP Plus: predicciones de tiempo en 5 km, 10 km, media y maratón, y ocho semanas de carga de entrenamiento.
+Tendencia de ritmo, récords personales, un mapa con todos tus recorridos y control del desgaste de tus zapatillas. Con Haizo Plus: predicciones de tiempo en 5 km, 10 km, media y maratón, y ocho semanas de carga de entrenamiento.
 
 DÓNDE CORRER CUANDO NO CONOCES EL SITIO
 ¿Llegas a una ciudad nueva y no sabes por dónde correr? El mapa muestra las rutas publicadas a tu alrededor, con distancia, desnivel y muchas veces una foto. Comparte las tuyas en dos toques: los primeros y últimos 300 metros se recortan antes de enviar, nadie verá de dónde saliste ni dónde volviste.
@@ -316,13 +316,13 @@ DÓNDE CORRER CUANDO NO CONOCES EL SITIO
 CLUB Y COMUNIDAD
 Clasificación semanal y general, retos de club, quedadas, muro de actividad e insignias. Y si prefieres seguir a unas pocas personas en vez de a un club entero, hay un muro de amigos.
 
-QUE ACABE EL PLAN NO ES EL FINAL — RUNUP PLUS
+QUE ACABE EL PLAN NO ES EL FINAL — Haizo PLUS
 Al terminar: un bloque de recuperación guiado y, después, un nuevo objetivo o carrera libre sin plan fijo.
 
 Conectar Apple Salud es opcional, pero afina la forma del día. El Club necesita una cuenta; todo lo demás funciona sin ella.
 
-SUSCRIPCIÓN RUNUP PLUS
-RUNUP funciona sin suscripción y sin límite de tiempo. RUNUP Plus desbloquea el plan y el entrenador, tras 7 días de prueba gratis.
+SUSCRIPCIÓN Haizo PLUS
+Haizo funciona sin suscripción y sin límite de tiempo. Haizo Plus desbloquea el plan y el entrenador, tras 7 días de prueba gratis.
 • Mensual — 6,99 € al mes
 • Anual — 39,99 € al año (3,33 € al mes)
 Renovación automática, cancelable cuando quieras desde los ajustes de tu cuenta de Apple.
@@ -416,11 +416,11 @@ e-mail, ou l'identifiant opaque de Sign in with Apple (`users.name`, `users.emai
 `users.apple_sub`). Usage : **App Functionality**.
 
 **Analytique.** Événements d'usage first-party (voir `api/events.js` et
-`RunUp/Services/Analytics.swift`) : **Analytics / Product Interaction**, en **"Data Not Linked to
+`Haizo/Services/Analytics.swift`) : **Analytics / Product Interaction**, en **"Data Not Linked to
 You"** pour les événements pré-inscription (identifiant anonyme uniquement) et **"Data Linked to
 You"** dès qu'un compte Club existe.
 
-**Contacts — liés à l'utilisatrice.** « Trouver mes contacts sur RUNUP » lit les adresses e-mail du
+**Contacts — liés à l'utilisatrice.** « Trouver mes contacts sur Haizo » lit les adresses e-mail du
 carnet d'adresses, les hache **sur l'appareil** (SHA-256 de l'adresse en minuscules, sans espaces —
 voir `ContactMatcher`) et n'envoie que les empreintes. Le serveur les compare à la colonne générée
 `users.email_sha256`, ne reçoit aucune adresse, n'en stocke aucune et ne conserve pas les empreintes
@@ -435,7 +435,7 @@ Préciser en notes de revue que rien ne quitte l'appareil en clair et que rien n
 
 **Diagnostics — Crash Data et Performance Data, liés à l'utilisatrice.** Les rapports de panne
 établis par iOS et récupérés par MetricKit (voir `api/crashes.js` et
-`RunUp/Services/Diagnostics.swift`) : pile d'appels non symbolisée, version de l'app, version
+`Haizo/Services/Diagnostics.swift`) : pile d'appels non symbolisée, version de l'app, version
 d'iOS, modèle d'appareil, cause de l'arrêt. **Crash Data** couvre les plantages ; **Performance
 Data** couvre les quatre autres genres du même canal — gel, dépassement de processeur, écriture
 disque excessive, lancement trop lent. Usage : **App Functionality** dans les deux cas, pas
@@ -443,7 +443,7 @@ Analytics : ces lignes servent à corriger des défauts, pas à mesurer des usag
 que `api/crashes.js` écrit l'identifiant anonyme et l'identifiant de compte sur la même ligne.
 Rien de ce que la personne écrit, rien d'Apple Santé, aucune position. Conservés 180 jours.
 
-Les deux entrées correspondantes sont dans `RunUp/Resources/PrivacyInfo.xcprivacy`, et
+Les deux entrées correspondantes sont dans `Haizo/Resources/PrivacyInfo.xcprivacy`, et
 `ci_scripts/check_pannes.py` vérifie qu'elles y restent tant que le service existe. La fiche App
 Store Connect doit dire la même chose : une divergence entre le manifeste et la fiche est un motif
 de rejet à part entière.
@@ -451,7 +451,7 @@ de rejet à part entière.
 ### Le tableau à saisir, dérivé du manifeste
 
 Ce qui suit n'est pas rédigé à la main : `ci_scripts/check_confidentialite.py` le DÉRIVE de
-`RunUp/Resources/PrivacyInfo.xcprivacy` et refuse de passer s'il a divergé. Le jour où le
+`Haizo/Resources/PrivacyInfo.xcprivacy` et refuse de passer s'il a divergé. Le jour où le
 manifeste gagne une ligne, le contrôle rougit et affiche le tableau corrigé.
 
 Il faut le reporter dans **App Store Connect → Mon app → Confidentialité de l'app**, catégorie
@@ -570,13 +570,13 @@ FREE TIER AND SUBSCRIPTION
   tracking, history, stats, daily goals, the weekly recap, Apple Health, Apple Watch, widgets,
   and the whole social side (leaderboards, challenges, feed, friends, shared routes).
 
-  RUNUP Plus adds the periodised training plan and its week-to-week adaptation, the coach by
+  Haizo Plus adds the periodised training plan and its week-to-week adaptation, the coach by
   text and by voice, race-day preparation, predicted race times and training load. A 7-day free
   trial precedes it.
 
   Two notes that save time:
   - Access is granted by the StoreKit entitlement of the *Apple ID* on the device, NOT by the
-    RUNUP account, so the demo account above cannot have "used up" the trial for you. On your
+    Haizo account, so the demo account above cannot have "used up" the trial for you. On your
     sandbox Apple ID the introductory offer is available and costs nothing.
   - Nothing is behind a wall you cannot get past. Locked features show what they contain and
     offer the trial; declining leaves the rest of the app fully usable. If StoreKit products
@@ -600,7 +600,7 @@ LOCATION
   address. Nothing about a run leaves the device unless the user publishes it.
 
 CONTACTS
-  One opt-in button in the Friends screen ("find my contacts on RUNUP"). E-mail addresses are
+  One opt-in button in the Friends screen ("find my contacts on Haizo"). E-mail addresses are
   hashed on-device (SHA-256, lowercased and trimmed) and only the hashes are sent; the server
   compares them to a generated column of hashes, receives no address, stores none, and keeps
   no hash it was sent. Phone numbers are never read. Declining the permission leaves every

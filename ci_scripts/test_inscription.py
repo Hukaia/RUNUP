@@ -21,7 +21,7 @@ def cas_test(nom):
 def depot(fichiers: dict) -> list:
     racine = pathlib.Path(tempfile.mkdtemp())
     try:
-        dossier = racine / "RunUp/Views/Onboarding"
+        dossier = racine / "Haizo/Views/Onboarding"
         dossier.mkdir(parents=True)
         for nom, source in fichiers.items():
             (dossier / nom).write_text(source, encoding="utf-8")

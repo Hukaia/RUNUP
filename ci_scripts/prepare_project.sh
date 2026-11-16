@@ -67,7 +67,7 @@ fi
 #    `project.yml`, ce qui évite des conflits de fusion permanents sur un fichier que Xcode
 #    réécrit sans arrêt. Sur ta machine tu lances `xcodegen` à la main ; une machine de CI clone
 #    un dépôt où le projet n'existe pas encore et n'a donc rien à construire.
-echo "→ Génération de RunUp.xcodeproj"
+echo "→ Génération de Haizo.xcodeproj"
 xcodegen generate
 
 echo "✓ Prêt à construire"

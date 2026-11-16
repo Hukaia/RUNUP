@@ -1,12 +1,12 @@
 {
   "fr-FR": {
     "ouverture": {
-      "mot": "RUNUP",
+      "mot": "HAIZO",
       "sous": "Course · Trail · Triathlon",
       "duree": 1.6
     },
     "fin": {
-      "mot": "RUNUP",
+      "mot": "HAIZO",
       "sous": "Sur l'App Store",
       "duree": 1.4
     },
@@ -43,12 +43,12 @@
   },
   "en-US": {
     "ouverture": {
-      "mot": "RUNUP",
+      "mot": "HAIZO",
       "sous": "Road · Trail · Triathlon",
       "duree": 1.6
     },
     "fin": {
-      "mot": "RUNUP",
+      "mot": "HAIZO",
       "sous": "On the App Store",
       "duree": 1.4
     },
@@ -85,12 +85,12 @@
   },
   "es-ES": {
     "ouverture": {
-      "mot": "RUNUP",
+      "mot": "HAIZO",
       "sous": "Ruta · Trail · Triatlón",
       "duree": 1.6
     },
     "fin": {
-      "mot": "RUNUP",
+      "mot": "HAIZO",
       "sous": "En el App Store",
       "duree": 1.4
     },

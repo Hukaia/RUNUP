@@ -30,14 +30,14 @@ import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-SERVICE = RACINE / "RunUp" / "Services" / "ClubService.swift"
+SERVICE = RACINE / "Haizo" / "Services" / "ClubService.swift"
 # Les types des pages de course vivent dans leur propre fichier. Les deux sources sont lues et
 # concaténées : `champs_obligatoires` cherche une structure par son nom, peu importe d'où elle
 # vient.
-MODELE_COURSE = RACINE / "RunUp" / "Models" / "RaceEvent.swift"
-MODELE_PROFIL = RACINE / "RunUp" / "Models" / "PublicProfile.swift"
-GRAINE = RACINE / "RunUp" / "Services" / "CaptureSeed.swift"
-CATALOGUE = RACINE / "RunUp" / "Models" / "ClubBadgeCatalog.swift"
+MODELE_COURSE = RACINE / "Haizo" / "Models" / "RaceEvent.swift"
+MODELE_PROFIL = RACINE / "Haizo" / "Models" / "PublicProfile.swift"
+GRAINE = RACINE / "Haizo" / "Services" / "CaptureSeed.swift"
+CATALOGUE = RACINE / "Haizo" / "Models" / "ClubBadgeCatalog.swift"
 
 CHAMP = re.compile(r"^    var (\w+):\s*([^\n/]+?)\s*$", re.M)
 # `try c.decode(String.self, forKey: .id)` — strict. `decodeIfPresent` ne compte pas.

@@ -28,7 +28,7 @@ def cas_test(nom):
 def _dans_une_vue(source: str) -> list:
     """Les écarts quand une vue ORDINAIRE du dépôt contient `source`."""
     dossier = pathlib.Path(tempfile.mkdtemp())
-    faux = dossier / "RunUp" / "Views" / "Essai.swift"
+    faux = dossier / "Haizo" / "Views" / "Essai.swift"
     faux.parent.mkdir(parents=True, exist_ok=True)
     faux.write_text(source, encoding="utf-8")
     vraie = ck.RACINE

@@ -26,7 +26,7 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-DOSSIERS = ["RunUp", "RunUpWidgets", "RunUpWatch"]
+DOSSIERS = ["Haizo", "HaizoWidgets", "HaizoWatch"]
 
 # `String(format:` suivi, dans la même chaîne de format, d'un marqueur à décimales.
 APPEL = re.compile(r'String\(\s*format:\s*"((?:[^"\\]|\\.)*)"([^)]*)')

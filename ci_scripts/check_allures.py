@@ -32,7 +32,7 @@ invention sous test devient une invention protégée.
 2. Les quatre allures passent par `Vdot` : les trois fractions nommées, et `allureDeCourse` pour
    le marathon — qui, chez Daniels, est l'allure du marathon prédit et non une fraction fixe.
 
-3. Chaque fraction déclarée dans `Vdot.Fraction` est nommée dans `RunUpTests/VdotTests.swift`, et
+3. Chaque fraction déclarée dans `Vdot.Fraction` est nommée dans `HaizoTests/VdotTests.swift`, et
    ce fichier porte la table de Daniels — au moins sept lignes — et cite sa source. Sans la table,
    les cas ne vérifieraient plus que la cohérence du code avec lui-même, ce qui est exactement
    l'état d'où l'on vient.
@@ -46,9 +46,9 @@ l'autre les nombres.
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-PACE = RACINE / "RunUp/Services/PaceModel.swift"
-VDOT = RACINE / "RunUp/Models/Vdot.swift"
-CAS = RACINE / "RunUpTests/VdotTests.swift"
+PACE = RACINE / "Haizo/Services/PaceModel.swift"
+VDOT = RACINE / "Haizo/Models/Vdot.swift"
+CAS = RACINE / "HaizoTests/VdotTests.swift"
 
 # Les quatre allures, et par quoi chacune doit passer dans le corps de `zones`.
 PASSAGES = {
@@ -132,7 +132,7 @@ def regle_chaque_fraction_est_eprouvee():
         return [f"{VDOT.name} : aucune fraction lue dans `enum Fraction`. La forme du fichier a "
                 f"changé et ce contrôle ne voit plus rien."]
     if not CAS.exists():
-        return [f"RunUpTests/{CAS.name} est absent : les fractions ne sont comparées à rien."]
+        return [f"HaizoTests/{CAS.name} est absent : les fractions ne sont comparées à rien."]
     texte = CAS.read_text()
     for n in noms:
         if f"Fraction.{n}" not in texte:

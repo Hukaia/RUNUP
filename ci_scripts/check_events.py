@@ -30,7 +30,7 @@ gens.
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-SWIFT = RACINE / "RunUp/Services/Analytics.swift"
+SWIFT = RACINE / "Haizo/Services/Analytics.swift"
 JS = RACINE / "api/events.js"
 
 

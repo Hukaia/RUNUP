@@ -40,7 +40,7 @@ correction.
 import pathlib, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CATALOGUE = RACINE / "RunUp" / "Resources" / "Localizable.xcstrings"
+CATALOGUE = RACINE / "Haizo" / "Resources" / "Localizable.xcstrings"
 
 
 def fautes(texte):

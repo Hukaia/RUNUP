@@ -1,0 +1,325 @@
+import Foundation
+import StoreKit
+import Observation
+
+/// L'abonnement Haizo Plus, côté app.
+///
+/// # Pourquoi l'essai n'est pas un compte à rebours maison
+///
+/// Le modèle retenu est celui de Runna : sept jours d'essai, puis l'app est verrouillée. La façon
+/// naïve de le faire est de stocker une date de premier lancement et de compter. Elle a trois
+/// défauts qu'aucun code ne rattrape : la date est reculée en changeant l'heure du téléphone, elle
+/// se réinitialise à la réinstallation, et elle ne suit pas l'utilisatrice d'un appareil à l'autre.
+///
+/// L'essai est donc une **offre d'introduction** déclarée sur l'abonnement dans App Store Connect.
+/// L'utilisatrice s'abonne dès le départ, Apple ne prélève rien pendant sept jours, et elle peut
+/// résilier depuis les Réglages. L'app n'a plus qu'une question à poser — « cet abonnement est-il
+/// actif ? » — à laquelle StoreKit répond avec une transaction signée par Apple, valable sur tous
+/// ses appareils et impossible à contrefaire depuis le téléphone.
+///
+/// # Ce que cette classe ne fait pas
+///
+/// Elle vérifie l'abonnement SUR L'APPAREIL. C'est solide contre la falsification ordinaire — la
+/// signature est vérifiée par StoreKit — mais un appareil débridé reste un appareil débridé. Le
+/// coach est le seul point où ça coûte de l'argent à chaque appel : la vérification côté serveur
+/// de `api/coach` est la suite logique, et elle est notée dans `IOS_SETUP.md`.
+@MainActor
+@Observable
+final class SubscriptionService {
+    /// Les identifiants à créer à l'identique dans App Store Connect. Le groupe d'abonnement doit
+    /// contenir les deux : sans quoi passer du mensuel à l'annuel serait un second abonnement au
+    /// lieu d'un changement de formule, et l'utilisatrice paierait deux fois.
+    enum ProductID {
+        static let monthly = "com.hicsuntco.runup.plus.monthly"
+        static let yearly = "com.hicsuntco.runup.plus.yearly"
+        static let all: [String] = [yearly, monthly]
+    }
+
+    /// Les formules à afficher, l'annuel d'abord — c'est celui qui est mis en avant.
+    private(set) var products: [Product] = []
+    /// `nil` tant que la première vérification n'a pas eu lieu. La distinction compte : afficher
+    /// le paywall à quelqu'un qui EST abonné, le temps d'une requête réseau, est la pire
+    /// expérience que cet écran puisse produire.
+    private(set) var isSubscribed: Bool?
+    private(set) var loadFailed = false
+    /// L'App Store a répondu que ces identifiants n'existent pas.
+    ///
+    /// C'est un état de LANCEMENT, pas une panne : tant que les produits ne sont pas créés dans
+    /// App Store Connect, il n'y a rien à vendre — et enfermer quelqu'un dehors d'une app qu'on
+    /// ne peut pas lui vendre est la pire des deux erreurs possibles. L'app reste donc ouverte
+    /// tant que c'est le cas, et le verrou se referme tout seul le jour où les produits existent.
+    ///
+    /// Le distinguo tient parce que StoreKit distingue les deux cas : `Product.products(for:)`
+    /// renvoie un tableau VIDE pour des identifiants inconnus, et LÈVE une erreur quand elle ne
+    /// peut pas joindre l'App Store. Couper le réseau ne donne donc pas l'app gratuitement — ça
+    /// donne `loadFailed`, qui ne déverrouille rien.
+    private(set) var productsUnavailable = false
+    private(set) var isPurchasing = false
+
+    /// Les jours d'essai gratuit RÉELLEMENT offerts, par identifiant de produit — et seulement à
+    /// qui y a droit.
+    ///
+    /// # POURQUOI CE N'EST PAS UNE CONSTANTE
+    ///
+    /// Le paywall écrivait « 7 jours offerts », « Commencer les 7 jours gratuits » et « 7 jours
+    /// gratuits, puis 39,99 € par an » en dur, trois fois. Ce chiffre n'appartient pas à l'app :
+    /// il vit dans App Store Connect, où l'offre d'introduction se règle par produit et peut
+    /// changer sans qu'une ligne de code bouge.
+    ///
+    /// Et surtout, l'essai NE S'OFFRE QU'UNE FOIS par groupe d'abonnement. Quelqu'un qui l'a déjà
+    /// utilisé — l'an dernier, puis résilié — voyait le même bouton « Commencer les 7 jours
+    /// gratuits » et était débité immédiatement. C'est une mauvaise surprise, et c'est aussi la
+    /// règle 3.1.2 de la revue App Store, qui demande que le prix annoncé soit celui qui sera
+    /// prélevé.
+    ///
+    /// `isEligibleForIntroOffer` répond pour CE compte Apple et pour ce groupe d'abonnement.
+    /// Vide = rien à annoncer, et le paywall se replie sur le prix seul.
+    private(set) var essaisParProduit: [String: Int] = [:]
+
+    /// Les jours d'essai à annoncer pour ce produit, ou `nil` s'il n'y en a pas — ou si cette
+    /// personne n'y a plus droit.
+    func joursDEssai(pour product: Product) -> Int? { essaisParProduit[product.id] }
+
+    /// L'essai de la formule mise en avant, pour les textes qui parlent avant tout choix.
+    var joursDEssaiAnnoncables: Int? {
+        products.compactMap { essaisParProduit[$0.id] }.max()
+    }
+
+    private func chargerLesEssais() async {
+        var trouves: [String: Int] = [:]
+        for product in products {
+            guard let abonnement = product.subscription,
+                  let offre = abonnement.introductoryOffer,
+                  offre.paymentMode == .freeTrial else { continue }
+            // La requête d'éligibilité part par produit : elle interroge le groupe d'abonnement
+            // du produit, et les deux formules sont dans le même groupe — mais c'est à StoreKit
+            // de le dire, pas à nous de le supposer.
+            guard await abonnement.isEligibleForIntroOffer else { continue }
+            trouves[product.id] = Self.joursDe(offre.period)
+        }
+        essaisParProduit = trouves
+    }
+
+    /// Une période d'abonnement en jours, pour l'afficher.
+    ///
+    /// Les mois et les années sont approximés — 30 et 365 — et c'est sans conséquence ici : une
+    /// offre d'introduction se règle en jours ou en semaines dans App Store Connect, et un essai
+    /// d'un mois s'annonce « 30 jours » sans que personne n'y trouve à redire.
+    static func joursDe(_ periode: Product.SubscriptionPeriod) -> Int {
+        switch periode.unit {
+        case .day: return periode.value
+        case .week: return periode.value * 7
+        case .month: return periode.value * 30
+        case .year: return periode.value * 365
+        @unknown default: return periode.value
+        }
+    }
+
+    init() {
+        // Démarré avant tout achat, et jamais annulé tant que l'app vit : c'est par là qu'arrivent
+        // les renouvellements, les remboursements, les achats faits sur un autre appareil et les
+        // transactions qu'Apple rejoue après une interruption au milieu d'un paiement.
+        // Pas de `Task` retenue ni de `deinit` pour l'annuler : la classe est `@MainActor`, donc
+        // `deinit` — qui ne l'est pas — ne peut pas lire une de ses propriétés. La boucle se
+        // termine d'elle-même par le `guard let self` ci-dessous dès que l'objet disparaît, ce qui
+        // est le seul mécanisme dont on ait besoin : ce service vit aussi longtemps que l'app.
+        Task { [weak self] in
+            for await update in Transaction.updates {
+                guard let self else { return }
+                if case .verified(let transaction) = update {
+                    await transaction.finish()
+                }
+                await self.refreshEntitlement()
+            }
+        }
+    }
+
+    func start() async {
+        // Les produits AVANT le droit d'accès : c'est le chargement des produits qui dit s'il y a
+        // quelque chose à vendre, et l'aiguillage lit les deux ensemble.
+        await loadProducts()
+        await refreshEntitlement()
+    }
+
+    func loadProducts() async {
+        do {
+            let fetched = try await Product.products(for: ProductID.all)
+            // Ordre imposé, pas celui d'Apple : l'annuel en premier parce que c'est la formule
+            // mise en avant, et `Product.products(for:)` ne garantit aucun ordre.
+            products = ProductID.all.compactMap { id in fetched.first { $0.id == id } }
+            loadFailed = false
+            productsUnavailable = products.isEmpty
+            await chargerLesEssais()
+        } catch {
+            loadFailed = true
+            productsUnavailable = false
+        }
+    }
+
+    /// Y a-t-il quelque chose à vendre ?
+    ///
+    /// Non veut dire : réseau coupé, panne StoreKit, ou produit pas encore approuvé. Dans ce cas
+    /// tout se déverrouille — un écran qui ne peut rien encaisser n'a pas le droit de bloquer.
+    ///
+    /// La première version distinguait « produits inexistants » (on laisse entrer) de « échec de
+    /// chargement » (on verrouille), pour qu'on ne puisse pas s'offrir l'app en coupant le
+    /// réseau. C'était le bon raisonnement sur le mauvais critère : la conséquence réelle a été
+    /// un verrou affichant « Les formules n'ont pas pu être chargées » au-dessus d'un bouton qui
+    /// ne mène nulle part. Le petit risque d'abus que la règle laisse est très en dessous du coût
+    /// de la panne qu'elle évite.
+    var canSell: Bool { !products.isEmpty }
+
+    /// La seule question que les écrans posent : cette fonctionnalité-là est-elle ouverte ?
+    ///
+    /// La décision vit dans `Entitlement`, sous test, plutôt qu'ici où elle serait mêlée à
+    /// StoreKit et invérifiable autrement qu'en achetant vraiment un abonnement.
+    func unlocks(_ feature: PlusFeature) -> Bool {
+        // En démonstration, tout est ouvert : une capture de l'App Store doit montrer le
+        // produit, pas son verrou. « Un plan qui s'adapte » surmontait un graphique FLOUTÉ.
+        //
+        // Ici et pas dans `Entitlement` : là-bas vivent les règles du droit d'accès, qui
+        // décident pour de vraies personnes et se testent comme telles. Le mode démonstration
+        // n'est pas une règle de droit, c'est l'absence de StoreKit dans un simulateur.
+        if Demonstration.enCours { return true }
+        return Entitlement.unlocks(feature, isSubscribed: isSubscribed, canSell: canSell,
+                                   estAdmin: estAdmin)
+    }
+
+    /// Un compte de la maison, tel que le SERVEUR l'a dit.
+    ///
+    /// Recopié depuis `AuthService.currentUser` plutôt que lu à travers lui : ce service est
+    /// consulté par une trentaine d'écrans, et lui donner une dépendance vers l'authentification
+    /// ferait dépendre tout le paywall de l'état de connexion — y compris hors ligne, où
+    /// `currentUser` peut être nil alors que le droit, lui, n'a pas changé.
+    ///
+    /// Posé par `AuthService.onAuthenticated`, et remis à faux à la déconnexion.
+    private(set) var estAdmin = false
+
+    func appliquerAdmin(_ actif: Bool) {
+        guard estAdmin != actif else { return }
+        estAdmin = actif
+    }
+
+    /// L'état d'abonnement, relu depuis les droits courants plutôt que mémorisé.
+    ///
+    /// `currentEntitlements` ne renvoie que ce qui est actif MAINTENANT : un abonnement résilié,
+    /// expiré ou remboursé en disparaît de lui-même. Stocker un booléen au moment de l'achat
+    /// laisserait l'accès ouvert après un remboursement.
+    func refreshEntitlement() async {
+        var active = false
+        for await entitlement in Transaction.currentEntitlements {
+            guard case .verified(let transaction) = entitlement else { continue }
+            guard ProductID.all.contains(transaction.productID) else { continue }
+            if let revoked = transaction.revocationDate, revoked <= .now { continue }
+            if let expiry = transaction.expirationDate, expiry <= .now { continue }
+            active = true
+        }
+        isSubscribed = active
+        // Recopié hors de SwiftUI pour que les notifications locales et la montre puissent le
+        // lire — voir `Entitlement.hasPlusCached`. Ici et nulle part ailleurs : c'est le seul
+        // endroit du code où l'on apprend la vérité, relue des droits StoreKit courants.
+        Entitlement.cacheHasPlus(active || !canSell)
+    }
+
+    /// Attend le droit d'accès, brièvement, et s'arrête à la première réponse positive.
+    ///
+    /// LE DROIT N'ARRIVE PAS AVEC LA FIN DE L'ACHAT. Apple le livre par `Transaction.updates`,
+    /// quelques centaines de millisecondes plus tard — parfois plus. Poser la question une seule
+    /// fois, tout de suite, répondrait « rien » à quelqu'un qui vient de payer ou d'entrer un code
+    /// parfaitement valide, et l'app afficherait le verrou pendant que l'abonnement s'ouvre
+    /// derrière.
+    ///
+    /// D'où l'attente bornée. Elle s'arrête à la première réponse positive — donc immédiatement
+    /// dans le cas ordinaire, sans aucune pause — et elle abandonne au bout de trois secondes.
+    /// Rien n'est perdu si elle abandonne : `Transaction.updates` finira par livrer la transaction
+    /// et les écrans se déverrouilleront d'eux-mêmes. Ce qu'on perd, c'est seulement le message.
+    ///
+    /// Une fonction partagée, et non deux boucles jumelles : le code promo attendait déjà, l'achat
+    /// non, et c'est précisément cet écart qui faisait annoncer « L'achat n'a pas abouti. » après
+    /// une transaction signée par Apple. Deux copies de cette boucle, c'est la garantie que la
+    /// prochaine divergence passera inaperçue aussi longtemps.
+    private func attendreLeDroit() async {
+        for essai in 0..<8 {
+            await refreshEntitlement()
+            if isSubscribed == true { return }
+            if essai < 7 { try? await Task.sleep(for: .milliseconds(400)) }
+        }
+    }
+
+    func purchase(_ product: Product) async -> PurchaseOutcome {
+        isPurchasing = true
+        // Relâché APRÈS l'attente ci-dessous, et c'est voulu : le bouton reste désactivé le temps
+        // qu'on sache quoi répondre, au lieu de redevenir tapable sous le doigt de quelqu'un dont
+        // l'achat est en train d'aboutir.
+        defer { isPurchasing = false }
+
+        // La décision ne se prend pas ici : voir `PurchaseOutcome`. Ici on ne fait que trois
+        // choses — demander, traduire la réponse de StoreKit, et laisser au droit le temps
+        // d'arriver.
+        let resultat = await resultatDeLAchat(product)
+
+        switch resultat {
+        // Rien à attendre : personne n'a payé, et dans le cas « Demander à acheter » le droit
+        // arrivera dans plusieurs minutes ou jamais — trois secondes de sablier n'y changeraient
+        // rien, sinon faire croire à une panne.
+        case .cancelled, .pending:
+            break
+        case .verified, .unverified, .unknown, .threw:
+            await attendreLeDroit()
+        }
+        return PurchaseOutcome.decide(result: resultat, isSubscribed: isSubscribed)
+    }
+
+    /// Ce que StoreKit a répondu, traduit sans rien décider.
+    ///
+    /// Une fonction à part pour que `purchase(_:)` reste lisible d'un coup d'œil — demander,
+    /// attendre, répondre — et pour qu'il n'y ait qu'UN seul `return` là où la réponse se décide.
+    private func resultatDeLAchat(_ product: Product) async -> PurchaseOutcome.StoreKitResult {
+        do {
+            switch try await product.purchase() {
+            case .success(let verification):
+                guard case .verified(let transaction) = verification else { return .unverified }
+                // `finish()` tout de suite : la transaction est honorée, et la laisser ouverte la
+                // ferait rejouer par `Transaction.updates` à chaque lancement de l'app.
+                await transaction.finish()
+                return .verified
+            case .userCancelled:
+                return .cancelled
+            case .pending:
+                return .pending
+            @unknown default:
+                return .unknown
+            }
+        } catch {
+            return .threw
+        }
+    }
+
+    /// Ce qu'il faut faire une fois la feuille de code promo refermée.
+    ///
+    /// L'attente est celle d'`attendreLeDroit()`, pour la raison qui y est écrite : le droit
+    /// n'arrive pas avec la fermeture de la feuille. Quand la feuille, elle, n'a pas pu s'ouvrir,
+    /// il n'y a rien à attendre — aucun code n'a été saisi — et une seule lecture suffit.
+    func applyRedemption(sheetFailed: Bool) async -> OfferCodeOutcome {
+        if sheetFailed {
+            await refreshEntitlement()
+        } else {
+            await attendreLeDroit()
+        }
+        return OfferCodeOutcome.decide(sheetFailed: sheetFailed, isSubscribed: isSubscribed)
+    }
+
+    /// Obligatoire pour la validation App Store (guideline 3.1.1) : une utilisatrice qui change de
+    /// téléphone doit pouvoir retrouver son abonnement sans repayer.
+    func restore() async -> RestoreOutcome {
+        // `AppStore.sync()` lève quand le réseau manque, et aussi quand la personne referme la
+        // demande de mot de passe Apple. L'échec était avalé, et l'écran enchaînait sur
+        // « Aucun abonnement actif trouvé » — c'est-à-dire qu'il annonçait à une abonnée qui
+        // vient de changer de téléphone qu'elle n'a rien, et lui laissait entendre qu'il faut
+        // repayer. C'est le pire message possible, il est faux, et il tombe au pire moment.
+        var syncFailed = false
+        do { try await AppStore.sync() } catch { syncFailed = true }
+        await refreshEntitlement()
+        return RestoreOutcome.decide(syncFailed: syncFailed, isSubscribed: isSubscribed)
+    }
+}

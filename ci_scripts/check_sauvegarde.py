@@ -33,9 +33,9 @@ import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-MODELES = RACINE / "RunUp" / "Models"
-SAUVEGARDE = RACINE / "RunUp" / "Services" / "Sauvegarde.swift"
-SERVICE = RACINE / "RunUp" / "Services" / "SauvegardeService.swift"
+MODELES = RACINE / "Haizo" / "Models"
+SAUVEGARDE = RACINE / "Haizo" / "Services" / "Sauvegarde.swift"
+SERVICE = RACINE / "Haizo" / "Services" / "SauvegardeService.swift"
 
 
 def sans_commentaires(source: str) -> str:
@@ -284,7 +284,7 @@ def main() -> int:
         print(f"{len(griefs)} problème(s) dans le filet de sauvegarde :\n")
         for g in griefs:
             print(f"  • {g}\n")
-        print("Voir l'en-tête de RunUp/Services/Sauvegarde.swift.")
+        print("Voir l'en-tête de Haizo/Services/Sauvegarde.swift.")
         return 1
     mods = modeles(None)
     src = SAUVEGARDE.read_text(encoding="utf-8")

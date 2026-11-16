@@ -68,7 +68,7 @@ def lance(entrees: str, fichiers: dict[str, str], etapes: str = SANS_SCRIPT):
         wf = racine / ".github/workflows/captures.yml"
         wf.parent.mkdir(parents=True)
         wf.write_text(workflow(entrees, etapes), encoding="utf-8")
-        app = racine / "RunUp"
+        app = racine / "Haizo"
         for chemin, contenu in fichiers.items():
             f = app / chemin
             f.parent.mkdir(parents=True, exist_ok=True)
@@ -89,24 +89,24 @@ def lance(entrees: str, fichiers: dict[str, str], etapes: str = SANS_SCRIPT):
 
 @cas_de("une vue sous un chemin couvert : d'accord")
 def _():
-    code, sortie = lance('      - "RunUp/Views/**"\n', {"Views/Ecran.swift": UNE_VUE})
+    code, sortie = lance('      - "Haizo/Views/**"\n', {"Views/Ecran.swift": UNE_VUE})
     assert code == 0, sortie
     assert "1 fichiers de vues" in sortie, sortie
 
 
 @cas_de("UNE VUE HORS DES CHEMINS : REFUS, ET ELLE EST NOMMÉE")
 def _():
-    # La régression exacte du 8 novembre 2026 : `RunUpApp.swift` portait `RootView` et ne
+    # La régression exacte du 8 novembre 2026 : `HaizoApp.swift` portait `RootView` et ne
     # figurait pas dans le déclencheur.
-    code, sortie = lance('      - "RunUp/Views/**"\n', {"RunUpApp.swift": UNE_VUE})
+    code, sortie = lance('      - "Haizo/Views/**"\n', {"HaizoApp.swift": UNE_VUE})
     assert code == 1, sortie
-    assert "RunUp/RunUpApp.swift" in sortie, sortie
+    assert "Haizo/HaizoApp.swift" in sortie, sortie
 
 
 @cas_de("un fichier sans vue n'est pas réclamé")
 def _():
     # Les `Services` et les `Models` restent dehors par décision : le contrôle ne la conteste pas.
-    code, sortie = lance('      - "RunUp/Views/**"\n', {
+    code, sortie = lance('      - "Haizo/Views/**"\n', {
         "Views/Ecran.swift": UNE_VUE,
         "Services/Reseau.swift": "final class Reseau { func charger() {} }\n",
         "Models/Profil.swift": "struct Profil { var nom = \"\" }\n",
@@ -121,14 +121,14 @@ def _():
     # orpheline la vue couverte par le dernier chemin.
     entrees = (
         "      # Ce qui se juge à l'œil.\n"
-        '      - "RunUp/Views/**"\n'
+        '      - "Haizo/Views/**"\n'
         "\n"
         "      # ET LE FICHIER QUI PORTE LA VUE RACINE.\n"
         "      #\n"
         "      # Deux lignes de commentaire d'affilée, et une ligne vide avant.\n"
-        '      - "RunUp/RunUpApp.swift"\n'
+        '      - "Haizo/HaizoApp.swift"\n'
     )
-    code, sortie = lance(entrees, {"Views/Ecran.swift": UNE_VUE, "RunUpApp.swift": UNE_VUE})
+    code, sortie = lance(entrees, {"Views/Ecran.swift": UNE_VUE, "HaizoApp.swift": UNE_VUE})
     assert code == 0, sortie
     assert "2 fichiers de vues" in sortie and "2 chemins" in sortie, sortie
 
@@ -137,14 +137,14 @@ def _():
 def _():
     # `workflow_dispatch:` et ses entrées ne sont pas des chemins. S'ils étaient ramassés, le
     # nombre de chemins mentirait — et un `description: "..."` pourrait même couvrir une vue.
-    code, sortie = lance('      - "RunUp/Views/**"\n', {"Views/Ecran.swift": UNE_VUE})
+    code, sortie = lance('      - "Haizo/Views/**"\n', {"Views/Ecran.swift": UNE_VUE})
     assert code == 0, sortie
     assert "1 chemins" in sortie, sortie
 
 
 @cas_de("un motif à étoile inconnue fait s'arrêter le contrôle, il ne devine pas")
 def _():
-    code, message = lance('      - "RunUp/*/Ecran.swift"\n', {"Views/Ecran.swift": UNE_VUE})
+    code, message = lance('      - "Haizo/*/Ecran.swift"\n', {"Views/Ecran.swift": UNE_VUE})
     assert code == "arret", f"attendu un arrêt, reçu {code} : {message}"
     assert "étoile" in message, message
 
@@ -175,10 +175,10 @@ def _():
 
 @cas_de("aucune vue trouvée : refus, parce que l'analyse a échoué")
 def _():
-    # Un `RunUp/` renommé, un `rglob` sur un chemin absent : ça ne rend rien et ne dit rien.
+    # Un `Haizo/` renommé, un `rglob` sur un chemin absent : ça ne rend rien et ne dit rien.
     # C'est exactement le défaut qui a fait relire un dossier inexistant en silence le
     # 7 novembre 2026.
-    code, sortie = lance('      - "RunUp/Views/**"\n', {})
+    code, sortie = lance('      - "Haizo/Views/**"\n', {})
     assert code == 1, sortie
     assert "Aucune vue" in sortie, sortie
 
@@ -195,13 +195,13 @@ def _():
 @cas_de("les deux fichiers dont l'omission a coûté quelque chose sont bien couverts")
 def _():
     motifs = ck.chemins_declencheurs()
-    for vue in ("RunUp/AppState.swift", "RunUp/RunUpApp.swift"):
+    for vue in ("Haizo/AppState.swift", "Haizo/HaizoApp.swift"):
         assert ck.couvert(vue, motifs), f"{vue} ne relance pas les captures"
 
 
 # --- La seconde règle : un script lancé doit déclencher la chaîne qui le lance ----------------
 
-COUVRE_TOUT = ('      - "RunUp/Views/**"\n'
+COUVRE_TOUT = ('      - "Haizo/Views/**"\n'
                '      - "ci_scripts/test_truc.py"\n')
 
 
@@ -211,7 +211,7 @@ def _():
     # être dans son filtre. Les modifier ne relançait pas la chaîne qui les exécute.
     etapes = ("      - name: Éprouver la comparaison\n"
               "        run: cd ci_scripts && python3 test_comparer.py\n")
-    code, sortie = lance('      - "RunUp/Views/**"\n', {"Views/E.swift": UNE_VUE}, etapes=etapes)
+    code, sortie = lance('      - "Haizo/Views/**"\n', {"Views/E.swift": UNE_VUE}, etapes=etapes)
     assert code == 1, sortie
     assert "ci_scripts/test_comparer.py" in sortie, sortie
     assert "débranché" in sortie, sortie
@@ -223,7 +223,7 @@ def _():
     # scripts avec le python d'un environnement virtuel, pas avec `python3`.
     etapes = ('      - name: Éprouver\n'
               '        run: cd ci_scripts && "$RUNNER_TEMP/venv/bin/python" test_comparer.py\n')
-    code, sortie = lance('      - "RunUp/Views/**"\n', {"Views/E.swift": UNE_VUE}, etapes=etapes)
+    code, sortie = lance('      - "Haizo/Views/**"\n', {"Views/E.swift": UNE_VUE}, etapes=etapes)
     assert code == 1, f"le script lancé par un venv n'a pas été vu :\n{sortie}"
     assert "test_comparer.py" in sortie, sortie
 
@@ -242,7 +242,7 @@ def _():
 def _():
     # Sinon la règle serait tautologique : tout ce qui est dans le filtre serait « lancé », et
     # elle ne pourrait jamais rien attraper.
-    entrees = ('      - "RunUp/Views/**"\n'
+    entrees = ('      - "Haizo/Views/**"\n'
                '      - "ci_scripts/test_comparer.py"\n'
                '      - "ci_scripts/test_truc.py"\n')
     code, sortie = lance(entrees, {"Views/E.swift": UNE_VUE})
@@ -264,7 +264,7 @@ def _():
 
 @cas_de("un workflow qui ne lance aucun script est un cas normal, pas une panne")
 def _():
-    code, sortie = lance('      - "RunUp/Views/**"\n', {"Views/E.swift": UNE_VUE})
+    code, sortie = lance('      - "Haizo/Views/**"\n', {"Views/E.swift": UNE_VUE})
     assert code == 0, f"un workflow sans script a été pris pour une lecture cassée :\n{sortie}"
     assert "0 scripts lancés" in sortie, sortie
 

@@ -1,0 +1,1204 @@
+import SwiftUI
+import SwiftData
+
+/// "Programme" home screen — mirrors `ProgScreen` in screensA.jsx.
+struct HomeView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var tailleDuTexte
+    @Environment(AppState.self) private var appState
+    @Environment(SubscriptionService.self) private var subscriptions
+    // Scoped to unread only — this query exists solely to badge the bell icon with a count, but
+    // an unscoped `@Query` fetched every notification ever created (unbounded, grows for the
+    // app's whole lifetime) just to filter it back down to unread right after. NotificationsSheet
+    // has its own separate `@Query` for the full list it actually displays.
+    @Query(filter: #Predicate<AppNotification> { !$0.read }) private var unreadNotifications: [AppNotification]
+    /// Borné aux trois dernières semaines, et c'est largement suffisant : `runs` ne sert QU'À
+    /// `semaine`, qui somme cette semaine et le même segment de la précédente. Sans cette borne, l'écran ouvert tous
+    /// les jours au lancement chargeait TOUT l'historique — chaque ligne portant son tracé GPS
+    /// sérialisé, soit des dizaines de mégaoctets après quelques centaines de courses — pour
+    /// produire deux additions hebdomadaires. Et il le rechargeait à chaque retour sur l'onglet,
+    /// puisque `RootTabView` recrée l'écran courant à chaque navigation.
+    ///
+    /// Trois semaines plutôt que deux : une marge qui absorbe les semaines à cheval sur un
+    /// changement de mois ou d'année sans jamais rogner la comparaison.
+    @Query private var runs: [RunRecord]
+    // La sonde « a-t-elle déjà couru une fois » a disparu avec la bande de chiffres : elle
+    // n'existait que pour choisir entre deux phrases de comparaison, et la carte de la semaine ne
+    // pose plus cette question — un premier jour s'y lit « 0,0 / 32 km », ce qui est à la fois
+    // exact et suffisant. Une requête SwiftData de moins à chaque retour sur l'onglet.
+
+    init() {
+        // Six semaines, pas trois. La comparaison hebdomadaire n'en demande que deux ; le bloc
+        // de chiffres en demande trente jours. Élargir CETTE requête plutôt qu'en ouvrir une
+        // seconde : une quarantaine d'enregistrements au total, contre un deuxième aller-retour
+        // SwiftData à chaque retour sur l'écran le plus ouvert de l'app.
+        let cutoff = Calendar.current.date(byAdding: .weekOfYear, value: -6, to: .now) ?? .distantPast
+        _runs = Query(
+            filter: #Predicate<RunRecord> { $0.date >= cutoff },
+            sort: \RunRecord.date,
+            order: .reverse
+        )
+    }
+
+    /// La hauteur du bandeau de la dernière sortie, qui suit le réglage de taille du texte.
+    ///
+    /// LE CADRE SUIT LE TEXTE, PARCE QUE C'EST LE TEXTE QUI EST DESSUS. Le bandeau est un tracé
+    /// pleine image avec la date et les chiffres posés en blanc par-dessus, et un voile dégradé
+    /// qui garantit la lisibilité. À 150 points fixes, au deuxième cran d'accessibilité, les
+    /// chiffres montaient au-delà du voile et le trait rose leur passait en travers — vu sur la
+    /// capture en grand texte. En grandissant avec eux, le bandeau garde la proportion pour
+    /// laquelle le voile a été réglé.
+    ///
+    /// Plafonné à 300, soit 2,0 × — le même plafond que la typographie, et pour la même raison :
+    /// au-delà, personne n'a regardé.
+    @ScaledMetric(relativeTo: .body) private var hauteurDeLaTrace: CGFloat = 150
+
+    private var profile: UserProfile { appState.profile }
+    private var isFreeRun: Bool { profile.programPhase == .freerun }
+    private var unreadCount: Int { unreadNotifications.count }
+
+    var body: some View {
+        Group {
+            // Les phases de fin de programme — récupération encadrée, puis choix d'un nouvel
+            // objectif — REMPLACENT l'accueil. C'est juste quand on suit un programme : pendant
+            // la récupération, l'app doit dire de ne pas courir, et c'est tout son propos.
+            //
+            // Sans abonnement, il n'y a pas de programme, donc pas de phase à respecter — et
+            // surtout ces deux écrans ne portent aucun bouton pour partir courir. Une abonnée
+            // dont l'abonnement s'arrête en pleine récupération se retrouvait donc devant une app
+            // de course sans aucun moyen de courir, sans rien à l'écran pour l'expliquer.
+            switch planUnlocked ? profile.programPhase : .active {
+            case .recovery: RecoveryView()
+            case .choice: ChoiceView()
+            default: mainContent
+            }
+        }
+    }
+
+    private var mainContent: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                HeaderView(
+                    // La date du jour, pas "Semaine 4/9" : la carte programme juste en dessous
+                    // affiche déjà la semaine ET le bloc, donc l'eyebrow ne faisait que répéter
+                    // l'information la plus proche à l'écran. Une date ancre le prénom dans le
+                    // vrai jour, comme la maquette (`.greet` au-dessus de `.greet-name`).
+                    //
+                    // Le prénom SEUL, sans salutation. « Salut Charlotte » se lit une fois avec
+                    // plaisir et cent fois comme un automatisme ; le prénom seul, sous la date du
+                    // jour, dit la même chose sans faire semblant de dire bonjour.
+                    eyebrow: isFreeRun ? String(localized: "Mode course libre") : todayDateEyebrow,
+                    title: profile.name,
+                    // 32 → 26. LE PRÉNOM EST UNE SALUTATION, PAS LE CONTENU DE L'ÉCRAN.
+                    //
+                    // L'argument d'origine — « les écrans modernes ouvrent sur un mot posé
+                    // grand » — reste vrai, et il ne dit pas DE COMBIEN. À 32 il rendait 34,9
+                    // points : plus gros que le titre d'une page de club (26,2) et presque
+                    // aussi gros que le record collectif (36), qui est le chiffre le plus
+                    // dominant de l'app. Un prénom qu'on ne lit pas — on le sait déjà — occupait
+                    // le haut du barème.
+                    //
+                    // Le cran de titre de l'app le met à 24,0 : au-dessus de tout texte de
+                    // l'écran, et sous les deux chiffres des cartes, qui sont ce qu'on vient voir.
+                    // C'était un 26 écrit ici seulement ; le prénom n'a pas de raison d'être le
+                    // seul titre de l'app à son propre palier.
+                    titleSize: .title
+                ) {
+                    HStack(spacing: 8) {
+                        streakChip
+                        Button(action: { appState.openNotifications() }) {
+                            ZStack(alignment: .topTrailing) {
+                                Circle()
+                                    .fill(RUColor.card)
+                                    .overlay(Circle().stroke(RUColor.line, lineWidth: RUSpacing.hairline))
+                                    .frame(width: 36, height: 36)
+                                    .overlay(Image(systemName: "bell").font(RUFont.icone(.medium)).foregroundColor(RUColor.textPrimary))
+                                if unreadCount > 0 {
+                                    Circle().fill(RUColor.rose).frame(width: 8, height: 8)
+                                        .overlay(Circle().stroke(RUColor.bg, lineWidth: 1.5))
+                                }
+                            }
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(PressableStyle())
+                        .accessibilityLabel(unreadCount > 0
+                            ? String(localized: "Notifications, \(unreadCount) non lues")
+                            : String(localized: "Notifications"))
+                        // L'avatar est parti : le Profil est un onglet maintenant, ce bouton
+                        // était un second chemin vers la même destination, à côté d'une barre
+                        // d'onglets qui la montre en permanence. L'en-tête de la maquette est
+                        // d'ailleurs réduit à la date, au nom et à la pastille de série — elle
+                        // ne pose pas d'avatar ici, précisément pour cette raison.
+                        //
+                        // La cloche reste : les notifications n'ont pas d'onglet, et la maquette
+                        // ne les omet pas au sens d'une décision de les supprimer.
+                    }
+                }
+
+                // La séance d'abord.
+                //
+                // L'ordre venait de la maquette — anneau, chiffres, séance — et la maquette a
+                // raison sur un écran qu'on consulte. Celui-ci n'est pas consulté, il est utilisé :
+                // on l'ouvre pour savoir ce qu'on court aujourd'hui, et c'est la seule carte qui
+                // porte un bouton. Elle arrivait en troisième position, après deux blocs qui
+                // regardent en arrière. Ce qui se fait passe donc avant ce qui s'est fait.
+                //
+                // L'anneau ne perd rien à venir en second : c'est un état, pas une action, et il
+                // reste au-dessus de la ligne de flottaison.
+                // Le programme entier — la séance du jour comprise — fait partie de Haizo Plus.
+                //
+                // Sans lui, l'accueil ne devient pas vide : il redevient ce qu'il est pour qui ne
+                // suit pas de plan. On court quand on veut, on enregistre, on garde ses anneaux
+                // du jour et sa série. Le bouton DÉMARRER est exactement le même — verrouiller la
+                // possibilité de courir dans une app de course n'aurait aucun sens, et c'est
+                // précisément ce qui peuple le Club et fait vivre le fil.
+                //
+                // Ce qui manque est nommé et montré juste en dessous, plutôt que simplement
+                // absent : personne ne peut vouloir un programme dont il ignore l'existence.
+                // La séance du jour est la seule chose qui change avec l'abonnement en tête
+                // d'écran. Tout ce qui suit est à soi — ses objectifs, sa semaine, ses chiffres —
+                // et n'a donc aucune raison d'être derrière le verrou.
+                if planUnlocked {
+                    sessionCard.ruRises(reduceMotion)
+                } else {
+                    freeRunCard.ruRises(reduceMotion)
+                }
+
+                // LA DERNIÈRE SORTIE, JUSTE APRÈS CELLE DU JOUR.
+                //
+                // L'accueil n'avait AUCUNE image. Pas une : une carte de séance, un anneau, une
+                // bande de sept jours, des chiffres — du texte et des formes, sur six cents
+                // points de défilement. Et l'app possède pourtant le seul vrai visuel qu'une app
+                // de course puisse avoir, son tracé GPS, qui ne sortait jamais de l'onglet Club.
+                //
+                // POURQUOI PAS TOUT EN HAUT, comme la maquette le proposait. La note vingt
+                // lignes plus haut tranche déjà la question et elle a raison : « on ouvre
+                // l'accueil pour savoir ce qu'on court aujourd'hui », donc ce qui SE FAIT passe
+                // avant ce qui S'EST FAIT. Un bandeau rétrospectif posé au-dessus de la seule
+                // carte qui porte un bouton aurait défait cette décision pour une raison
+                // d'esthétique — ce qui est exactement la mauvaise façon de gagner un argument.
+                //
+                // Juste après, en revanche, il répond à la carte du jour : voilà ce que tu cours
+                // aujourd'hui, voilà ce que tu as couru la dernière fois. Et il reste au-dessus
+                // de la ligne de flottaison.
+                derniereSortie.ruRises(reduceMotion)
+
+                // L'ORDRE SUIT LES QUESTIONS QU'ON SE POSE EN OUVRANT L'APP.
+                //
+                // Qu'est-ce que je fais aujourd'hui (la séance) — qu'est-ce que je viens de faire
+                // (le tracé) — où j'en suis dans mon plan (le programme) — et le reste.
+                //
+                // Le programme passait APRÈS les objectifs du jour, c'est-à-dire sous la ligne de
+                // flottaison : sur la capture du 13 novembre, « Ton programme · 10 km · 47:30 »
+                // n'apparaissait qu'en bas de l'écran, à moitié caché par la barre d'onglets.
+                // C'est la promesse que l'app vend — un plan qui s'adapte — et c'était la seule
+                // chose qu'on ne voyait pas en ouvrant.
+
+                // La bande de la semaine pour tout le monde. Elle disait deux choses, et une
+                // seule était le produit payant : CE QUI EST PRÉVU. Ce qu'on a COURU est son
+                // propre historique. La carte montre donc les sept jours à tout le monde, et
+                // n'ajoute le programme qu'à qui l'a — ce qui vend mieux qu'un cadenas : une
+                // semaine à moitié remplie à côté d'une semaine dont chaque jour porte un nom
+                // montre la forme de ce qui manque, là où une case grise s'apprend à ne plus
+                // être vue.
+                programWeekCard.ruRises(reduceMotion)
+
+                ringsCard.ruRises(reduceMotion)
+
+                // Les chiffres, pour tout le monde aussi, et cachés tant qu'il n'y a rien à
+                // montrer : « 0 km · 0 sortie » le premier jour est une carte qui décourage.
+                //
+                // DE LA 3e À LA 9e SORTIE, CE N'EST PAS LA BONNE CARTE, et c'est la carte des
+                // premiers jalons qui prend la place — voir `premiersJalons`. Les deux ensemble
+                // diraient deux fois la même chose : avec moins de dix sorties, la fenêtre de
+                // trente jours contient à peu près tout ce qu'on a couru.
+                if let jalons = premiersJalons {
+                    premiersJalonsCard(jalons).ruRises(reduceMotion)
+                }
+
+                // LA CARTE « 30 DERNIERS JOURS » EST PARTIE.
+                //
+                // Quatre chiffres — distance, sorties, temps, allure — et un bouton vers l'onglet
+                // Stats, qui est dans la barre du bas, en permanence, à un doigt. Une carte
+                // entière pour raccourcir un trajet d'un tap, sur l'écran dont Charlotte dit le
+                // 14 novembre qu'il porte trop d'informations.
+                //
+                // La carte des PREMIERS JALONS reste : elle ne double rien. Elle s'affiche tant
+                // qu'on n'a pas assez couru pour que les statistiques veuillent dire quelque
+                // chose — c'est de l'accueil pour une débutante, pas un résumé.
+
+                if !planUnlocked {
+
+                    // Sans la ligne « ce qui reste gratuit » : les trois quarts de l'écran
+                    // au-dessus SONT la version gratuite en fonctionnement — la carte pour
+                    // partir courir, les anneaux du jour, la série. Le rappeler par écrit
+                    // au-dessous, c'est décrire ce qu'on a sous les yeux.
+                    // En dernier, et c'est le point. À la troisième place sur trois, cette carte
+                    // était un mur ; sous quatre blocs de contenu réel, c'est une proposition.
+                    PlusLockCard(feature: .adaptivePlan, showsFreeReminder: false)
+                        .ruRises(reduceMotion)
+                }
+
+                // `planUnlocked` en plus d'`isFreeRun` : sans abonnement, cette ligne promettait
+                // un coach qui est lui aussi derrière le verrou, deux centimètres sous une carte
+                // qui explique déjà qu'il n'y a pas de programme. Elle disait donc la même chose
+                // une deuxième fois, en annonçant une aide qui n'arrivera pas.
+                if isFreeRun && planUnlocked {
+                    Text("Pas de plan fixe — le coach te propose de quoi garder la forme, jour après jour.")
+                        .font(RUFont.sans(.small))
+                        .foregroundColor(RUColor.text3)
+                        .frame(maxWidth: .infinity)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 4)
+                }
+            }
+            .padding(.horizontal, RUSpacing.pagePadding)
+            .padding(.top, 8)
+            .padding(.bottom, 130)
+        }
+    }
+
+    /// The week strip and the program teaser, merged into ONE card (owner's call — they're two
+    /// halves of the same information, "où j'en suis cette semaine / dans le programme", and
+    /// lived at opposite ends of the screen). Tapping anywhere opens the full plan. In course
+    /// libre there's no program to tease, so the card is just the days, not tappable.
+    private var programWeekCard: some View {
+        // CE QUI EST PRÉVU reste payant ; les sept jours ne le sont plus.
+        //
+        // La condition était `!isFreeRun`, qui parle de la PHASE du programme, pas de
+        // l'abonnement. Montrer cette carte à qui n'a pas souscrit aurait donc livré le
+        // bloc, les kilomètres prévus et le lien vers le plan complet à quelqu'un dont le
+        // programme est justement derrière le verrou.
+        let montreLeProgramme = planUnlocked && !isFreeRun
+        let shape = planShape
+        let block = AdaptivePlanEngine.trainingBlock(forWeek: profile.weekNumber, shape: shape)
+        // Nommé ici parce qu'un bloc `ViewBuilder` n'accepte pas de déclaration, et que les deux
+        // branches ci-dessous — avec ou sans date de course — portent le même titre.
+        //
+        // L'OBJECTIF SORT DE L'EN-TÊTE, ET C'EST UNE LIGNE RENDUE AU RUBAN.
+        //
+        // Il disait « Ton programme · 10 km · 47:30 ». La distance et le chrono cible vivent
+        // déjà sur le profil, dans la pastille « 10 km · 47:30 · 27 décembre 2026 », et sur
+        // l'écran du plan dont cette carte est le bouton. Les répéter ici était la troisième
+        // copie, sur l'écran dont Charlotte dit depuis le 14 novembre qu'il porte trop.
+        let titreDuProgramme = String(localized: "Ton programme")
+        return Button(action: { appState.go(.plan) }) {
+            VStack(alignment: .leading, spacing: 12) {
+                // Combiné à part du ruban ci-dessous : il expose déjà un élément par jour, avec
+                // son libellé, et l'aplatir dans ce même `combine` déferèrait cette granularité
+                // au lieu de s'y ajouter.
+                Group {
+                    if montreLeProgramme {
+                        // LE COMPTE À REBOURS PASSE PAR L'ACCESSOIRE DE L'EN-TÊTE.
+                        //
+                        // Il était posé à côté de `RUCardHeader`, dans un `HStack` à nous. Vu de
+                        // l'en-tête, il n'existait donc pas — et le mécanisme que `RUCardHeader`
+                        // porte justement pour ça, l'accessoire qui descend SOUS le titre au
+                        // deuxième cran d'accessibilité, ne s'appliquait pas. Résultat sur la
+                        // capture en grand texte du 14 novembre : « Ton programme · 10… ».
+                        //
+                        // Il reste du texte gris au bout de la ligne : il était une capsule rose
+                        // remplie ; il se lit aussi bien sans, et il cesse de réclamer
+                        // l'attention d'un bouton alors qu'on ne peut pas le toucher. La flèche
+                        // qui l'accompagnait est partie pour de bon : la section entière est un
+                        // bouton, et sa dernière ligne dit déjà « voir le plan complet ».
+                        if let days = profile.daysUntilRace {
+                            RUCardHeader(icon: "map.fill", title: titreDuProgramme) {
+                                Text(String(localized: "J-\(days)"))
+                                    .font(RUFont.sans(.small, weight: .bold))
+                                    .foregroundColor(RUColor.text3)
+                            }
+                        } else {
+                            RUCardHeader(icon: "map.fill", title: titreDuProgramme)
+                        }
+                        // LA SEMAINE PASSE EN SOUS-TITRE, au lieu d'être un second titre.
+                        //
+                        // Elle était à `displayStyle(.subtitle)` — 20 points, encre pleine —
+                        // soit la taille d'un titre de carte, juste sous un titre de carte. Deux
+                        // titres empilés ne font pas une hiérarchie, ils font une hésitation.
+                        //
+                        // Et c'est cette ligne-là qui a poussé le ruban sous la barre d'onglets
+                        // quand l'échelle a grandi : 20 points au lieu de 14, c'est six points
+                        // de hauteur qui manquaient en bas de l'écran. Mesuré sur les captures
+                        // des campagnes 208 et 210, à pleine résolution.
+                        Text("\(weekEyebrow) · Bloc \(block.label)")
+                            .font(RUFont.sans(.small, weight: .medium))
+                            .foregroundColor(RUColor.text2)
+                    }
+                }
+                .accessibilityElement(children: .combine)
+
+                // Les kilomètres de la semaine, à l'endroit où la semaine est décrite.
+                //
+                // Ils vivaient dans une bande à filets au-dessus, séparée de cette carte par la
+                // séance et l'anneau : deux blocs pour une seule semaine, l'un donnant le chiffre
+                // et l'autre les jours. La barre de phases part avec la bande — le bloc est déjà
+                // nommé au-dessus (« Bloc Base »), la forme complète du programme est le sujet de
+                // l'écran du plan, et deux barres de progression dans une même carte ne se lisent
+                // plus ni l'une ni l'autre.
+                if montreLeProgramme {
+                    // `SemaineComparable` coupe la semaine passée AU MÊME POINT : sans ça, une
+                    // semaine en cours (partielle) était soustraite d'une semaine entière, et
+                    // tout le monde était « en retard » le lundi matin.
+                    WeekKmSummary(
+                        doneKm: semaine.cette,
+                        plannedKm: profile.plannedWeeklyKm,
+                        lastWeekKm: semaine.passee,
+                        baisseProgrammee: AdaptivePlanEngine.baisseProgrammee(
+                            forWeek: profile.weekNumber, shape: shape),
+                        footnote: nil
+                    )
+                }
+
+                weekStrip
+                // LE PIED DE CARTE NE RESTE QUE POUR LE PROGRAMME OUVERT.
+                //
+                // Il disait « 7 semaines · voir le plan complet ». Les deux moitiés étaient déjà
+                // ailleurs : l'en-tête annonce « Semaine 1/7 », donc le total y est, et la carte
+                // ENTIÈRE est un bouton vers le plan, donc l'invitation aussi.
+                //
+                // Un programme sans date de course, lui, n'a pas de total à mettre dans son
+                // « Semaine 1 » : « Programme ouvert » est alors la seule façon de le dire.
+                if montreLeProgramme, shape.totalWeeks == nil {
+                    Text("Programme ouvert").font(RUFont.sans(.small)).foregroundColor(RUColor.text2)
+                }
+            }
+            .padding(RUSpacing.cardPadding)
+        }
+        .buttonStyle(PressableStyle())
+        .ruCard()
+        .disabled(!montreLeProgramme)
+    }
+
+    /// LA BANDE DE LA SEMAINE LAISSE TOMBER LE QUANTIÈME QUAND LE TEXTE EST TROP GRAND.
+    ///
+    /// Sept colonnes sur la largeur d'un téléphone, c'est une quarantaine de points chacune.
+    /// Elles portent une initiale et un nombre à deux chiffres : à taille de texte normale ça
+    /// tient, et à partir d'un certain agrandissement plus rien ne tient — c'est précisément la
+    /// mise en page que `Typography.swift` cite en exemple pour justifier son plafond.
+    ///
+    /// Une semaine a sept jours, on ne peut pas en replier une partie. Ce qui peut céder, c'est
+    /// le QUANTIÈME : l'initiale dit déjà quel jour, la marque dit déjà son état, et la date
+    /// complète reste annoncée à VoiceOver. On perd un repère de confort, pas une information.
+    ///
+    /// `ViewThatFits` et pas un seuil de catégorie, pour la même raison qu'ailleurs : ce qui
+    /// décide est la place, pas le réglage.
+    /// LA SEMAINE DE L'ACCUEIL EST CELLE DU COACH, et c'était deux objets jusqu'au 14 novembre.
+    ///
+    /// Ici vivait une bande à soi : sept lettres, sept quantièmes, une pastille rose cochée pour
+    /// les séances faites. Elle disait quel jour on est et ce qui est fait. Le ruban dit en plus
+    /// QUOI et COMBIEN DE TEMPS — la famille par la couleur, la durée par la hauteur — et il
+    /// reprend les quantièmes, qui étaient la seule chose que la bande faisait de plus.
+    ///
+    /// Deux semaines dessinées dans deux langages, dans la même app, c'est la divergence que le
+    /// jeton `traceBackground` décrit depuis septembre. Celle-ci était de moi : le ruban est
+    /// arrivé sur le Coach la veille, sans que je voie que l'accueil en avait déjà une.
+    private var weekStrip: some View {
+        RubanDeSemaine(jours: profile.weekSessions.sorted { $0.weekday < $1.weekday },
+                       aujourdHui: indexDuJour,
+                       surLaNuit: false,
+                       quantiemes: true)
+            // PAS DE HAUTEUR FIXE : le ruban se mesure lui-même.
+            //
+            // Avec `.frame(height: 104)`, un réglage de texte accessible poussait les étiquettes
+            // hors du cadre — l'initiale et le quantième font alors quarante points à eux deux,
+            // au-dessus d'une barre qui peut en faire soixante-seize. La carte du Coach, elle,
+            // lui donne une hauteur parce qu'elle en a une : c'est une carte de nuit.
+            .padding(.top, 2)
+    }
+
+    /// Lundi = 0, comme `PlannedDay.weekday`. `Calendar` compte le dimanche comme 1.
+    private var indexDuJour: Int {
+        (Calendar.current.component(.weekday, from: .now) + 5) % 7
+    }
+
+
+    /// Was one big `Button` wrapping the FAIT/DÉMARRER buttons INSIDE it — nested SwiftUI buttons
+    /// have unreliable hit-testing (the outer button can swallow or fight taps meant for the
+    /// inner ones), which is almost certainly why the FAIT/DÉMARRER row felt inconsistent to tap.
+    /// A plain `VStack` with `.onTapGesture` for "open the detail sheet" opens exactly the same
+    /// way, but SwiftUI correctly gives priority to the real `Button`s nested inside a tap-gesture
+    /// container (unlike inside an actual `Button`), so FAIT/DÉMARRER get their own reliable taps.
+    /// La pastille dégradée `.session-card .tag` de la maquette, à la place de l'eyebrow rose
+    /// discret : c'est le seul endroit de l'écran où la maquette remplit vraiment avec l'accent,
+    /// et ça fait de la carte séance l'ancre visuelle de la page. Un jour de repos garde une
+    /// pastille neutre — il n'y a rien à mettre en avant.
+    ///
+    /// Elle vivait au milieu des aides de la bande de chiffres ; en supprimant la bande, j'ai
+    /// emporté cette fonction avec elle et cassé la compilation. Elle est désormais posée juste
+    /// au-dessus de son unique appelante.
+    /// La pastille « aujourd'hui ».
+    ///
+    /// Son symbole était `bolt.fill` pour toute séance — or l'éclair désigne le FRACTIONNÉ dans le
+    /// plan depuis que les familles ont une forme. Le même signe pour deux choses différentes sur
+    /// deux écrans voisins : la pastille prend maintenant le symbole de la famille du jour.
+    ///
+    /// Sa couleur, elle, ne bouge pas. Sur l'accueil il n'y a qu'une séance : une couleur de
+    /// famille n'y apprendrait rien et disputerait l'accent, alors que dans le plan, où sept
+    /// lignes se côtoient, c'est précisément ce qui donne la forme de la semaine.
+    private func sessionTag(_ isRestDay: Bool, family: SessionFamily) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: isRestDay ? "moon.zzz.fill" : family.symbol).font(RUFont.icone(.micro, weight: .bold))
+            Text(LocalizedStringKey(isRestDay ? "Aujourd'hui" : "Séance du jour"))
+                .font(RUFont.sans(.micro, weight: .bold)).tracking(0.2)
+        }
+        // UN SEUL ROSE PAR CARTE, ET IL VA À CE SUR QUOI ON PEUT AGIR.
+        //
+        // Cette pastille était un aplat de dégradé rose à texte blanc — l'élément le plus bruyant
+        // de la carte, et celui qui dit le moins : « Séance du jour » sur l'écran d'accueil d'une
+        // app de course n'apprend rien à personne. Elle disputait l'accent au bouton DÉMARRER,
+        // qui est la seule chose de la carte sur laquelle on peut appuyer.
+        //
+        // Elle garde son symbole — qui, lui, porte la famille de la séance et change selon le
+        // jour — et perd sa couleur. Les deux états deviennent le même, ce qui est juste : un
+        // jour de repos et un jour de séance sont deux faits, pas deux niveaux d'importance.
+        .foregroundColor(RUColor.text2)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(RUColor.card2, in: Capsule())
+        .overlay(Capsule().stroke(RUColor.line, lineWidth: RUSpacing.hairline))
+    }
+
+    /// DÉMARRER, et un « + » à côté.
+    ///
+    /// Les deux actions ne sont pas de même nature : l'une lance une course, l'autre en
+    /// enregistre une déjà faite. Deux boutons de même taille et de même forme les annonçaient
+    /// comme deux choix équivalents, ce qui donnait à la carte la silhouette d'une boîte de
+    /// dialogue « Annuler / OK ». Un carré compact à côté du bouton pleine largeur dit la
+    /// hiérarchie par la géométrie, sans avoir besoin d'un mot.
+    ///
+    /// Et le « + » ouvre une saisie plutôt que de valider tout seul : une séance faite hors de
+    /// l'app a une distance et une durée réelles, que l'app ne peut pas deviner. Les demander
+    /// vaut mieux que de les inventer ou de les laisser à zéro.
+    ///
+    /// Partagée entre la carte de séance et la carte de course libre : ce sont les deux mêmes
+    /// gestes, et deux copies auraient divergé au premier changement.
+    private var runActionsRow: some View {
+        HStack(spacing: 10) {
+            Button(action: { appState.startRun() }) {
+                HStack { Image(systemName: "play.fill"); Text("DÉMARRER") }
+            }
+            .buttonStyle(PrimaryButtonStyle())
+
+            // LE CHROME PART, LA CIBLE RESTE.
+            //
+            // C'était un carré gris de 52 points, rempli et cerclé, posé contre le bouton
+            // principal. Deux objets de même encombrement côte à côte, dont un seul compte :
+            // l'œil doit trancher entre eux alors que la hiérarchie est évidente.
+            //
+            // C'est la règle déjà écrite pour les actions d'une carte du fil — « dans une carte,
+            // deux gros boutons bordés pèsent plus lourd que l'activité elle-même » : on retire
+            // l'emballage, pas la zone tapable. 44 points de cible via `frame` + `contentShape`,
+            // le minimum d'Apple, et le bouton principal récupère la largeur rendue.
+            Button(action: { Haptics.selection(); appState.openLogSession() }) {
+                Image(systemName: "plus")
+                    .font(RUFont.icone(.xlarge, weight: .semibold))
+                    .foregroundColor(RUColor.text2)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(PressableStyle())
+            .accessibilityLabel("Ajouter une séance déjà faite")
+        }
+    }
+
+    private var planUnlocked: Bool { subscriptions.unlocks(.adaptivePlan) }
+
+    /// L'accueil de qui ne suit pas de programme.
+    ///
+    /// # ELLE NE PROPOSAIT RIEN, ET C'ÉTAIT LE DÉFAUT
+    ///
+    /// « On sort courir ? », tous les jours, indéfiniment. Trois modèles de séance existaient
+    /// dans le moteur, un index était prévu pour les faire tourner, il n'a jamais été
+    /// incrémenté, et la carte n'en montrait de toute façon aucun. Course libre était un
+    /// chronomètre avec un joli fond.
+    ///
+    /// Or quelqu'un qui ne suit pas de plan a BESOIN qu'on lui dise quoi faire aujourd'hui,
+    /// plus encore que quelqu'un qui en suit un : il n'a rien d'autre pour décider. La carte
+    /// porte donc une vraie séance, qui change chaque jour, qui progresse, et qui tient compte
+    /// d'hier et de la forme — voir `CourseLibre`.
+    ///
+    /// LA RAISON EST AFFICHÉE AVEC LA SÉANCE. Une suggestion sans raison est un ordre, et on
+    /// n'obéit pas longtemps à une app ; « Hier c'était dur, aujourd'hui on récupère » se
+    /// discute, donc s'accepte.
+    /// Une ligne d'explication sous le titre d'une séance : une icône, une phrase.
+    ///
+    /// Trois endroits la posent — l'ajustement du moteur, la phrase « pourquoi cette séance », et
+    /// la carte de course libre. Chacun portait son propre `HStack`, sa propre fonte et sa propre
+    /// couleur : trois copies d'une même ligne, donc trois occasions de la laisser dériver.
+    ///
+    /// DEUX INITIALISEURS, ET CE N'EST PAS UNE COMMODITÉ. Les deux sortes de texte qui passent
+    /// ici ne s'affichent pas de la même façon : `adjustment` est une clé FRANÇAISE enregistrée
+    /// en base, que le catalogue traduit à l'affichage, tandis que la phrase de
+    /// `PourquoiCetteSeance` est composée à l'exécution et DÉJÀ traduite. Confondre les deux la
+    /// traduit deux fois — ce qui marche en français par identité et casse partout ailleurs, le
+    /// défaut exact que l'en-tête de `applyCoachAction` met en garde contre. Deux noms, donc, et
+    /// aucun des deux ne peut être pris pour l'autre par distraction.
+    private struct LigneDExplication: View {
+        let icone: String
+        private let phrase: Text
+
+        /// Une clé française enregistrée, traduite ici par le catalogue.
+        init(icone: String, cle: String) {
+            self.icone = icone
+            self.phrase = Text(LocalizedStringKey(cle))
+        }
+
+        /// Une phrase déjà traduite, composée à l'exécution.
+        init(icone: String, dejaTraduite: String) {
+            self.icone = icone
+            self.phrase = Text(dejaTraduite)
+        }
+
+        var body: some View {
+            HStack(spacing: 6) {
+                Image(systemName: icone)
+                    .font(RUFont.icone(.small, weight: .semibold))
+                phrase
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .font(RUFont.sans(.small, weight: .medium))
+            // C'est une EXPLICATION — « voici pourquoi la séance est ce qu'elle est » — et une
+            // explication n'est pas un accent : on la lit une fois, on n'agit pas dessus.
+            .foregroundColor(RUColor.text2)
+        }
+    }
+
+    private var freeRunCard: some View {
+        let suggestion = CourseLibre.duJour(profil: profile, courses: runs)
+        let seance = suggestion.seance
+        let repos = seance.durationMinutes == 0
+        return VStack(alignment: .leading, spacing: 0) {
+            sessionTag(repos, family: seance.family)
+            Text(seance.displayTitle)
+                .displayStyle(repos ? .subtitle : .title)
+                .foregroundColor(repos ? RUColor.text2 : RUColor.textPrimary)
+                .padding(.top, 8)
+            Text(suggestion.raison)
+                .font(RUFont.sans(.small))
+                .foregroundColor(RUColor.text2)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 4)
+
+            // ET SI LA SÉANCE A ÉTÉ ALLÉGÉE, LA CARTE LE DIT.
+            //
+            // Elle se taisait, et l'allègement ne l'atteignait même pas. Maintenant qu'il
+            // l'atteint, se taire serait pire : la séance aurait maigri de 15 ou 30 % sans un
+            // mot, sur la carte dont l'en-tête dit justement qu'une suggestion sans raison est un
+            // ordre. Les deux phrases ne disent pas la même chose et tiennent ensemble : la
+            // première explique la SUGGESTION, celle-ci explique la RÉDUCTION.
+            if let adjustment = seance.adjustment {
+                LigneDExplication(icone: "arrow.triangle.2.circlepath", cle: adjustment)
+                    .padding(.top, 6)
+            }
+
+            if profile.seanceDoneToday {
+                Text("Séance faite aujourd'hui ✓")
+                    .font(RUFont.sans(.body, weight: .semibold))
+                    .foregroundColor(RUColor.lime)
+                    .padding(.top, 14)
+            } else {
+                // Les chiffres ne s'affichent pas un jour de repos : il n'y a ni durée, ni
+                // allure, ni zone à annoncer, et une rangée de tirets occuperait la meilleure
+                // place de l'écran pour ne rien dire.
+                if !repos {
+                    RUMetricRow(spacing: 18) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("\(seance.durationMinutes)")
+                                // 56 → 40. Voir la note jumelle sur `sessionCard`.
+                                .font(RUFont.display(.banner))
+                                .foregroundColor(RUColor.textPrimary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.6)
+                            Text("minutes")
+                                .font(RUFont.sans(.micro, weight: .medium))
+                                .tracking(0.9)
+                                .textCase(.uppercase)
+                                .foregroundColor(RUColor.text3)
+                        }
+                        MetricColumn(value: seance.pace, label: "Allure")
+                        MetricColumn(value: seance.zone, label: "Zone")
+                    }
+                    .padding(.top, 10)
+                }
+                // LE BOUTON RESTE, MÊME UN JOUR DE REPOS. C'est une suggestion, pas une porte
+                // fermée : course libre veut dire qu'elle décide, et une app qui propose du
+                // repos en retirant le bouton ne propose plus, elle interdit.
+                runActionsRow
+                    .padding(.top, repos ? 14 : 15)
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .ruCard()
+    }
+
+    /// La dernière sortie qui a laissé une trace, en bandeau.
+    ///
+    /// `route.count > 1` et pas seulement « la dernière sortie » : une séance saisie à la main
+    /// ou validée sans GPS n'a rien à montrer, et un bandeau vide vaut moins que pas de bandeau.
+    /// On remonte donc jusqu'à la dernière qui en a une — sinon rien, et l'accueil retrouve
+    /// exactement la mise en page qu'il avait.
+    ///
+    /// Le tracé est DESSINÉ (`SelfDrawingRoute`), pas cartographié. L'historique, lui, affiche
+    /// une vraie carte dans ses vignettes, et c'est juste à cet endroit-là : on y cherche OÙ on
+    /// a couru. Ici on cherche QU'ON a couru — et un dessin se charge sans tuiles, sans réseau,
+    /// et se dessine tout seul à l'apparition, ce qu'une carte ne fait pas.
+    @ViewBuilder private var derniereSortie: some View {
+        if let derniere = runs.filter({ $0.route.count > 1 }).max(by: { $0.date < $1.date }) {
+            Button(action: { Haptics.selection(); appState.go(.history) }) {
+                // ── LES CHIFFRES SE POSENT SUR LE TRACÉ, ET PAS SOUS LUI ────────────────
+                //
+                // La première version mettait une bande de 104 points puis une ligne de chiffres
+                // dessous. La capture a montré le défaut : une boucle est à peu près aussi haute
+                // que large, `SelfDrawingRoute` conserve ses proportions, donc elle se cale sur
+                // la hauteur et laisse DEUX LARGES MARGES NOIRES. Le bandeau était vide aux trois
+                // quarts.
+                //
+                // La géométrie ne se discute pas : un sujet carré dans un cadre large laisse des
+                // marges, se fait rogner, ou devient une vignette. Rogner ampute l'information
+                // que le tracé porte pour décorer ; une vignette à côté des chiffres aurait fait
+                // du bandeau une ligne d'historique de plus.
+                //
+                // Le noir cesse donc d'être du vide et devient un FOND : le tracé occupe tout le
+                // cadre, et la date et les chiffres se posent dessus en blanc, comme un texte sur
+                // une photo. Un voile dégradé au bas garantit la lisibilité quelle que soit la
+                // forme de la boucle — le trait peut passer derrière le texte sans le gêner,
+                // exactement comme une photo le ferait.
+                CarteDeNuit(hauteur: min(hauteurDeLaTrace, 300)) {
+                    SelfDrawingRoute(route: derniere.route, lineWidth: 3,
+                                     targetPoints: 140, showsStart: true)
+                } legende: {
+                    LegendeDeNuit(
+                        surtitre: Text(verbatim: derniere.date.formatted(
+                            .dateTime.weekday(.abbreviated).day().month(.abbreviated)
+                                .locale(Locale.current))),
+                        chiffres: [ChiffreDeNuit(valeur: Distances.valeur(derniere.distanceKm), unite: "km"),
+                                   ChiffreDeNuit(valeur: derniere.avgPace, unite: "/km")])
+                }
+            }
+            .buttonStyle(PressableStyle())
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "Ta dernière sortie"))
+            .accessibilityValue(String(localized: "\(Distances.km(derniere.distanceKm)) à \(derniere.avgPace) du kilomètre"))
+            .accessibilityHint(String(localized: "Ouvre l'historique"))
+        }
+    }
+
+    /// La phrase « pourquoi cette séance » du jour, quand il y en a une.
+    ///
+    /// Tout le raisonnement vit dans `PourquoiCetteSeance` — cette fonction ne fait que lui
+    /// tendre ce que le moteur sait. `adaptationNote` compte comme une explication au même titre
+    /// qu'`adjustment` : elle est recopiée dans le sous-titre de la séance (voir
+    /// `WorkoutSession.displaySubtitle`), donc la raison est déjà à l'écran.
+    private func pourquoiCetteSeance(_ session: WorkoutSession, estUnJourDeRepos: Bool) -> String? {
+        let shape = AdaptivePlanEngine.ProgramShape.compute(
+            goal: profile.goalId, raceDate: profile.raceDate,
+            from: profile.programStartDate ?? .now)
+        let jours = profile.raceDate.map {
+            Calendar.current.dateComponents([.day], from: .now, to: $0).day ?? 0
+        }
+        return PourquoiCetteSeance.phrase(.init(
+            bloc: AdaptivePlanEngine.trainingBlock(forWeek: profile.weekNumber, shape: shape),
+            semaine: profile.weekNumber,
+            semainesEnTout: shape.totalWeeks,
+            joursAvantLaCourse: jours,
+            dejaExplique: session.adjustment != nil || session.adaptationNote != nil,
+            estUnJourDeRepos: estUnJourDeRepos,
+            estEnCourseLibre: isFreeRun))
+    }
+
+    private var sessionCard: some View {
+        let session = profile.todaySession
+        // `isRestDayToday` plutôt que la durée de la séance prescrite : COURIR EFFACE LE REPOS,
+        // et cette carte doit le dire comme l'anneau. Sinon l'écran annonce « Repos » juste
+        // au-dessus d'un anneau qui compte la séance du jour comme bouclée — deux réponses à
+        // « qu'est-ce qu'aujourd'hui ? », sur quinze centimètres d'écran.
+        let isRestDay = profile.isRestDayToday
+        // Le plan prescrivait du repos et la journée compte quand même : ce n'est plus du repos,
+        // et ce n'est pas la séance prévue non plus. C'est une sortie libre.
+        let reposEfface = session.durationMinutes == 0 && !isRestDay
+        let titre = reposEfface ? String(localized: "Course libre") : session.displayTitle
+        return VStack(alignment: .leading, spacing: 0) {
+            sessionTag(isRestDay, family: reposEfface ? .endurance : session.family)
+            // Un jour de repos, cette carte n'a rien à faire faire : ni durée, ni allure, ni
+            // boutons. Elle gardait pourtant le corps de 23 pt des jours de séance, ce qui
+            // faisait de « REPOS » le bloc le plus lourd de l'écran — la hiérarchie disait
+            // l'inverse de l'information. Le titre recule d'un cran et la carte se contente
+            // d'une ligne, pour que le regard aille à l'anneau et aux chiffres de la semaine,
+            // qui eux ont quelque chose à dire ce jour-là.
+            Text(titre)
+                .displayStyle(isRestDay ? .subtitle : .title)
+                .foregroundColor(isRestDay ? RUColor.text2 : RUColor.textPrimary)
+                .padding(.top, 8)
+
+            // L'ajustement était une PASTILLE, en haut à droite, à côté du tag de séance.
+            //
+            // Ce n'est pas une pastille : c'est une PHRASE — « Semaine chargée — séances
+            // raccourcies ». Enfermée dans une capsule teintée, elle passait sur deux lignes,
+            // occupait la moitié de la largeur et pesait plus lourd que le titre qu'elle
+            // accompagne. Une pastille est faite pour un mot ou un nombre.
+            //
+            // Elle devient une ligne, sous le titre, à sa place chronologique : voici la séance,
+            // voici pourquoi elle est ce qu'elle est.
+            //
+            // `cle:` et non `dejaTraduite:` : la valeur STOCKÉE est une clé française
+            // (« Allégée · nuit courte »), que le catalogue traduit. La fiche détail l'affichait
+            // déjà traduite via `StatChip` ; l'accueil montrait le français à tout le monde.
+            // Même valeur, deux écrans, deux langues.
+            if let adjustment = session.adjustment {
+                LigneDExplication(icone: "arrow.triangle.2.circlepath", cle: adjustment)
+                    .padding(.top, 6)
+            }
+            // ET LES AUTRES JOURS, CEUX OÙ LE MOTEUR N'A RIEN CORRIGÉ.
+            //
+            // `adjustment` n'existe que lorsqu'une séance a été ALLÉGÉE. La grande majorité des
+            // jours, la carte affichait donc une séance et se taisait sur la raison — alors que
+            // le moteur en a une : le bloc, le rang de la semaine, la distance à la course.
+            //
+            // En `else if`, jamais en plus : une correction est une explication plus précise que
+            // n'importe quelle phrase de bloc, et deux explications sur la même carte, c'est une
+            // de trop. Voir `PourquoiCetteSeance`, qui porte la décision et ses cas.
+            else if let pourquoi = pourquoiCetteSeance(session, estUnJourDeRepos: isRestDay) {
+                LigneDExplication(icone: "calendar", dejaTraduite: pourquoi)
+                    .padding(.top, 6)
+            }
+
+            if isRestDay {
+                // Le sous-titre du modèle et la phrase d'explication disaient déjà la même
+                // chose deux fois de suite (« Jour de repos — laisse ton corps récupérer », puis
+                // « Pas de séance prévue — profite-en pour récupérer »). Une seule suffit.
+                Text(session.displaySubtitle)
+                    .font(RUFont.sans(.small)).foregroundColor(RUColor.text3)
+                    .padding(.top, 4)
+            } else if profile.seanceDoneToday {
+                // Le sous-titre du modèle dirait « Jour de repos — laisse ton corps récupérer »,
+                // ce qui contredirait la ligne « Séance faite » juste en dessous.
+                Text(reposEfface
+                     ? String(localized: "Le plan prévoyait du repos — ta sortie compte quand même.")
+                     : session.displaySubtitle)
+                    .font(RUFont.sans(.small)).foregroundColor(RUColor.text2).padding(.top, 4)
+                Text("Séance faite aujourd'hui ✓")
+                    .font(RUFont.sans(.body, weight: .semibold)).foregroundColor(RUColor.lime)
+                    .padding(.top, 14)
+                // Une carte qui n'a plus d'action garde la place d'une carte qui en a une.
+                //
+                // Séance faite, il restait un titre, deux lignes, une coche — puis quatre-vingts
+                // points de vide, au SOMMET de l'écran. La carte occupait la meilleure place de la
+                // page pour ne rien proposer, et c'est ce vide qui creusait ensuite tout le bas de
+                // l'écran.
+                //
+                // Elle regarde donc devant : demain. C'est la seule chose qu'on vient encore
+                // chercher ici une fois la séance cochée, et c'est déjà dans le programme — il
+                // suffisait d'aller la lire. Un jour de repos demain, la ligne ne s'affiche pas et
+                // la carte reste courte : c'est correct aussi, il n'y a rien à annoncer.
+                if let next = tomorrowSession { tomorrowRow(next) }
+            } else {
+                Text(session.displaySubtitle).font(RUFont.sans(.small)).foregroundColor(RUColor.text2).padding(.top, 4)
+                // UNE mesure domine, deux l'accompagnent.
+                //
+                // Les trois colonnes avaient la même taille — 20 points chacune — donc l'écran
+                // n'avait pas de sommet : rien n'attirait l'œil en premier, et une page sans
+                // sommet se lit comme une liste de champs. C'est ce qui faisait « plat », bien
+                // plus que les couleurs.
+                //
+                // La durée gagne : c'est la seule des trois qui décrit ce qu'on est sur le point
+                // de FAIRE. L'allure et la zone décrivent comment le faire, elles n'ont pas
+                // besoin d'être lues à un mètre.
+                //
+                // Le prime « ′ » posé à 24 points à côté d'un 56 se lisait comme une virgule
+                // tronquée : « 40, ». Un grand chiffre porte son unité SOUS lui, en petites
+                // capitales, comme les deux mesures qui l'accompagnent — sinon ce n'est pas une
+                // unité, c'est un caractère perdu.
+                //
+                // Et les trois mesures sont groupées à GAUCHE, l'espace rejeté au bout. Avec un
+                // `Spacer` au milieu, le 40 et le couple allure/zone se retrouvaient collés aux
+                // deux bords avec un trou au centre : deux blocs qui s'ignorent au lieu d'une
+                // rangée qui se lit.
+                RUMetricRow(spacing: 18) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(session.durationMinutes)")
+                            // 56 → 40, SOIT 43,6 POINTS AU LIEU DE 61.
+                            //
+                            // Soixante et un points, c'était le plus gros élément de toute
+                            // l'app — plus gros que le record collectif d'un club (36), pour
+                            // une durée de séance. Et dans sa propre carte, il écrasait le titre
+                            // qui le surplombe : « Footing récup » rend 25,1, donc la durée
+                            // parlait DEUX FOIS ET DEMIE plus fort que le nom de ce qu'on va
+                            // faire. On lit d'abord ce que c'est, le nombre de minutes vient
+                            // après.
+                            //
+                            // À 43,6 le rapport tombe à 1,7 : la durée domine toujours sa
+                            // rangée de mesures — c'est elle le chiffre de la carte — sans
+                            // écraser son propre titre ni tenir un tiers de l'écran.
+                            .font(RUFont.display(.banner))
+                            .foregroundColor(RUColor.textPrimary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.6)
+                        Text("minutes")
+                            .font(RUFont.sans(.micro, weight: .medium))
+                            .tracking(0.9)
+                            .textCase(.uppercase)
+                            .foregroundColor(RUColor.text3)
+                    }
+                    MetricColumn(value: session.pace, label: "Allure")
+                    MetricColumn(value: session.zone, label: "Zone")
+                }
+                .padding(.top, 10)
+
+                // DÉMARRER, et un « + » à côté.
+                //
+                // Les deux actions ne sont pas de même nature : l'une lance une course, l'autre en
+                // enregistre une déjà faite. Deux boutons de même taille et de même forme les
+                // annonçaient comme deux choix équivalents, ce qui donnait à la carte la silhouette
+                // d'une boîte de dialogue « Annuler / OK ». Un carré compact à côté du bouton
+                // pleine largeur dit la hiérarchie par la géométrie, sans avoir besoin d'un mot.
+                //
+                // Et le « + » ouvre une saisie plutôt que de valider tout seul : une séance faite
+                // hors de l'app a une distance et une durée réelles, que l'app ne peut pas
+                // deviner. Les demander vaut mieux que de les inventer ou de les laisser à zéro.
+                runActionsRow
+                    .padding(.top, 14)
+            }
+        }
+        // La carte prend TOUTE la largeur, quel que soit son contenu.
+        //
+        // Sans ça, elle se réduisait à son texte le plus long dans les états qui n'ont ni rangée
+        // de mesures ni boutons — « séance faite », jour de repos. Le défaut existait depuis
+        // toujours mais restait invisible tant que trois cartes se suivaient : elles étaient
+        // toutes étroites ensemble. Depuis que les sections en dessous vont d'un bord à l'autre,
+        // la carte se retrouve seule à s'arrêter au milieu, et l'écran a l'air cassé — parce
+        // qu'il l'est.
+        .frame(maxWidth: .infinity, alignment: .leading)
+        // 20 au lieu de 16 : c'est la carte qui porte le sommet de l'écran, et une marge plus
+        // large est ce qui distingue une carte principale d'une carte de liste — sans avoir à
+        // lui ajouter un contour, une teinte ou un badge.
+        .padding(18)
+        .contentShape(Rectangle())
+        .onTapGesture { appState.openSessionDetail() }
+        .ruCard()
+        // The manual-debrief sheet presents from RootTabView now — anchored here it could only
+        // ever appear while this specific card was mounted on screen.
+    }
+
+    /// Replaces the old "forme du jour" readiness ring — that score barely moved week to week and
+    /// wasn't tied to anything she could act on. Total km run this week, compared against last
+    /// week, is the number every runner already watches and tries to beat — real, concrete, and
+    /// it visibly changes after every run instead of drifting inside a narrow band.
+    /// La séance de demain, si demain en porte une.
+    ///
+    /// Lue dans `weekSessions`, la même source que la bande de la semaine — pas une prévision, pas
+    /// un calcul : ce qui est déjà planifié. `nil` un jour de repos, et le dernier jour d'une
+    /// semaine dont la suivante n'est pas encore générée.
+    private var tomorrowSession: (title: String, minutes: Int)? {
+        guard let date = Calendar.current.date(byAdding: .day, value: 1, to: .now) else { return nil }
+        let index = AdaptivePlanEngine.weekdayIndex(for: date)
+        guard let planned = profile.weekSessions.first(where: { $0.weekday == index }),
+              let session = planned.session, session.durationMinutes > 0 else { return nil }
+        return (session.displayTitle, session.durationMinutes)
+    }
+
+    /// « DEMAIN · Sortie longue · 60 min », sous un filet.
+    ///
+    /// Volontairement discrète : elle informe, elle n'appelle pas à agir. Un second bouton dans
+    /// cette carte lui donnerait deux sommets, et on ne démarre pas la séance de demain.
+    private func tomorrowRow(_ next: (title: String, minutes: Int)) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            RUFilet()
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                Text("Demain")
+                    .font(RUFont.sans(.micro, weight: .bold))
+                    .tracking(1.2)
+                    .textCase(.uppercase)
+                    .foregroundColor(RUColor.text3)
+                Text(next.title)
+                    .font(RUFont.sans(.label, weight: .semibold))
+                    .foregroundColor(RUColor.text2)
+                    .lineLimit(1).minimumScaleFactor(0.8)
+                Spacer(minLength: 6)
+                Text("\(next.minutes) min")
+                    .font(RUFont.sans(.small, weight: .bold))
+                    .foregroundColor(RUColor.text3)
+            }
+        }
+        .padding(.top, 18)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// Cette semaine et la semaine passée au même point — voir `SemaineComparable`, qui porte
+    /// la mesure et la raison. Le calcul vivait ici ET dans `StatsView`, chacun avec sa propre
+    /// façon de borner, ce qui faisait deux occasions de le réparer à moitié.
+    private var semaine: (cette: Double, passee: Double) {
+        SemaineComparable.kilometres(runs)
+    }
+
+    /// Légende verticale `.ring-legend` de la maquette (pastille · nom de l'objectif · valeur
+    /// alignée à droite) à la place de la rangée horizontale de trois valeurs : les trois
+    /// objectifs y étaient serrés côte à côte et surtout désignés par leur unité ("séance",
+    /// "/400 KCAL", "/6000 PAS") plutôt que par leur nom, ce qui obligeait à décoder la couleur
+    /// de l'anneau pour savoir de quel objectif on parle. Une ligne par objectif, nommée, laisse
+    /// aussi la valeur respirer au lieu d'être tronquée.
+    /// L'anneau du jour, posé en GRAND et centré, avec le compte au milieu et ses objectifs
+    /// en dessous.
+    ///
+    /// # CE QU'IL ÉTAIT
+    ///
+    /// Un anneau de 84 points à gauche d'une carte, trois lignes « nom … valeur » à droite. Lisible,
+    /// mais c'était la mise en page d'une LIGNE DE LISTE appliquée à l'objet signature de l'app :
+    /// l'anneau segmenté n'existe nulle part ailleurs, et il se présentait comme une vignette au
+    /// bout d'un intitulé.
+    ///
+    /// # CE QU'IL EST
+    ///
+    /// Le centre de gravité de l'écran. Le compte vit DANS l'anneau — c'est le seul endroit où il
+    /// ne répète rien, puisque l'anneau le dessine déjà — et les trois objectifs passent en
+    /// colonnes dessous, alignés sur les trois arcs qu'ils nomment, de gauche à droite comme eux.
+    ///
+    /// # LA TAILLE EST FIXE, ET C'EST UN CHOIX
+    ///
+    /// 236 points, pas une fraction de la largeur. Une fraction demanderait de mesurer le
+    /// conteneur, donc un `GeometryReader` qui a besoin qu'on lui impose la hauteur qu'il est
+    /// justement censé calculer. 236 occupe les deux tiers du contenu sur un téléphone courant,
+    /// tient sur le plus étroit, et ne coûte aucune mesure.
+    // MARK: - Les premiers jalons
+
+    /// CE QUE L'APP NE DISAIT RIEN ENTRE LA 3e ET LA 10e SORTIE.
+    ///
+    /// Le catalogue de badges marque la toute première course, puis la dixième. Entre les deux,
+    /// rien qui compte les sorties — c'est-à-dire rien dans la fenêtre où l'on arrête. Et ce
+    /// qu'on avait à la place était pire que rien : la carte des trente derniers jours, qui
+    /// affiche une ALLURE MOYENNE. Au cinquième jour d'une reprise, c'est le seul chiffre de
+    /// l'écran capable de donner tort à quelqu'un qui hésite déjà.
+    ///
+    /// Cette carte-ci n'affiche donc QUE des grandeurs qui ne peuvent pas baisser : le nombre de
+    /// sorties, les kilomètres cumulés, la plus longue sortie. Aucune ne redescend d'une semaine
+    /// sur l'autre, quoi qu'on fasse.
+    ///
+    /// Le nombre de JOURS depuis la première sortie a été écarté pour cette raison exactement :
+    /// il grandit qu'on coure ou non. « 3 sorties en 40 jours » est un reproche déguisé en
+    /// mesure.
+    ///
+    /// Elle s'arrête à la dixième, quand le badge prend le relais — pas de réglage, pas de croix
+    /// à fermer, et elle ne revient jamais. Elle commence à la troisième : en dessous, « 1 sortie
+    /// · 3 km · plus longue 3 km » dit trois fois la même chose.
+    private var premiersJalons: (sorties: Int, km: Double, plusLongueKm: Double)? {
+        guard runs.count >= 3, runs.count < 10 else { return nil }
+        var km = 0.0, plusLongue = 0.0
+        for r in runs {
+            km += r.distanceKm
+            plusLongue = max(plusLongue, r.distanceKm)
+        }
+        return (runs.count, km, plusLongue)
+    }
+
+    /// Les trois premiers chiffres d'une coureuse qui débute : combien de sorties, combien de
+    /// kilomètres, la plus longue.
+    ///
+    /// Pas un bouton : il n'y a rien derrière qu'on n'ait déjà sous les yeux. L'onglet Stats, avec
+    /// moins de dix sorties, montre les mêmes nombres et des courbes de trois points.
+    ///
+    /// Elle a survécu au ménage du 14 novembre, où la carte « 30 derniers jours » est partie :
+    /// celle-là doublait l'onglet Stats, celle-ci le précède. Les tuiles qu'elles partageaient —
+    /// `statTile` — restent ici, puisque c'est leur dernier usage.
+    private func premiersJalonsCard(_ jalons: (sorties: Int, km: Double, plusLongueKm: Double)) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            RUCardHeader(icon: "chart.line.uptrend.xyaxis",
+                         title: String(localized: "Depuis ta première sortie"))
+            // Trois colonnes, DEUX aux tailles d'accessibilité — même règle et même raison que
+            // la grille de mesures d'`ActivityDetailView` : « PLUS LONGUE » en capitales
+            // espacées dans un tiers d'écran rétrécit déjà à 0,7 au corps normal, et n'a plus
+            // de place du tout au-delà.
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10),
+                                     count: tailleDuTexte.isAccessibilitySize ? 2 : 3),
+                      spacing: 14) {
+                statTile("\(jalons.sorties)", unit: nil, label: "Sorties")
+                // `locale:` parce que « 14.2 km » s'écrit « 14,2 km » en français et en espagnol —
+                // voir `check_decimales.py`.
+                statTile(String(format: "%.0f", locale: Locale.current, jalons.km),
+                         unit: "km", label: "Distance")
+                statTile(String(format: "%.1f", locale: Locale.current, jalons.plusLongueKm),
+                         unit: "km", label: "Plus longue")
+            }
+        }
+        .padding(RUSpacing.cardPadding)
+        .ruCard()
+    }
+
+
+
+
+    /// Un chiffre, son unité, son nom. `verbatim` pour la valeur : un nombre formaté n'est pas
+    /// une phrase et n'a rien à faire dans le catalogue.
+    private func statTile(_ value: String, unit: String?, label: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            RUChiffre(valeur: value, unite: unit)
+            Text(LocalizedStringKey(label))
+                .font(RUFont.sans(.label, weight: .medium))
+                .foregroundColor(RUColor.text3)
+                .textCase(.uppercase)
+                .tracking(1.1)
+                .lineLimit(1).minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// « 2/2 » : les objectifs du jour atteints sur ceux du jour.
+    ///
+    /// Nommé parce que les deux branches du `ViewThatFits` le dessinent, et qu'un nombre écrit
+    /// deux fois finit par ne plus l'être tout à fait.
+    private func compteDuJour(_ p: UserProfile) -> some View {
+        Text(verbatim: "\(p.dailyGoalsDone)/\(p.dailyGoalsTotal)")
+            .displayStyle(.banner)
+            .foregroundColor(RUColor.textPrimary)
+            .monospacedDigit()
+    }
+
+    private var libelleDeLaJournee: some View {
+        Text("Ta journée")
+            .font(RUFont.sans(.label, weight: .medium))
+            .foregroundColor(RUColor.text3)
+            .textCase(.uppercase)
+            .tracking(1.6)
+    }
+
+    private var ringsCard: some View {
+        let p = profile
+        return Button(action: { appState.go(.rings) }) {
+            VStack(spacing: 18) {
+                // L'ANNEAU PASSE À CÔTÉ DE SON COMPTE, AU LIEU DE L'ENTOURER.
+                //
+                // Il faisait 186 points, avec « 2/3 » en `hero` au centre et les trois mesures
+                // dessous : près de trois cents points de haut, pour un objet que l'écran
+                // Journée porte désormais EN GRAND, sur sa carte de nuit. Sur la capture du
+                // 13 novembre, cette carte poussait le programme — la promesse du coach — sous
+                // la ligne de flottaison, et se faisait elle-même couper.
+                //
+                // Rien n'est retiré : le compte, le libellé et les trois mesures sont tous là.
+                // C'est la mise en page qui change — un anneau de 72 points à gauche de son
+                // chiffre plutôt qu'autour, et la carte tient en moitié moins de hauteur.
+                HStack(spacing: 14) {
+                    DailyGoalsBarsView(
+                        goals: p.dailyGoalSlotsToday.map { .init(slot: $0.slot, progress: $0.progress) },
+                        size: 72,
+                        animateOnAppear: true
+                    )
+
+                    // LE COMPTE ET SON LIBELLÉ SE METTENT SUR UNE LIGNE QUAND ILS TIENNENT.
+                    //
+                    // Empilés, ils occupaient 241 points des 388 de la carte, et laissaient
+                    // 160 points de vide avant le chevron — mesuré sur la capture du
+                    // 14 novembre. La même ligne ailleurs dans l'app, « Le fil » sur le profil,
+                    // en laisse 50 : son sous-titre court sur deux lignes jusqu'au chevron.
+                    // Le trou est né le matin même, quand les trois mesures du jour sont
+                    // parties d'ici ; c'est une place vide, pas une respiration.
+                    //
+                    // Rien ne revient pour la combler : les deux textes se rangent côte à côte,
+                    // ce qui donne « 2/2 · TA JOURNÉE » en une lecture et ramène le vide dans
+                    // la grammaire de l'app. En grand texte, la ligne ne tient plus — le
+                    // `ViewThatFits` repasse alors à la pile, plutôt que de réduire un nombre
+                    // de 44 points à la moitié de sa taille.
+                    ViewThatFits(in: .horizontal) {
+                        HStack(alignment: .firstTextBaseline, spacing: 10) {
+                            compteDuJour(p)
+                            libelleDeLaJournee
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            compteDuJour(p)
+                            libelleDeLaJournee
+                        }
+                    }
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right")
+                        .font(RUFont.icone(.small, weight: .semibold))
+                        .foregroundColor(RUColor.text3)
+                }
+
+                // LES TROIS MESURES — séance, calories, pas — SONT PARTIES D'ICI.
+                //
+                // Elles vivent en entier sur l'écran Journée, que cette carte ouvre d'un tap et
+                // qui les porte avec leurs barres de progression. Les garder ici, c'était six
+                // éléments de plus pour dire ce que l'anneau dit déjà : deux objectifs sur deux.
+                //
+                // L'anneau reste, parce qu'il est l'entrée vers la Journée et qu'il se lit sans
+                // se lire.
+            }
+            .frame(maxWidth: .infinity)
+            // CETTE CARTE N'AVAIT PAS DE MARGES. Huit points en haut et en bas, zéro sur les
+            // côtés, là où toutes les autres en ont quatorze : l'anneau arrivait donc au bord de
+            // sa carte, et le cadrage se voyait avant le dessin. Les marges normales, plus de la
+            // hauteur — un objet rond a besoin de plus d'air qu'un bloc de texte pour ne pas
+            // paraître à l'étroit, parce que ses coins sont vides et que l'œil mesure la distance
+            // au point le plus PROCHE du bord, pas au cadre.
+            // 24 points de marge verticale visaient un anneau de 186 : « un objet rond a besoin
+            // de plus d'air qu'un bloc de texte ». À 72, il n'est plus la masse de la carte, et
+            // les marges ordinaires suffisent.
+            .padding(RUSpacing.cardPadding)
+        }
+        .buttonStyle(PressableStyle())
+        // LE NOM PRONONÇABLE DE LA CARTE.
+        //
+        // Sans lui, VoiceOver lisait ce qui est écrit : « deux barre oblique deux, T A
+        // J O U R N É E » — un libellé en capitales s'épelle. La phrase posée ici est MOT POUR
+        // MOT celle de l'anneau de l'écran Journée (`RingsView`), parce que c'est le même objet
+        // : cette carte en est l'entrée, et deux noms pour une chose font croire à deux choses.
+        .accessibilityLabel(Text(String(localized: "\(p.dailyGoalsDone) sur \(p.dailyGoalsTotal) objectifs bouclés")))
+        // La carte revient. Je l'avais retirée en pariant qu'un anneau de cette taille n'a plus
+        // besoin d'un cadre pour exister — vrai dans l'absolu, faux dans CET écran : la séance
+        // au-dessus et l'offre en dessous sont des cartes blanches posées sur un fond lavande,
+        // et l'anneau nu entre les deux ne se lisait pas comme une section, il se lisait comme un
+        // trou. Une grammaire par écran, pas deux.
+        .ruCard()
+    }
+
+
+ 
+
+    /// `profile.streak` was already tracked (`AdaptivePlanEngine.applyDebrief`) and shown deep in
+    /// Stats/Readiness/Club, but never on Home — the screen actually opened every day, where a
+    /// visible streak does the most to make her not want to break it.
+    private var streakChip: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "flame.fill").font(RUFont.icone(.body))
+            Text("\(profile.streak)").font(RUFont.sans(.label, weight: .bold))
+        }
+        .foregroundColor(profile.streak > 0 ? RUColor.amber : RUColor.text3)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(RUColor.card, in: Capsule())
+        .overlay(Capsule().stroke(RUColor.line, lineWidth: RUSpacing.hairline))
+        // Was just "5" to VoiceOver with no context — the flame icon that gives it meaning
+        // visually carries no information for someone who can't see it.
+        .accessibilityElement(children: .combine)
+        // Deux clés entières plutôt qu'un « jour\(s) » recollé : le pluriel ne se fabrique pas en
+        // ajoutant un « s » dans les autres langues.
+        .accessibilityLabel(Pluriel.choisir(profile.streak,
+            String(localized: "Série, \(profile.streak) jour"),
+            String(localized: "Série, \(profile.streak) jours")))
+    }
+
+    /// La date du jour, en toutes lettres — `EyebrowLabel` la passe en capitales comme tous les
+    /// eyebrows de l'app.
+    private var todayDateEyebrow: String {
+        Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale.current))
+    }
+
+    /// "Semaine 4/9" when the program has a real end (a race goal periodizes toward one), else
+    /// just "Semaine 4" — matches the mockup's "SEM. 4/9" without claiming a total for the
+    /// open-ended goals (progress/weight/restart/health) that genuinely don't have one.
+    private var weekEyebrow: String {
+        if let total = planShape.totalWeeks {
+            return String(localized: "Semaine \(profile.weekNumber)/\(total)")
+        }
+        return String(localized: "Semaine \(profile.weekNumber)")
+    }
+
+    private var planShape: AdaptivePlanEngine.ProgramShape {
+        AdaptivePlanEngine.ProgramShape.compute(goal: profile.goalId, raceDate: profile.raceDate, from: profile.programStartDate ?? .now)
+    }
+
+}

@@ -19,13 +19,13 @@ C'est la même duplication que `check_events.py` surveille entre le client et le
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-SOURCE = RACINE / "RunUp" / "DesignSystem" / "AccentTheme.swift"
-MIROIRS_COMPLETS = [RACINE / "RunUpWidgets" / "WidgetAccentPalette.swift"]
+SOURCE = RACINE / "Haizo" / "DesignSystem" / "AccentTheme.swift"
+MIROIRS_COMPLETS = [RACINE / "HaizoWidgets" / "WidgetAccentPalette.swift"]
 # Les copies qui ne gardent QUE le rose principal, parce qu'elles n'offrent pas le choix du
 # nuancier : la montre et le widget d'activité en direct affichent la couleur de la marque.
 MIROIRS_DU_ROSE = {
-    RACINE / "RunUpWatch" / "WatchViews.swift": r"static let rose = Color\(hex: (0x[0-9A-Fa-f]{6})\)",
-    RACINE / "RunUpWidgets" / "RunActivityWidget.swift":
+    RACINE / "HaizoWatch" / "WatchViews.swift": r"static let rose = Color\(hex: (0x[0-9A-Fa-f]{6})\)",
+    RACINE / "HaizoWidgets" / "RunActivityWidget.swift":
         r"private static let accent = Color\(hex: (0x[0-9A-Fa-f]{6})\)",
 }
 
@@ -54,7 +54,7 @@ _MIROIR = re.compile(r'"(\w+)":\s*\((0x[0-9A-Fa-f]{6}),\s*(0x[0-9A-Fa-f]{6}),\s*
 _MAQUETTE_SOURCE = re.compile(
     r'"(\w+)":\s*\(Color\(hex:\s*(0x[0-9A-Fa-f]{6})\)')
 _MAQUETTE_MIROIR = re.compile(r'"(\w+)":\s*(0x[0-9A-Fa-f]{6})\b')
-MAQUETTE_CLAIRE = RACINE / "RunUpWidgets" / "WidgetAccentPalette.swift"
+MAQUETTE_CLAIRE = RACINE / "HaizoWidgets" / "WidgetAccentPalette.swift"
 
 
 def _bloc(source, apres):
@@ -150,7 +150,7 @@ def main():
     if problemes:
         for p in problemes:
             print(f"::error::{p}", file=sys.stderr)
-        print("::error::La source est RunUp/DesignSystem/AccentTheme.swift. Les autres cibles "
+        print("::error::La source est Haizo/DesignSystem/AccentTheme.swift. Les autres cibles "
               "sont des processus séparés qui ne peuvent pas la lire : elles la recopient, et "
               "c'est à ce contrôle de tenir les copies d'accord.", file=sys.stderr)
         return 1

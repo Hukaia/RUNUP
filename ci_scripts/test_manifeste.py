@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Les cas de `check_manifeste.py`.
 
-CE QU'ILS GARDENT. `RunUpWatch` n'embarque aucun manifeste de confidentialité, et c'est licite
+CE QU'ILS GARDENT. `HaizoWatch` n'embarque aucun manifeste de confidentialité, et c'est licite
 aujourd'hui : la cible n'appelle aucune API à motif obligatoire, et un envoi du 10 novembre 2026
-contenant `RunUp.app/Watch/RunUpWatch.app` passe la validation d'Apple sans une erreur.
+contenant `Haizo.app/Watch/HaizoWatch.app` passe la validation d'Apple sans une erreur.
 
 Une seule ligne rendrait ça faux — un `UserDefaults` écrit dans la montre pour y garder un
 réglage. Elle compile, les tests passent, et le refus tombe à l'ENVOI, après quinze minutes
@@ -51,14 +51,14 @@ MONTRE = {"type": "application", "sources": [{"path": "Montre"}]}
 @cas_de("un UserDefaults dans une cible sans manifeste sonne")
 def _():
     p = plaintes({"Montre/App.swift": 'let x = UserDefaults.standard.bool(forKey: "k")\n'},
-                 {"RunUpWatch": MONTRE})
+                 {"HaizoWatch": MONTRE})
     assert any("ITMS-91053" in m and "UserDefaults" in m for m in p), p
 
 
 @cas_de("le message nomme la catégorie à déclarer ET le fichier fautif")
 def _():
     p = plaintes({"Montre/App.swift": "let d = ProcessInfo.processInfo.systemUptime\n"},
-                 {"RunUpWatch": MONTRE})
+                 {"HaizoWatch": MONTRE})
     assert any("NSPrivacyAccessedAPICategorySystemBootTime" in m for m in p), p
     assert any("Montre/App.swift" in m for m in p), p
 
@@ -73,7 +73,7 @@ def _():
         "NSPrivacyAccessedAPICategoryActiveKeyboards": "k.activeInputModes\n",
     }
     for categorie, ligne in lignes.items():
-        p = plaintes({"Montre/App.swift": ligne}, {"RunUpWatch": MONTRE})
+        p = plaintes({"Montre/App.swift": ligne}, {"HaizoWatch": MONTRE})
         assert any(categorie in m for m in p), f"{categorie} n'a pas été vue : {p}"
 
 
@@ -83,7 +83,7 @@ def _():
 def _():
     p = plaintes({"Montre/App.swift": "UserDefaults.standard\n",
                   "Montre/PrivacyInfo.xcprivacy": "<plist/>\n"},
-                 {"RunUpWatch": MONTRE})
+                 {"HaizoWatch": MONTRE})
     assert p == [], p
 
 
@@ -96,22 +96,22 @@ def _():
 
 @cas_de("une cible qui n'appelle rien et n'a pas de manifeste ne sonne pas")
 def _():
-    # C'est l'état de `RunUpWatch` aujourd'hui, et il est licite : rien à déclarer, rien à
+    # C'est l'état de `HaizoWatch` aujourd'hui, et il est licite : rien à déclarer, rien à
     # refuser. Faire sonner ici imposerait un manifeste vide à toute cible, ce qu'Apple ne
     # demande pas.
-    p = plaintes({"Montre/App.swift": "Text(\"Courir\")\n"}, {"RunUpWatch": MONTRE})
+    p = plaintes({"Montre/App.swift": "Text(\"Courir\")\n"}, {"HaizoWatch": MONTRE})
     assert p == [], p
 
 
 @cas_de("une API nommée dans un commentaire ne compte pas")
 def _():
     src = "// la montre n'appelle pas UserDefaults, et c'est ce qui la dispense de manifeste\n"
-    assert plaintes({"Montre/App.swift": src}, {"RunUpWatch": MONTRE}) == []
+    assert plaintes({"Montre/App.swift": src}, {"HaizoWatch": MONTRE}) == []
 
 
 @cas_de("une API nommée dans une chaîne ne compte pas")
 def _():
-    assert plaintes({"Montre/App.swift": 'let s = "UserDefaults"\n'}, {"RunUpWatch": MONTRE}) == []
+    assert plaintes({"Montre/App.swift": 'let s = "UserDefaults"\n'}, {"HaizoWatch": MONTRE}) == []
 
 
 @cas_de("un fichier exclu des sources n'est pas lu")
@@ -119,7 +119,7 @@ def _():
     # `excludes` décide ce que la cible COMPILE. Un fichier qu'elle ne compile pas ne peut pas
     # l'exposer à un refus.
     p = plaintes({"Montre/App.swift": "Text()\n", "Montre/Vieux.swift": "UserDefaults.standard\n"},
-                 {"RunUpWatch": {"type": "application",
+                 {"HaizoWatch": {"type": "application",
                                  "sources": [{"path": "Montre", "excludes": ["Vieux.swift"]}]}})
     assert p == [], p
 

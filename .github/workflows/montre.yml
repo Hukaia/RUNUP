@@ -16,7 +16,7 @@
 #
 # ─── CE QU'ELLE FAIT ───────────────────────────────────────────────────────────────────────────
 #
-# 1. Construit `RunUpWatch` pour un simulateur watchOS — schéma `Montre`, voir `project.yml`.
+# 1. Construit `HaizoWatch` pour un simulateur watchOS — schéma `Montre`, voir `project.yml`.
 # 2. Pour chaque langue : pose la langue SUR L'APPAREIL, redémarre, lance, photographie.
 # 3. Refuse deux captures identiques, et une taille qu'Apple ne connaît pas.
 # 4. Publie les trois images brutes et les trois images livrables.
@@ -34,9 +34,9 @@ on:
       # Le code qui dessine l'écran photographié. C'est le lien qui manquait : le bouton est passé
       # de la pilule au cercle le 6 août 2026, et l'image livrée à Apple est restée celle d'avant
       # pendant trois mois, parce que rien ne reliait l'une à l'autre.
-      - "RunUpWatch/**"
+      - "HaizoWatch/**"
       # La police et les couleurs que la montre emprunte à l'app.
-      - "RunUp/Shared/**"
+      - "Haizo/Shared/**"
       # Le schéma qui la construit.
       - "project.yml"
       # Ce qui pose l'image livrable et ce qui la vérifie.
@@ -48,7 +48,7 @@ on:
       # catalogue que la montre embarque désormais pour de vrai.
       - "ci_scripts/check_spec.py"
       - "ci_scripts/test_spec.py"
-      - "RunUp/Resources/Localizable.xcstrings"
+      - "Haizo/Resources/Localizable.xcstrings"
 
 concurrency:
   group: montre
@@ -101,16 +101,16 @@ jobs:
           echo "udid=$udid" >> "$GITHUB_OUTPUT"
 
           xcodebuild build \
-            -project RunUp.xcodeproj \
+            -project Haizo.xcodeproj \
             -scheme Montre \
             -configuration Debug \
             -destination "id=$udid" \
             -derivedDataPath build/montre \
             CODE_SIGNING_ALLOWED=NO
 
-          app=$(find build/montre/Build/Products -maxdepth 2 -name "RunUpWatch.app" -print -quit)
+          app=$(find build/montre/Build/Products -maxdepth 2 -name "HaizoWatch.app" -print -quit)
           if [ -z "$app" ]; then
-            echo "✗ RunUpWatch.app introuvable sous build/montre/Build/Products :"
+            echo "✗ HaizoWatch.app introuvable sous build/montre/Build/Products :"
             find build/montre/Build/Products -maxdepth 2 -print
             exit 1
           fi
@@ -221,7 +221,7 @@ jobs:
         run: |
           set -euo pipefail
           xcodebuild test \
-            -project RunUp.xcodeproj \
+            -project Haizo.xcodeproj \
             -scheme MontreTests \
             -configuration Debug \
             -destination "id=${{ steps.construire.outputs.udid }}" \

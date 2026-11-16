@@ -269,7 +269,7 @@ async function handleMatchContacts(req, res, userId) {
 //
 // Il était écrit UNE FOIS, à l'inscription, et plus jamais. Or « Se connecter avec Apple » ne
 // transmet `fullName` qu'à la TOUTE PREMIÈRE autorisation d'un identifiant Apple pour cette
-// app : une réinstallation, un second appareil, ou un compte Apple qui avait déjà ouvert RUNUP
+// app : une réinstallation, un second appareil, ou un compte Apple qui avait déjà ouvert Haizo
 // une fois n'envoient rien. Le serveur rangeait alors le compte sous « Coureur » — et personne
 // ne pouvait plus le corriger, depuis aucun écran.
 //

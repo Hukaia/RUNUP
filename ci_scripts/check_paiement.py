@@ -28,8 +28,8 @@ statistique qui devrait le signaler est celle qu'il corrompt.
    ternaire, pas de `return .failed` écrit à la main : ces décisions ne se vérifient qu'en
    achetant un abonnement, donc elles doivent vivre dans un type pur.
 
-2. Chaque issue est un type pur et TESTÉ. Elle vit dans `RunUp/Models/`, elle porte un
-   `static func decide(`, et elle a son fichier de cas dans `RunUpTests/`.
+2. Chaque issue est un type pur et TESTÉ. Elle vit dans `Haizo/Models/`, elle porte un
+   `static func decide(`, et elle a son fichier de cas dans `HaizoTests/`.
 
 3. Chaque CAS de chaque issue est nommé dans ses cas de test. Ajouter une issue sans la tester,
    c'est rouvrir le même trou par le haut.
@@ -43,9 +43,9 @@ Il garantit seulement que la décision est à un endroit où elle PEUT être vé
 import pathlib, re, sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-SERVICE = RACINE / "RunUp/Services/SubscriptionService.swift"
-MODELES = RACINE / "RunUp/Models"
-CAS = RACINE / "RunUpTests"
+SERVICE = RACINE / "Haizo/Services/SubscriptionService.swift"
+MODELES = RACINE / "Haizo/Models"
+CAS = RACINE / "HaizoTests"
 
 # Les issues de paiement, par nom de type. Chacune est rendue par une fonction du service et
 # consommée par le paywall.
@@ -116,19 +116,19 @@ def regle_type_pur():
     for issue in ISSUES:
         modele = MODELES / f"{issue}.swift"
         if not modele.exists():
-            defauts.append(f"{issue} n'a pas de modèle `RunUp/Models/{issue}.swift` : la décision "
+            defauts.append(f"{issue} n'a pas de modèle `Haizo/Models/{issue}.swift` : la décision "
                            f"est mêlée à StoreKit, donc invérifiable autrement qu'en payant.")
             continue
         src = modele.read_text()
         if "static func decide(" not in src:
-            defauts.append(f"RunUp/Models/{issue}.swift n'expose pas `static func decide(` : il n'y "
+            defauts.append(f"Haizo/Models/{issue}.swift n'expose pas `static func decide(` : il n'y "
                            f"a rien à appeler depuis le service, ni rien à tester.")
         if "import StoreKit" in src:
-            defauts.append(f"RunUp/Models/{issue}.swift importe StoreKit. Une issue qui dépend de "
+            defauts.append(f"Haizo/Models/{issue}.swift importe StoreKit. Une issue qui dépend de "
                            f"StoreKit ne se construit pas dans un test — c'est tout ce qu'on gagnait "
                            f"en la sortant du service.")
         if not (CAS / f"{issue}Tests.swift").exists():
-            defauts.append(f"{issue} n'a pas de cas : `RunUpTests/{issue}Tests.swift` est absent.")
+            defauts.append(f"{issue} n'a pas de cas : `HaizoTests/{issue}Tests.swift` est absent.")
     return defauts
 
 
@@ -168,7 +168,7 @@ def regle_cas_testes():
             continue  # Déjà signalé par la règle 2.
         noms = cas_de_lenum(sans_commentaires_ni_chaines(modele.read_text()), issue)
         if not noms:
-            defauts.append(f"RunUp/Models/{issue}.swift : aucun cas lu dans l'énumération. La forme "
+            defauts.append(f"Haizo/Models/{issue}.swift : aucun cas lu dans l'énumération. La forme "
                            f"du fichier a changé et ce contrôle ne voit plus rien — il passerait "
                            f"vert pour la mauvaise raison.")
             continue
@@ -176,7 +176,7 @@ def regle_cas_testes():
         for n in noms:
             if not re.search(r"\.\s*" + n + r"\b", texte):
                 defauts.append(f"{issue}.{n} n'apparaît dans aucun cas de "
-                               f"RunUpTests/{issue}Tests.swift : une issue que personne ne vérifie.")
+                               f"HaizoTests/{issue}Tests.swift : une issue que personne ne vérifie.")
     return defauts
 
 

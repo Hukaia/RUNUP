@@ -14,7 +14,7 @@ terminé. Rien, nulle part, ne l'avait dit.
 
 # CE QUI EST REGARDÉ
 
-Les chemins que l'app appelle vraiment, lus dans `RunUp/Services/*.swift` — pas une liste tenue
+Les chemins que l'app appelle vraiment, lus dans `Haizo/Services/*.swift` — pas une liste tenue
 à la main, qui aurait divergé au premier ajout.
 
 # CE QUI COMPTE COMME « EXISTE »
@@ -48,7 +48,7 @@ import urllib.error
 import urllib.request
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-SERVICES = RACINE / "RunUp/Services"
+SERVICES = RACINE / "Haizo/Services"
 
 # L'URL de production, lue là où l'app la porte plutôt que recopiée ici : une copie qui dérive
 # ferait contrôler le mauvais serveur, et personne ne s'en apercevrait.
@@ -64,13 +64,13 @@ def base_de_production() -> str:
     for fichier in sorted(SERVICES.glob("*.swift")):
         if trouve := BASE.search(fichier.read_text(encoding="utf-8")):
             return trouve.group(1).rstrip("/")
-    sys.exit("Aucune `baseURL` trouvée dans RunUp/Services : le contrôle ne sait pas qui interroger.")
+    sys.exit("Aucune `baseURL` trouvée dans Haizo/Services : le contrôle ne sait pas qui interroger.")
 
 
 def adresses() -> list:
     """Chaque adresse une fois, dans l'ordre alphabétique."""
     vues = set()
-    for dossier in (SERVICES, RACINE / "RunUp"):
+    for dossier in (SERVICES, RACINE / "Haizo"):
         for fichier in sorted(dossier.rglob("*.swift")):
             texte = fichier.read_text(encoding="utf-8")
             for m in CHEMIN.finditer(texte):

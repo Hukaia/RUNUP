@@ -13,15 +13,15 @@ texte courant. Les icônes étaient la troisième famille, et la dernière à ne
 
 # CE QUI EST REGARDÉ
 
-Tout appel à `.font(.system(size:` dans `RunUp/Views`. Il en reste DEUX, et ce sont des glyphes : les deux chevrons « ‹ » des boutons de retour ont rejoint `chevron.left` le 7 novembre, sur décision de Charlotte. Le compilateur ne peut pas l'interdire :
+Tout appel à `.font(.system(size:` dans `Haizo/Views`. Il en reste DEUX, et ce sont des glyphes : les deux chevrons « ‹ » des boutons de retour ont rejoint `chevron.left` le 7 novembre, sur décision de Charlotte. Le compilateur ne peut pas l'interdire :
 c'est une API de SwiftUI, pas une des nôtres. Ce contrôle fixe donc la liste des exceptions,
 fichier par fichier, avec son compte et sa raison — en ajouter une demande de modifier CE
 fichier, c'est-à-dire d'écrire pourquoi cet appel-là ne peut pas tenir sur les sept crans.
 
 # CE QUI N'EST PAS REGARDÉ, ET POURQUOI
 
-Le widget et la montre. `RunUp/DesignSystem/Typography.swift` n'appartient pas à leurs cibles —
-seule une poignée de fichiers de `RunUp/Shared` y est partagée — donc `RUFont` n'y existe pas, et
+Le widget et la montre. `Haizo/DesignSystem/Typography.swift` n'appartient pas à leurs cibles —
+seule une poignée de fichiers de `Haizo/Shared` y est partagée — donc `RUFont` n'y existe pas, et
 leurs quatre appels ne peuvent pas prendre un cran. Les y obliger demanderait de partager tout le
 système de typographie avec deux processus qui ne portent ni thème ni réglage de taille ; ce
 n'est pas ce qu'on répare ici.
@@ -33,9 +33,9 @@ MOTIF = re.compile(r"\.font\(\s*\.system\(size:")
 
 # fichier → (nombre d'appels attendu, la raison)
 AUTORISE = {
-    "RunUp/Views/Home/Sheets/NotificationsSheet.swift":
+    "Haizo/Views/Home/Sheets/NotificationsSheet.swift":
         (1, "le repli qui affiche l'emoji d'une notification déjà enregistrée en base"),
-    "RunUp/Views/ProgramEnd/NewGoalWizardView.swift":
+    "Haizo/Views/ProgramEnd/NewGoalWizardView.swift":
         (1, "la coche typographique « ✓ » de la fin de construction du plan"),
 }
 
@@ -43,9 +43,9 @@ AUTORISE = {
 def comptes() -> dict:
     """fichier → nombre d'appels à `.font(.system(size:))`, pour les vues qui en ont."""
     trouves = {}
-    dossier = RACINE / "RunUp/Views"
+    dossier = RACINE / "Haizo/Views"
     if not dossier.is_dir():
-        raise SystemExit("RunUp/Views est introuvable : ce contrôle ne relit pas ce qu'il annonce.")
+        raise SystemExit("Haizo/Views est introuvable : ce contrôle ne relit pas ce qu'il annonce.")
     for chemin in sorted(dossier.rglob("*.swift")):
         n = len(MOTIF.findall(chemin.read_text(encoding="utf-8")))
         if n:

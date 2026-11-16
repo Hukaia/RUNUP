@@ -2,10 +2,10 @@
 //
 // # POURQUOI CE SCRIPT EXISTE
 //
-// `public/club.html` est la seule surface de RUNUP qu'un inconnu voit AVANT d'avoir l'app :
+// `public/club.html` est la seule surface de Haizo qu'un inconnu voit AVANT d'avoir l'app :
 // c'est le lien qu'un crew met dans sa bio. Elle n'avait jamais été regardée. En l'ouvrant pour
 // la première fois, le 7 novembre 2026, trois défauts se voyaient d'un coup d'œil : le bouton
-// « Rejoindre sur RUNUP » pointait sur la page elle-même, l'état d'erreur était une phrase grise
+// « Rejoindre sur Haizo » pointait sur la page elle-même, l'état d'erreur était une phrase grise
 // sans marque ni issue, et tout était en français alors que l'app est livrée en trois langues.
 //
 // Aucun test ne pouvait les trouver : il n'y a rien à compiler, rien à exécuter, et le serveur

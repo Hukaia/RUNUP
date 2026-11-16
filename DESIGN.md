@@ -1,4 +1,4 @@
-# La direction artistique de RunUp
+# La direction artistique de Haizo
 
 Tenu par la direction artistique. Ce fichier existe pour que la DA ne dépende plus d'une
 conversation : les trois questions, la palette, la typographie, les deux thèmes et les règles de
@@ -26,7 +26,7 @@ document de DA qui dérive de l'app est pire qu'aucun document : on le lit en cr
 
 ### Le test final
 
-Sorti de son cadre de téléphone et sans logo, l'écran doit être reconnaissable comme RunUp.
+Sorti de son cadre de téléphone et sans logo, l'écran doit être reconnaissable comme Haizo.
 
 ### Ce que les trois questions veulent dire quand on tient un écran dans les mains
 
@@ -84,8 +84,8 @@ version.
 
 ## 2. La palette
 
-Déclarée dans `RunUp/DesignSystem/Colors.swift` (`RUColor`) et
-`RunUp/DesignSystem/AccentTheme.swift`. Les valeurs ci-dessous sont celles du code, vérifiées par
+Déclarée dans `Haizo/DesignSystem/Colors.swift` (`RUColor`) et
+`Haizo/DesignSystem/AccentTheme.swift`. Les valeurs ci-dessous sont celles du code, vérifiées par
 `check_design.py`.
 
 ### 2.1 L'accent est au choix de la coureuse — huit nuanciers
@@ -487,6 +487,8 @@ vivait que dans leur somme. `check_lancement.py` refait l'addition à chaque CI.
 | Les six teintes d'intensité du brief s'appliquent, ardoise `#44506B` comprise | 15 novembre 2026 |
 | L'en-tête d'accueil ne porte pas de photo : c'est le tracé GPS en grand | 15 novembre 2026 |
 | L'avatar et le récap de fin de course gardent leur dégradé, comme le logo | 15 novembre 2026 |
+| **L'app s'appelle Haizo.** L'identifiant de l'app, le groupe applicatif, le domaine, le schéma d'URL, l'en-tête HTTP et les variables Vercel ne changent PAS : invisibles, et leur renommage coûte une panne. Le dépôt GitHub non plus, parce que l'adresse de confidentialité de la fiche App Store contient son nom. Le journal raconte l'avant ; `check_marque.py` tient l'après. | 16 novembre 2026 |
+| **La graphie : en capitales au logo et à l'écran de lancement, en capitale initiale dans les phrases.** Dans une phrase, c'est un mot, pas un cri. | 16 novembre 2026 |
 
 ---
 
@@ -505,7 +507,7 @@ vivait que dans leur somme. `check_lancement.py` refait l'addition à chaque CI.
 ## 9. La signature : la carte de nuit
 
 Le test final de la DA — « sorti de son cadre de téléphone et sans logo, l'écran doit être
-reconnaissable comme RunUp » — ne tenait que sur deux écrans sur six. Charlotte a tranché le
+reconnaissable comme Haizo » — ne tenait que sur deux écrans sur six. Charlotte a tranché le
 13 novembre : l'étendre aux quatre autres.
 
 ### Ce que l'app avait d'authored
@@ -539,7 +541,7 @@ quelle app de course.
 
 ### LA RÈGLE
 
-Elle est écrite dans `RunUp/Views/Components/CarteDeNuit.swift`, qui est le composant, pour qu'on
+Elle est écrite dans `Haizo/Views/Components/CarteDeNuit.swift`, qui est le composant, pour qu'on
 ne puisse pas la suivre sans la lire. Quatre choses ensemble, et il faut les quatre :
 
 1. **Ce qui est mesuré devient le dessin.** Pas une illustration de la donnée : la donnée

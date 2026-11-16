@@ -14,14 +14,14 @@ généré de façon fiable par un seul outil sur ta machine).
 ## Générer le projet
 
 ```bash
-cd RunUp   # ou la racine du repo, là où se trouve project.yml
+cd Haizo   # ou la racine du repo, là où se trouve project.yml
 xcodegen generate
-open RunUp.xcodeproj
+open Haizo.xcodeproj
 ```
 
 Relance `xcodegen generate` à chaque fois que `project.yml` change (nouveau fichier source,
 nouvelle capability, etc.) — les fichiers `.swift` eux n'ont pas besoin d'être ajoutés
-manuellement au projet, `project.yml` référence le dossier `RunUp/` entier.
+manuellement au projet, `project.yml` référence le dossier `Haizo/` entier.
 
 ## Envoyer un build sur TestFlight
 
@@ -80,13 +80,13 @@ trente secondes avant l'export ne peut pas être périmé : la panne n'a plus d'
 produire.
 
 Le script ne touche qu'aux profils qu'il a lui-même créés — ceux dont le nom commence par
-`RunUp CI`. Les profils que tu crées à la main dans le portail ne sont ni lus ni supprimés.
+`Haizo CI`. Les profils que tu crées à la main dans le portail ne sont ni lus ni supprimés.
 
 **Le seul cas qui demande encore un humain** : si une capacité n'est pas cochée sur l'identifiant
 d'app, aucun profil ne la portera, et il faut aller cocher la case. Le script distingue ce cas du
 profil simplement périmé et te donne le chemin exact :
 
-> Le profil « RunUp CI app » vient d'être fabriqué et ne porte toujours pas :
+> Le profil « Haizo CI app » vient d'être fabriqué et ne porte toujours pas :
 > com.apple.developer.weatherkit
 > Ce n'est donc pas un profil périmé : la capacité n'est pas activée sur l'identifiant d'app
 > lui-même. developer.apple.com → Certificates, Identifiers & Profiles → Identifiers →
@@ -152,7 +152,7 @@ est le seul point d'appel réseau côté app.
    - `RUNUP_APP_SECRET` — doit être identique à `RUNUP_APP_SECRET` dans `Secrets.xcconfig` côté
      app (voir juste en dessous) — secret partagé app↔serveur, pas un identifiant utilisateur —
      juste un frein contre un appel externe au hasard sur cette URL.
-3. Redéploie, puis vérifie que `RunUp/Services/CoachService.swift`'s `endpoint` pointe bien vers
+3. Redéploie, puis vérifie que `Haizo/Services/CoachService.swift`'s `endpoint` pointe bien vers
    l'URL Vercel réelle du projet (`https://<projet>.vercel.app/api/coach`).
 
 **Le coach modifie le programme.** Il ne se contente pas de répondre : il peut alléger les
@@ -170,14 +170,14 @@ Trois choses à savoir avant d'y toucher :
   `runningDays`), jamais dans les séances produites, qui sont regénérées chaque semaine. Voir
   l'en-tête de `TrainingEase` — c'est la seule forme qui survit au lundi suivant.
 - Rien de ce qui vient du modèle n'est pris pour argent comptant : `CoachAction.make` et
-  `TrainingEase.sanitized` bornent tout, et `RunUpTests/CoachActionTests.swift` verrouille ces
+  `TrainingEase.sanitized` bornent tout, et `HaizoTests/CoachActionTests.swift` verrouille ces
   bornes.
 
 **Côté app — `Secrets.xcconfig` (une fois, sur ta machine) :**
 
 Ce secret n'est **plus** écrit en dur dans `CoachService.swift` : il était committé en clair dans
 le repo (et il reste dans l'historique git — voir plus bas). L'app le lit maintenant dans son
-Info.plist (`RUNUPAppSecret`), rempli au build depuis le réglage `RUNUP_APP_SECRET`.
+Info.plist (`HaizoAppSecret`), rempli au build depuis le réglage `RUNUP_APP_SECRET`.
 
 1. À la racine du repo, crée un fichier **`Secrets.xcconfig`** (déjà dans `.gitignore`, il ne sera
    jamais committé) contenant une seule ligne :
@@ -236,7 +236,7 @@ L'entitlement est déjà dans `project.yml` (`com.apple.developer.applesignin`).
 automatique (`CODE_SIGN_STYLE: Automatic`, déjà configuré), Xcode devrait activer la capability
 "Sign In with Apple" tout seul au premier build sur un appareil/simulateur connecté à ton compte
 développeur. Si Xcode affiche une erreur de provisioning à ce sujet : Signing & Capabilities →
-vérifie que "Sign In with Apple" apparaît dans la liste des capabilities de la cible RunUp (elle
+vérifie que "Sign In with Apple" apparaît dans la liste des capabilities de la cible Haizo (elle
 devrait y être automatiquement, générée depuis `project.yml`) et relance le build.
 
 ### 4. Déployer et tester
@@ -246,7 +246,7 @@ devrait y être automatiquement, générée depuis `project.yml`) et relance le 
    (nouvelles dépendances : `@neondatabase/serverless`, `bcryptjs`, `jose`).
 
    > **La branche connectée est une branche de travail, et elle est la PRODUCTION.** Au
-   > 7 novembre 2026, c'est `claude/runup-ios-swiftui-app-5b1yv6` : Vercel enregistre un
+   > 7 novembre 2026, c'est `claude/haizo-ios-swiftui-app-5b1yv6` : Vercel enregistre un
    > déploiement « Production » par commit — douze ce jour-là. `main` n'a pas bougé depuis le
    > 24 octobre et ne contient même pas `api/races/`. Donc : pas de préproduction, pas de
    > relecture, et une modification de `api/`, `lib/` ou `package.json` est EN LIGNE dans la
@@ -326,12 +326,12 @@ Xcode/Simulator pour simuler un déplacement et voir le tracé se dessiner.
 ## Polices
 
 Les fichiers `.ttf` (Bebas Neue, DM Sans, DM Mono — Google Fonts, licence OFL) sont déjà présents
-dans `RunUp/Resources/Fonts/` et déclarés dans `project.yml` (`UIAppFonts`) — rien à faire de
+dans `Haizo/Resources/Fonts/` et déclarés dans `project.yml` (`UIAppFonts`) — rien à faire de
 plus, XcodeGen les enregistre automatiquement.
 
 ## Widget écran d'accueil
 
-Un nouveau target `RunUpWidgets` (WidgetKit) affiche l'anneau des 3 objectifs du jour + la série
+Un nouveau target `HaizoWidgets` (WidgetKit) affiche l'anneau des 3 objectifs du jour + la série
 sur l'écran d'accueil. Il tourne dans son propre processus, séparé de l'app — il ne voit jamais
 `UserProfile` directement, seulement l'instantané que l'app publie dans un App Group partagé
 (`DailyGoalsSnapshot`, `AppState.publishWidgetSnapshot()`).
@@ -342,11 +342,11 @@ sur l'écran d'accueil. Il tourne dans son propre processus, séparé de l'app �
    (`group.com.hicsuntco.runup`) sur ton compte développeur — avec la signature automatique
    (`CODE_SIGN_STYLE: Automatic`, déjà configuré sur les deux targets), il devrait proposer de le
    créer tout seul. Si Xcode affiche une erreur de provisioning à ce sujet : sélectionne la cible
-   `RunUp` → Signing & Capabilities → vérifie que "App Groups" apparaît et que
-   `group.com.hicsuntco.runup` est bien coché, puis fais pareil pour la cible `RunUpWidgets`.
+   `Haizo` → Signing & Capabilities → vérifie que "App Groups" apparaît et que
+   `group.com.hicsuntco.runup` est bien coché, puis fais pareil pour la cible `HaizoWidgets`.
 3. Lance l'app une première fois sur un appareil (pas besoin du Simulateur, mais ça marche aussi)
    pour qu'elle publie un premier instantané, puis ajoute le widget : appui long sur l'écran
-   d'accueil → **+** → cherche "RunUp" → choisis la taille (petite ou moyenne).
+   d'accueil → **+** → cherche "Haizo" → choisis la taille (petite ou moyenne).
 4. Le widget ne se met à jour tout seul qu'une fois par heure environ (limite du système) — mais
    l'app lui demande de se rafraîchir immédiatement à chaque fois que les objectifs du jour
    changent (fin de séance, sync Santé, changement de thème), donc en pratique il devrait toujours
@@ -354,16 +354,16 @@ sur l'écran d'accueil. Il tourne dans son propre processus, séparé de l'app �
 
 ## Icône de l'app
 
-`RunUp/Resources/Assets.xcassets/AppIcon.appiconset/` contient l'icône App Store (1024×1024,
-format "single size" iOS 17+), et `RunUpWatch/Assets.xcassets/` la même pour la montre — les deux
+`Haizo/Resources/Assets.xcassets/AppIcon.appiconset/` contient l'icône App Store (1024×1024,
+format "single size" iOS 17+), et `HaizoWatch/Assets.xcassets/` la même pour la montre — les deux
 sont en place, un binaire sans elles étant refusé à l'envoi. Pour la refaire, le logo décrit dans
 le handoff design (voir
-`design_handoff_runup_app/README.md` § Assets, fonction `AppMark`) est un bon point de départ :
+`design_handoff_haizo_app/README.md` § Assets, fonction `AppMark`) est un bon point de départ :
 c'est le même glyphe que `Views/Components/AppMarkView.swift`, à exporter en PNG haute résolution.
 
 ---
 
-## Abonnement RUNUP Plus — ce qu'il reste à faire dans App Store Connect
+## Abonnement Haizo Plus — ce qu'il reste à faire dans App Store Connect
 
 Le code est en place et compile, mais **aucun abonnement ne peut être acheté ni testé** tant que
 les étapes ci-dessous ne sont pas faites. Elles ne peuvent l'être que depuis le compte Apple
@@ -380,7 +380,7 @@ des paywalls vides, et elle ne produit aucun message d'erreur exploitable.
 
 ### 2. Le groupe d'abonnement
 
-App Store Connect → l'app → **Abonnements** → créer un groupe, par exemple `RUNUP Plus`.
+App Store Connect → l'app → **Abonnements** → créer un groupe, par exemple `Haizo Plus`.
 
 Les deux formules doivent être **dans le même groupe**. Sinon, passer du mensuel à l'annuel crée un
 second abonnement au lieu de changer de formule, et l'utilisatrice paie les deux.

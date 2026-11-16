@@ -1,4 +1,4 @@
-// Build settings that must never be committed with their real values — wired into the RunUp
+// Build settings that must never be committed with their real values — wired into the Haizo
 // target through `configFiles` in project.yml, and surfaced to the app through Info.plist keys
 // (see IOS_SETUP.md § "Coach backend").
 //

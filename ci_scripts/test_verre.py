@@ -48,42 +48,42 @@ UN = ".background(.ultraThinMaterial, in: Capsule())\n"
 
 @cas_de("un verre dépoli dans un fichier non listé sonne")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": UN})
+    p = plaintes({"Haizo/Views/Ecran.swift": UN})
     assert any("Ecran.swift" in m and "règle 7" in m.lower() for m in p), p
 
 
 @cas_de("deux dans le même fichier sont comptés comme deux")
 def _():
     # Le sélecteur de discipline en portait exactement deux, et `LiveRunView` quatre.
-    p = plaintes({"RunUp/Views/Ecran.swift": UN * 2})
+    p = plaintes({"Haizo/Views/Ecran.swift": UN * 2})
     assert any("2 verre(s)" in m for m in p), p
 
 
 @cas_de("le même, listé avec sa raison, ne sonne pas")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": UN},
-                 {"RunUp/Views/Ecran.swift": (1, "une raison écrite quelque part")})
+    p = plaintes({"Haizo/Views/Ecran.swift": UN},
+                 {"Haizo/Views/Ecran.swift": (1, "une raison écrite quelque part")})
     assert p == [], p
 
 
 @cas_de("un de plus que ce que la raison couvre sonne")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": UN * 2},
-                 {"RunUp/Views/Ecran.swift": (1, "une raison pour un seul")})
+    p = plaintes({"Haizo/Views/Ecran.swift": UN * 2},
+                 {"Haizo/Views/Ecran.swift": (1, "une raison pour un seul")})
     assert any("2 verre(s), 1 autorisé(s)" in m for m in p), p
 
 
 @cas_de("un de moins sonne aussi : l'exception a cessé de servir")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": UN},
-                 {"RunUp/Views/Ecran.swift": (2, "deux raisons")})
+    p = plaintes({"Haizo/Views/Ecran.swift": UN},
+                 {"Haizo/Views/Ecran.swift": (2, "deux raisons")})
     assert any("Retire-la" in m for m in p), p
 
 
 @cas_de("un fichier listé qui n'en porte plus aucun sonne")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": "let x = 1\n"},
-                 {"RunUp/Views/Ecran.swift": (1, "une raison périmée")})
+    p = plaintes({"Haizo/Views/Ecran.swift": "let x = 1\n"},
+                 {"Haizo/Views/Ecran.swift": (1, "une raison périmée")})
     assert any("encore dans `PERMIS`" in m for m in p), p
 
 
@@ -93,20 +93,20 @@ def _():
 def _():
     for forme in ["ultraThinMaterial", "thinMaterial", "regularMaterial",
                   "thickMaterial", "ultraThickMaterial"]:
-        p = plaintes({"RunUp/Views/Ecran.swift": f".background(.{forme})\n"})
+        p = plaintes({"Haizo/Views/Ecran.swift": f".background(.{forme})\n"})
         assert p, f"{forme} est passé"
 
 
 @cas_de("`Material.bar` compte")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": ".background(Material.bar)\n"})
+    p = plaintes({"Haizo/Views/Ecran.swift": ".background(Material.bar)\n"})
     assert p, p
 
 
 @cas_de("`.background(.bar)` compte")
 def _():
     # `.bar` est un `Material` à part entière, et il s'écrit sans le mot « Material ».
-    p = plaintes({"RunUp/Views/Ecran.swift": ".background(.bar, in: Capsule())\n"})
+    p = plaintes({"Haizo/Views/Ecran.swift": ".background(.bar, in: Capsule())\n"})
     assert p, p
 
 
@@ -115,12 +115,12 @@ def _():
     # Un symbole SF. Le refuser bloquerait le dépôt sur un nom d'icône, et quatre écrans
     # l'emploient aujourd'hui.
     src = 'RUCardHeader(icon: "chart.bar.fill", title: "Volume")\n'
-    assert plaintes({"RunUp/Views/Ecran.swift": src}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": src}) == []
 
 
 @cas_de("`RUSpacing.tabBarHeight` n'est PAS un verre dépoli")
 def _():
-    assert plaintes({"RunUp/Views/Ecran.swift": ".frame(height: RUSpacing.tabBarHeight)\n"}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": ".frame(height: RUSpacing.tabBarHeight)\n"}) == []
 
 
 # ─── CE QUE LE GARDE-FOU NE DOIT PAS COMPTER ───────────────────────────────────────────────────
@@ -128,28 +128,28 @@ def _():
 @cas_de("un verre nommé dans un commentaire // ne compte pas")
 def _():
     src = "// C'était un .ultraThinMaterial, et il est parti.\nlet x = 1\n"
-    assert plaintes({"RunUp/Views/Ecran.swift": src}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": src}) == []
 
 
 @cas_de("un verre nommé dans un commentaire /// ne compte pas")
 def _():
     src = "/// Portait un `.ultraThinMaterial` sous un noir à 45 %. Règle 7.\nlet x = 1\n"
-    assert plaintes({"RunUp/Views/Ecran.swift": src}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": src}) == []
 
 
 @cas_de("un verre nommé dans un bloc /* */ ne compte pas")
 def _():
-    assert plaintes({"RunUp/Views/Ecran.swift": "/* .regularMaterial vivait ici */\nlet x = 1\n"}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": "/* .regularMaterial vivait ici */\nlet x = 1\n"}) == []
 
 
 @cas_de("un verre nommé dans une chaîne ne compte pas")
 def _():
-    assert plaintes({"RunUp/Views/Ecran.swift": 'let m = "ultraThinMaterial"\n'}) == []
+    assert plaintes({"Haizo/Views/Ecran.swift": 'let m = "ultraThinMaterial"\n'}) == []
 
 
 @cas_de("un commentaire ne masque pas le code de la ligne suivante")
 def _():
-    p = plaintes({"RunUp/Views/Ecran.swift": "// un .ultraThinMaterial de commentaire\n" + UN})
+    p = plaintes({"Haizo/Views/Ecran.swift": "// un .ultraThinMaterial de commentaire\n" + UN})
     assert p, p
 
 

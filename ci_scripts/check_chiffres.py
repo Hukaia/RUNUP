@@ -26,7 +26,7 @@ FENETRE = 12
 # Les exceptions, avec leur raison. Le compte est fixé : en ajouter une demande de modifier ce
 # fichier, c'est-à-dire d'écrire pourquoi cet écran ne peut pas prendre le composant partagé.
 AUTORISE = {
-    "RunUp/Views/Live/LiveRunView.swift":
+    "Haizo/Views/Live/LiveRunView.swift":
         (1, "l'écran de course en cours : son chiffre porte un `contentTransition(.numericText())` "
             "et son animation de chiffre, que le composant partagé ne transporte pas, et son "
             "unité vit sur l'encrier `Ink` de cet écran et non sur le thème"),
@@ -37,7 +37,7 @@ compte = {}
 
 for chemin in sorted(RACINE.rglob("*.swift")):
     rel = str(chemin.relative_to(RACINE))
-    if rel == "RunUp/Views/Components/ChiffreView.swift":
+    if rel == "Haizo/Views/Components/ChiffreView.swift":
         continue
     lignes = chemin.read_text().split("\n")
     for i, ligne in enumerate(lignes):

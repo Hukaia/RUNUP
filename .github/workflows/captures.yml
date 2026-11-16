@@ -14,7 +14,7 @@
 # 1. Construit l'app en DÉBOGAGE pour un simulateur. C'est la condition de tout : l'état de
 #    démonstration vit sous `#if DEBUG` (voir `CaptureSeed`), donc une construction Release
 #    photographierait l'écran d'inscription.
-# 2. Lance `RunUpUITests` DEUX fois par langue : une passe en thème sombre, une en thème clair.
+# 2. Lance `HaizoUITests` DEUX fois par langue : une passe en thème sombre, une en thème clair.
 #    Le test ouvre l'app six fois par passe, chaque fois directement sur l'écran voulu, et écrit
 #    le PNG sur le disque de la machine. La passe claire livre la fiche ; la passe sombre produit
 #    le dossier `diagnostic/`, celui qu'on regarde pour juger l'app écran par écran.
@@ -72,8 +72,8 @@ on:
       # test qui photographie, et le script qui compose. Les toucher sans refaire les captures
       # laisse en ligne une série qui ne correspond plus à ce que le dépôt produit — c'est
       # exactement ce qui a fait dater les six captures publiées du 30 août.
-      - "RunUp/Services/CaptureSeed.swift"
-      - "RunUpUITests/**"
+      - "Haizo/Services/CaptureSeed.swift"
+      - "HaizoUITests/**"
       - "ci_scripts/screenshots.py"
       # Les deux images qu'Apple exige en plus des six, et le témoin qui les garde. Le script
       # qui les fabrique ET le contrôle qui les vérifie : si seul le premier était ici, changer
@@ -89,7 +89,7 @@ on:
       # Ils étaient nommés dans les étapes ci-dessous sans être dans ce filtre : les modifier ne
       # relançait donc PAS la chaîne qui les exécute. `check_cablage.py` ne pouvait pas le voir —
       # il vérifie qu'un script est nommé par un workflow, pas que ce workflow parte quand le
-      # script change. C'est la même omission que `RunUpApp.swift` juste en dessous, d'un cran
+      # script change. C'est la même omission que `HaizoApp.swift` juste en dessous, d'un cran
       # plus loin, et `check_declencheur.py` la refuse maintenant aussi.
       #
       # Le prix est assumé : toucher l'un de ces cinq coûte vingt minutes de machine macOS. C'est
@@ -102,8 +102,8 @@ on:
       - "ci_scripts/check_banniere.py"
       - "ci_scripts/test_banniere.py"
       # Tout ce qui se juge à l'œil et qu'aucun script ne sait relire.
-      - "RunUp/Views/**"
-      - "RunUp/DesignSystem/**"
+      - "Haizo/Views/**"
+      - "Haizo/DesignSystem/**"
       # ET LES QUATRE ENTRÉES QUI DÉCIDENT DE CE QU'ON VOIT SANS ÊTRE DANS `Views`.
       #
       # `AppState` est le routeur — c'est lui qui dit quel écran est à l'écran, et désormais
@@ -111,15 +111,15 @@ on:
       # lui : les captures ne se sont pas relancées, et je n'ai donc pas pu mesurer ce que le
       # correctif changeait. Un déclencheur qui rate le fichier le plus central de l'app rate
       # sa raison d'être.
-      - "RunUp/AppState.swift"
-      - "RunUp/AppScreen.swift"
-      # `RunUpApp.swift` EST LE SEUL FICHIER HORS DE `Views` ET `DesignSystem` QUI CONTIENNE DES
-      # VUES SwiftUI — mesuré, pas supposé : un seul `some View` dans tout le reste de `RunUp/`.
+      - "Haizo/AppState.swift"
+      - "Haizo/AppScreen.swift"
+      # `HaizoApp.swift` EST LE SEUL FICHIER HORS DE `Views` ET `DesignSystem` QUI CONTIENNE DES
+      # VUES SwiftUI — mesuré, pas supposé : un seul `some View` dans tout le reste de `Haizo/`.
       # Il porte `RootView`, donc la barre d'onglets, les feuilles présentées par-dessus, et le
       # bloc qui pose le profil de démonstration que ces captures photographient. Il manquait.
       # Le commit du rapport de panne l'a touché le 8 novembre 2026 : les captures ne se sont pas
       # relancées, et rien n'aurait dit qu'une vue racine cassée était en ligne.
-      - "RunUp/RunUpApp.swift"
+      - "Haizo/HaizoApp.swift"
       # LES `ViewModels` ONT UN VISAGE, contrairement aux `Models` et aux `Services` (voir
       # ci-dessous). Les six décident de ce qu'au moins cinq écrans photographiés AFFICHENT :
       # `BilanDeLaSemaine` les quatre chiffres du bilan, `CoachViewModel` la conversation,
@@ -127,7 +127,7 @@ on:
       # `OnboardingViewModel` est lu par dix-huit vues dont celle de la capture « inscription ».
       # Un chiffre faux sur l'écran de course ne casse rien, ne lève aucune alerte, et ne se voit
       # que sur l'image.
-      - "RunUp/ViewModels/**"
+      - "Haizo/ViewModels/**"
   workflow_dispatch:
     inputs:
       langues:
@@ -252,7 +252,7 @@ jobs:
         run: |
           set -euo pipefail
           xcodebuild build-for-testing \
-            -project RunUp.xcodeproj \
+            -project Haizo.xcodeproj \
             -scheme Captures \
             -configuration Debug \
             -destination "id=${{ steps.sim.outputs.udid }}" \
@@ -295,16 +295,16 @@ jobs:
           # `xcodebuild` seraient deux occasions d'en corriger une seule.
           #
           # LE PRÉFIXE `TEST_RUNNER_` N'EST PAS DÉCORATIF. Le test tourne dans un processus du
-          # SIMULATEUR, qui n'hérite pas de l'environnement du shell : poser `RUNUP_LANG=…`
+          # SIMULATEUR, qui n'hérite pas de l'environnement du shell : poser `Haizo_LANG=…`
           # devant `xcodebuild` ne le ferait arriver nulle part, et le test lirait `nil` sans se
           # plaindre — trois séries identiques en français, et aucune erreur pour le dire.
           # `xcodebuild` transmet en revanche toute variable nommée `TEST_RUNNER_X` au lanceur,
           # sous le nom `X`.
           photographier() {
-            TEST_RUNNER_RUNUP_LANG="$1" \
-            TEST_RUNNER_RUNUP_CAPTURES_DIR="$2" \
+            TEST_RUNNER_Haizo_LANG="$1" \
+            TEST_RUNNER_Haizo_CAPTURES_DIR="$2" \
               xcodebuild test-without-building \
-                -project RunUp.xcodeproj \
+                -project Haizo.xcodeproj \
                 -scheme Captures \
                 -destination "id=${{ steps.sim.outputs.udid }}" \
                 -derivedDataPath build/captures \
@@ -376,11 +376,11 @@ jobs:
             echo "──────────── $langue · clair ────────────"
             dossier="$PWD/appstore/raw/$langue"
             rm -rf "$dossier/clair"
-            TEST_RUNNER_RUNUP_LANG="$langue" \
-            TEST_RUNNER_RUNUP_CAPTURES_DIR="$dossier" \
-            TEST_RUNNER_RUNUP_CAPTURES_CLAIR="1" \
+            TEST_RUNNER_Haizo_LANG="$langue" \
+            TEST_RUNNER_Haizo_CAPTURES_DIR="$dossier" \
+            TEST_RUNNER_Haizo_CAPTURES_CLAIR="1" \
               xcodebuild test-without-building \
-                -project RunUp.xcodeproj \
+                -project Haizo.xcodeproj \
                 -scheme Captures \
                 -destination "id=${{ steps.sim.outputs.udid }}" \
                 -derivedDataPath build/captures \
@@ -400,9 +400,9 @@ jobs:
           set +e
           echo "────────── rapports de plantage ──────────"
           dossier=~/Library/Logs/DiagnosticReports
-          rapports=$(ls -t "$dossier"/RunUp*.ips 2>/dev/null | head -2)
+          rapports=$(ls -t "$dossier"/Haizo*.ips 2>/dev/null | head -2)
           if [ -z "$rapports" ]; then
-            echo "(aucun rapport pour RunUp dans $dossier)"
+            echo "(aucun rapport pour Haizo dans $dossier)"
             ls -t "$dossier" 2>/dev/null | head -10
           fi
           # LE MESSAGE D'UN `fatalError` N'EST PAS DANS LE RAPPORT .ips.
@@ -414,7 +414,7 @@ jobs:
           echo "────────── journal du simulateur ──────────"
           xcrun simctl spawn "${{ steps.sim.outputs.udid }}" log show \
             --last 10m --style compact \
-            --predicate 'processImagePath CONTAINS "RunUp"' 2>/dev/null \
+            --predicate 'processImagePath CONTAINS "Haizo"' 2>/dev/null \
             | grep -iE "fatal error|precondition|assert" | head -20 || true
 
           for r in $rapports; do
@@ -453,13 +453,13 @@ jobs:
           done
           # L'IMAGE iPAD COMPOSÉE ICI A DISPARU, ET C'ÉTAIT UNE ERREUR, PAS UNE SIMPLIFICATION.
           #
-          # RUNUP est une app iPhone : `TARGETED_DEVICE_FAMILY` vaut 1 dans les réglages de base
+          # Haizo est une app iPhone : `TARGETED_DEVICE_FAMILY` vaut 1 dans les réglages de base
           # comme dans ceux du widget, seule la montre porte 4. Apple ne demande donc aucune
           # image d'iPad — `RELEASE.md` l'écrivait déjà pendant que `requis.py` en fabriquait
           # une, à partir d'une mise en page iPhone étirée dans un cadre d'iPad.
           #
           # La raison de fond est une décision produit : on ne court pas avec son iPad. Une app
-          # iPad de RunUp ne serait pas la même app, donc elle ne se photographie pas en
+          # iPad de Haizo ne serait pas la même app, donc elle ne se photographie pas en
           # étirant celle de l'iPhone.
           #
           # Il reste `check_requis.py`, qui vérifie que les images de montre VERSÉES dans le
@@ -544,7 +544,7 @@ jobs:
       # aperçu qui montre une version de l'app qui n'existe plus est pire que pas d'aperçu.
       #
       # Le simulateur est déjà démarré, l'app déjà construite : il ne manquait que de le filmer
-      # pendant qu'un test le pilote. Voir `RunUpUITests/ApercuUITests`.
+      # pendant qu'un test le pilote. Voir `HaizoUITests/ApercuUITests`.
       #
       # ffmpeg n'est pas livré avec les machines macOS — il l'est avec les Ubuntu, d'où la
       # répartition d'origine. On l'installe donc ici, et c'est le seul coût ajouté.
@@ -618,15 +618,15 @@ jobs:
               depart=$(python3 -c "import time; print(time.time())")
             fi
 
-            TEST_RUNNER_RUNUP_LANG="$langue" \
-            TEST_RUNNER_RUNUP_APERCU="1" \
-            TEST_RUNNER_RUNUP_APERCU_DIR="$dossier" \
+            TEST_RUNNER_Haizo_LANG="$langue" \
+            TEST_RUNNER_Haizo_APERCU="1" \
+            TEST_RUNNER_Haizo_APERCU_DIR="$dossier" \
               xcodebuild test-without-building \
-                -project RunUp.xcodeproj \
+                -project Haizo.xcodeproj \
                 -scheme Captures \
                 -destination "id=${{ steps.sim.outputs.udid }}" \
                 -derivedDataPath build/captures \
-                -only-testing:RunUpUITests/ApercuUITests \
+                -only-testing:HaizoUITests/ApercuUITests \
                 CODE_SIGNING_ALLOWED=NO
 
             # TROIS SECONDES DE RAB AVANT DE COUPER, et une seconde et demie ne suffisait pas.

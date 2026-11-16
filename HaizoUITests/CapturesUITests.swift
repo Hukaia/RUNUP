@@ -1,0 +1,529 @@
+import XCTest
+
+/// Les captures de la fiche App Store, prises par la machine.
+///
+/// # CE QUE CE FICHIER REMPLACE
+///
+/// Dix-huit captures prises à la main sur un téléphone — six écrans, trois langues — à refaire
+/// à chaque changement d'accent, de police ou de mise en page. En pratique ça veut dire qu'on ne
+/// les refait pas : les six en ligne dataient du 30 août, portaient l'ancien rose, et seules
+/// quatre des six existaient, en français seulement.
+///
+/// # COMMENT IL S'Y PREND
+///
+/// UNE CAPTURE PAR LANCEMENT, et pas une navigation à travers l'app. Naviguer veut dire trouver
+/// un onglet, attendre une transition, deviner quand elle est finie — six fois, et la première
+/// qui bronche emporte les cinq suivantes. Le drapeau `--ecran=` dit à l'app où s'ouvrir, elle
+/// s'y ouvre, on photographie. Six lancements de quelques secondes, indépendants : si l'un
+/// échoue, les cinq autres sortent quand même.
+///
+/// L'ÉTAT VIENT DE L'APP, pas du test. `CaptureSeed` le pose par le vrai chemin d'inscription,
+/// donc la capture montre un état dans lequel l'app peut réellement se trouver.
+///
+/// LES FICHIERS SONT ÉCRITS SUR LA MACHINE HÔTE. Un processus de simulateur voit le disque du
+/// Mac : le chemin arrive par `Haizo_CAPTURES_DIR`, et les PNG atterrissent directement là où
+/// `screenshots.py` les attend. Sans cette variable, le test se contente d'attacher les images
+/// au rapport — utile en local, inexploitable par un script.
+final class CapturesUITests: XCTestCase {
+
+    // L'ordre EST celui des accroches de `appstore/captions.json`, et les noms portent leur
+    // rang : `screenshots.py` apparie par le chiffre de tête, pas par la position dans le
+    // dossier. Un écran qui manque ne décale donc pas les cinq autres.
+
+    override func setUpWithError() throws {
+        continueAfterFailure = true
+    }
+
+    // UNE MÉTHODE PAR ÉCRAN, ET C'EST UNE CORRECTION.
+    //
+    // La première version les prenait dans une boucle, à l'intérieur d'un seul `testCaptures`.
+    // Le commentaire d'en-tête promettait « six lancements indépendants : si l'un échoue, les
+    // cinq autres sortent quand même » — c'était faux. Une seule méthode est un seul cas de
+    // test : l'app a planté sur le premier écran, et les cinq suivants n'ont jamais été tentés.
+    //
+    // XCTest, lui, isole vraiment deux méthodes : il relance l'app, repart à zéro, et rapporte
+    // les échecs séparément. La promesse est maintenant tenue par la structure plutôt que par le
+    // commentaire — et un plantage sur le club n'empêche plus d'avoir les statistiques.
+
+    func test1Accueil() { prendre(rang: 1, ecran: "prog", nom: "accueil") }
+    func test2Plan() { prendre(rang: 2, ecran: "plan", nom: "plan") }
+    func test3Coach() { prendre(rang: 3, ecran: "coach", nom: "coach") }
+    func test4Club() { prendre(rang: 4, ecran: "club", nom: "club") }
+    func test5Journee() { prendre(rang: 5, ecran: "rings", nom: "journee") }
+    func test6Stats() { prendre(rang: 6, ecran: "stats", nom: "stats") }
+
+    // LES CAPTURES DE DIAGNOSTIC — celles qu'on prend pour REGARDER, pas pour publier.
+    //
+    // CE QU'ELLES RÉSOLVENT. Sans Xcode en local, un écran redessiné ne se juge qu'une fois
+    // installé sur un téléphone : un aller-retour d'un quart d'heure pour savoir si deux tuiles
+    // tiennent côte à côte. Celles-ci sortent du même harnais que les captures de la fiche, par
+    // le même chemin, avec le même état de démonstration — mais dans un sous-dossier que
+    // `screenshots.py` ne regarde pas.
+    //
+    // POURQUOI UN SOUS-DOSSIER. Le composeur de la fiche apparie chaque capture à une accroche
+    // par le chiffre de tête de son nom. Une septième image à la racine recevrait une accroche
+    // qui n'existe pas. Il ne lit que les FICHIERS d'un dossier, jamais ses sous-dossiers : une
+    // capture rangée dans `diagnostic/` est donc invisible pour lui, et visible dans l'artefact.
+    func test7ProfilDiagnostic() { prendre(rang: 7, ecran: "profile", nom: "profil", diagnostic: true) }
+
+    /// La page de quelqu'un, ouverte par-dessus l'onglet Club. `--profil=` se combine avec
+    /// `--ecran=` au lieu de le remplacer : une page de profil n'est pas un écran de l'app, elle
+    /// se présente au-dessus de n'importe lequel.
+    func test8ProfilPublicDiagnostic() {
+        prendre(rang: 8, ecran: "club", nom: "profil-public", diagnostic: true, profil: "2")
+    }
+
+    /// Le fil, qui est un écran à lui seul depuis qu'il a son onglet : `--ecran=fil` suffit, là
+    /// où il fallait `--ecran=club --mur` pour atteindre un mode de l'onglet social.
+    func test9FilDiagnostic() {
+        prendre(rang: 9, ecran: "fil", nom: "fil", diagnostic: true)
+    }
+
+    /// La page d'une course — l'écran qui porte le plus de mise en page : des coureurs, un mur,
+    /// un avertissement de dossard. Celui qu'on ne veut surtout pas juger de mémoire.
+    func test10CourseDiagnostic() {
+        prendre(rang: 10, ecran: "club", nom: "course", diagnostic: true, course: true)
+    }
+
+    /// La sortie déroulée — l'écran le plus CHIFFRÉ de l'app : six mesures, douze barres de
+    /// splits, un profil de terrain. Rien n'y plante quand un chiffre est faux ; il faut le voir.
+    func test11SortieDiagnostic() {
+        prendre(rang: 11, ecran: "club", nom: "sortie", diagnostic: true, sortie: true)
+    }
+
+    /// Les deux onglets du Club que la démonstration n'ouvre jamais : l'aperçu — niveau, semaine
+    /// du club, défi, sorties de groupe — et le classement.
+    func test12ClubApercuDiagnostic() {
+        prendre(rang: 12, ecran: "club", nom: "club-apercu", diagnostic: true, onglet: "apercu")
+    }
+
+    func test13ClubClassementDiagnostic() {
+        prendre(rang: 13, ecran: "club", nom: "club-classement", diagnostic: true, onglet: "classement")
+    }
+
+    /// LE BAS DES ÉCRANS, QUE PERSONNE N'AVAIT JAMAIS VU.
+    ///
+    /// Une capture photographie l'écran, donc le HAUT de la page. L'aperçu du Club fait
+    /// maintenant deux écrans et demi — ce que le club prépare, ses records, le niveau — et la
+    /// page d'une sortie en fait autant avec ses splits et son profil de terrain. Tout ce qui
+    /// est sous la ligne de flottaison n'avait donc jamais été regardé, sur les deux écrans qui
+    /// portent le plus de chiffres.
+    func test14ClubApercuBasDiagnostic() {
+        prendre(rang: 14, ecran: "club", nom: "club-apercu-bas", diagnostic: true,
+                onglet: "apercu", defilements: 3)
+    }
+
+    func test15SortieBasDiagnostic() {
+        prendre(rang: 15, ecran: "club", nom: "sortie-bas", diagnostic: true,
+                sortie: true, defilements: 3)
+    }
+
+    /// DEUX ÉCRANS QUI EXISTENT DEPUIS TOUJOURS ET QUE PERSONNE N'AVAIT JAMAIS PHOTOGRAPHIÉS.
+    ///
+    /// `AppScreen` les expose tous les deux — il suffisait de les demander. Ils portent
+    /// précisément ce qui vient de changer : le bilan hebdomadaire a des tuiles de statistique
+    /// (dont la hiérarchie libellé/chiffre a été inversée) et des lignes de course (dont le
+    /// rayon est passé de 14 à 24), l'historique a une colonne de chiffres alignés (donc la
+    /// chasse fixe) et des cartes.
+    ///
+    /// Une page qu'on ne photographie pas est une page qu'on juge de mémoire — c'est écrit plus
+    /// haut à propos des onglets du club, et c'était vrai de ces deux-là aussi.
+    func test16HistoriqueDiagnostic() {
+        prendre(rang: 16, ecran: "history", nom: "historique", diagnostic: true)
+    }
+
+    func test17BilanHebdoDiagnostic() {
+        prendre(rang: 17, ecran: "weeklyRecap", nom: "bilan-hebdo", diagnostic: true)
+    }
+
+    /// LE BAS DU PROFIL, où vit la grille de badges.
+    ///
+    /// `test7` photographie le profil sans défiler, et la grille est tout en bas — sous les
+    /// chiffres, la carte du fil et la grille communauté. Elle n'a donc jamais été vue, alors
+    /// qu'elle vient précisément de passer d'une bande horizontale à une grille : le défaut
+    /// qu'on corrigeait était « on ne voit que cinq badges sur seize », et la capture ne voyait
+    /// pas la correction.
+    ///
+    /// Même raison que pour `club-apercu-bas` et `sortie-bas` : un écran long n'est pas
+    /// photographié par sa première hauteur.
+    func test18ProfilBasDiagnostic() {
+        prendre(rang: 18, ecran: "profile", nom: "profil-bas", diagnostic: true, defilements: 3)
+    }
+
+    /// LES RÉGLAGES, ET CE QU'ILS CACHAIENT.
+    ///
+    /// La feuille des réglages n'était photographiée nulle part. Elle porte pourtant la ligne de
+    /// phase du cycle, qui a reçu sa teinte et sa surface le 13 novembre — et qui, vérification
+    /// faite le jour même en cherchant ces deux couleurs dans toute la campagne, n'apparaissait
+    /// sur AUCUNE des cent quarante-sept images.
+    ///
+    /// Deux défilements : le bloc du cycle est bas dans la feuille, sous les notifications et les
+    /// sources connectées.
+    func test26Reglages() {
+        // L'ordre suit celui de `prendre` : Swift exige que les arguments d'un appel apparaissent
+        // dans l'ordre des paramètres, et `defilements` est déclaré avant `reglages`. Écrit à
+        // l'envers, ce fichier ne compilait plus — et la cible des tests d'interface n'est
+        // construite QUE par le workflow des captures, jamais par celui du build. Trois campagnes
+        // sont mortes dessus avant que la quatrième n'en montre la cause.
+        prendre(rang: 26, ecran: "profile", nom: "reglages", diagnostic: true,
+                defilements: 2, reglages: true)
+    }
+
+    /// # LE BLOC DU CYCLE, DEUX FOIS, À DEUX PROFONDEURS
+    ///
+    /// `test26Reglages` a enfin photographié la feuille des réglages — et la ligne de phase n'y
+    /// était pas : zéro pixel de `#F6EAE5` et zéro de `#80462E` sur l'image. Elle n'est pas DANS
+    /// cette feuille, elle est derrière sa ligne « Plus de réglages », soit un troisième niveau.
+    ///
+    /// AUCUN DÉFILEMENT : c'est l'app qui se pose sur le bloc, par `--cycle`.
+    ///
+    /// Les versions précédentes comptaient les gestes — un, puis trois. Trois ont marché le
+    /// 13 novembre en français. Le 14, la même capture a donné TROIS RÉSULTATS dans la même
+    /// campagne : l'espagnol tombait sur le bloc, le français et l'anglais le dépassaient, parce
+    /// que les quatre cartes qui le précèdent sont plus courtes dans ces deux langues.
+    ///
+    /// Le défilement en coordonnées reste la règle pour tout le reste de ce fichier, et sa raison
+    /// tient toujours : interroger l'arbre d'accessibilité DEPUIS LE TEST avait tué le premier
+    /// essai de ces captures. Ici, rien n'est demandé depuis le test — l'app connaît ses propres
+    /// vues et se place elle-même.
+    ///
+    /// `attente: 4.0` et non les deux secondes par défaut : deux feuilles s'ouvrent l'une après
+    /// l'autre avant d'arriver ici, et la marge ne coûte rien.
+    ///
+    /// ET L'ENCRE DE LA LIGNE DE PHASE EST JUSTE. Je l'ai crue fausse deux fois.
+    ///
+    /// Sur l'image française, elle mesurait `#834C33` là où `RUColor.cycle` déclare `#80462E`.
+    /// J'ai d'abord conclu à un fondu saisi en cours — faux : deux campagnes aux attentes
+    /// différentes rendaient le même compte de pixels, au pixel près. J'ai ensuite soupçonné le
+    /// rendu des teintes saturées — faux aussi : le rose de marque comptait 142 223 pixels
+    /// exacts dans cette même image, et le jeton `cycle` rend exactement `#F2B8A0` en thème
+    /// sombre.
+    ///
+    /// La réponse était dans la campagne elle-même : l'image ESPAGNOLE du même écran contient
+    /// 6 315 pixels exactement `#80462E`. Le jeton rend juste. C'était l'image française qui ne
+    /// valait rien comme mesure — prise alors que le défilement n'était pas posé, ce que le
+    /// présent correctif supprime en ne défilant plus du tout.
+    ///
+    /// La leçon tient en une ligne : une couleur ne se juge pas sur une image dont on n'a pas
+    /// vérifié qu'elle était stable.
+    ///
+    func test29Cycle() {
+        prendre(rang: 29, ecran: "profile", nom: "cycle", diagnostic: true,
+                reglages: true, plusDeReglages: true, cycle: true, attente: 4.0)
+    }
+
+    // MARK: Les trois écrans que personne ne revoit
+    //
+    // L'inscription, parce qu'on ne s'inscrit qu'une fois. Le mur d'abonnement, parce qu'on est
+    // abonné et qu'`introShown` s'en souvient pour toujours. L'écran de course, parce qu'on le
+    // regarde en courant. Ce sont les trois écrans les plus décisifs de l'app, et les trois
+    // qu'aucune capture n'avait jamais montrés — donc les trois qu'on jugeait de mémoire.
+
+    /// Le premier écran que voit quelqu'un. Aucune graine n'est posée : `onboarded` vaut `false`
+    /// à la création, donc l'app ouvre sur l'inscription d'elle-même.
+    func test19InscriptionDiagnostic() {
+        prendre(rang: 19, ecran: "prog", nom: "inscription", diagnostic: true, inscription: true)
+    }
+
+    /// Le mur d'abonnement, celui qui décide du chiffre d'affaires.
+    func test20PaywallDiagnostic() {
+        prendre(rang: 20, ecran: "prog", nom: "paywall", diagnostic: true, paywall: true)
+    }
+
+    /// L'ÉCRAN DE COURSE, SANS DISTANCE, ET C'EST ATTENDU.
+    ///
+    /// Le simulateur n'a pas de signal GPS : la capture montre 0,00 km et le bandeau
+    /// « Recherche du signal GPS… ». C'est l'état des premières secondes de chaque vraie course,
+    /// et c'est tout ce qu'on vient regarder ici — la disposition, le panneau de mesures, les
+    /// commandes, la place de la bulle du coach, et le bandeau lui-même. Attendre d'avoir un GPS
+    /// simulé pour photographier cet écran reviendrait à ne jamais le photographier.
+    func test21CourseEnCoursDiagnostic() {
+        // SIX SECONDES, PARCE QUE LE DÉPART SE COMPTE À REBOURS.
+        //
+        // `LiveRunViewModel.demarrer` pose un décompte de trois secondes avant que la course ne
+        // commence vraiment, et le voile qui le porte couvre tout l'écran. Les deux secondes
+        // d'attente ordinaires photographiaient donc « 1 · Appuie pour partir tout de suite » —
+        // un écran réel, mais pas celui qu'on venait chercher. Je ne l'ai su qu'en regardant
+        // l'image.
+        prendre(rang: 21, ecran: "live", nom: "course-en-cours", diagnostic: true,
+                courseEnCours: true, attente: 6.0)
+    }
+
+    // ─── LE GRAND TEXTE, QUATRE ÉCRANS ────────────────────────────────────────────────────────
+    //
+    // AX2 et pas AX5, et le choix se lit dans `RUFont` : le plafond de l'app vaut 2,0 ×, AX2
+    // demande ≈1,94 × et passe donc en entier, tandis qu'AX3 à AX5 (2,35 / 2,76 / 3,12 ×) sont
+    // écrêtés. Photographier un cran écrêté montrerait le plafond, pas la mise en page.
+    //
+    // Quatre écrans, choisis sur ce qu'ils EMPILENT : l'accueil porte la bande des sept jours et
+    // trois rangées de mesures côte à côte ; les statistiques, les tuiles de records et de
+    // prédiction ; la course en cours, le panneau de mesures qu'on lit à bout de bras ; le bilan
+    // de la semaine, les quatre chiffres de la semaine et le graphique. Ce sont les quatre
+    // endroits où un texte deux fois plus grand n'a nulle part où aller.
+
+    func test22AccueilGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 22, ecran: "prog", nom: "grand-texte/accueil", diagnostic: true,
+                tailleDuTexte: Self.ax2)
+    }
+
+    /// # LE BAS DE L'ACCUEIL N'ÉTAIT PHOTOGRAPHIÉ NULLE PART
+    ///
+    /// Ni en taille normale, ni en grand texte. C'est l'écran le plus ouvert de l'app, et sa
+    /// moitié basse — le programme, la semaine, les objectifs du jour — n'apparaissait sur
+    /// aucune des images de la campagne. On la jugeait de mémoire.
+    ///
+    /// Le trou s'est vu le 14 novembre, quand le ruban de semaine a remplacé la bande de
+    /// l'accueil : le ruban se posait dans un cadre de hauteur fixe, et au plus grand texte ses
+    /// étiquettes en débordaient. Aucune capture n'aurait pu le montrer.
+    func test31AccueilBas() {
+        prendre(rang: 31, ecran: "prog", nom: "accueil-bas", diagnostic: true, defilements: 1)
+    }
+
+    func test32AccueilBasGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 32, ecran: "prog", nom: "grand-texte/accueil-bas", diagnostic: true,
+                defilements: 1, tailleDuTexte: Self.ax2)
+    }
+
+    /// # LA FEUILLE DE LA SÉANCE DU JOUR, QUE PERSONNE N'AVAIT JAMAIS VUE
+    ///
+    /// C'est l'écran qu'on ouvre AVANT de courir : le détail de la séance, son découpage en
+    /// échauffement, bloc et retour au calme, ses allures cibles, son bouton de départ. Il
+    /// n'apparaissait sur AUCUNE des images de la campagne — « sortie » photographie la page
+    /// d'une course PASSÉE, pas celle-ci. Relevé le 15 novembre, en cherchant où regarder un
+    /// en-tête de carte qui se posait à côté de son accessoire.
+    ///
+    /// Ce qu'elle montre suit le jour de la campagne : une sortie longue un dimanche, trois
+    /// lignes de repos un jour de repos. Les deux sont des états réels, et c'est la même
+    /// dépendance au jour que l'accueil.
+    func test33Seance() {
+        prendre(rang: 33, ecran: "prog", nom: "seance", diagnostic: true, seance: true)
+    }
+
+    /// Et en grand texte, parce que c'est une feuille DENSE — trois étapes, chacune avec son
+    /// titre, sa durée, son allure et sa zone — et qu'une feuille a moins de hauteur qu'un écran.
+    func test34SeanceGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 34, ecran: "prog", nom: "grand-texte/seance", diagnostic: true,
+                seance: true, tailleDuTexte: Self.ax2)
+    }
+
+    /// # L'ACCUEIL SANS PROGRAMME, QUE PERSONNE N'AVAIT JAMAIS VU
+    ///
+    /// Toutes les captures de l'accueil montrent un programme actif. Or c'est la carte du
+    /// programme qui porte la moitié de la hauteur de l'écran : sans elle, il ne reste de cette
+    /// carte que le ruban des sept jours.
+    ///
+    /// Charlotte, le 15 novembre : « maintenant l'accueil fait vide lorsqu'il n'y a pas de
+    /// programme en cours, mais c'est peut-être fait exprès ? » Personne ne pouvait répondre.
+    /// La carte « 30 derniers jours », retirée la veille parce qu'elle doublait l'onglet Stats,
+    /// était aussi ce qui remplissait cet écran-là — et la coupe a été mesurée sur un jour AVEC
+    /// programme.
+    ///
+    /// Deux captures, le haut et après un défilement : si les deux images sont identiques, c'est
+    /// que l'écran tient en moins d'une hauteur, et c'est la mesure de ce « vide ».
+    func test35AccueilLibre() {
+        prendre(rang: 35, ecran: "prog", nom: "accueil-libre", diagnostic: true, libre: true)
+    }
+
+    func test36AccueilLibreBas() {
+        prendre(rang: 36, ecran: "prog", nom: "accueil-libre-bas", diagnostic: true,
+                defilements: 1, libre: true)
+    }
+
+    func test23StatsGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 23, ecran: "stats", nom: "grand-texte/stats", diagnostic: true,
+                tailleDuTexte: Self.ax2)
+    }
+
+    func test24CourseEnCoursGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 24, ecran: "live", nom: "grand-texte/course-en-cours", diagnostic: true,
+                courseEnCours: true, attente: 6.0, tailleDuTexte: Self.ax2)
+    }
+
+    func test25BilanHebdoGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 25, ecran: "weeklyRecap", nom: "grand-texte/bilan-hebdo", diagnostic: true,
+                tailleDuTexte: Self.ax2)
+    }
+
+    // TROIS ÉCRANS DE PLUS, ET LA RAISON EST LE RENDEMENT DE LA MÉTHODE.
+    //
+    // Les quatre premiers ont rendu DIX défauts à la première exécution — une rangée de mesures
+    // qui ne basculait pas en colonne, deux titres de section tronqués, une pastille qui
+    // flottait. Quatre écrans sur les vingt et un que le harnais photographie, c'est la
+    // couverture qu'on avait ; les trois ajoutés ici sont les plus denses de ceux qui n'avaient
+    // jamais été vus en grand texte.
+    //
+    // · LA SORTIE DÉROULÉE est l'écran le plus CHIFFRÉ de l'app : six mesures, douze barres de
+    //   splits, un profil de terrain. Rien n'y plante quand la mise en page casse.
+    // · L'APERÇU DU CLUB empile le niveau, la semaine du club, le défi, les sorties de groupe,
+    //   ce que le club prépare et ses records — et il vient d'être redécoupé en quatre
+    //   fichiers, donc c'est aussi la première fois qu'on le regarde en grand texte après.
+    // · LE PROFIL est une grille de tuiles, et une grille est ce qui résiste le moins à un
+    //   texte deux fois plus grand.
+
+    func test26SortieGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 26, ecran: "club", nom: "grand-texte/sortie", diagnostic: true,
+                sortie: true, tailleDuTexte: Self.ax2)
+    }
+
+    func test27ClubApercuGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 27, ecran: "club", nom: "grand-texte/club-apercu", diagnostic: true,
+                onglet: "apercu", tailleDuTexte: Self.ax2)
+    }
+
+    func test28ProfilGrandTexte() throws {
+        try passeSombreSeulement()
+        prendre(rang: 28, ecran: "profile", nom: "grand-texte/profil", diagnostic: true,
+                tailleDuTexte: Self.ax2)
+    }
+
+    /// Le deuxième des cinq crans d'accessibilité — `UIContentSizeCategory.accessibilityLarge`.
+    private static let ax2 = "UICTContentSizeCategoryAccessibilityL"
+
+    /// LA PASSE SOMBRE SEULEMENT, ET C'EST UNE QUESTION DE COÛT.
+    ///
+    /// Le harnais lance le même test deux fois par langue, une passe par thème. Sept écrans de
+    /// plus dans les deux passes font quarante-deux lancements ; dans une seule, vingt et un. Et
+    /// le dossier `diagnostic/` est par construction celui de la passe sombre — « la passe claire
+    /// livre la fiche, la passe sombre produit le dossier qu'on regarde ».
+    ///
+    /// Ce n'est pas une affirmation que le clair tiendrait aussi : personne ne l'a vu. Le jour où
+    /// les sept images sombres seront jugées, l'ajout du clair coûtera une ligne.
+    private func passeSombreSeulement() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_CAPTURES_CLAIR"] == nil,
+                          "Le grand texte se photographie dans la passe sombre.")
+    }
+
+    private func prendre(rang: Int, ecran: String, nom: String, diagnostic: Bool = false,
+                         profil: String? = nil, course: Bool = false,
+                         sortie: Bool = false, onglet: String? = nil, defilements: Int = 0,
+                         inscription: Bool = false, paywall: Bool = false,
+                         reglages: Bool = false, plusDeReglages: Bool = false,
+                         cycle: Bool = false,
+                         courseEnCours: Bool = false, seance: Bool = false,
+                         libre: Bool = false,
+                         attente: TimeInterval = 2.0,
+                         tailleDuTexte: String? = nil) {
+        let clair = ProcessInfo.processInfo.environment["Haizo_CAPTURES_CLAIR"] != nil
+        let app = XCUIApplication()
+        app.launchArguments = ["--captures", "--ecran=\(ecran)"]
+        if let profil { app.launchArguments += ["--profil=\(profil)"] }
+        // La page de course s'ouvre depuis l'écran des courses : il faut donc y être.
+        if course { app.launchArguments += ["--course", "--courses"] }
+        if sortie { app.launchArguments += ["--sortie"] }
+        if let onglet { app.launchArguments += ["--onglet=\(onglet)"] }
+        // Les trois écrans qu'on ne revoit jamais soi-même — voir `CaptureSeed`.
+        if inscription { app.launchArguments += ["--inscription"] }
+        if paywall { app.launchArguments += ["--paywall"] }
+        if reglages { app.launchArguments += ["--reglages"] }
+        // `--reglages-plus` ne se suffit pas : il ouvre la feuille SUIVANTE, donc la première
+        // doit être demandée aussi. Les deux ensemble plutôt qu'un drapeau qui en implique un
+        // autre — un appelant qui lit la liste voit le chemin complet.
+        if plusDeReglages { app.launchArguments += ["--reglages-plus"] }
+        if cycle { app.launchArguments += ["--cycle"] }
+        if courseEnCours { app.launchArguments += ["--encours"] }
+        // La feuille de la séance du jour, qui ne s'atteint par aucun `--ecran=` : c'est une
+        // feuille, pas un écran. Voir `CaptureSeed.seanceDemandee`.
+        if seance { app.launchArguments += ["--seance"] }
+        // Le mode course libre : pas de programme, donc pas la carte qui porte la moitié de la
+        // hauteur de l'accueil. Voir `CaptureSeed.libreDemandee`.
+        if libre { app.launchArguments += ["--libre"] }
+        // LA TAILLE DU TEXTE, PAR LE MÊME CHEMIN QUE LA LANGUE.
+        //
+        // `TextSizeStore` lit `UIApplication.shared.preferredContentSizeCategory`, et
+        // `-UIPreferredContentSizeCategoryName` est ce qui la pose au lancement — c'est le
+        // réglage Réglages → Affichage → Taille du texte, dit de l'extérieur.
+        //
+        // Sans ça, le plafond de 2,0 × de `RUFont` et le travail de réorganisation qui l'a
+        // autorisé — rangées de mesures qui passent en colonne, bande des sept jours qui laisse
+        // tomber le quantième, barre d'onglets qui laisse tomber ses libellés — n'ont JAMAIS
+        // été photographiés. Ils sont écrits, commentés, et crus sur parole.
+        if let tailleDuTexte {
+            app.launchArguments += ["-UIPreferredContentSizeCategoryName", tailleDuTexte]
+        }
+        // LE THÈME VIENT DE L'EXTÉRIEUR, COMME LA LANGUE, ET POUR LA MÊME RAISON.
+        //
+        // Le même test tourne une fois de plus avec `Haizo_CAPTURES_CLAIR` posé, et c'est le
+        // workflow qui le dit. Tant qu'il n'existait pas, le harnais ne photographiait que le
+        // sombre — donc la moitié de l'app n'était jugeable que sur un téléphone, et c'est en
+        // clair que sont apparus les défauts les plus coûteux.
+        if clair { app.launchArguments += ["--clair"] }
+        // La langue et la région viennent de l'extérieur : le même test tourne trois fois, une
+        // par langue, et c'est le workflow qui dit laquelle. `-AppleLanguages` est la seule
+        // façon de forcer la langue d'un lancement sans toucher aux réglages du simulateur.
+        if let langue = ProcessInfo.processInfo.environment["Haizo_LANG"] {
+            app.launchArguments += ["-AppleLanguages", "(\(langue))", "-AppleLocale", langue]
+        }
+        app.launch()
+
+        // ON NE DEMANDE PAS L'ARBRE D'ACCESSIBILITÉ. C'est ce qui a tué le premier essai.
+        //
+        // La version précédente attendait `app.descendants(matching: .any).firstMatch`, pour ne
+        // pas photographier trop tôt. Cette requête-là exige un INSTANTANÉ COMPLET de tous les
+        // éléments de l'écran : sur une vue SwiftUI dense — l'accueil, ses anneaux, sa bande de
+        // semaine et ses cartes — elle a fait perdre la connexion à l'app, qui est morte sans
+        // même laisser de rapport de plantage. Quarante secondes de lancement pour un écran
+        // qu'on ne photographiera jamais.
+        //
+        // Or `XCUIScreen.main.screenshot()` photographie L'ÉCRAN, pas l'app : il n'a besoin
+        // d'aucun élément, d'aucun arbre, et il marche même si l'app vient de mourir. La seule
+        // chose à attendre est donc que l'app soit au premier plan, ce que le système sait dire
+        // sans rien inspecter.
+        _ = app.wait(for: .runningForeground, timeout: 30)
+        // Puis on laisse la première image se poser. Les animations d'entrée de
+        // `ContentRouterView` durent moins d'une demi-seconde ; deux secondes laissent la marge
+        // sur une machine chargée sans peser sur les dix-huit lancements.
+        Thread.sleep(forTimeInterval: attente)
+
+        // LE DÉFILEMENT SE FAIT EN COORDONNÉES, PAS EN ÉLÉMENTS.
+        //
+        // `app.scrollViews.firstMatch.swipeUp()` demanderait l'arbre d'accessibilité — la
+        // requête qui a tué le premier essai de ces captures (voir ci-dessus). Un glissement
+        // entre deux points normalisés ne consulte rien : il s'adresse à la fenêtre.
+        //
+        // Une pause après chaque geste : l'inertie du défilement continue après le doigt, et
+        // photographier pendant qu'elle court donne une image floue ou à mi-chemin.
+        for _ in 0..<defilements {
+            let depart = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+            let arrivee = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
+            depart.press(forDuration: 0.05, thenDragTo: arrivee)
+            Thread.sleep(forTimeInterval: 0.6)
+        }
+        if defilements > 0 { Thread.sleep(forTimeInterval: 1.0) }
+
+        let capture = XCUIScreen.main.screenshot()
+        let piece = XCTAttachment(screenshot: capture)
+        piece.name = diagnostic ? "diagnostic-\(nom)" : "\(rang)-\(nom)"
+        piece.lifetime = .keepAlways
+        add(piece)
+
+        // En clair, TOUT part dans un sous-dossier, les six publiables comprises : le composeur
+        // de la fiche n'apparie que les fichiers posés à la racine du dossier d'une langue, et
+        // une seconde série de « 1-accueil.png » lui donnerait deux candidates pour une accroche.
+        let fichier = diagnostic ? "diagnostic/\(nom).png" : "\(rang)-\(nom).png"
+        ecrire(capture.pngRepresentation, sous: clair ? "clair/\(fichier)" : fichier)
+        app.terminate()
+    }
+
+    /// Écrit le PNG sur le disque de la machine hôte, quand elle a dit où.
+    private func ecrire(_ donnees: Data, sous nom: String) {
+        guard let dossier = ProcessInfo.processInfo.environment["Haizo_CAPTURES_DIR"] else { return }
+        let url = URL(fileURLWithPath: dossier).appendingPathComponent(nom)
+        do {
+            try FileManager.default.createDirectory(
+                at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try donnees.write(to: url)
+        } catch {
+            // Pas un échec de test : les images sont déjà attachées au rapport, et l'écriture
+            // sur l'hôte n'est qu'un raccourci pour le script qui les compose.
+            print("capture non écrite sur l'hôte : \(error)")
+        }
+    }
+}

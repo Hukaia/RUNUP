@@ -81,9 +81,9 @@ def main() -> int:
             failed = True
 
     # Le bloc d'abonnement doit figurer dans les trois : un seul manquant est un rejet.
-    for lang, marker in (("FR", "ABONNEMENT RUNUP PLUS"),
-                         ("EN", "RUNUP PLUS SUBSCRIPTION"),
-                         ("ES", "SUSCRIPCIÓN RUNUP PLUS")):
+    for lang, marker in (("FR", "ABONNEMENT Haizo PLUS"),
+                         ("EN", "Haizo PLUS SUBSCRIPTION"),
+                         ("ES", "SUSCRIPCIÓN Haizo PLUS")):
         if marker not in text:
             print(f"ECHEC [{lang}] : bloc d'abonnement absent (guideline 3.1.2)")
             failed = True

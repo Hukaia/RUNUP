@@ -161,7 +161,7 @@ def _():
     assert relu["montre/fr-FR/1.png"]["constat"] == "à refaire", "le constat a été perdu : " + str(relu)
 
 
-CODE = {"RunUpWatch/WatchViews.swift": b"Circle().fill(rose)"}
+CODE = {"HaizoWatch/WatchViews.swift": b"Circle().fill(rose)"}
 
 
 @cas_de("LE CODE A CHANGÉ : l'image ne montre plus l'écran que l'app dessine")
@@ -174,7 +174,7 @@ def _():
     table = {"montre/fr-FR/1.png": {
         "source": "appstore/raw-montre/fr-FR/1.png",
         "empreinte": emp(BONNE),
-        "code": "RunUpWatch",
+        "code": "HaizoWatch",
         "empreinte_code": "000000000000",
     }}
     code, sortie, _ = lance(images, table)
@@ -192,7 +192,7 @@ def _():
     table = {"montre/fr-FR/1.png": {
         "source": "appstore/raw-montre/fr-FR/1.png",
         "empreinte": emp(BONNE),
-        "code": "RunUpWatch",
+        "code": "HaizoWatch",
         "empreinte_code": None,
     }}
     code, sortie, relu = lance(images, table, ecrire=True)
@@ -212,11 +212,11 @@ def _():
                            "appstore/raw-montre/fr-FR/1.png": BONNE})
     table = {"montre/fr-FR/1.png": {"source": "appstore/raw-montre/fr-FR/1.png",
                                     "empreinte": emp(BONNE),
-                                    "code": "RunUpWatch", "empreinte_code": None}}
+                                    "code": "HaizoWatch", "empreinte_code": None}}
     _, _, relu = lance(images, table, ecrire=True)
     avant = relu["montre/fr-FR/1.png"]["empreinte_code"]
 
-    renomme = {"RunUpWatch/Vues.swift": CODE["RunUpWatch/WatchViews.swift"],
+    renomme = {"HaizoWatch/Vues.swift": CODE["HaizoWatch/WatchViews.swift"],
                "appstore/requis/montre/fr-FR/1.png": BONNE,
                "appstore/raw-montre/fr-FR/1.png": BONNE}
     _, _, relu2 = lance(renomme, table, ecrire=True)
@@ -228,15 +228,15 @@ def _():
 def _():
     # `rglob` sur un chemin absent ne rend rien, SANS RIEN DIRE : l'empreinte d'un dossier vide
     # est stable, donc le contrôle resterait vert en ne regardant plus rien. C'est le défaut que
-    # `check_attributs.py` a déjà eu avec « RunUpWidget » au singulier.
+    # `check_attributs.py` a déjà eu avec « HaizoWidget » au singulier.
     images = {"appstore/requis/montre/fr-FR/1.png": BONNE,
               "appstore/raw-montre/fr-FR/1.png": BONNE}
     table = {"montre/fr-FR/1.png": {"source": "appstore/raw-montre/fr-FR/1.png",
                                     "empreinte": emp(BONNE),
-                                    "code": "RunUpWatch", "empreinte_code": "abc"}}
+                                    "code": "HaizoWatch", "empreinte_code": "abc"}}
     code, message, _ = lance(images, table)
     assert code == "arret", f"attendu un arrêt, reçu {code} : {message}"
-    assert "RunUpWatch" in message, message
+    assert "HaizoWatch" in message, message
 
 
 @cas_de("UNE TAILLE QU'APPLE NE CONNAÎT PAS est refusée, même si l'image est fraîche")

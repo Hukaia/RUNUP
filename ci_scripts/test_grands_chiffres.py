@@ -123,7 +123,7 @@ def _():
 
 @cas_test("l'écran de séance porte bien ses deux réductions")
 def _():
-    chemin = ck.RACINE / "RunUp/Views/Live/LiveRunView.swift"
+    chemin = ck.RACINE / "Haizo/Views/Live/LiveRunView.swift"
     source = chemin.read_text(encoding="utf-8")
     grands = list(ck.grands_corps(source))
     assert len(grands) >= 3, [g[:2] for g in grands]

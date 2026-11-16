@@ -24,7 +24,7 @@ struct Ecran: View {
         Text("x")
             .sheet(isPresented: $ouverte) {
                 MaFeuille()
-                    .runUpSheetStyle(detents: [.large])
+                    .haizoSheetStyle(detents: [.large])
             }
     }
 }
@@ -65,14 +65,14 @@ struct Racine: View {
         Text("x")
             .sheet(isPresented: Binding(get: { etat.ouverte }, set: { etat.ouverte = $0 })) {
                 MaFeuille()
-                    .runUpSheetStyle()
+                    .haizoSheetStyle()
             }
     }
 }
 '''
     assert griefs(a=piege) == [], griefs(a=piege)
 
-    nue = piege.replace("                    .runUpSheetStyle()\n", "")
+    nue = piege.replace("                    .haizoSheetStyle()\n", "")
     assert len(griefs(a=nue)) == 1, griefs(a=nue)
 
 

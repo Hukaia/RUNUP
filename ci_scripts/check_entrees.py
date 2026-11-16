@@ -15,7 +15,7 @@ dès qu'elle écrivait au coach « j'ai mal au genou, allège ».
 Aucun des deux défauts n'avait de symptôme. La semaine restait pleine, les séances restaient
 justes, rien ne plantait. C'est pour ça que la règle se vérifie ici plutôt que de se répéter
 en commentaire : ce qui survit à une régénération, ce sont les ENTRÉES du générateur — voir
-`RunUp/Models/ChangementDemande.swift` et `RunUp/Models/TrainingEase.swift`.
+`Haizo/Models/ChangementDemande.swift` et `Haizo/Models/TrainingEase.swift`.
 
 LA RÈGLE, ÉTROITE EXPRÈS. Une version large — « aucun champ de séance ne se modifie hors du
 moteur » — noierait le rapport sous les constructions légitimes de séances (`CaptureSeed`,
@@ -57,10 +57,10 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-DOSSIERS = ["RunUp", "RunUpWatch"]
+DOSSIERS = ["Haizo", "HaizoWatch"]
 
-MOTEUR = "RunUp/Services/AdaptivePlanEngine.swift"
-RESTAURATION = "RunUp/Services/SauvegardeService.swift"
+MOTEUR = "Haizo/Services/AdaptivePlanEngine.swift"
+RESTAURATION = "Haizo/Services/SauvegardeService.swift"
 PRODUCTEURS = ("generateWeekSessions(", "snapshot.weekSessions")
 
 
@@ -204,7 +204,7 @@ def main() -> int:
                 if bout:
                     print(f"      {bout.rstrip('.')}.")
             print()
-        print("Voir l'en-tête de RunUp/Models/ChangementDemande.swift.")
+        print("Voir l'en-tête de Haizo/Models/ChangementDemande.swift.")
         return 1
     print("Semaine du plan : aucune séance écrite à la main, elle ne vient que du générateur.")
     return 0

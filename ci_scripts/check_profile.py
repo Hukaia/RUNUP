@@ -10,7 +10,7 @@ Il faut les régénérer, les télécharger et remplacer le secret.
 Sans ce contrôle, l'oubli se paie douze minutes plus tard, à l'export, par un message d'Apple
 qu'on met un moment à relier à la case cochée la veille :
 
-    error: exportArchive Provisioning profile "RunUp App Store"
+    error: exportArchive Provisioning profile "Haizo App Store"
            doesn't include the com.apple.developer.weatherkit entitlement.
 
 Le même défaut se voit ici en trente secondes, avant la compilation, avec la marche à suivre.

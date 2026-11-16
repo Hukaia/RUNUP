@@ -3,7 +3,7 @@
 
 # POURQUOI CE CONTRÔLE EXISTE
 
-RUNUP tutoie, et le tutoiement français s'accorde. Toute l'app était écrite au féminin — c'est sa
+Haizo tutoie, et le tutoiement français s'accorde. Toute l'app était écrite au féminin — c'est sa
 voix, et c'est délibéré. Mais un homme qui répond « Homme » à la question du profil, et à qui
 l'app répond « tu es seule dans ce club », n'a pas affaire à une voix : il a affaire à une app
 qui ne l'a pas écouté.
@@ -29,8 +29,8 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CATALOGUE = RACINE / "RunUp/Resources/Localizable.xcstrings"
-DOSSIERS = ["RunUp"]
+CATALOGUE = RACINE / "Haizo/Resources/Localizable.xcstrings"
+DOSSIERS = ["Haizo"]
 # Le fichier qui DÉFINIT la règle en parle forcément, et ses commentaires citent les deux formes.
 EXEMPTS = {"Accord.swift"}
 

@@ -1,7 +1,7 @@
 # Phase 2 — la liste unique des chantiers
 
 Établie le 9 novembre 2026, à partir de `AUDIT.md` et de mesures refaites aujourd'hui sur
-`claude/runup-ios-swiftui-app-5b1yv6`.
+`claude/haizo-ios-swiftui-app-5b1yv6`.
 
 **Rien n'est commencé.** Le brief dit : j'attends ta validation avant d'écrire du code. Cette
 liste est donc à lire, à trancher et à renvoyer — pas à exécuter.
@@ -35,7 +35,7 @@ autre produit que celui du brief.
 ### D1 — Huit thèmes d'accent, ou un seul ?
 
 `AccentTheme.all` propose **huit palettes** au choix dans Profil → Apparence : rose, violet, bleu,
-cyan, lime, ambre, corail, magenta. Le brief dit « une seule couleur d'accent RunUp ».
+cyan, lime, ambre, corail, magenta. Le brief dit « une seule couleur d'accent Haizo ».
 
 - **Si on ferme à un seul** : l'identité devient reconnaissable, et le système de jetons se
   simplifie beaucoup. On retire un réglage que des gens utilisent peut-être déjà.
@@ -79,7 +79,7 @@ Ce qui doit être réglé avant qu'une nouvelle personne télécharge l'app. Cla
 | **A4** | ~~**Le paiement de bout en bout.** `SubscriptionService` existe, aucun test de parcours d'achat.~~ **FAIT — et l'item était mal posé, pour la quatrième fois.** Les trois décisions du parcours étaient déjà sorties de StoreKit et déjà sous test : `Entitlement` (8 cas), `OfferCodeOutcome` (6), `RestoreOutcome` (7). Mais en lisant, une asymétrie : `applyRedemption` attendait le droit d'accès 3,2 s, commentaire à l'appui ; `purchase(_:)` le lisait **une fois** et répondait **« L'achat n'a pas abouti. »** après une transaction signée par Apple — plus un `purchaseFailed` dans la statistique et un bouton d'achat laissé actif. Voir « Chantier 28 » dans `PROGRESS.md`. | — | — | — |
 | **A5** | ~~**Un composant d'état vide partagé.** Zéro fichier ne porte un `RUEmpty`.~~ **FAIT, composant ET reliquat.** 6 appels au départ, **24** dans 17 fichiers. La mesure : trois graisses de titre, deux couleurs de message, deux corps de texte, deux tailles d'icône pour la même phrase — et le composant partagé était LUI-MÊME le seul à ne pas utiliser `RUIconSize.hero`, le cran que le système nomme pour lui. Quatre endroits ne sont pas convertis, chacun avec sa raison écrite (une promesse de premier jour, un appel à l'action, un chargement, une erreur). Gardé par `check_vides.py` (15 cas), qui **dit aussi ce qu'il ne sait pas garder** : la forme `.ligne` n'a pas de signature détectable — 35 candidats pour 6 vrais. Et un trou trouvé en passant : trois familles de composants passaient un nom de symbole par propriété stockée, invisible au contrôle des symboles ; 3 symboles n'avaient jamais été éprouvés. Voir « Chantier 31 » dans `PROGRESS.md`. | — | — | — |
 | **A6** | ~~**Le `TODO(privacy)` périmé dans `PrivacyInfo.xcprivacy`.**~~ **FAIT.** Voir « Chantier 23 ». | — | — | — |
-| **A7** | ~~**`RunUpWatch` n'embarque aucun `PrivacyInfo.xcprivacy`.**~~ **FAIT**, et cherché plutôt que deviné. Voir « Chantier 23 ». | — | — | — |
+| **A7** | ~~**`HaizoWatch` n'embarque aucun `PrivacyInfo.xcprivacy`.**~~ **FAIT**, et cherché plutôt que deviné. Voir « Chantier 23 ». | — | — | — |
 | **A8** | ~~`privacy.html` et `support.html` sont recopiés à la main depuis `main`~~ **DÉJÀ COUVERT, et l'item était mal posé.** `check_politique.py` va chercher la page PUBLIÉE en ligne et compare le texte de chaque section, commentaires ignorés, avec `--exiger` dans `server.yml`. Et `support.html` n'est la page de personne : la fiche App Store déclare un `mailto:`, l'app aussi, rien n'y mène. **La décision est prise** : `support.html` EST la vraie URL de support, et `asc.py` l'envoie. Elle envoyait jusque-là la politique de confidentialité, sur un domaine mort depuis le renommage du dépôt — voir le chantier du 12 novembre. | — | — | — |
 
 ---

@@ -27,13 +27,13 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 # fichier → { ligne : raison }. La ligne est indicative ; c'est le COMPTE par fichier qui est
 # tenu, pour qu'un ajout de code au-dessus ne fasse pas échouer le build pour rien.
 AUTORISE = {
-    "RunUp/Views/Profile/ProfileView.swift":
+    "Haizo/Views/Profile/ProfileView.swift":
         (1, "« Session expirée » en ambre : la couleur nomme un avertissement"),
-    "RunUp/Views/Race/RacePageView.swift":
+    "Haizo/Views/Race/RacePageView.swift":
         (1, "« Je prépare cette course » en vert : la couleur nomme un état confirmé"),
-    "RunUp/Views/Profile/ShoesView.swift":
+    "Haizo/Views/Profile/ShoesView.swift":
         (1, "« Retirées » en gris : volontairement éteint, ce sont des archives"),
-    "RunUp/Views/Stats/StatsView.swift":
+    "Haizo/Views/Stats/StatsView.swift":
         (6, "le bloc Vélo, marqué en turquoise d'un bout à l'autre — un repère de discipline, "
             "et non une décoration, parce qu'il est tenu sur toute la section ; plus la flamme "
             "de la série, verte quand elle court et grise quand elle est cassée — la seule "

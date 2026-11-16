@@ -54,7 +54,7 @@ import sys
 from couleurs import contraste, famille, fonds, melange, sans_commentaires  # noqa: F401
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-COULEURS = RACINE / "RunUp/DesignSystem/Colors.swift"
+COULEURS = RACINE / "Haizo/DesignSystem/Colors.swift"
 
 # Les opacités d'origine, par thème. Ce sont des FAITS SUR LE PASSÉ, pas des valeurs attendues :
 # elles servent uniquement à recalculer le contraste que le jeton rendait avant d'être opaque, donc
@@ -185,7 +185,7 @@ def main() -> int:
             print(f"  • {quoi}" + (f" — {valeur}" if valeur else ""))
             print(f"      {raison}\n")
         print("Voir l'en-tête de ce script et le bloc « LES QUATRE JETONS DE TEXTE » "
-              "dans RunUp/DesignSystem/Colors.swift.")
+              "dans Haizo/DesignSystem/Colors.swift.")
         return 1
     print("Jetons de texte : opaques, dans la famille du fond, aucun contraste perdu.")
     print(tableau())

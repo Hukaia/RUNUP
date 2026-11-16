@@ -319,7 +319,7 @@ test("la casse ne retire pas le droit", () => {
 test("plusieurs adresses, parce qu'un compte Apple en crée une autre", () => {
   // Le défaut qu'Hukaia a vécu : une seule adresse codée en dur, et le péage s'est refermé sur
   // la personne qui a écrit l'app — son iPhone s'était connecté avec Apple, sous une autre
-  // adresse. RUNUP a la même porte, et Apple peut en plus masquer l'adresse derrière un relais.
+  // adresse. Haizo a la même porte, et Apple peut en plus masquer l'adresse derrière un relais.
   avecListe('a@exemple.com, b@exemple.fr ,c@privaterelay.appleid.com', () => {
     assert.equal(listeConfiguree(), true);
     assert.equal(estAdmin('a@exemple.com'), true);

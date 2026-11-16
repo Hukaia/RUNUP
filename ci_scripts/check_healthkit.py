@@ -4,7 +4,7 @@
 POURQUOI CETTE RÈGLE EXISTE.
 
 `HKSource.default()` — appelé deux fois dans ce fichier, pour écarter des sommes du jour ce que
-RUNUP a elle-même écrit dans Santé — ne renvoie pas d'erreur Swift quand le binaire tourne sans le
+Haizo a elle-même écrit dans Santé — ne renvoie pas d'erreur Swift quand le binaire tourne sans le
 droit `com.apple.developer.healthkit`. Il lève une exception Objective-C, que Swift ne peut pas
 rattraper : ni `try`, ni `if let`, ni aucun garde-fou du langage. Le processus meurt sur SIGABRT.
 
@@ -26,7 +26,7 @@ import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-FICHIER = RACINE / "RunUp" / "Services" / "HealthKitService.swift"
+FICHIER = RACINE / "Haizo" / "Services" / "HealthKitService.swift"
 
 # Le drapeau que le garde doit consulter, sous l'une ou l'autre de ses écritures.
 GARDE = re.compile(r"\bisHealthDataAvailable\b")
@@ -102,7 +102,7 @@ def coupe_circuit_present(texte):
 
 def coupe_circuit_tire(racine):
     """Le harnais de captures doit tirer le coupe-circuit, sinon tout ceci est décoratif."""
-    app = (racine / "RunUp" / "RunUpApp.swift").read_text(encoding="utf-8")
+    app = (racine / "Haizo" / "HaizoApp.swift").read_text(encoding="utf-8")
     return "HealthKitService.desactiver()" in app
 
 
@@ -129,7 +129,7 @@ def main():
         print(f"{len(nus)} méthode(s) de HealthKitService n'interrogent jamais Santé avant"
               " de lui parler :\n", file=sys.stderr)
         for nom, ligne in nus:
-            print(f"  RunUp/Services/HealthKitService.swift:{ligne}  {nom}(…)", file=sys.stderr)
+            print(f"  Haizo/Services/HealthKitService.swift:{ligne}  {nom}(…)", file=sys.stderr)
         print("\nAjoute le premier geste du corps :", file=sys.stderr)
         print("  guard Self.isHealthDataAvailable else { return … }", file=sys.stderr)
         print("\nSans lui, l'appel atteint `HKSource.default()`, qui lève une exception"

@@ -22,7 +22,7 @@ plus, parce que les écrans qui employaient `Divider` ne sont pas photographiés
 
 # CE QUI EST REFUSÉ
 
-Dans `RunUp/`, hors `FiletView.swift` : tout `Divider(`, et tout `RUSpacing.hairline` posé en
+Dans `Haizo/`, hors `FiletView.swift` : tout `Divider(`, et tout `RUSpacing.hairline` posé en
 `frame(height:)` ou `frame(width:)`. Les contours (`stroke(…, lineWidth: RUSpacing.hairline)`)
 ne sont pas concernés : ce sont des bordures, pas des filets, et ils n'ont jamais eu de second
 idiome.
@@ -79,7 +79,7 @@ def sans_commentaires(ligne: str) -> str:
 
 
 def main() -> int:
-    dossier = RACINE / "RunUp"
+    dossier = RACINE / "Haizo"
     if not dossier.is_dir():
         raise SystemExit(f"{dossier} est introuvable : le contrôle regarde au mauvais endroit.")
 

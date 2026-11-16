@@ -7,7 +7,7 @@ la seconde à partir de la première, et tourne depuis l'onglet Actions comme le
 pas avoir à ouvrir un terminal.
 
     Entrée  : appstore/raw/<langue>/1-accueil.png … 6-stats.png
-                                           (prises par `RunUpUITests.CapturesUITests`, une
+                                           (prises par `HaizoUITests.CapturesUITests`, une
                                            série par langue ; à défaut de dossier de langue,
                                            les fichiers posés à la racine de `raw/`)
               appstore/captions.json       (les accroches, par langue)
@@ -34,7 +34,7 @@ ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "appstore" / "raw"
 OUT = ROOT / "appstore" / "out"
 CAPTIONS = ROOT / "appstore" / "captions.json"
-FONTS = ROOT / "RunUp" / "Resources" / "Fonts"
+FONTS = ROOT / "Haizo" / "Resources" / "Fonts"
 
 CANVAS = (1290, 2796)
 
@@ -140,7 +140,7 @@ MARGE = 96
 # pour que la présence ne se perde pas en chemin — la place libérée par la graisse plus fine est
 # exactement celle que la taille reprend. 500 et 700 sont à une ligne d'ici si l'arbitrage change.
 #
-# Le fichier vit dans `appstore/`, pas dans `RunUp/Resources/Fonts` : il ne sert qu'à composer des
+# Le fichier vit dans `appstore/`, pas dans `Haizo/Resources/Fonts` : il ne sert qu'à composer des
 # images sur la machine, il n'entre pas dans l'app, et il ne doit pas pouvoir être confondu avec
 # une police d'interface par `check_fonts.py`. Sa licence SIL OFL est à côté, comme elle l'exige.
 TITRE_POLICE = ROOT / "appstore/polices/BricolageGrotesque-96pt-Condensed-SemiBold.ttf"
@@ -271,7 +271,7 @@ def linear(size: tuple, stops: list, horizontal: bool = False) -> Image.Image:
 # L'ENCRE ET LE PAPIER.
 #
 # Le fond était le rose de marque, plein cadre, six fois. C'est ce qui faisait du rose l'identité
-# de RUNUP avant même qu'on ouvre l'app — et une identité qui tient dans un magenta saturé est
+# de Haizo avant même qu'on ouvre l'app — et une identité qui tient dans un magenta saturé est
 # une identité où tout le monde ne se reconnaît pas.
 #
 # Le fond est désormais un os très légèrement dégradé, les captures sont prises en thème CLAIR,

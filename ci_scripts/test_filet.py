@@ -38,13 +38,13 @@ struct RUFilet: View {
 
 
 def arborescence(tmp: str, vues: dict[str, str], composant: str | None = COMPOSANT):
-    """Un faux dépôt : RunUp/Views/… avec `vues`, et le composant à la place qu'il occupe."""
+    """Un faux dépôt : Haizo/Views/… avec `vues`, et le composant à la place qu'il occupe."""
     racine = pathlib.Path(tmp)
-    (racine / "RunUp" / "Views" / "Components").mkdir(parents=True)
+    (racine / "Haizo" / "Views" / "Components").mkdir(parents=True)
     if composant is not None:
-        (racine / "RunUp" / "Views" / "Components" / "FiletView.swift").write_text(composant)
+        (racine / "Haizo" / "Views" / "Components" / "FiletView.swift").write_text(composant)
     for nom, contenu in vues.items():
-        cible = racine / "RunUp" / "Views" / nom
+        cible = racine / "Haizo" / "Views" / nom
         cible.parent.mkdir(parents=True, exist_ok=True)
         cible.write_text(contenu)
     # Le contrôle se repère sur son propre fichier : on le pose dans un `ci_scripts` du faux dépôt.
@@ -141,7 +141,7 @@ def _():
     with tempfile.TemporaryDirectory() as tmp:
         c = arborescence(tmp, {
             "A.swift": "struct A: View { var body: some View { RUFilet() } }\n",
-            "B.swift": 'let u = "https://runup.app"; let f = Divider()\n',
+            "B.swift": 'let u = "https://haizo.app"; let f = Divider()\n',
         })
         code, sortie = lancer(c)
         assert code == 1, (f"la ligne a été coupée sur le // d'une URL, et le Divider qui "
@@ -177,14 +177,14 @@ def _():
         assert "employé nulle part" in sortie, sortie
 
 
-@cas_de("sans dossier RunUp, le contrôle le dit")
+@cas_de("sans dossier Haizo, le contrôle le dit")
 def _():
     with tempfile.TemporaryDirectory() as tmp:
         c = arborescence(tmp, {})
         import shutil
-        shutil.rmtree(c.parent.parent / "RunUp")
+        shutil.rmtree(c.parent.parent / "Haizo")
         code, sortie = lancer(c)
-        assert code != 0, f"un dépôt sans RunUp a rendu un vert :\n{sortie}"
+        assert code != 0, f"un dépôt sans Haizo a rendu un vert :\n{sortie}"
         assert "mauvais endroit" in sortie, sortie
 
 

@@ -30,8 +30,8 @@ class Atelier(unittest.TestCase):
 
     def setUp(self):
         self.d = pathlib.Path(tempfile.mkdtemp())
-        (self.d / "RunUp").mkdir(parents=True)
-        self.ecran = self.d / "RunUp/UnEcran.swift"
+        (self.d / "Haizo").mkdir(parents=True)
+        self.ecran = self.d / "Haizo/UnEcran.swift"
         # UN ÉCRAN TÉMOIN DANS CHAQUE BANC, et il a sa raison d'être.
         #
         # `controler()` se plaint quand il ne voit AUCUN `ForEach` sous un défilement — c'est sa
@@ -39,7 +39,7 @@ class Atelier(unittest.TestCase):
         # dépôt sain. Mais un banc d'essai qui ne contient qu'un écran paresseux est exactement
         # ce cas-là, légitimement. Le témoin porte une source bornée, donc il ne dit jamais rien
         # par lui-même, et il suffit à prouver que la lecture fonctionne.
-        self.temoin = self.d / "RunUp/Temoin.swift"
+        self.temoin = self.d / "Haizo/Temoin.swift"
         self.temoin.write_text(GABARIT % ("VStack", "Filtre.allCases"))
         self.anciens = (cl.RACINE, dict(cl.DISPENSES))
         cl.RACINE = self.d

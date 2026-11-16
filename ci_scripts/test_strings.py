@@ -321,7 +321,7 @@ def _():
 
 @cas_test("le vrai code : les cinq bandeaux de l'écran de course sont réclamés")
 def _():
-    source = (ck.RACINE / "RunUp/Views/Live/LiveRunView.swift").read_text(encoding="utf-8")
+    source = (ck.RACINE / "Haizo/Views/Live/LiveRunView.swift").read_text(encoding="utf-8")
     table = ck.methodes_localisees(source)
     assert "text" in table.get("bannerBody", set()), table.get("bannerBody")
     trouves = [cle for _, cle in ck.litteraux_des_methodes_localisees(source)]

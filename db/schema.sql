@@ -1,4 +1,4 @@
--- RunUp backend schema — Postgres (Vercel Postgres / Neon). Every statement is idempotent
+-- Haizo backend schema — Postgres (Vercel Postgres / Neon). Every statement is idempotent
 -- (CREATE ... IF NOT EXISTS), so re-running this whole file after it's grown new tables is safe —
 -- no need to track which snippet you already ran. See IOS_SETUP.md § "Backend (comptes, clubs,
 -- activités)".
@@ -404,7 +404,7 @@ CREATE INDEX IF NOT EXISTS idx_revoked_tokens_expires ON revoked_tokens(expires_
 ALTER TABLE users ADD COLUMN IF NOT EXISTS weekly_target_km NUMERIC;
 
 -- Behavioural analytics — first-party, on the Postgres this backend already runs (see
--- api/events.js and RunUp/Services/Analytics.swift). Deliberately NOT a third-party SDK: any
+-- api/events.js and Haizo/Services/Analytics.swift). Deliberately NOT a third-party SDK: any
 -- analytics vendor means a new sub-traitant to declare in PRIVACY_POLICY.md, a new "Tracking"
 -- answer in App Store Connect's privacy questionnaire, and an account/API key that doesn't exist
 -- yet — for numbers this one table already answers (where onboarding leaks, whether a first run
@@ -877,7 +877,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_club_session_history_unique
 
 -- ── LES RAPPORTS DE PANNE ─────────────────────────────────────────────────────────────────────
 --
--- Écrits par `api/crashes.js`, produits par `RunUp/Services/Diagnostics.swift`. Aucun SDK tiers,
+-- Écrits par `api/crashes.js`, produits par `Haizo/Services/Diagnostics.swift`. Aucun SDK tiers,
 -- même raisonnement que la table `events` plus haut — et, détail qui n'en est pas un, aucun
 -- gestionnaire de signal : c'est iOS qui collecte la panne hors du processus mort, via MetricKit,
 -- et nous la rend au lancement suivant. Le pourquoi est écrit en tête du fichier Swift.

@@ -39,9 +39,9 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-SWIFT = RACINE / "RunUp/Services/Diagnostics.swift"
+SWIFT = RACINE / "Haizo/Services/Diagnostics.swift"
 JS = RACINE / "lib/pannes.js"
-MANIFESTE = RACINE / "RunUp/Resources/PrivacyInfo.xcprivacy"
+MANIFESTE = RACINE / "Haizo/Resources/PrivacyInfo.xcprivacy"
 
 #: Ce que le manifeste doit déclarer tant que le service existe, et ce que chaque entrée couvre.
 DECLARATIONS = {

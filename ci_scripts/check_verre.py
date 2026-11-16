@@ -45,7 +45,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from swift import sans_commentaires  # noqa: E402
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-CIBLES = ["RunUp", "RunUpWatch", "RunUpWidgets"]
+CIBLES = ["Haizo", "HaizoWatch", "HaizoWidgets"]
 
 # Les cinq épaisseurs nommées, le type lui-même, et `.bar` — mais `.bar` seulement là où une
 # forme ou un fond l'attend, sinon `chart.bar.fill` et `RUSpacing.tabBarHeight` sonneraient.
