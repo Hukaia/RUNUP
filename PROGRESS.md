@@ -7627,3 +7627,32 @@ demande pour tout ce qui a un visage.
 Le geste tape la flèche de semaine **en coordonnées**, comme le défilement juste à côté : le
 fichier s'interdit l'arbre d'accessibilité depuis que cette requête a tué le premier essai de ces
 captures.
+
+## 16 novembre 2026 — le garde des teintes n'avait aucun banc, et c'était structurel
+
+Soixante-quatre gardes du dépôt ont un `test_*.py`. `check_teintes.py` n'en avait aucun, et pas
+par négligence : il était écrit en **code de premier niveau**, exécuté à l'import et terminé par
+`sys.exit`. On ne pouvait donc pas le faire tourner sur un faux dépôt comme `avec()` le fait pour
+les autres.
+
+Il a gagné sa troisième règle le jour même — les valeurs recopiées à la main — et porte
+maintenant **quatre listes d'exceptions**. Chacune doit pouvoir maigrir, et c'est ce sens-là qui
+pourrit quand personne ne le vérifie : une liste d'exceptions qui ne se vide jamais devient une
+liste de passe-droits.
+
+### La refonte
+
+Quatre fonctions, `ecarts_en_tetes`, `ecarts_cloche`, `ecarts_directs`, `ecarts_recopies`, qui
+prennent une racine et rendent leurs écarts et leur compte ; un `ecarts()` qui les enchaîne ; un
+`main()` qui imprime. Les tables restent au niveau du module, pour que le banc les échange comme
+il le fait déjà pour `check_majuscules`. La sortie est identique au caractère près.
+
+### Dix-neuf cas, dont les deux sens pour chacune des quatre règles
+
+Et un cas qui a trouvé une faute dans son propre fixtur : « une teinte déclarée au compte juste
+passe » posait `RUColor.lime` dans l'en-tête, ce qui réveille AUSSI la règle 3. **Un cas qui
+réveille deux règles à la fois n'en éprouve aucune.** Le fixtur porte maintenant une teinte
+neutre.
+
+C'est la même leçon que le reste de la journée, prise par l'autre bout : un banc se vérifie en
+regardant ce qu'il allume, pas en relisant son intention.

@@ -53,37 +53,40 @@ AUTORISE = {
 OUVERTURE = re.compile(r"(?:RUCardHeader|RUStatTile)\(")
 PROFONDEUR = 12
 
-fautes = []
-compte = {}
-for chemin in sorted(RACINE.rglob("*.swift")):
-    rel = str(chemin.relative_to(RACINE))
-    lignes = chemin.read_text().split("\n")
-    for num, ligne in enumerate(lignes, 1):
-        if ligne.lstrip().startswith("//") or not OUVERTURE.search(ligne):
-            continue
-        profondeur, corps = 0, []
-        for suite in lignes[num - 1:num - 1 + PROFONDEUR]:
-            corps.append(suite)
-            profondeur += suite.count("(") - suite.count(")")
-            if profondeur <= 0 and len(corps) > 0:
-                break
-        # Les lignes de commentaire du corps ne comptent pas : une note qui mentionne `tint:`
-        # n'est pas une teinte.
-        if not any("tint:" in c for c in corps if not c.lstrip().startswith("//")):
-            continue
-        compte[rel] = compte.get(rel, 0) + 1
-        if rel not in AUTORISE:
-            fautes.append(f"{rel}:{num} : une teinte posée sur un en-tête de carte.\n"
-                          f"    Si elle nomme vraiment quelque chose, inscris le fichier dans\n"
-                          f"    AUTORISE de ci_scripts/check_teintes.py avec sa raison. Sinon,\n"
-                          f"    retire-la : le défaut est l'accent de l'app.\n"
-                          f"    {ligne.strip()}")
+def ecarts_en_tetes(racine=None):
+    """Les teintes posées sur un en-tête de carte, et le compte par fichier."""
+    racine = racine or RACINE
+    fautes, compte = [], {}
+    for chemin in sorted(racine.rglob("*.swift")):
+        rel = str(chemin.relative_to(racine))
+        lignes = chemin.read_text(encoding="utf-8").split("\n")
+        for num, ligne in enumerate(lignes, 1):
+            if ligne.lstrip().startswith("//") or not OUVERTURE.search(ligne):
+                continue
+            profondeur, corps = 0, []
+            for suite in lignes[num - 1:num - 1 + PROFONDEUR]:
+                corps.append(suite)
+                profondeur += suite.count("(") - suite.count(")")
+                if profondeur <= 0 and len(corps) > 0:
+                    break
+            # Les lignes de commentaire du corps ne comptent pas : une note qui mentionne `tint:`
+            # n'est pas une teinte.
+            if not any("tint:" in c for c in corps if not c.lstrip().startswith("//")):
+                continue
+            compte[rel] = compte.get(rel, 0) + 1
+            if rel not in AUTORISE:
+                fautes.append(f"{rel}:{num} : une teinte posée sur un en-tête de carte.\n"
+                              f"    Si elle nomme vraiment quelque chose, inscris le fichier dans\n"
+                              f"    AUTORISE de ci_scripts/check_teintes.py avec sa raison. Sinon,\n"
+                              f"    retire-la : le défaut est l'accent de l'app.\n"
+                              f"    {ligne.strip()}")
 
-for rel, (attendu, raison) in sorted(AUTORISE.items()):
-    n = compte.get(rel, 0)
-    if n != attendu:
-        fautes.append(f"{rel} : {n} teinte(s), {attendu} déclarée(s).\n"
-                      f"    Raison inscrite : {raison}")
+    for rel, (attendu, raison) in sorted(AUTORISE.items()):
+        n = compte.get(rel, 0)
+        if n != attendu:
+            fautes.append(f"{rel} : {n} teinte(s), {attendu} déclarée(s).\n"
+                          f"    Raison inscrite : {raison}")
+    return fautes, compte
 
 # ── LA PALETTE PARALLÈLE DE LA CLOCHE ────────────────────────────────────────────────────────
 #
@@ -114,20 +117,25 @@ CLOCHE_EN_DUR = re.compile(r"colorHex:\s*(0x[0-9A-Fa-f]{6})")
 #: L'exception part donc avec la question qui la justifiait.
 CLOCHE_TOLEREE = {}
 
-for f in sorted((RACINE / "Haizo").rglob("*.swift")):
-    for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
-        if ligne.lstrip().startswith("//"):
-            continue
-        for valeur in CLOCHE_EN_DUR.findall(ligne):
-            if valeur in CLOCHE_TOLEREE:
+def ecarts_cloche(racine=None):
+    """Les couleurs de notification écrites en dur, hors des trois registres nommés."""
+    racine = racine or RACINE
+    fautes = []
+    for f in sorted((racine / "Haizo").rglob("*.swift")):
+        for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
+            if ligne.lstrip().startswith("//"):
                 continue
-            rel = f.relative_to(RACINE).as_posix()
-            fautes.append(
-                f"{rel}:{num} : une couleur de cloche écrite en dur, {valeur}.\n"
-                f"    Passe par `AppNotification.accent`, `.avertissement` ou `.incident`.\n"
-                f"    Si ce message dit vraiment autre chose, nomme la valeur dans\n"
-                f"    `AppNotification` et explique ce qu'elle dit.\n"
-                f"    {ligne.strip()[:110]}")
+            for valeur in CLOCHE_EN_DUR.findall(ligne):
+                if valeur in CLOCHE_TOLEREE:
+                    continue
+                rel = f.relative_to(racine).as_posix()
+                fautes.append(
+                    f"{rel}:{num} : une couleur de cloche écrite en dur, {valeur}.\n"
+                    f"    Passe par `AppNotification.accent`, `.avertissement` ou `.incident`.\n"
+                    f"    Si ce message dit vraiment autre chose, nomme la valeur dans\n"
+                    f"    `AppNotification` et explique ce qu'elle dit.\n"
+                    f"    {ligne.strip()[:110]}")
+    return fautes
 
 # ── LES TROIS COULEURS SÉMANTIQUES, PARTOUT OÙ ELLES SONT POSÉES ─────────────────────────────
 #
@@ -196,22 +204,33 @@ DIRECTES_AUTORISEES = {
            "Huit teintes dont trois sémantiques. Le brief n'en veut qu'une."),
 }
 
-compte_direct = {}
-for f in sorted((RACINE / "Haizo").rglob("*.swift")):
-    rel = f.relative_to(RACINE).as_posix()
-    for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
-        if ligne.lstrip().startswith("//"):
-            continue
-        for trouve in DIRECTES.finditer(ligne):
-            compte_direct[rel] = compte_direct.get(rel, 0) + 1
-            if rel not in DIRECTES_AUTORISEES:
-                fautes.append(
-                    f"{rel}:{num} : `RUColor.{trouve.group(1)}` posé en direct.\n"
-                    f"    `lime` veut dire MIEUX, `amber` veut dire MOINS BIEN, `cyan` ne dit\n"
-                    f"    rien. Si celle-ci nomme vraiment quelque chose, inscris le fichier\n"
-                    f"    dans DIRECTES_AUTORISEES avec sa raison. Sinon, c'est l'accent ou le\n"
-                    f"    gris.\n"
-                    f"    {ligne.strip()[:110]}")
+def ecarts_directs(racine=None):
+    """Les trois couleurs sémantiques posées en direct, et le compte par fichier."""
+    racine = racine or RACINE
+    fautes, compte_direct = [], {}
+    for f in sorted((racine / "Haizo").rglob("*.swift")):
+        rel = f.relative_to(racine).as_posix()
+        for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
+            if ligne.lstrip().startswith("//"):
+                continue
+            for trouve in DIRECTES.finditer(ligne):
+                compte_direct[rel] = compte_direct.get(rel, 0) + 1
+                if rel not in DIRECTES_AUTORISEES:
+                    fautes.append(
+                        f"{rel}:{num} : `RUColor.{trouve.group(1)}` posé en direct.\n"
+                        f"    `lime` veut dire MIEUX, `amber` veut dire MOINS BIEN, `cyan` ne dit\n"
+                        f"    rien. Si celle-ci nomme vraiment quelque chose, inscris le fichier\n"
+                        f"    dans DIRECTES_AUTORISEES avec sa raison. Sinon, c'est l'accent ou le\n"
+                        f"    gris.\n"
+                        f"    {ligne.strip()[:110]}")
+
+    for rel, (attendu, raison) in sorted(DIRECTES_AUTORISEES.items()):
+        n = compte_direct.get(rel, 0)
+        if n != attendu:
+            fautes.append(f"{rel} : {n} emploi(s) direct(s), {attendu} déclaré(s).\n"
+                          f"    Raison inscrite : {raison}\n"
+                          f"    Un de plus : il faut le justifier. Un de moins : l'entrée maigrit.")
+    return fautes, compte_direct
 
 # ── TROISIÈME RÈGLE : LA MÊME TEINTE, RECOPIÉE À LA MAIN ────────────────────────────────────
 #
@@ -248,50 +267,66 @@ RECOPIEES_AUTORISEES = {
            "du Club et des objectifs."),
 }
 
-compte_recopie = {}
-for f in sorted((RACINE / "Haizo").rglob("*.swift")):
-    rel = f.relative_to(RACINE).as_posix()
-    if rel == "Haizo/DesignSystem/Colors.swift":
-        continue
-    for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
-        if ligne.lstrip().startswith("//"):
+def ecarts_recopies(racine=None):
+    """Les valeurs des teintes décoratives recopiées à la main, et le compte par fichier."""
+    racine = racine or RACINE
+    fautes, compte_recopie = [], {}
+    for f in sorted((racine / "Haizo").rglob("*.swift")):
+        rel = f.relative_to(racine).as_posix()
+        if rel == "Haizo/DesignSystem/Colors.swift":
             continue
-        for trouve in re.finditer(r"0x([0-9A-Fa-f]{6})", ligne):
-            valeur = trouve.group(1).upper()
-            if valeur not in VALEURS_DECORATIVES:
+        for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
+            if ligne.lstrip().startswith("//"):
                 continue
-            compte_recopie[rel] = compte_recopie.get(rel, 0) + 1
-            if rel not in RECOPIEES_AUTORISEES:
-                noms = ", ".join(sorted(VALEURS_DECORATIVES[valeur]))
-                fautes.append(
-                    f"{rel}:{num} : `0x{valeur}` est la valeur de `RUColor.{noms}`, recopiée.\n"
-                    f"    Un nom de jeton se cherche ; une valeur recopiée ne se cherche pas.\n"
-                    f"    C'est ainsi que le turquoise des kcal a survécu au point 2 du brief.\n"
-                    f"    {ligne.strip()[:110]}")
+            for trouve in re.finditer(r"0x([0-9A-Fa-f]{6})", ligne):
+                valeur = trouve.group(1).upper()
+                if valeur not in VALEURS_DECORATIVES:
+                    continue
+                compte_recopie[rel] = compte_recopie.get(rel, 0) + 1
+                if rel not in RECOPIEES_AUTORISEES:
+                    noms = ", ".join(sorted(VALEURS_DECORATIVES[valeur]))
+                    fautes.append(
+                        f"{rel}:{num} : `0x{valeur}` est la valeur de `RUColor.{noms}`, recopiée.\n"
+                        f"    Un nom de jeton se cherche ; une valeur recopiée ne se cherche pas.\n"
+                        f"    C'est ainsi que le turquoise des kcal a survécu au point 2 du brief.\n"
+                        f"    {ligne.strip()[:110]}")
 
-for rel, (attendu, raison) in sorted(RECOPIEES_AUTORISEES.items()):
-    n = compte_recopie.get(rel, 0)
-    if n != attendu:
-        fautes.append(f"{rel} : {n} valeur(s) recopiée(s), {attendu} déclarée(s).\n"
-                      f"    Raison inscrite : {raison}\n"
-                      f"    Un de plus : il faut le justifier. Un de moins : l'entrée maigrit.")
+    for rel, (attendu, raison) in sorted(RECOPIEES_AUTORISEES.items()):
+        n = compte_recopie.get(rel, 0)
+        if n != attendu:
+            fautes.append(f"{rel} : {n} valeur(s) recopiée(s), {attendu} déclarée(s).\n"
+                          f"    Raison inscrite : {raison}\n"
+                          f"    Un de plus : il faut le justifier. Un de moins : l'entrée maigrit.")
+    return fautes, compte_recopie
 
-for rel, (attendu, raison) in sorted(DIRECTES_AUTORISEES.items()):
-    n = compte_direct.get(rel, 0)
-    if n != attendu:
-        fautes.append(f"{rel} : {n} emploi(s) direct(s), {attendu} déclaré(s).\n"
-                      f"    Raison inscrite : {raison}\n"
-                      f"    Un de plus : il faut le justifier. Un de moins : l'entrée maigrit.")
 
-if fautes:
-    print("Des teintes hors de ce qui est déclaré :\n")
-    for f in fautes:
-        print("  • " + f)
-    sys.exit(1)
+def ecarts(racine=None):
+    """Les quatre règles, dans l'ordre où elles sont écrites."""
+    en_tetes, compte = ecarts_en_tetes(racine)
+    cloche = ecarts_cloche(racine)
+    directs, compte_direct = ecarts_directs(racine)
+    recopies, compte_recopie = ecarts_recopies(racine)
+    return (en_tetes + cloche + directs + recopies,
+            {"en_tetes": compte, "directs": compte_direct, "recopies": compte_recopie})
 
-print(f"Teintes d'en-tête : {sum(compte.values())} déclarée(s) dans {len(AUTORISE)} fichiers. "
-      f"Emplois directs de lime/cyan/ambre : {sum(compte_direct.values())} dans "
-      f"{len(DIRECTES_AUTORISEES)} fichiers — des avertissements, un repère de discipline, "
-      f"et deux palettes qui attendent une décision.\n"
-      f"Valeurs recopiées à la main : {sum(compte_recopie.values())} dans "
-      f"{len(RECOPIEES_AUTORISEES)} fichier(s).")
+
+def main() -> int:
+    fautes, comptes = ecarts()
+    if fautes:
+        print("Des teintes hors de ce qui est déclaré :\n")
+        for f in fautes:
+            print("  • " + f)
+        return 1
+
+    print(f"Teintes d'en-tête : {sum(comptes['en_tetes'].values())} déclarée(s) dans "
+          f"{len(AUTORISE)} fichiers. "
+          f"Emplois directs de lime/cyan/ambre : {sum(comptes['directs'].values())} dans "
+          f"{len(DIRECTES_AUTORISEES)} fichiers — des avertissements, un repère de discipline, "
+          f"et deux palettes qui attendent une décision.\n"
+          f"Valeurs recopiées à la main : {sum(comptes['recopies'].values())} dans "
+          f"{len(RECOPIEES_AUTORISEES)} fichier(s).")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

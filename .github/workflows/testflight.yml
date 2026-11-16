@@ -594,7 +594,9 @@ jobs:
       # pastilles d'écart — les dépenser en décoration vide de son sens le seul endroit où la
       # couleur parlait.
       - name: Vérifier que les teintes d'en-tête nomment quelque chose
-        run: python3 ci_scripts/check_teintes.py
+        run: |
+          cd ci_scripts && python3 test_teintes.py
+          cd .. && python3 ci_scripts/check_teintes.py
 
       # Le nom de quelqu'un s'écrit à un seul endroit : trois façons de le réécrire à côté, et
       # c'est par là que « Charlotte » et « Charlotte Grudé » ont fini par coexister.
