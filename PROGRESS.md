@@ -6646,3 +6646,73 @@ exemption que je venais de retirer. Réécrit sur la propriété plutôt que sur
 sens. Les trois fichiers d'export en perdent une chacun : le mot y était composé hors échelle,
 à juste titre — un logo n'a pas à suivre l'échelle du texte. Il n'est plus composé du tout, et
 une image n'a pas de cran de typographie.
+
+---
+
+## 16 novembre 2026 — l'horloge de la démonstration est figée
+
+La fiche App Store montrait une app **vide deux jours sur sept**, et personne ne le choisissait.
+
+### Le calcul, avant la correction
+
+`CaptureSeed.historique` pose ses seize sorties en JOURS EN ARRIÈRE — 2, 4, 6, 9… — à partir de
+l'horloge réelle. Ce que la semaine en cours contient dépend donc du jour où la campagne tourne.
+Calculé sur la vraie table :
+
+| « aujourd'hui » de la démo | la semaine en cours |
+| --- | --- |
+| lundi, **mardi** | **0,0 / 24 km** — aucune sortie, barre grise, pastille d'écart absente |
+| mercredi, jeudi | 8,1 / 24 km — une sortie |
+| vendredi, samedi | 14,1 / 24 km — deux sorties |
+| dimanche | 28,3 / 24 km — trois sorties, et la pastille « ▼ 1,2 km » |
+
+**Le modèle se vérifie sur une observation.** La campagne 210 tournait un dimanche et montrait
+bien 28,3 ; la 212 tournait un lundi et montrait 0,0. C'est la même famille de défaut que le
+tracé GPS photographié à moitié dessiné en campagne 166 : le minutage décide de ce qu'Apple
+reçoit.
+
+**Et j'avais sous-déclaré.** En signalant le défaut j'ai écrit « une fois sur sept ». Le calcul
+dit deux : le mardi aussi.
+
+### Le dimanche, et pourquoi ce n'est pas un choix esthétique
+
+C'est l'image qui est **déjà sur la fiche** et que Charlotte a validée. Changer ce que la vitrine
+raconte — une semaine bouclée plutôt qu'une semaine en cours — serait une décision de direction
+artistique. Celle-ci n'en est pas une : elle rend constant ce qui était tiré au sort.
+
+L'heure est figée aussi, à 18 h. `historique` choisit l'heure d'une sortie selon son type et
+`poseDUneActiviteDuJour` borne l'activité du club au matin même : une campagne lancée à 23 h et
+une autre à 7 h ne rendraient pas les mêmes écrans.
+
+Et c'est le **dernier** dimanche, pas celui de la semaine en cours : un dimanche à venir serait
+dans le futur, et la démonstration montrerait des sorties pas encore courues — la seule chose que
+cette app ne doit jamais faire.
+
+### Un piège de calendrier, évité de justesse
+
+Un premier jet posait `firstWeekday = 2` juste au-dessus de la recherche, ce qui ne changeait
+rien et laissait croire que `weekday: 1` valait lundi. Les deux se confondent facilement :
+`firstWeekday` dit par quel jour une SEMAINE commence, `weekday` numérote les jours du calendrier
+grégorien, où 1 est toujours le dimanche. La ligne est partie, la confusion est écrite.
+
+### Quatre cas, dans le fichier qui porte déjà ce raisonnement
+
+`CaptureSeedHeureTests` existe parce qu'un défaut qui ne casse qu'entre minuit et 5 h ne peut pas
+être attrapé par une chaîne qui tourne quand quelqu'un pousse. Le même argument vaut mot pour
+mot ici, sur les jours plutôt que les heures.
+
+Trois cas décrivent le MOYEN — c'est toujours un dimanche à 18 h, jamais dans le futur, et le
+dimanche matin on recule d'une semaine. **Le quatrième décrit la fin** : quel que soit le jour,
+la semaine de la démonstration porte au moins trois sorties et plus de 20 km. C'est celui qui
+protège la vitrine ; les autres protègent la façon d'y arriver.
+
+L'intention a été éprouvée en Python sur 14 jours × 7 heures avant d'être écrite en Swift — le
+harnais local ne compile pas de Swift, et il n'était pas question d'envoyer une campagne d'une
+heure vérifier une arithmétique de calendrier.
+
+### Ce que ça ne corrige pas
+
+**Trois des six teintes d'intensité restent invisibles sur les captures.** Le seuil, la
+récupération et le renforcement n'apparaissent sur aucun des écrans photographiés — dont le seuil
+`#F5A524`, le plus bas des six en contraste à 2,04:1. Ce n'est pas la graine qui en décide mais
+le programme que le moteur compose pour ce profil. Chantier à part.

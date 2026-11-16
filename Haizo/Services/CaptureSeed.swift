@@ -44,6 +44,52 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains(drapeau)
     }
 
+    /// LE « MAINTENANT » DE LA DÉMONSTRATION : LE DERNIER DIMANCHE, 18 HEURES.
+    ///
+    /// # LE DÉFAUT : LA VITRINE ÉTAIT VIDE DEUX JOURS SUR SEPT
+    ///
+    /// `historique` pose ses seize sorties en JOURS EN ARRIÈRE — 2, 4, 6, 9… — à partir de
+    /// l'horloge réelle. Ce que la semaine en cours contient dépend donc du jour où la campagne
+    /// tourne, et personne ne le choisit. Calculé sur la vraie table :
+    ///
+    ///     lundi, mardi        0,0 / 24 km   aucune sortie, barre grise, pas de pastille d'écart
+    ///     mercredi, jeudi     8,1 / 24 km   une sortie
+    ///     vendredi, samedi   14,1 / 24 km   deux sorties
+    ///     dimanche           28,3 / 24 km   trois sorties, et la pastille « ▼ 1,2 km »
+    ///
+    /// Deux jours sur sept, la fiche App Store montre donc une app qui paraît VIDE — et la
+    /// campagne 212 l'a fait, un lundi. C'est la même famille de défaut que le tracé GPS
+    /// photographié à moitié dessiné : le minutage décide de ce qu'Apple reçoit.
+    ///
+    /// # POURQUOI LE DIMANCHE, ET PAS UN AUTRE JOUR
+    ///
+    /// Parce que c'est l'image qui est DÉJÀ sur la fiche et que Charlotte a validée : la
+    /// campagne 210 tournait un dimanche. Changer ce que la vitrine raconte — une semaine
+    /// bouclée plutôt qu'une semaine en cours — serait une décision de direction artistique.
+    /// Celle-ci n'en est pas une : elle rend constant ce qui était tiré au sort.
+    ///
+    /// # POURQUOI L'HEURE AUSSI
+    ///
+    /// `historique` choisit l'heure d'une sortie selon son type, et `poseDUneActiviteDuJour`
+    /// borne l'activité du club au matin même. Une campagne lancée à 23 h et une autre à 7 h ne
+    /// rendraient pas les mêmes écrans. Dix-huit heures laisse la journée derrière elle.
+    ///
+    /// # ET POURQUOI « LE DERNIER », PAS « CELUI DE CETTE SEMAINE »
+    ///
+    /// Un dimanche à venir serait dans le FUTUR, et la démonstration montrerait des sorties pas
+    /// encore courues. On prend donc le dernier instant qui satisfait la règle et qui est passé.
+    static func maintenantDeLaDemonstration(_ horloge: Date = .now,
+                                            calendrier: Calendar = .current) -> Date {
+        // `weekday: 1` EST LE DIMANCHE, et ça ne dépend pas de `firstWeekday`. Les deux se
+        // confondent facilement : `firstWeekday` dit par quel jour une SEMAINE commence — lundi
+        // ici, comme le ruban — tandis que `weekday` numérote les jours du calendrier grégorien,
+        // où 1 est toujours le dimanche. Un premier jet posait `firstWeekday = 2` juste au-dessus
+        // de cette ligne, ce qui ne changeait rien et laissait croire que 1 valait lundi.
+        let dimanche = DateComponents(hour: 18, minute: 0, second: 0, weekday: 1)
+        return calendrier.nextDate(after: horloge, matching: dimanche,
+                                   matchingPolicy: .nextTime, direction: .backward) ?? horloge
+    }
+
     /// `--film` : on FILME, on ne photographie pas.
     ///
     /// Le drapeau est posé sur le film et non sur les photos, et le sens compte. Les deux tournent

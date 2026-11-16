@@ -170,4 +170,81 @@ final class CaptureSeedHeureTests: XCTestCase {
                            "à \(heure) h, la réponse du coach tombe un autre jour que la question")
         }
     }
+
+    // MARK: - L'HORLOGE FIGÉE DE LA DÉMONSTRATION
+    //
+    // Même famille de défaut que ci-dessus, et même raison de l'éprouver ici : ce qui casse
+    // dépend du JOUR où la campagne tourne, et une campagne tombe le jour où quelqu'un pousse.
+    // Deux jours sur sept, l'accueil montrait « 0,0 / 24 km » — une app qui paraît vide sur la
+    // fiche App Store. Les sept jours sont éprouvés en une seconde.
+
+    /// Une date fixe au jour et à l'heure voulus. Le 16 novembre 2026 est un lundi.
+    private func le(_ jour: Int, _ heure: Int) -> Date {
+        var m = DateComponents()
+        m.year = 2026; m.month = 11; m.day = jour; m.hour = heure; m.minute = 23
+        return calendrier.date(from: m)!
+    }
+
+    /// QUEL QUE SOIT LE JOUR ET L'HEURE, C'EST UN DIMANCHE À 18 HEURES.
+    func testLHorlogeDeLaDemonstrationTombeToujoursUnDimancheASoir() {
+        for jour in 16...29 {            // deux semaines pleines, lundi à dimanche
+            for heure in [0, 7, 12, 17, 18, 19, 23] {
+                let fige = CaptureSeed.maintenantDeLaDemonstration(le(jour, heure), calendrier: calendrier)
+                let m = calendrier.dateComponents([.weekday, .hour, .minute, .second], from: fige)
+                XCTAssertEqual(m.weekday, 1, "le \(jour) à \(heure) h, ce n'est pas un dimanche")
+                XCTAssertEqual(m.hour, 18, "le \(jour) à \(heure) h, il n'est pas 18 h")
+                XCTAssertEqual(m.minute, 0)
+                XCTAssertEqual(m.second, 0)
+            }
+        }
+    }
+
+    /// ET JAMAIS DANS LE FUTUR — sinon la démonstration montrerait des sorties pas encore
+    /// courues, ce qui est la seule chose que cette app ne doit jamais faire.
+    func testLHorlogeDeLaDemonstrationNEstJamaisDansLeFutur() {
+        for jour in 16...29 {
+            for heure in 0..<24 {
+                let horloge = le(jour, heure)
+                XCTAssertLessThanOrEqual(
+                    CaptureSeed.maintenantDeLaDemonstration(horloge, calendrier: calendrier),
+                    horloge, "le \(jour) à \(heure) h, l'horloge figée est dans le futur")
+            }
+        }
+    }
+
+    /// LE DIMANCHE MÊME, AVANT 18 HEURES, ON RECULE D'UNE SEMAINE.
+    ///
+    /// C'est le seul cas où « le dernier dimanche » n'est pas aujourd'hui, et c'est celui qu'un
+    /// `nextDate` mal orienté rendrait dans le futur.
+    func testLeDimancheMatinOnPrendCeluiDAvant() {
+        let dimancheMatin = le(22, 10)       // 22 novembre 2026, un dimanche
+        let fige = CaptureSeed.maintenantDeLaDemonstration(dimancheMatin, calendrier: calendrier)
+        XCTAssertEqual(calendrier.dateComponents([.day], from: fige).day, 15,
+                       "un dimanche matin, on doit reculer au dimanche précédent")
+
+        let dimancheSoir = le(22, 20)
+        let fige2 = CaptureSeed.maintenantDeLaDemonstration(dimancheSoir, calendrier: calendrier)
+        XCTAssertEqual(calendrier.dateComponents([.day], from: fige2).day, 22,
+                       "un dimanche soir, c'est celui du jour")
+    }
+
+    /// CE QUE TOUT CECI PROTÈGE VRAIMENT : LA VITRINE N'EST JAMAIS VIDE.
+    ///
+    /// Les trois cas ci-dessus décrivent le MOYEN ; celui-ci décrit la fin. Quel que soit le jour
+    /// où la campagne tourne, la semaine en cours de la démonstration porte des sorties — donc
+    /// l'accueil ne montre jamais « 0,0 / 24 km » et une barre grise sur la fiche App Store.
+    func testLaSemaineDeLaDemonstrationNEstJamaisVide() {
+        var cal = calendrier
+        cal.firstWeekday = 2                 // la semaine commence le lundi, comme le ruban
+        for jour in 16...29 {
+            let fige = CaptureSeed.maintenantDeLaDemonstration(le(jour, 11), calendrier: calendrier)
+            let debut = cal.dateInterval(of: .weekOfYear, for: fige)!.start
+            let dedans = CaptureSeed.historique(maintenant: fige)
+                .filter { $0.date >= debut && $0.date <= fige }
+            XCTAssertGreaterThanOrEqual(dedans.count, 3,
+                "le \(jour), la semaine de la démonstration ne porte que \(dedans.count) sortie(s)")
+            let km = dedans.reduce(0.0) { $0 + $1.distanceKm }
+            XCTAssertGreaterThan(km, 20, "le \(jour), la semaine ne totalise que \(km) km")
+        }
+    }
 }

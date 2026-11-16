@@ -139,7 +139,12 @@ private struct RootView: View {
                         // capture nommée « inscription » montrait l'accueil de Charlotte.
                         CaptureSeed.viderLeStock(dans: modelContext)
                     } else {
-                        CaptureSeed.poser(dans: modelContext)
+                        // L'horloge de la démonstration est FIGÉE — voir
+                        // `CaptureSeed.maintenantDeLaDemonstration`. Sans ça, ce que la fiche
+                        // App Store montre dépend du jour où la campagne tourne, et deux jours
+                        // sur sept elle montre une app vide.
+                        CaptureSeed.poser(dans: modelContext,
+                                          maintenant: CaptureSeed.maintenantDeLaDemonstration())
                     }
                 }
                 #endif
@@ -149,7 +154,11 @@ private struct RootView: View {
                     // Le club vit dans un cache EN MÉMOIRE sur `AppState`, donc il ne peut être
                     // posé qu'une fois celui-ci construit — contrairement au reste, qui est en
                     // base et doit y être avant.
-                    CaptureSeed.poserLeClub(dans: etat)
+                    // La MÊME horloge figée que le profil : le club et le reste de l'app
+                    // doivent raconter le même instant, sinon le fil affiche « il y a 3 h »
+                    // à côté d'une sortie posée un autre jour.
+                    CaptureSeed.poserLeClub(dans: etat,
+                                            maintenant: CaptureSeed.maintenantDeLaDemonstration())
                 }
                 // AVANT `go` : `SocialView` lit ce drapeau dans son `onAppear`, donc il doit
                 // être posé avant que l'écran n'apparaisse.
