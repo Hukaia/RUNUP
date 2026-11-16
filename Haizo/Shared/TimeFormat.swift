@@ -142,7 +142,33 @@ enum TimeFormat {
         case .allureParCentMetres: valeur = allureParCentMetres(secondesParKm: secondesParKm)
         case .vitesse: valeur = vitesse(secondesParKm: secondesParKm)
         }
-        return (valeur, discipline.rythmeUnite.uppercased())
+        return (valeur, discipline.rythmeUnite)
+    }
+
+    /// Le rythme ÉCRIT : le chiffre et son unité, composés une seule fois.
+    ///
+    /// # Pourquoi cette fonction existe
+    ///
+    /// Le bilan hebdomadaire écrivait la même mesure DE DEUX FAÇONS, à quatre lignes d'écart sur
+    /// le même écran — vu sur la campagne 217 :
+    ///
+    ///     Allure moyenne              5:18/km
+    ///     Footing endurance   8,10 km  5:18 /KM
+    ///
+    /// Les capitales venaient d'un `uppercased()` posé ici « pour l'écran de course », une raison
+    /// morte depuis que le point 1 du brief a sorti cet écran des capitales — exactement comme
+    /// `rythmeLabelMajuscules`, parti le même jour pour le même motif. L'espace, lui, venait de
+    /// l'appelant qui recomposait le couple à la main.
+    ///
+    /// # La règle de l'espace
+    ///
+    /// Une unité qui commence par une barre oblique est un SUFFIXE et se colle : « 5:18/km »,
+    /// « 1:42/100 m ». Les autres sont des unités à part entière et prennent l'espace fine que
+    /// veut la typographie : « 25,3 km/h ». La règle tient en une ligne, et elle est ici plutôt
+    /// que chez chaque appelant.
+    static func rythmeEcrit(_ discipline: Discipline, secondesParKm: Double) -> String {
+        let (valeur, unite) = rythme(discipline, secondesParKm: secondesParKm)
+        return unite.hasPrefix("/") ? "\(valeur)\(unite)" : "\(valeur) \(unite)"
     }
 
 }

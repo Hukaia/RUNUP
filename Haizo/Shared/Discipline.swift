@@ -184,10 +184,10 @@ enum Discipline: String, Codable, Equatable, CaseIterable {
 
     /// L'unité du rythme. Pas traduite — « km », « m » et « h » sont les mêmes symboles partout.
     ///
-    /// En minuscules ici, parce que c'est la forme la plus employée ; `TimeFormat.rythme` la met
-    /// en capitales pour l'écran de course. `uppercased()` dépend bien de la langue, mais ces
-    /// chaînes ne contiennent aucune lettre que le turc traite à part — c'est le `i` qui pose
-    /// problème, et il n'y en a pas.
+    /// En minuscules, PARTOUT. `TimeFormat.rythme` la mettait en capitales « pour l'écran de
+    /// course » ; cet écran n'est plus en capitales depuis le point 1 du brief, et le bilan
+    /// hebdomadaire se retrouvait à écrire « 5:18/km » et « 5:18 /KM » sur la même carte. Un
+    /// symbole d'unité s'écrit en minuscules — le kilo du Système international est un `k` bas.
     ///
     /// L'île dynamique écrivait « /km » en dur, sous un chiffre devenu des kilomètres-heure dès
     /// qu'on roule. Deuxième endroit à le faire, après le libellé juste au-dessus.

@@ -81,6 +81,33 @@ BOUTON = ("le libellé d'un bouton — les capitales d'un bouton sont une conven
           "c'est cette liste qui se vide.")
 
 #: fichier → (nombre de libellés en capitales autorisés, pourquoi)
+#: LA SECONDE RÈGLE : LES CAPITALES POSÉES À L'EXÉCUTION.
+#:
+#: Ce contrôle lit des LITTÉRAUX. Un `Text(label.uppercased())` n'en est pas un : la chaîne dit
+#: « Hier » dans le catalogue, en trois langues, et l'écran affiche « HIER ». Le balayage du
+#: point 1 est donc passé à côté, et la campagne 217 l'a montré sur l'écran du Coach — avec un
+#: `tracking(1.2)` par-dessus, c'est-à-dire exactement les « majuscules espacées » que le brief
+#: nomme en exemple.
+#:
+#: C'était la SIXIÈME orthographe qu'un garde de la semaine ne connaissait pas, après le dégradé
+#: dans un `Canvas`, le `display(horsEchelle:)`, le couple caché par `metaStyle`, le littéral
+#: derrière une interpolation, et la valeur d'une teinte recopiée à la main. La leçon ne change
+#: pas : un garde se vérifie en changeant l'écriture qu'il surveille.
+#:
+#: CE QUI RESTE EST LÉGITIME, ET C'EST LA MÊME RAISON DEUX FOIS : une seule LETTRE n'est pas un
+#: libellé. L'initiale d'un jour, l'initiale d'un prénom dans une pastille d'avatar. La règle du
+#: brief vise des mots.
+A_LA_VOLEE = re.compile(r"\.uppercased\(\)")
+
+PERMIS_A_LA_VOLEE: dict = {
+    "Haizo/Models/Session.swift": (
+        2, "les initiales des sept jours — « L M M J V S D ». Une seule lettre n'est pas un "
+           "libellé, et la capitale y est la forme attendue d'une initiale."),
+    "Haizo/Views/Components/AvatarView.swift": (
+        3, "l'initiale d'un prénom dans une pastille d'avatar. Même raison : une lettre, pas un "
+           "mot."),
+}
+
 PERMIS = {
     # ── 1. DES BOUTONS ────────────────────────────────────────────────────────────────────────
     "Haizo/Views/Auth/SignInView.swift": (3, BOUTON),
@@ -194,13 +221,23 @@ def litteraux(ligne: str):
 
 
 def ecarts() -> list:
-    problemes, compte = [], {}
+    problemes, compte, volee = [], {}, {}
     for dossier in CIBLES:
         for chemin in sorted((RACINE / dossier).rglob("*.swift")):
             relatif = str(chemin.relative_to(RACINE))
             for numero, ligne in enumerate(chemin.read_text(encoding="utf-8").split("\n"), 1):
                 if ligne.lstrip().startswith("//"):
                     continue
+                for _ in A_LA_VOLEE.finditer(ligne):
+                    volee[relatif] = volee.get(relatif, 0) + 1
+                    if relatif not in PERMIS_A_LA_VOLEE:
+                        problemes.append(
+                            f"{relatif}:{numero} : `uppercased()` met un libellé en capitales À "
+                            f"L'EXÉCUTION.\n"
+                            f"    La chaîne du catalogue est en casse normale, donc ce contrôle "
+                            f"ne la voit pas — mais l'écran, si.\n"
+                            f"    Le retirer, ou une entrée dans PERMIS_A_LA_VOLEE avec sa "
+                            f"raison.")
                 for texte in litteraux(ligne):
                     if texte in TECHNIQUES:
                         continue
@@ -217,6 +254,14 @@ def ecarts() -> list:
                         problemes.append(
                             f"{relatif}:{numero} : « {texte} » est écrit tout en capitales.\n"
                             f"    Casse normale, ou une entrée dans PERMIS avec sa raison.")
+
+    for relatif, (attendu, raison) in sorted(PERMIS_A_LA_VOLEE.items()):
+        reel = volee.get(relatif, 0)
+        if reel != attendu:
+            problemes.append(
+                f"{relatif} : {reel} `uppercased()`, {attendu} déclaré(s).\n"
+                f"    Raison inscrite : {raison}\n"
+                f"    Un de plus : il faut le justifier. Un de moins : l'entrée doit maigrir.")
 
     for relatif, (attendu, raison) in sorted(PERMIS.items()):
         reel = compte.get(relatif, 0)
@@ -236,8 +281,11 @@ def main() -> int:
             print("  " + p)
         return 1
     total = sum(n for n, _ in PERMIS.values())
+    volee = sum(n for n, _ in PERMIS_A_LA_VOLEE.values())
     print(f"Libellés en capitales : {total} déclarés dans {len(PERMIS)} fichiers — "
-          f"des boutons, deux affiches, un onglet, et une dette nommée sur la montre.")
+          f"des boutons, deux affiches, un onglet, et une dette nommée sur la montre.\n"
+          f"Capitales posées à l'exécution : {volee} dans {len(PERMIS_A_LA_VOLEE)} fichiers — "
+          f"des initiales, qui sont des lettres et non des mots.")
     return 0
 
 

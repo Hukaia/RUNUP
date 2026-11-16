@@ -114,10 +114,17 @@ struct RubanDeSemaine: View {
     /// Quarante, décidé par Charlotte le 16 novembre. L'écart entre une sortie longue et une
     /// séance courte reste lisible, et la marque redevient une marque.
     ///
-    /// CE PLAFOND NE RÈGLE PAS LE RUBAN COUPÉ, et c'est écrit ici pour qu'on ne le croie pas :
-    /// les quantièmes sont SOUS les barres, donc leur position ne dépend pas de la hauteur de
-    /// celles-ci. Seule la carte entière peut remonter, et c'est ce que fait l'en-tête plein
-    /// cadre. Les deux changements voyagent ensemble, ils ne se remplacent pas.
+    /// CE QUE J'AI ÉCRIT ICI LE 16 NOVEMBRE ÉTAIT FAUX, et la campagne 218 l'a dit.
+    ///
+    /// J'avais écrit que ce plafond ne pouvait rien pour le ruban coupé, « parce que les
+    /// quantièmes sont SOUS les barres, donc leur position ne dépend pas de leur hauteur ». Le
+    /// raisonnement traitait la ligne de base des barres comme fixe. Elle ne l'est pas : la carte
+    /// s'écoule DU HAUT, donc tout ce qui suit une barre plus courte remonte avec elle.
+    ///
+    /// La mesure : le ruban devait remonter de 89 points, l'en-tête plein cadre en a donné 97, et
+    /// ce plafond en a donné 31 de plus — barres de 66,3 à 35 points sur le lundi. Les quantièmes
+    /// sont arrivés à 798 là où j'en prédisais 825. Les deux changements voyagent ensemble, et ils
+    /// agissent tous les deux.
     static let hauteurMaxDUneBarre: CGFloat = 40
 
     /// La plus longue séance de la semaine donne l'échelle. `max(1, …)` : une semaine entièrement

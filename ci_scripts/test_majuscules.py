@@ -38,16 +38,19 @@ def faux_depot(fichiers):
     return racine
 
 
-def avec(fichiers, permis):
-    """Fait tourner le garde sur un faux dépôt, avec une liste d'exceptions donnée."""
+def avec(fichiers, permis, volee=None):
+    """Fait tourner le garde sur un faux dépôt, avec les deux listes d'exceptions données."""
     racine, cibles, anciens = ck.RACINE, ck.CIBLES, ck.PERMIS
+    anciennes_volee = ck.PERMIS_A_LA_VOLEE
     try:
         ck.RACINE = faux_depot(fichiers)
         ck.CIBLES = sorted({c.split("/")[0] for c in fichiers})
         ck.PERMIS = permis
+        ck.PERMIS_A_LA_VOLEE = {} if volee is None else volee
         return ck.ecarts()
     finally:
         ck.RACINE, ck.CIBLES, ck.PERMIS = racine, cibles, anciens
+        ck.PERMIS_A_LA_VOLEE = anciennes_volee
 
 
 @cas_de("un libellé en capitales est refusé")
@@ -133,6 +136,49 @@ def _():
 def _():
     maigres = [f"{f} : « {r} »" for f, (_, r) in ck.PERMIS.items() if len(r) < 40]
     assert not maigres, "\n".join(maigres)
+
+
+@cas_de("UN `uppercased()` SUR UN LIBELLÉ EST REFUSÉ — le cas qui manquait le 16 novembre")
+def _():
+    # Le catalogue dit « Hier », en casse normale et en trois langues. L'écran affichait
+    # « HIER », avec un `tracking(1.2)` par-dessus : les majuscules espacées que le point 1 du
+    # brief nomme en exemple. Ce garde lit des LITTÉRAUX, donc il ne voyait rien.
+    p = avec({"Haizo/V.swift": 'return Text(label.uppercased())'}, {})
+    assert len(p) == 1 and "À L'EXÉCUTION" in p[0], p
+
+
+@cas_de("et la chaîne du catalogue, elle, reste en casse normale — donc rien d'autre ne sonne")
+def _():
+    # Le piège serait de croire que le littéral fautif est quelque part. Il n'y est pas : c'est
+    # tout ce qui rendait ce défaut invisible.
+    p = avec({"Haizo/V.swift": 'let label = String(localized: "Hier")\nText(label.uppercased())'},
+             {})
+    assert len(p) == 1 and "Hier" not in p[0].split("\n")[0].split("`")[0], p
+
+
+@cas_de("un commentaire qui cite `uppercased()` ne compte pas")
+def _():
+    assert avec({"Haizo/V.swift": '// On évitait un uppercased() ici, voir plus bas.'}, {}) == []
+
+
+@cas_de("une dispense de capitalisation comptée juste passe")
+def _():
+    d = {"Haizo/A.swift": 'Text(initiale.uppercased())\nText(autre.uppercased())'}
+    assert avec(d, {}, {"Haizo/A.swift": (2, "des initiales, pas des mots")}) == []
+
+
+@cas_de("un `uppercased()` de plus sonne")
+def _():
+    d = {"Haizo/A.swift": 'Text(a.uppercased())\nText(b.uppercased())\nText(c.uppercased())'}
+    p = avec(d, {}, {"Haizo/A.swift": (2, "des initiales, pas des mots")})
+    assert len(p) == 1 and "3 `uppercased()`" in p[0], p
+
+
+@cas_de("un de moins sonne AUSSI — une dispense qui ne maigrit pas devient un passe-droit")
+def _():
+    d = {"Haizo/A.swift": 'Text(a.uppercased())'}
+    p = avec(d, {}, {"Haizo/A.swift": (2, "des initiales, pas des mots")})
+    assert len(p) == 1 and "1 `uppercased()`" in p[0], p
 
 
 @cas_de("le dépôt tel qu'il est passe")

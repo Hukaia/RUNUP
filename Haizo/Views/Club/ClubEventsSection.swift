@@ -55,7 +55,10 @@ struct ClubEventsSection: View {
                 : String(localized: "Aujourd'hui · \(time)")
         }
         if Calendar.current.isDateInTomorrow(date) { return String(localized: "Demain · \(time)") }
-        return Self.eventDateFormatter.string(from: date).uppercased()
+        // Les trois branches au-dessus rendent « Ce soir · 18:30 », « Aujourd'hui · … »,
+        // « Demain · … » en casse normale. Celle-ci les mettait en capitales : le MÊME libellé
+        // changeait de casse selon la distance de la date.
+        return Self.eventDateFormatter.string(from: date)
     }
 
     /// Sorties de groupe — real proposed group runs with RSVP. The one feature that turns a

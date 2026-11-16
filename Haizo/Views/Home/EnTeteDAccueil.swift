@@ -96,6 +96,21 @@ struct EnTeteDAccueil: View {
                 if let derniere = derniereAvecTrace {
                     SelfDrawingRoute(route: derniere.route, lineWidth: 4,
                                      targetPoints: 140, showsStart: true)
+                        // LE FOND VA AU BORD, LE DESSIN NON. Même règle que la rangée du haut
+                        // juste en dessous, et je ne l'avais appliquée qu'à elle : la campagne
+                        // 218 a montré le tracé COUPÉ NET sur l'image de la fiche.
+                        //
+                        // `screenshots.py` repeint la bande d'état d'un aplat — 185 px sur 2868,
+                        // soit 61,7 points — pour effacer l'heure du téléphone qui a pris la
+                        // photo. Tant que l'en-tête s'arrêtait sous la barre d'état, il n'y avait
+                        // rien dessous ; depuis qu'il monte jusqu'au bord, le tracé y passait.
+                        // Mesuré : 11 385 pixels de tracé détruits, et la courbe tranchée à
+                        // l'horizontale sur la capture n° 1.
+                        //
+                        // L'encart du haut l'en sort. Ce n'est pas un contournement du
+                        // compositeur : un dessin n'a rien à faire sous l'îlot dynamique, et
+                        // c'est la même raison qui tient la barre de marque plus bas.
+                        .padding(.top, BordsDeLEcran.haut)
                 }
             } legende: {
                 VStack(alignment: .leading, spacing: 2) {

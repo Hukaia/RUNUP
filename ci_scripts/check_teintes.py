@@ -213,6 +213,69 @@ for f in sorted((RACINE / "Haizo").rglob("*.swift")):
                     f"    gris.\n"
                     f"    {ligne.strip()[:110]}")
 
+# ── TROISIÈME RÈGLE : LA MÊME TEINTE, RECOPIÉE À LA MAIN ────────────────────────────────────
+#
+# Les deux règles au-dessus cherchent des NOMS — `RUColor.cyan`, `tint:`. La campagne 217 a
+# montré ce qu'elles laissent passer : `LiveRunView` déclarait, dans un enum privé,
+#
+#     static let cyan = Color(hex: 0x38E0D0)
+#
+# c'est-à-dire la valeur EXACTE de `RUColor.cyanSombre`, et en peignait les kcal de l'écran de
+# course. Le turquoise que le point 2 du brief nomme en toutes lettres était donc toujours à
+# l'écran, et le garde affichait « 29 emplois, tous déclarés ».
+#
+# C'était la cinquième orthographe qu'un garde de la semaine ne connaissait pas. Celle-ci se
+# ferme en comparant les VALEURS et non les noms : tout littéral hexadécimal d'une vue qui vaut
+# l'une des teintes décoratives est signalé.
+#
+# CE QUE ÇA NE DIT PAS : qu'une couleur proche est fautive. Une valeur voisine d'un chiffre n'est
+# pas la même couleur, et l'app en porte beaucoup. On ne juge que l'identité.
+VALEURS_DECORATIVES = {}
+for _num, _ligne in enumerate(
+        (RACINE / "Haizo/DesignSystem/Colors.swift").read_text(encoding="utf-8").splitlines(), 1):
+    _m = re.search(r"static let (lime|cyan|amber|amberText|cyanSombre|limeSombre|ambreSombre)"
+                   r"\b[^\n]*?0x([0-9A-Fa-f]{6})", _ligne)
+    if _m:
+        VALEURS_DECORATIVES.setdefault(_m.group(2).upper(), set()).add(_m.group(1))
+
+#: Les valeurs recopiées qui restent, avec leur raison et leur compte exact.
+RECOPIEES_AUTORISEES = {
+    "Haizo/Models/AppNotification.swift": (
+        1, "`incident` — « une panne dont on s'est relevé : ni une réussite ni un avertissement ». "
+           "C'est le seul message que personne n'attend, et sa raison est écrite au-dessus de la "
+           "constante. Sémantique, donc, et non décorative — mais la même valeur que "
+           "`cyanSombre`, ce qui la rend indiscernable à l'œil. À trancher avec les deux palettes "
+           "du Club et des objectifs."),
+}
+
+compte_recopie = {}
+for f in sorted((RACINE / "Haizo").rglob("*.swift")):
+    rel = f.relative_to(RACINE).as_posix()
+    if rel == "Haizo/DesignSystem/Colors.swift":
+        continue
+    for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
+        if ligne.lstrip().startswith("//"):
+            continue
+        for trouve in re.finditer(r"0x([0-9A-Fa-f]{6})", ligne):
+            valeur = trouve.group(1).upper()
+            if valeur not in VALEURS_DECORATIVES:
+                continue
+            compte_recopie[rel] = compte_recopie.get(rel, 0) + 1
+            if rel not in RECOPIEES_AUTORISEES:
+                noms = ", ".join(sorted(VALEURS_DECORATIVES[valeur]))
+                fautes.append(
+                    f"{rel}:{num} : `0x{valeur}` est la valeur de `RUColor.{noms}`, recopiée.\n"
+                    f"    Un nom de jeton se cherche ; une valeur recopiée ne se cherche pas.\n"
+                    f"    C'est ainsi que le turquoise des kcal a survécu au point 2 du brief.\n"
+                    f"    {ligne.strip()[:110]}")
+
+for rel, (attendu, raison) in sorted(RECOPIEES_AUTORISEES.items()):
+    n = compte_recopie.get(rel, 0)
+    if n != attendu:
+        fautes.append(f"{rel} : {n} valeur(s) recopiée(s), {attendu} déclarée(s).\n"
+                      f"    Raison inscrite : {raison}\n"
+                      f"    Un de plus : il faut le justifier. Un de moins : l'entrée maigrit.")
+
 for rel, (attendu, raison) in sorted(DIRECTES_AUTORISEES.items()):
     n = compte_direct.get(rel, 0)
     if n != attendu:
@@ -229,4 +292,6 @@ if fautes:
 print(f"Teintes d'en-tête : {sum(compte.values())} déclarée(s) dans {len(AUTORISE)} fichiers. "
       f"Emplois directs de lime/cyan/ambre : {sum(compte_direct.values())} dans "
       f"{len(DIRECTES_AUTORISEES)} fichiers — des avertissements, un repère de discipline, "
-      f"et deux palettes qui attendent une décision.")
+      f"et deux palettes qui attendent une décision.\n"
+      f"Valeurs recopiées à la main : {sum(compte_recopie.values())} dans "
+      f"{len(RECOPIEES_AUTORISEES)} fichier(s).")

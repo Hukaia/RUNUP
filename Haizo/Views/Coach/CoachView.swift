@@ -300,9 +300,13 @@ struct CoachView: View {
         if Calendar.current.isDateInToday(date) { label = String(localized: "Aujourd'hui") }
         else if Calendar.current.isDateInYesterday(date) { label = String(localized: "Hier") }
         else { label = Self.separatorFormatter.string(from: date) }
-        return Text(label.uppercased())
-            .font(RUFont.sans(.micro, weight: .bold)).tracking(1.2)
-            .foregroundColor(RUColor.text3)
+        // « HIER » SURVIVAIT AU BALAYAGE DU POINT 1, parce que la capitalisation se fait ICI et
+        // non dans la chaîne : le catalogue dit « Hier », et `check_majuscules.py` lit des
+        // LITTÉRAUX. C'était la sixième orthographe qu'un garde de la semaine ne connaissait pas.
+        // Et c'était bien le cas visé — des capitales ESPACÉES, `tracking(1.2)`, les trois mots
+        // que le brief nomme en exemple.
+        return Text(verbatim: label)
+            .metaStyle()
             .frame(maxWidth: .infinity)
             .padding(.top, 6)
     }

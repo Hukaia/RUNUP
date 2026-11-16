@@ -65,7 +65,16 @@ private enum Ink {
     static let surBlanc = Color(hex: 0x0A0A0A)
     static let label = Color.white.opacity(0.55)
     static let line = Color.white.opacity(0.08)
-    static let cyan = Color(hex: 0x38E0D0)
+    // `cyan` A DISPARU LE 16 NOVEMBRE, avec le seul chiffre qu'il peignait.
+    //
+    // Il valait `Color(hex: 0x38E0D0)` — la valeur exacte de `RUColor.cyanSombre`, recopiée à la
+    // main dans un enum privé. Le point 2 du brief le nomme : « le turquoise des kcal et de
+    // "Zone optimale" devient blanc ou gris ». Les kcal sont blanches ; « Zone optimale » avait
+    // déjà perdu le sien, voir `StatsView`.
+    //
+    // ET IL EXPLIQUE POURQUOI LE BALAYAGE DU POINT 2 NE L'AVAIT PAS VU. `check_teintes.py`
+    // surveillait l'écriture `RUColor.cyan` ; une valeur recopiée est une autre orthographe. Le
+    // garde connaît les deux maintenant — il compare aussi les VALEURS.
     static let amber = Color(hex: 0xFFB03D)
 }
 
@@ -915,7 +924,7 @@ struct LiveRunView: View {
             // symbole, il ne se traduit pas. Et un symbole d'unité s'écrit en minuscules : le
             // kilo du Système international est un `k` bas, et la capitale ne venait que du
             // libellé espacé que le point 1 du brief a retiré.
-            liveMetric("\(Int(vm?.kcal ?? 0))", "kcal", Ink.cyan)
+            liveMetric("\(Int(vm?.kcal ?? 0))", "kcal", .white)
         }
         if enColonne {
             VStack(spacing: 10) { cellules }

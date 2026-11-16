@@ -7508,3 +7508,56 @@ en aurait fallu un troisième ici. `BordsDeLEcran` les remplace, avec `haut` et 
 
 Si le bandeau est toujours là, c'est que `ignoresSafeArea` sur le défilement ne suffit pas et il
 faudra le lire autrement. Si le ruban reste coupé, c'est mon calcul de 89 qui est faux.
+
+## 16 novembre 2026 — la campagne 218 a validé trois prédictions et démenti une phrase
+
+Mesuré sur `raw/fr-FR/clair/1-accueil.png` :
+
+| ce qui était prédit | ce qui est mesuré |
+|---|---|
+| la nuit à la première rangée de pixels | bandeau clair : **0 px** (hier 186), première rangée `#14131E` |
+| l'en-tête de 0 à 285 pt | **0 → 285,0 pt**, exactement |
+| aucune heure sur la capture brute | **0 pixel clair** dans la bande ; 94,8 % de `#14131E` |
+| 9:41 en blanc sur l'image composée | **818 pixels blancs** sur la bande sombre |
+| le ruban au-dessus de la barre d'onglets | barres **747 → 782**, quantièmes **798 → 816**, pour un bord à 854 |
+
+### La phrase qui était fausse
+
+J'avais écrit, dans `RubanDeSemaine` et dans le message du commit, que **le plafond des barres ne
+pouvait rien pour le ruban coupé** — « les quantièmes sont sous les barres, donc leur position ne
+dépend pas de leur hauteur ».
+
+Le raisonnement traitait la ligne de base des barres comme fixe. Elle ne l'est pas : une carte
+s'écoule **du haut**, donc tout ce qui suit une barre plus courte remonte avec elle. Le ruban
+devait monter de 89 points ; l'en-tête plein cadre en a donné 97, et le plafond **31 de plus**.
+D'où des quantièmes à 798 là où j'en prédisais 825.
+
+Le commentaire est corrigé sur place, avec la mesure. Une phrase fausse dans un commentaire est
+exactement ce qui trompe la prochaine lecture — c'est le même genre de défaut que le relevé Vercel
+réécrit à l'aveugle ce matin.
+
+### Et une régression que j'ai causée, visible sur l'image de la fiche
+
+**Le tracé GPS est coupé net.** `screenshots.py` repeint la bande d'état d'un aplat — 185 px sur
+2868, soit 61,7 points — pour effacer l'heure du téléphone qui a pris la photo. Tant que
+l'en-tête s'arrêtait sous la barre d'état, il n'y avait rien dessous. Depuis qu'il monte jusqu'au
+bord, le tracé y passe : **11 385 pixels de tracé détruits**, et la courbe tranchée à
+l'horizontale sur la capture n° 1.
+
+J'avais vu le risque en lisant `clean_status_bar` et je l'avais écarté d'un « probablement sans
+conséquence », sans le mesurer. Il suffisait de compter les pixels roses dans les 185 premières
+rangées.
+
+La correction est la règle que j'avais appliquée à la rangée du haut et pas au dessin : **le fond
+va au bord, le dessin non.** Un encart du haut sur `SelfDrawingRoute`. Ce n'est pas un
+contournement du compositeur — un dessin n'a rien à faire sous l'îlot dynamique.
+
+### Ce qui reste à regarder, et qui n'est pas tranché
+
+La carte « 2/3 · Ta journée » passe maintenant sous la barre d'onglets, et le chiffre y est coupé.
+Le ruban est sauvé, mais la limite s'est déplacée d'une carte. Mesuré : la carte « Ton programme »
+finit à 847, la barre couvre 854 → 910, et le « 2/3 » reparaît à 942.
+
+Courir après cette limite est sans fin — il y aura toujours quelque chose au bord. La question
+est de savoir si ce qui est coupé doit être un BORD DE CARTE plutôt qu'un chiffre, et c'est une
+décision de direction artistique.

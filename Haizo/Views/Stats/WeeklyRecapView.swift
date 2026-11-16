@@ -328,8 +328,7 @@ struct WeeklyRecapView: View {
     /// un chiffre inventé.
     private func rythmeAffiche(_ run: RunRecord) -> String {
         guard let secParKm = PaceModel.parseSecPerKm(run.avgPace), secParKm > 0 else { return "" }
-        let (valeur, unite) = TimeFormat.rythme(run.discipline, secondesParKm: secParKm)
-        return "\(valeur) \(unite)"
+        return TimeFormat.rythmeEcrit(run.discipline, secondesParKm: secParKm)
     }
 
     private func runRow(_ run: RunRecord) -> some View {
