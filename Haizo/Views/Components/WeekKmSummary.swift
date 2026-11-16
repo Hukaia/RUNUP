@@ -19,10 +19,6 @@ struct WeekKmSummary: View {
     /// inventer — le chiffre reste seul, sans barre.
     var plannedKm: Double
     var lastWeekKm: Double
-    /// Vrai quand le plan prévoit LUI-MÊME moins de volume cette semaine — décharge ou affûtage.
-    /// Voir `couleurDeLEcart`. Faux par défaut : un appelant qui ne sait pas répondre garde le
-    /// comportement d'avant plutôt qu'une affirmation inventée.
-    var baisseProgrammee: Bool = false
     /// Une ligne grise sous la barre, quand l'écran a de quoi la remplir. Les séances restent
     /// dites, mais comme une précision — pas comme un second dénominateur en concurrence.
     var footnote: String?
@@ -34,23 +30,33 @@ struct WeekKmSummary: View {
 
     private var delta: Double { doneKm - lastWeekKm }
 
-    /// UNE BAISSE PROGRAMMÉE N'EST PAS UNE ALERTE.
+    /// L'ÉCART N'A PLUS DE COULEUR, ET C'EST LA FIN D'UNE HISTOIRE EN TROIS TEMPS.
     ///
-    /// L'écart négatif s'affichait en `amber`, que le système réserve à l'attention. Or le plan
-    /// PROGRAMME des semaines où le volume baisse : le fil des phases les annonce lui-même — « en
-    /// gris, les semaines de décharge : le volume baisse exprès, c'est là que les progrès se
-    /// fixent ». L'app prescrivait donc une baisse, puis la peignait comme une faute.
+    /// 1. Il s'affichait en `amber` dès qu'il était négatif — la couleur que le système réserve
+    ///    à l'attention. Or le plan PROGRAMME des semaines où le volume baisse : le fil des
+    ///    phases les annonce lui-même, « en gris, les semaines de décharge : le volume baisse
+    ///    exprès, c'est là que les progrès se fixent ». L'app prescrivait une baisse, puis la
+    ///    peignait comme une faute.
+    /// 2. Le 14 novembre, `baisseProgrammee` a éteint l'ambre quand la baisse était prescrite.
+    ///    L'argument tenait, et il laissait la moitié du défaut : une semaine plus courte parce
+    ///    qu'on était malade ou en vacances restait peinte en alerte.
+    /// 3. Le brief du 15 novembre tranche le reste — « l'orange de la flamme et du ▼ devient
+    ///    gris ». Et le 16 novembre, la correction est passée dans les stats, le bilan hebdo, le
+    ///    débriefing et le widget… MAIS PAS ICI. C'est la pastille de l'ACCUEIL, celle qui part
+    ///    sur la fiche App Store, et la campagne 215 l'a photographiée encore ambre.
     ///
-    /// L'affûtage compte pour la même raison, et ce n'est pas une extension de confort : son
-    /// commentaire dans `trainingBlock` dit qu'il « déleste par construction ». Une semaine
-    /// d'affûtage où l'on court moins fait exactement ce qu'on lui demande.
+    /// Les flèches `▲` et `▼` portent l'information en entier, dans une forme qui ne dépend ni
+    /// du daltonisme ni du contraste. La couleur n'ajoutait qu'un jugement.
     ///
     /// La baisse reste AFFICHÉE — c'est une information, et la masquer rendrait l'app moins
     /// honnête, pas plus douce. Elle cesse seulement d'être criée.
-    private var couleurDeLEcart: Color {
-        if delta >= 0 { return RUColor.lime }
-        return baisseProgrammee ? RUColor.text3 : RUColor.amber
-    }
+    ///
+    /// `baisseProgrammee` PART AVEC LA COULEUR. C'était son seul lecteur : le garder serait un
+    /// paramètre que deux appelants calculent et que personne ne lit — la même chose qu'un
+    /// booléen qui n'a plus qu'une valeur. `AdaptivePlanEngine.baisseProgrammee` reste, elle,
+    /// avec son raisonnement : la question « le plan prévoit-il lui-même moins cette semaine ? »
+    /// est vraie et utile, et le jour où une PHRASE la dira sous la barre, elle est là.
+    private var couleurDeLEcart: Color { RUColor.text2 }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {

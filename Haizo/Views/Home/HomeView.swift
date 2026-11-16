@@ -278,8 +278,6 @@ struct HomeView: View {
                         doneKm: semaine.cette,
                         plannedKm: profile.plannedWeeklyKm,
                         lastWeekKm: semaine.passee,
-                        baisseProgrammee: AdaptivePlanEngine.baisseProgrammee(
-                            forWeek: profile.weekNumber, shape: shape),
                         footnote: nil
                     )
                 }

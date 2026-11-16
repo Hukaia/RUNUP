@@ -99,5 +99,19 @@ enum Demonstration {
     #if DEBUG
     static func commencer() { enCours = true }
     static func filmer() { filme = true }
+
+    /// REFERMER L'INTERRUPTEUR, ET POURQUOI IL LE FAUT.
+    ///
+    /// `enCours` était écrit une seule fois, au lancement, et jamais remis — ce qui est juste
+    /// pour l'app. Mais ça rendait la scène INTESTABLE : l'invariant qui compte ici — « ce que
+    /// la graine écrit, la remise à zéro du jour ne l'efface pas » — n'est vrai QUE pendant une
+    /// démonstration. Un cas qui ne peut pas allumer la démonstration ne peut pas le vérifier.
+    ///
+    /// C'est ce qui a manqué le 16 novembre : la capture « Ta journée » est partie chez Apple à
+    /// 0/3, 0 kcal, 0 pas, et rien dans le dépôt ne pouvait le dire — ni le harnais, qui ne
+    /// compile pas de Swift, ni les cas, qui ne pouvaient pas entrer dans la scène.
+    ///
+    /// `#if DEBUG` : l'app livrée n'a pas de quoi rallumer ni éteindre quoi que ce soit.
+    static func arreter() { enCours = false; filme = false }
     #endif
 }

@@ -187,7 +187,12 @@ struct EnTeteDAccueil: View {
     /// brief : « supprimer les majuscules espacées — ce sont des labels en 12 gris, casse
     /// normale ».
     private var dateDuJour: String {
-        Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale.current))
+        // `Demonstration.maintenant` : la date écrite ici doit être celle de la SCÈNE, sinon
+        // l'en-tête annonce lundi au-dessus d'une semaine qui s'arrête au dimanche précédent.
+        // C'est ce que montrait la campagne 215 — « lundi 16 novembre » sur une carte à 28,3 km
+        // qui ne comptait que des sorties du 9 au 15.
+        Demonstration.maintenant
+            .formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale.current))
     }
 
     /// « Dernière sortie · dim. 15 nov. · 8,1 km · 5:18/km ».

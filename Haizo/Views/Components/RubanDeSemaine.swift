@@ -72,9 +72,14 @@ struct RubanDeSemaine: View {
     /// fournir À LA FOIS l'index du jour et la date du lundi aurait deux occasions de se
     /// contredire.
     private var lundi: Date? {
+        // `Demonstration.maintenant` : les quantièmes sous les barres doivent être ceux de la
+        // SEMAINE AFFICHÉE. La campagne 215 montrait « 28,3 / 24 km » — la semaine du dimanche
+        // figé — avec les quantièmes 16 à 22 dessous, c'est-à-dire la semaine réelle. Deux
+        // semaines sur la même carte.
         let cal = Calendar.current
-        let jour = (cal.component(.weekday, from: .now) + 5) % 7
-        return cal.date(byAdding: .day, value: -jour, to: cal.startOfDay(for: .now))
+        let maintenant = Demonstration.maintenant
+        let jour = (cal.component(.weekday, from: maintenant) + 5) % 7
+        return cal.date(byAdding: .day, value: -jour, to: cal.startOfDay(for: maintenant))
     }
 
     /// ## POURQUOI UNE MARQUE ÉTROITE ET NON UNE COLONNE PLEINE

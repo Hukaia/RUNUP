@@ -259,6 +259,41 @@ final class CaptureSeedHeureTests: XCTestCase {
         }
     }
 
+    /// LA GRAINE SURVIT À LA REMISE À ZÉRO DU JOUR.
+    ///
+    /// `refreshProgramForCurrentDate`, appelée dès que la scène devient active, passe par
+    /// `resetDailyGoalsIfNewDay` : si `lastDailyResetDay` n'est pas « aujourd'hui », elle remet
+    /// les pas, les calories et la sortie du jour à ZÉRO.
+    ///
+    /// LES DEUX ONT VÉCU DANS DEUX JOURS DIFFÉRENTS. La campagne 215 a livré « Ta journée » à
+    /// 0/3, 0 kcal, 0 pas sur un profil qui venait de poser 9 240 pas : la graine écrivait le
+    /// dimanche figé, la remise à zéro lisait le lundi réel.
+    ///
+    /// Ce cas ne compare pas deux dates — il appelle la fonction et regarde ce qu'elle laisse.
+    /// Comparer les deux horloges supposerait de savoir où elles sont ; les appeler ne suppose
+    /// rien, et c'est la leçon du cas précédent.
+    func testLaGraineSurvitÀLaRemiseÀZéroDuJour() {
+        // L'INVARIANT N'EST VRAI QUE DANS LA SCÈNE, donc le cas y entre. Hors démonstration,
+        // remettre les compteurs à zéro un nouveau jour est exactement ce qu'on veut.
+        Demonstration.commencer()
+        defer { Demonstration.arreter() }
+
+        let profil = UserProfile()
+        // Écrit comme `CaptureSeed` l'écrit, et pas « au bon jour » décidé ici : si les deux
+        // expressions divergent un jour, c'est CE cas qui doit le dire.
+        profil.lastDailyResetDay = Calendar.current.startOfDay(
+            for: CaptureSeed.maintenantDeLaDemonstration())
+        profil.stepsToday = 9_240
+        profil.activeCaloriesToday = 612
+        profil.runValue = 8.4
+
+        AdaptivePlanEngine.resetDailyGoalsIfNewDay(profil)
+
+        XCTAssertEqual(profil.stepsToday, 9_240, "les pas de la démonstration ont été effacés")
+        XCTAssertEqual(profil.activeCaloriesToday, 612, "les calories ont été effacées")
+        XCTAssertEqual(profil.runValue, 8.4, "la sortie du jour a été effacée")
+    }
+
     /// ET L'INSTANT DE L'ÉCRAN EST BIEN CELUI DE LA GRAINE.
     ///
     /// Les deux ont vécu séparément une demi-journée : `CaptureSeed` figeait le sien, l'écran

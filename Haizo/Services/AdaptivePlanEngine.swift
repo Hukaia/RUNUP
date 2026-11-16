@@ -399,8 +399,23 @@ enum AdaptivePlanEngine {
     /// time this runs on a new calendar day — call unconditionally on every foreground, regardless
     /// of `programPhase`, since daily goals apply in recovery/free-run too. `Séance du jour` needs
     /// no reset here: it's computed live from `weekSessions`, which regenerates on its own schedule.
+    ///
+    /// # ET POURQUOI `Demonstration.maintenant` PLUTÔT QUE `.now`
+    ///
+    /// « Est-ce un nouveau jour ? » est une LECTURE de l'horloge, pas une écriture — c'est ce que
+    /// la fonction écrit ensuite qui en découle. En démonstration, la scène est figée au dernier
+    /// dimanche 18 h, et `CaptureSeed` pose `lastDailyResetDay` à ce jour-là.
+    ///
+    /// LE 16 NOVEMBRE, CES DEUX LIGNES ONT VÉCU DANS DEUX JOURS DIFFÉRENTS pendant une campagne.
+    /// La graine écrivait dimanche, cette fonction lisait lundi : pas le même jour, donc remise à
+    /// zéro — et la capture « Ta journée » livrée à Apple montrait 0/3, 0 kcal, 0 pas sur un
+    /// profil qui venait de poser 9 240 pas et 612 kcal.
+    ///
+    /// Le commentaire de la graine décrivait DÉJÀ ce défaut, mot pour mot, parce qu'il s'était
+    /// produit une première fois dans l'autre sens. Figer l'horloge à trois endroits et pas au
+    /// quatrième l'a ramené.
     static func resetDailyGoalsIfNewDay(_ profile: UserProfile) {
-        let today = Calendar.current.startOfDay(for: .now)
+        let today = Calendar.current.startOfDay(for: Demonstration.maintenant)
         guard profile.lastDailyResetDay != today else { return }
         profile.lastDailyResetDay = today
         profile.activeCaloriesToday = 0

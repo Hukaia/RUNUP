@@ -7217,3 +7217,67 @@ garde ne voit que les orthographes qu'on lui a données** — et ça se vérifie
 
 `check_cablage.py` a refusé aussi : le nouveau garde et ses cas ne tournaient dans aucun
 workflow. Il vérifie exactement ça, et c'est pour ça qu'il existe.
+
+## 16 novembre 2026 — j'ai figé une horloge en énumérant ses lecteurs
+
+La campagne 215 a validé deux prédictions sur quatre, et m'en a montré une cinquième chose que
+je n'avais pas prédite du tout.
+
+| | prédit | mesuré |
+| --- | --- | --- |
+| En-tête plein cadre, le tracé, « Charlotte », la ligne | oui | **oui** |
+| Semaine à **28,3 / 24 km** | oui | **oui** — l'horloge figée marche |
+| Eyebrow « dimanche 15 novembre » | oui | **non** — « lundi 16 novembre » |
+| Pastille ▼ en gris | oui | **non** — toujours ambre |
+| Aucune carte noire sur Coach, Stats, Plan, Journée | oui | **oui** |
+
+### La régression que j'ai causée, et que seule la capture pouvait dire
+
+« Ta journée » montrait **0/3 bouclés, 0 kcal, 0 pas**. La capture d'avant : 2/3, 612 kcal,
+9 240 pas.
+
+`CaptureSeed` écrit `lastDailyResetDay` au jour de l'instant figé — dimanche.
+`resetDailyGoalsIfNewDay` lisait `.now` — lundi. Pas le même jour, donc **remise à zéro**.
+
+Et le commentaire de la graine décrit ce défaut **mot pour mot**, parce qu'il s'était déjà
+produit dans l'autre sens : « l'accroche *Trois objectifs par jour* surmontait trois zéros, et
+l'anneau de l'accueil affichait 0/3 sur un profil qui venait de poser 9 240 pas ». En figeant
+l'horloge à trois endroits et pas au quatrième, je l'ai ramené.
+
+### Les trois autres lecteurs oubliés
+
+- **La date de l'en-tête** : « lundi 16 novembre » au-dessus d'une semaine qui s'arrête au
+  dimanche précédent.
+- **Les quantièmes sous les barres de la semaine** : la carte affichait « 28,3 / 24 km » — la
+  semaine figée — avec les quantièmes **16 à 22** dessous, c'est-à-dire la semaine réelle. Deux
+  semaines différentes sur le même objet.
+- **La remise à zéro du jour**, ci-dessus.
+
+**La leçon est à moi : j'ai figé une horloge en énumérant ses lecteurs, et énumérer est
+exactement la façon d'en oublier un.** Les quatre se sont trouvés en ouvrant la capture, pas en
+relisant le code.
+
+### Rendre la scène testable plutôt que compter sur ma vigilance
+
+`Demonstration.enCours` s'écrivait une seule fois et ne se refermait jamais — ce qui est juste
+pour l'app, et qui rendait la scène **intestable** : l'invariant qui compte ici, « ce que la
+graine écrit, la remise à zéro ne l'efface pas », n'est vrai QUE pendant une démonstration. Un
+cas qui ne peut pas entrer dans la scène ne peut pas le vérifier.
+
+Un `arreter()` sous `#if DEBUG`, et le cas y entre. Il aurait rougi ce matin. L'app livrée, elle,
+n'a de quoi ni allumer ni éteindre quoi que ce soit.
+
+### Le ▼ de l'accueil, en trois temps
+
+1. Négatif, il s'affichait en `amber` — la couleur de l'attention. Or le plan **programme** des
+   semaines où le volume baisse.
+2. Le 14 novembre, `baisseProgrammee` a éteint l'ambre quand la baisse était prescrite. Moitié du
+   défaut réglée : une semaine courte pour cause de maladie restait peinte en alerte.
+3. Le brief du 15 novembre tranche le reste. La correction est passée le 16 dans les stats, le
+   bilan hebdo, le débriefing et le widget — **pas dans `WeekKmSummary`**, celui de l'accueil,
+   celui qui part sur la fiche App Store. La campagne 215 l'a photographié encore ambre.
+
+Et le paramètre `baisseProgrammee` de `WeekKmSummary` est devenu du code que deux écrans
+calculent et que personne ne lit : il part, comme les trois booléens `surLaNuit` ce matin.
+`AdaptivePlanEngine.baisseProgrammee` reste, avec ses cas — le jour où une **phrase** dira la
+chose sous la barre plutôt qu'une couleur, elle est là.
