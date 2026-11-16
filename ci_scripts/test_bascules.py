@@ -454,18 +454,20 @@ with tempfile.TemporaryDirectory() as d:
     attendu("au milieu du plan, c'est « stats » sans hésitation", tard[0][0], "stats")
     attendu("et l'écart au suivant est franc", tard[1][1] - tard[0][1] > 40, True)
 
-    # LE MEILLEUR DES TROIS, ce qui est la règle du verdict depuis que le milieu s'est fait
-    # prendre par un défilement. On refait ici ce que la mesure fait : trois images, on garde
-    # celle qui ressemble le plus à quelque chose.
-    def meilleur_des_trois(b, suffixe):
-        retenu = None
-        for k, instant in enumerate(bs.instants_juges(b), start=1):
-            essai = bs.le_plus_proche(bs.posee(film, instant, dossier, f"{suffixe}{k}"), refs)
-            if retenu is None or essai[0][1] < retenu[0][1]:
-                retenu = essai
-        return retenu
+    # LA RÈGLE DU VERDICT, APPELÉE ET NON RECOPIÉE.
+    #
+    # Ces deux cas réimplémentaient le choix à la main — « on garde celui qui ressemble le plus
+    # à quelque chose ». C'était la règle de l'époque, et la copie a continué de passer au vert
+    # pendant que l'originale restait fausse : un banc qui refait le travail au lieu de
+    # l'appeler ne surveille que lui-même. Il appelle maintenant `bs.instant_retenu`.
+    def retenu_des_trois(b, suffixe):
+        juges = [(instant, bs.le_plus_proche(bs.posee(film, instant, dossier, f"{suffixe}{k}"),
+                                             refs))
+                 for k, instant in enumerate(bs.instants_juges(b), start=1)]
+        return bs.instant_retenu(juges, bs.ecran_vise(b["nom"]))[1]
 
-    meilleur = meilleur_des_trois(plan, "m")
+
+    meilleur = retenu_des_trois(plan, "m")
     attendu("le meilleur des trois instants reconnaît « stats »", meilleur[0][0], "stats")
     attendu("et il est franc, alors que le premier instant ne l'était pas",
             meilleur[1][1] - meilleur[0][1] > 40, True)
@@ -476,7 +478,43 @@ with tempfile.TemporaryDirectory() as d:
     # règle qu'il ne faut pas perdre en élargissant la recherche.
     faux = {"nom": "stats", "debut": 0.0, "fin": 0.9, "bascule": True}
     attendu("un plan posé sur le mauvais écran reste refusé",
-            meilleur_des_trois(faux, "f")[0][0], "profil")
+            retenu_des_trois(faux, "f")[0][0], "profil")
+
+
+# --- LEQUEL DES TROIS INSTANTS PORTE LE VERDICT -------------------------------------------------
+#
+# Cas purs, sans image : `instant_retenu` ne manipule que des classements déjà calculés, et
+# c'est précisément ce qui le rend éprouvable. Il a vécu au milieu de `main` jusqu'au
+# 16 novembre, où aucun cas ne pouvait l'atteindre — et il y est resté faux sous un commentaire
+# qui le décrivait correctement.
+
+# LE CAS DE LA CAMPAGNE 211, chiffres réels. Le plan vise « coach ». Les deux premiers instants
+# le montrent à 6,0 — la distance d'un écran POSÉ. Le troisième montre « stats » à 5,8. Deux
+# dixièmes de netteté emportaient le verdict contre l'identité de l'écran, et le film était
+# refusé alors qu'il contenait le bon plan.
+_c211 = [
+    (0.50, [("coach", 6.0), ("stats", 70.0), ("profil", 80.0)]),
+    (1.00, [("coach", 6.0), ("stats", 71.0), ("profil", 81.0)]),
+    (1.50, [("stats", 5.8), ("profil", 66.1), ("coach", 117.6)]),
+]
+attendu("campagne 211 : le verdict retient l'instant qui montre « coach »",
+        bs.instant_retenu(_c211, "coach")[1][0][0], "coach")
+attendu("et c'est bien le premier des deux qui correspondent",
+        bs.instant_retenu(_c211, "coach")[0], 0.50)
+# LA NETTETÉ DÉPARTAGE ENTRE CEUX QUI CORRESPONDENT, et seulement entre ceux-là.
+attendu("entre deux instants justes, le plus net gagne",
+        bs.instant_retenu([(0.5, [("coach", 9.0)]), (1.0, [("coach", 4.0)])], "coach")[0], 1.0)
+# ET LA MOITIÉ DE LA RÈGLE QU'IL NE FAUT PAS PERDRE : aucun instant ne montre l'écran visé,
+# donc on retombe sur le plus net et le plan est refusé. C'est le défaut de trois secondes.
+_faux = [
+    (0.50, [("profil", 6.0), ("coach", 90.0)]),
+    (1.00, [("profil", 5.0), ("coach", 91.0)]),
+    (1.50, [("profil", 7.0), ("coach", 92.0)]),
+]
+attendu("aucun instant juste : on retombe sur le plus net, et le plan est refusé",
+        bs.instant_retenu(_faux, "coach")[1][0][0], "profil")
+attendu("et c'est le plus net des trois qui sert à la diagnose",
+        bs.instant_retenu(_faux, "coach")[0], 1.00)
 
 
 # --- L'ALIGNEMENT DES DEUX HORLOGES -------------------------------------------------------------
@@ -510,6 +548,14 @@ attendu("aucun changement vu", bs.instant_du_changement(["avant"] * 27, 0.9), No
 # La fenêtre ne commence pas sur l'écran d'avant : le premier élément décide, et c'est tout
 # l'intérêt — un désalignement de trois secondes met la fenêtre entière après la bascule.
 attendu("une fenêtre qui commence déjà posée", bs.instant_du_changement(["posée"] * 27, 0.9), 0.9)
+# UNE FENÊTRE VIDE N'EST PAS UNE FENÊTRE QUI COMMENCE POSÉE.
+#
+# Les deux rendaient 0,9 — la longueur de la fenêtre — et la ligne du dessus explique pourquoi
+# c'est juste quand il Y A des images. Avec zéro image il n'y a rien à conclure, et la campagne
+# 211 l'a payé : trois fenêtres vides ont imprimé « changement d'écran à 0,90 s (attendu 0,60) »
+# dans la forme exacte d'un relevé. J'ai lu un décalage uniforme de trois dixièmes qui n'existait
+# pas, et je l'ai annoncé avant de vérifier d'où venait le nombre.
+attendu("une fenêtre vide ne rend pas une mesure", bs.instant_du_changement([], 0.9), None)
 
 # --- LES CONSTANTES, contre une faute de frappe -------------------------------------------------
 attendu("cadence", bs.IPS, 30)

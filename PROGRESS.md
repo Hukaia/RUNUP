@@ -6399,3 +6399,88 @@ plus rien le jour où elles la partageraient.
 Première version de la correction : substituer un nom inventé. Le garde se plaignait alors du
 COMPTE de lignes au lieu de nommer le fractionné, et le cas serait passé pour la mauvaise raison.
 C'est un autre jeton de famille qui est substitué.
+
+---
+
+## 16 novembre 2026 — le verdict du film gardait le plus net, pas le bon écran
+
+Le film d'aperçu était refusé depuis trois campagnes. L'instrumentation posée le 15 novembre —
+imprimer les TROIS instants au lieu du seul verdict — a donné la réponse à la première lecture.
+
+Campagne 211, plan « coach » :
+
+```
+instant 1 (+0,50 s) : « coach » à 6,0,  « coach » à 6,0
+instant 2 (+1,00 s) : « coach » à 6,0,  « coach » à 6,0
+instant 3 (+1,50 s) : « stats » à 5,8,  « coach » à 117,6  ← jugé
+```
+
+**Six, c'est la distance d'un écran posé** — le journal emploie ce chiffre partout pour dire
+« reconnu ». Le plan contenait le bon écran deux fois sur trois. **Deux dixièmes de netteté ont
+emporté le verdict contre l'identité de l'écran.**
+
+### La règle était écrite, elle n'était pas appliquée
+
+Le docstring de `instants_juges`, posé la veille, dit : *« il suffit qu'il CONTIENNE le bon
+écran »*. Le code gardait `min` sur la distance au plus proche, quel que soit l'écran — et son
+propre commentaire le disait en toutes lettres trois lignes plus bas : *« pas celui qui montre
+l'écran visé »*. **Les deux textes se contredisaient dans le même fichier**, et la recherche
+d'alignement, qui lit le même enregistrement au même décalage, concluait « chaque plan sur son
+écran » pendant que ce verdict-ci en déclarait un de travers.
+
+Ce n'est pas un desserrage. Un plan posé sur le mauvais écran — le défaut de trois secondes qui a
+sorti trois films faux — n'a AUCUN instant dont l'écran le plus proche soit le bon : on retombe
+sur le plus net et il est refusé comme avant. Les deux moitiés de la règle ont leur cas.
+
+### Le choix devient une fonction, et c'est la vraie leçon
+
+Il vivait au milieu de `main`, entre une extraction d'images et un `print`. **Aucun cas ne pouvait
+l'atteindre, et c'est exactement pour ça qu'il a pu rester faux sous un commentaire juste.**
+
+Pire : les deux cas qui l'approchaient le **recopiaient** à la main. La copie est restée verte
+pendant que l'originale était fausse. Un banc qui refait le travail au lieu de l'appeler ne
+surveille que lui-même. Ils appellent maintenant `instant_retenu`, qui a cinq cas purs — dont les
+chiffres réels de la campagne 211, et un faux plan pour la moitié de la règle qu'il ne faut pas
+perdre.
+
+### Une fenêtre vide n'est pas une mesure, et celui-là m'a eu le premier
+
+`instant_du_changement` rendait la longueur de la fenêtre dès qu'aucune image n'était celle de
+l'écran d'avant — **zéro image comprise**. Sur la 211, trois fenêtres sur quatre portaient zéro
+image, et le journal a imprimé trois fois « changement d'écran à 0,90 s avant le plan (attendu
+0,60) », dans la forme exacte d'un relevé.
+
+**J'en ai conclu un décalage uniforme de trois dixièmes, et je l'ai annoncé à Charlotte avant de
+chercher d'où venait le nombre.** Il n'existe pas : 0,90 est la longueur de la fenêtre. C'est la
+même faute que la comparaison d'une vignette au tiers avec une image pleine — lire un nombre sans
+vérifier ce qu'il mesure.
+
+Le raisonnement d'origine est juste **quand il y a des images** : la branche est donc gardée, et
+les deux silences ne s'écrivent plus pareil. Cette valeur polluait aussi la moyenne de
+l'alignement ; à 0,30 s de l'attendu elle est passée sous la tolérance de 0,5, et rien ne
+garantissait qu'une fenêtre plus courte reste du bon côté.
+
+---
+
+## 16 novembre 2026 — le ruban remonté, vérifié à pleine résolution
+
+Campagne 210 contre 211, même résolution, bandes d'encre relevées dans la zone du ruban :
+
+| Campagne | barres | lettres des jours | quantièmes |
+| --- | --- | --- | --- |
+| 210 (avant) | 2400–2477 | 2505–2530 — 26 px | 2555–2561 — **7 px** |
+| 211 (après) | 2400–2448 | 2476–2501 — 26 px | 2526–2551 — **26 px** |
+
+Un chiffre entier fait 26 pixels. Avant, il en restait **sept** au-dessus de la barre d'onglets :
+73 % de la rangée passait dessous. Après, les vingt-six sont là, et la dernière ligne d'encre
+tombe dix pixels au-dessus du bord de la barre. **Identique dans les trois langues** — mesuré,
+pas regardé.
+
+**Correction d'une prédiction : j'avais annoncé « six points de hauteur rendus ».** Le ruban est
+remonté de 29 pixels, soit 9,7 points. Les deux gestes — l'objectif hors de l'en-tête, la semaine
+en sous-titre — rendent plus que ce que j'avais calculé.
+
+Et une trouvaille en chemin, qui n'a rien à voir avec le chantier : **l'accueil photographié un
+lundi montre « 0,0 / 24 km » et une barre vide.** Voir la tâche correspondante — la graine pose
+son historique en jours en arrière, donc un lundi aucune sortie ne tombe dans la semaine en cours,
+et la fiche App Store montre une app vide une fois sur sept.

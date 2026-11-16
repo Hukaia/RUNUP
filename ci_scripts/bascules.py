@@ -286,14 +286,28 @@ def instant_du_changement(classes: list[str], fenetre: float) -> float | None:
     # L'écran change UNE FOIS et ne revient pas. Ce qu'on cherche est donc le dernier instant
     # où l'on est encore sur l'écran d'avant, et tout ce qui clignote plus tôt est ignoré par
     # construction.
+    if not classes:
+        # UNE FENÊTRE VIDE N'EST PAS UNE MESURE, et c'est la correction du 16 novembre.
+        #
+        # La branche d'en dessous rendait `fenetre` — 0,90 s — dès qu'aucune image n'était
+        # celle de l'écran d'avant, zéro image comprise. Sur la campagne 211, trois fenêtres
+        # sur quatre portaient zéro image : le journal a donc imprimé « changement d'écran à
+        # 0,90 s avant le plan (attendu 0,60) » trois fois, dans la forme exacte d'un relevé,
+        # et j'ai lu un décalage uniforme de trois dixièmes qui n'existait pas.
+        #
+        # La valeur de repli avait la forme d'une mesure, et c'est tout ce qu'il faut pour
+        # qu'on la traite comme telle. Elle polluait aussi la moyenne de l'alignement : à
+        # 0,30 s de l'attendu elle est passée sous la tolérance de 0,5, mais rien ne garantit
+        # qu'une fenêtre plus courte reste du bon côté.
+        return None
     dernier = None
     for i, c in enumerate(classes):
         if c == "avant":
             dernier = i
     if dernier is None:
-        # AUCUNE image de l'écran d'avant : le changement a eu lieu AVANT la fenêtre. On rend
-        # sa longueur — « au moins aussi tôt que ça » — plutôt que rien, parce que c'est une
-        # mesure, et c'est elle qui dit que le découpage tombe trop tard.
+        # AUCUNE image de l'écran d'avant, alors qu'il y EN A : le changement a eu lieu avant
+        # la fenêtre. On rend sa longueur — « au moins aussi tôt que ça » — plutôt que rien,
+        # parce que c'est une mesure, et c'est elle qui dit que le découpage tombe trop tard.
         return fenetre
     if dernier + 1 >= len(classes):
         # Toute la fenêtre est sur l'écran d'avant : le changement est APRÈS elle.
@@ -446,6 +460,39 @@ def instants_juges(b: dict) -> list[float]:
     return [b["debut"] + part * duree for part in PARTS_JUGEES]
 
 
+def instant_retenu(juges: list, vise: str):
+    """Lequel des trois instants porte le verdict — `(instant, classement)`.
+
+    # L'INSTANT QUI CORRESPOND, ET SEULEMENT À DÉFAUT LE PLUS NET
+
+    C'est la règle que `instants_juges` énonce depuis le 15 novembre — « il suffit que le plan
+    CONTIENNE le bon écran ». Elle n'était pas appliquée : le code gardait l'instant dont
+    l'image était la plus NETTE au sens de la distance, quel que soit l'écran qu'elle montrait,
+    et son propre commentaire le disait en toutes lettres.
+
+    Campagne 211, plan « coach » : les instants 1 et 2 montrent « coach » à 6,0 — la distance
+    d'un écran POSÉ, le journal emploie ce chiffre partout pour dire « reconnu ». L'instant 3
+    montre « stats » à 5,8. Deux dixièmes de netteté ont emporté le verdict contre l'identité de
+    l'écran. La recherche d'alignement, qui lit le MÊME enregistrement au MÊME décalage, avait
+    conclu « chaque plan sur son écran » : les deux se contredisaient parce qu'elles ne posaient
+    pas la même question.
+
+    # CE QUE ÇA NE LAISSE PAS PASSER
+
+    Un plan posé sur le mauvais écran — le défaut de trois secondes qui a sorti trois films
+    faux — n'a AUCUN instant dont l'écran le plus proche soit le bon. On retombe alors sur le
+    plus net, et le plan est refusé exactement comme avant. Le cas est éprouvé.
+
+    # ET POURQUOI C'EST UNE FONCTION
+
+    Ce choix vivait au milieu de `main`, entre une extraction d'images et un `print`. Aucun cas
+    ne pouvait l'atteindre, et c'est la raison pour laquelle il a pu rester faux sous un
+    commentaire qui le décrivait correctement.
+    """
+    correspondants = [(instant, essai) for instant, essai in juges if essai[0][0] == vise]
+    return min(correspondants or juges, key=lambda ie: ie[1][0][1])
+
+
 def main() -> int:
     a = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -580,8 +627,10 @@ def main() -> int:
             # à ce que l'écran soit POSÉ : « stats » a mis 0,57 s le 8 novembre, et l'image était
             # alors à mi-chemin entre deux écrans. Voir `instants_juges`.
             if references:
-                # LE MEILLEUR DES TROIS INSTANTS, et on retient lequel pour la preuve : une
-                # image gardée doit être celle sur laquelle le verdict s'est prononcé.
+                # TROIS INSTANTS, ET `instant_retenu` DIT LEQUEL PORTE LE VERDICT : celui qui
+                # montre l'écran visé, et seulement à défaut le plus net. On retient lequel
+                # c'est, parce qu'une image gardée doit être celle sur laquelle le verdict
+                # s'est prononcé.
                 #
                 # LES TROIS SONT GARDÉS, PAS SEULEMENT CELUI-LÀ — et c'est la correction du
                 # 15 novembre. Les campagnes 202 et 203 ont été refusées ici, et le journal
@@ -595,15 +644,12 @@ def main() -> int:
                 # seule image gardée sur trois laissait donc un verdict sans moyen de savoir ce
                 # que montraient les deux autres. Trois PNG par plan fautif, c'est le prix d'une
                 # diagnose au lieu d'une hypothèse.
+                vise = ecran_vise(b["nom"])
                 juges: list[tuple[float, list]] = []
-                meilleur, classement = None, None
                 for k, instant in enumerate(instants_juges(b), start=1):
                     juge = posee(options.entree, vers_fichier(instant), travail, f"j{i}-{k}")
-                    essai = le_plus_proche(juge, references)
-                    juges.append((instant, essai))
-                    if classement is None or essai[0][1] < classement[0][1]:
-                        meilleur, classement = instant, essai
-                vise = ecran_vise(b["nom"])
+                    juges.append((instant, le_plus_proche(juge, references)))
+                meilleur, classement = instant_retenu(juges, vise)
                 proche, ecart = classement[0]
                 suivant = classement[1] if len(classement) > 1 else (proche, ecart)
                 if vise not in references:
@@ -619,10 +665,15 @@ def main() -> int:
                           + ", ".join(f"{n} {e:.1f}" for n, e in classement))
                     # LES TROIS INSTANTS, NOMMÉS, AVANT LES IMAGES.
                     #
-                    # Ce que le verdict garde est l'instant dont l'image est la PLUS NETTE au
-                    # sens de la distance — pas celui qui montre l'écran visé. Les trois lignes
-                    # ci-dessous disent donc si le plan contenait le bon écran à un autre
-                    # moment, ce que la ligne de verdict seule ne peut pas dire.
+                    # On n'arrive ici que si AUCUN des trois ne montre l'écran visé — sinon le
+                    # choix ci-dessus l'aurait retenu. Les trois lignes disent alors ce que le
+                    # plan montrait à chaque moment, et à quelle distance il était du bon
+                    # écran : c'est ce qui sépare « posé sur le mauvais écran » de « jamais
+                    # posé du tout », et la ligne de verdict seule ne peut pas le dire.
+                    #
+                    # Jusqu'au 16 novembre, ces lignes servaient à rattraper un verdict qui
+                    # pouvait se tromper d'instant. Elles n'ont plus ce rôle ; elles gardent
+                    # l'autre, qui est le vrai.
                     for k, (instant, essai) in enumerate(juges, start=1):
                         vu, ecart_vu = essai[0]
                         marque = " ← jugé" if instant == meilleur else ""
@@ -646,11 +697,17 @@ def main() -> int:
             print(f"  {'':<10} {len(classes)} images sur {options.fenetre:.2f} s — "
                   f"mise en place : {traversee} images ({traversee / IPS:.2f} s), "
                   f"dont {vides_traversee} vide(s) ; {vides} vide(s) dans toute la fenêtre")
-            print(f"  {'':<10} changement d'écran à "
-                  + (f"{quand:.2f} s avant le plan (attendu {ATTENDU_AVANT:.2f})"
-                     if quand is not None
-                     else "un instant qu'on n'a pas vu : aucune image de la fenêtre ne quitte "
-                          "l'écran d'avant"))
+            if quand is not None:
+                dit = f"{quand:.2f} s avant le plan (attendu {ATTENDU_AVANT:.2f})"
+            elif not classes:
+                # Les deux silences ne disent pas la même chose, et les confondre a coûté une
+                # fausse conclusion : « zéro image » n'est pas « j'ai regardé et rien ne bouge ».
+                dit = ("rien à mesurer : la fenêtre ne porte AUCUNE image. L'enregistrement "
+                       "est à cadence variable et un écran immobile n'en produit presque pas.")
+            else:
+                dit = ("un instant qu'on n'a pas vu : aucune image de la fenêtre ne quitte "
+                       "l'écran d'avant")
+            print(f"  {'':<10} changement d'écran à {dit}")
 
         if egares:
             print(f"  DÉCOUPAGE : {len(egares)} bascule(s) tombent sur le mauvais écran — "
