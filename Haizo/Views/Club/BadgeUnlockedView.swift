@@ -57,9 +57,9 @@ struct BadgeUnlockedView: View {
                     }
 
                     let color = ClubBadgeCatalog.color(for: badge.key)
-                    HexagonBadgeShape()
+                    Circle()
                         .fill(color.opacity(0.22))
-                        .overlay(HexagonBadgeShape().stroke(color.opacity(0.7), lineWidth: RUSpacing.hairline))
+                        .overlay(Circle().stroke(color.opacity(0.7), lineWidth: RUSpacing.hairline))
                         .frame(width: 108, height: 108)
                         .overlay(Image(systemName: badge.symbole)
                             .font(RUFont.icone(horsEchelle: 42, weight: .semibold))

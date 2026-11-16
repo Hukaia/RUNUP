@@ -6808,3 +6808,63 @@ daltonisme ni du contraste. La couleur n'ajoutait qu'un jugement.
 n'a plus d'objet, et le commentaire qui la remplace raconte pourquoi elle a existé.
 
 Une attente inscrite dans la CI se referme ; une attente non écrite s'oublie.
+
+## 16 novembre 2026 — une seule carte, et ce qui tenait debout grâce à la deuxième
+
+Le point 4 du brief du 15 novembre tient en une phrase : **« une seule carte : blanche, rayon 20,
+ombre `0 2px 12px rgba(0,0,0,0.06)`, pas de contour, padding 20 ; pastilles `#F3EEF4` ; badges en
+cercles de 64 ; barres de semaine à 8 »**. L'app en avait deux, et la deuxième ne vivait pas
+seulement dans son composant.
+
+### La carte « héros » n'existait pas qu'à un endroit
+
+`ruHeroCard` posait un lavis d'accent sous **sept** cartes — la forme du jour, la relance du
+coach, le résumé du programme, la reprise après un objectif. Supprimer le modificateur aurait
+laissé **quatre lavis peints à la main**, hors du composant, dans quatre écrans qui écrivaient
+`RUColor.heroSurface` en direct. C'est la même famille que les hexagones ci-dessous : *un
+composant supprimé ne supprime pas ce que d'autres ont recopié à la main.*
+
+Ce que la carte héros servait — « celle-ci compte plus que les autres » — était déjà dit par la
+place (la première sous l'en-tête) et par la taille du chiffre. Le lavis le **redisait**, au prix
+d'une deuxième surface dans le vocabulaire.
+
+Le jeton `heroSurface` reste déclaré et n'est appelé par personne. C'est un choix écrit : il nomme
+une surface d'accent **opaque, calculée par mélange** plutôt que par transparence, et cette
+raison-là se perd avec la ligne qui la portait.
+
+### Les hexagones étaient dessinés quatre fois
+
+`HexagonBadgeShape` est parti — et avec lui `BadgeHexTile`, devenu `BadgeTile`. Mais **trois
+écrans dessinaient l'hexagone à la main** : `ClubBadgeTile`, `BadgeUnlockedView`,
+`BadgeShareCardView`. Le fichier supprimé, l'app aurait gardé trois hexagones et un cercle.
+
+### L'ombre revient là où son argument de départ ne s'applique plus
+
+Le 12 novembre, l'ombre portée avait été retirée au profit d'un filet, avec une raison qui
+tenait : « sur du papier, une ombre portée empile du gris sur un fond déjà gris ». Elle tenait
+**pour une ombre à 16 % posée sur un fond teinté**. À 6 % sur du blanc, ce n'est plus du gris
+empilé, c'est un bord qui s'adoucit. Le filet tombe, l'ombre revient, et `cardBorder` vaut
+`.clear` dans les deux thèmes.
+
+Au passage, une conversion qui se perd souvent : **le `radius` de SwiftUI vaut la moitié du flou
+CSS.** 12 px de flou donnent 6 ; le décalage vertical, lui, se lit tel quel.
+
+### Deux endroits où je n'ai pas suivi la lettre du brief
+
+**Le padding : 18, pas 20.** La grille d'espacement a fusionné 16, 20 et 22 dans 18 ou 24 le jour
+où 409 appels l'ont rejointe, avec cet argument : « au-dessus de 14, deux points ne se voient
+pas ». Et son commentaire prévient : « ajouter une valeur ici la rend légale partout ». 14 → 18
+reste le vrai changement que le brief demande — quatre points de plus sur les quatre côtés.
+
+**Les pastilles sur `card2`, pas sur `#F3EEF4`.** La valeur du brief est une lavande **froide** ;
+les fonds clairs de l'app sont chauds depuis le 12 novembre, et `check_jetons_de_texte.py` tient
+la règle « la famille du fond ». Je garde la direction — une surface **déclarée** au lieu d'un
+noir dilué, qui ne rendait pas la même couleur sur une carte et sur une sous-surface — et la
+famille de la page : luminance 0,839 contre 0,867, un cran plus marqué. Si l'app passe au froid,
+cette ligne et `card2` bougent ensemble ; c'est une ligne, pas un chantier.
+
+### Le rayon, lui, est un remplacement, pas un ajout
+
+`radiusCard` passe de 24 à 20. Quatre points sur un angle **se voient**, contrairement aux deux
+points d'écart que la grille juge invisibles. `rayons` compte toujours cinq valeurs, et aucun
+rayon écrit à la main ne valait 24 : l'échelle ne s'ouvre pas.

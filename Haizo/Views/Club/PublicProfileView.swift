@@ -230,7 +230,7 @@ struct PublicProfileView: View {
                                         // le reste de l'app lit celle du badge. Une série d'hexagones
                                         // identiques ne dit plus lequel est lequel, et ne ressemble
                                         // plus à la bande du Profil ni à celle du Club.
-                                        BadgeHexTile(symbole: badge.symbole, earned: true,
+                                        BadgeTile(symbole: badge.symbole, earned: true,
                                                      color: ClubBadgeCatalog.color(for: badge.key),
                                                      side: 58)
                                         // Et son nom. Un hexagone nu avec « 🌅 » dessus ne dit pas

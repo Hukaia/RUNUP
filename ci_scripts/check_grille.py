@@ -63,10 +63,14 @@ FORMES_DESSINEES = {
 }
 
 ESPACE = re.compile(r"\bspacing: (\d+(?:\.\d+)?)\b")
-# `ruCard(radius:)` et `ruHeroCard(radius:)` comptent aussi : c'est par là que huit cartes
-# avaient gardé un rayon à la main (14, 16, 18, 20) que le seul mot « cornerRadius » ne
-# voyait pas — la façon dont les dix valeurs d'avant avaient survécu au premier rangement.
-RAYON = re.compile(r"(?:cornerRadius:? ?\(?|ruHeroCard\(radius: |ruCard\(radius: )(\d+(?:\.\d+)?)")
+# `ruCard(radius:)` compte aussi : c'est par là que huit cartes avaient gardé un rayon à la main
+# (14, 16, 18, 20) que le seul mot « cornerRadius » ne voyait pas — la façon dont les dix valeurs
+# d'avant avaient survécu au premier rangement.
+#
+# `ruHeroCard(radius:)` y figurait jusqu'au 16 novembre ; la carte « héros » n'existe plus, le
+# brief n'en voulant qu'une. Le motif est retiré avec elle : un garde qui cherche un appel
+# disparu ne garde rien et laisse croire le contraire.
+RAYON = re.compile(r"(?:cornerRadius:? ?\(?|ruCard\(radius: )(\d+(?:\.\d+)?)")
 MARGE = re.compile(r"\.padding\((?:\.(?:top|bottom|leading|trailing|horizontal|vertical), )?(\d+(?:\.\d+)?)\)")
 
 fautes = []

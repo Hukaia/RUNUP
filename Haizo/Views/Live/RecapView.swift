@@ -184,7 +184,7 @@ struct RecapView: View {
                                     shareImage
                                         .resizable()
                                         .scaledToFit()
-                                        .background(RUColor.heroSurface, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+                                        .ruCard()
                                         .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous).stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
                                 } else if shareRenderFailed {
                                     // `ImageRenderer.uiImage` can come back nil under memory
@@ -204,7 +204,7 @@ struct RecapView: View {
                                     ProgressView().tint(RUColor.text2)
                                         .frame(width: Self.sharePreviewHeight * Self.shareCardAspect)
                                         .frame(maxHeight: .infinity)
-                                        .background(RUColor.heroSurface, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+                                        .ruCard()
                                 }
                             }
                             // 300 et non 230 : à 129 points de large la carte n'était pas
@@ -358,7 +358,7 @@ struct RecapView: View {
             Spacer(minLength: 0)
         }
         .padding(RUSpacing.cardPadding)
-        .background(RUColor.heroSurface, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+        .ruCard()
         .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous).stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
     }
 

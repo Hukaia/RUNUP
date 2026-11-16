@@ -45,7 +45,7 @@ struct BadgeDetailView: View {
     var body: some View {
         let color = ClubBadgeCatalog.color(for: badge.key)
         VStack(spacing: 14) {
-            BadgeHexTile(symbole: badge.symbole, earned: badge.earned, color: color,
+            BadgeTile(symbole: badge.symbole, earned: badge.earned, color: color,
                          side: 76, tailleDuSymbole: 32, lockedOpacity: 0.4)
                 .padding(.top, 24)
 

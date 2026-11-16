@@ -152,9 +152,23 @@ enum RUColor {
     /// retirée du système de design, et le filet est monté en même temps (voir `CardBackground`).
     /// Les deux changements n'ont de sens qu'ensemble, et c'est toujours vrai — en `trace` c'est
     /// l'inverse qui s'applique, le filet tombe et l'ombre revient.
+    /// ELLE NE DÉPEND PLUS DE L'HABILLAGE DEPUIS LE 16 NOVEMBRE.
+    ///
+    /// Elle ne vivait qu'en habillage teinté ; en classique c'était le filet qui séparait, et
+    /// les deux s'excluaient pour ne pas donner « une carte cernée ET flottante ». Le brief de
+    /// direction artistique tranche en faveur de l'ombre : « ombre 0 2px 12px rgba(0,0,0,0.06),
+    /// pas de contour ». Une carte, donc, et une seule — quel que soit l'habillage, qui ne
+    /// gouverne plus que le fond de PAGE.
+    ///
+    /// `0,06` est la valeur du brief, et elle est beaucoup plus douce que les `0,16` d'avant :
+    /// l'ombre d'alors devait séparer à elle seule une carte d'un fond teinté. Ici elle pose une
+    /// feuille sur une table, elle ne la décolle pas.
+    ///
+    /// EN SOMBRE ELLE RESTE PLUS DENSE. Six pour cent de noir sur du presque-noir ne se voit
+    /// pas : la valeur sombre n'est pas une préférence, c'est la même intention rendue sur un
+    /// fond qui ne renvoie pas la lumière.
     static var cardShadow: Color {
-        guard habillage == .teinte else { return .clear }
-        return isLight ? ombreDeCarte(0.16) : Color.black.opacity(0.45)
+        isLight ? Color.black.opacity(0.06) : Color.black.opacity(0.45)
     }
 
     /// Le fond de PAGE, à poser à la racine d'un écran — un dégradé en clair, une couleur en
@@ -446,14 +460,18 @@ enum RUColor {
     ///
     /// L'encre est celle de la page — voir `encreDeLaPage`, qui porte la valeur et son histoire.
     /// Elle penche du même côté que le fond, et elle a changé de camp avec lui.
-    static var cardBorder: Color {
-        // En habillage teinté, le filet TOMBE : c'est l'ombre colorée qui sépare (voir
-        // `cardShadow`). Garder les deux donnerait une carte cernée ET flottante, soit deux
-        // réponses à la même question — exactement ce que la suppression de l'ombre avait
-        // corrigé dans l'autre sens.
-        guard habillage != .teinte else { return .clear }
-        return isLight ? encreDeLaPage.opacity(0.10) : Color.clear
-    }
+    /// LE FILET EST TOMBÉ PARTOUT LE 16 NOVEMBRE, et le jeton reste.
+    ///
+    /// Il ne tombait qu'en habillage teinté, là où l'ombre séparait. Le brief demande « pas de
+    /// contour » sans condition, et la règle qui gouvernait les deux reste vraie : une carte
+    /// cernée ET flottante donne deux réponses à la même question. Puisque l'ombre est désormais
+    /// partout, le filet n'est plus nulle part.
+    ///
+    /// LE JETON N'EST PAS SUPPRIMÉ parce qu'il nomme quelque chose que l'app peut vouloir à
+    /// nouveau, et qu'un jeton qui rend `.clear` se relit — contrairement à trente appels
+    /// effacés qu'il faudrait retrouver. `check_filet.py` continue de surveiller les contours
+    /// écrits à la main, qui eux n'ont jamais eu le droit d'exister.
+    static var cardBorder: Color { .clear }
 
     /// Mélange opaque de `color` dans `base`, exactement `color-mix(in srgb, color N%, base)` en CSS.
     ///
@@ -519,22 +537,16 @@ enum RUColor {
         LinearGradient(colors: [rose, violet], startPoint: .topLeading, endPoint: .bottomTrailing)
     }
 
-    /// LA SURFACE D'UNE CARTE HÉROS — un aplat, et plus un lavis.
+    /// LE LAVIS D'ACCENT, QUI N'EST PLUS POSÉ NULLE PART.
     ///
-    /// C'était un dégradé qui descendait d'un lavis d'accent à 12 % vers la couleur de la carte.
-    /// Sa raison d'être n'a jamais été le dégradé lui-même, mais le fait qu'une carte héros se
-    /// distingue des autres : un aplat le fait aussi bien, et la règle 7 tranche le reste.
+    /// Il servait de fond à la carte « héros » — la forme du jour, la relance du coach, le
+    /// résumé du programme — et à quatre lavis écrits à la main hors du composant. Le brief du
+    /// 15 novembre ne veut qu'une carte, blanche ; les onze emplois sont partis le 16.
     ///
-    /// 6 % et non 12 % : le lavis descendait LINÉAIREMENT de 12 % à 0, donc sa moyenne sur la
-    /// hauteur de la carte valait 6 %. Reprendre 12 % aurait doublé le poids perçu de onze cartes
-    /// d'un coup. Même raisonnement en sombre, où le lavis partait de 10 %.
-    ///
-    /// Le lavis est DÉRIVÉ de l'accent courant, pas écrit en dur : avec huit palettes au choix
-    /// (décision du 9 novembre, les huit restent), un gris ou un prune fixe serait faux pour sept
-    /// personnes sur huit. Les deux branches sont tombées dans ce piège, à des moments différents.
-    ///
-    /// En clair il se pose sur `card`, la surface à laquelle la carte appartient ; en sombre sur
-    /// `bg`, où sa teinte doit se fondre.
+    /// LE JETON RESTE, et c'est un choix, pas un oubli. Il nomme une surface d'accent opaque,
+    /// calculée par mélange plutôt que par transparence — la raison en est écrite dans
+    /// `melange`. Cette connaissance-là ne se retrouve pas en relisant un commit ; elle se perd
+    /// avec la ligne qui la portait. Un jeton déclaré et non appelé se relit.
     static var heroSurface: Color {
         isLight ? tint(rose, 0.06, over: card) : tint(rose, 0.05, over: bg)
     }

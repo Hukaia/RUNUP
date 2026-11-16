@@ -78,8 +78,14 @@ enum RUSpacing {
     static let radiusChip: CGFloat = 12
     /// 16 — sous-surfaces dans une carte, champs de saisie.
     static let radiusInner: CGFloat = 16
-    /// 24 — une carte. Toutes les cartes.
-    static let radiusCard: CGFloat = 24
+    /// 20 — une carte. Toutes les cartes.
+    ///
+    /// 24 JUSQU'AU 16 NOVEMBRE. Le brief de direction artistique demande 20, et quatre points
+    /// sur un angle, eux, SE VOIENT — contrairement aux deux points d'écart que la grille
+    /// d'espacement juge invisibles au-dessus de 14. C'est donc un remplacement dans l'échelle,
+    /// pas un ajout : `rayons` compte toujours cinq valeurs, et aucun rayon écrit à la main ne
+    /// valait 24.
+    static let radiusCard: CGFloat = 20
 
     /// L'échelle ci-dessus, pour `ci_scripts/check_grille.py` — même rôle que `grille` : elle
     /// n'est appelée par aucune vue, elle est la déclaration que le garde-fou compare au code.
@@ -93,7 +99,16 @@ enum RUSpacing {
     /// tombe au milieu et reste dans le rythme pair du reste des tokens. Les cartes plus denses
     /// (lignes d'historique, tuiles de grille) descendent légitimement en dessous — ce token est le
     /// défaut à prendre quand rien ne justifie autre chose, pas une valeur imposée.
-    static let cardPadding: CGFloat = 14
+    ///
+    /// 18 DEPUIS LE 16 NOVEMBRE, ET LE BRIEF EN DEMANDE 20. Les deux points d'écart sont réglés
+    /// par la grille elle-même, qui a fusionné 16, 20 et 22 dans 18 ou 24 le jour où 409 appels
+    /// l'ont rejointe : « au-dessus de 14, deux points ne se voient pas, et c'est bien pour ça
+    /// que quatre valeurs y cohabitaient sans que personne tranche ». Rouvrir la grille pour
+    /// 20 rendrait la valeur légale PARTOUT — c'est ce que son propre commentaire prévient.
+    ///
+    /// 14 → 18 reste un vrai changement : quatre points de plus sur les quatre côtés de chaque
+    /// carte, et c'est bien ce que le brief veut — des cartes qui respirent.
+    static let cardPadding: CGFloat = 18
 
     /// Épaisseur de TOUS les contours et séparateurs de l'app (voir `RUColor.line`).
     ///

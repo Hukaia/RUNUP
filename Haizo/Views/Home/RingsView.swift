@@ -189,7 +189,7 @@ struct RingsView: View {
                             }
                         }
                         .padding(14)
-                        .ruHeroCard(radius: RUSpacing.radiusCard)
+                        .ruCard()
                     } else {
                         // The one genuine celebration state on this screen (all 3 goals done) — a
                         // spring scale-in gives it the "achievement unlocked" beat the static text
@@ -204,7 +204,7 @@ struct RingsView: View {
                         // sans : elle a déjà son titre, son animation d'apparition et le fait
                         // que les trois anneaux soient pleins. Un lavis d'accent à plat, le
                         // même que les cartes héros, et la règle 7 est tenue.
-                        .background(RUColor.heroSurface, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+                        .ruCard()
                         .scaleEffect(celebrationShown ? 1 : 0.85)
                         .opacity(celebrationShown ? 1 : 0)
                         .onAppear {

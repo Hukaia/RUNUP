@@ -568,9 +568,9 @@ struct ClubMemberProfileView: View {
                         let color = ClubBadgeCatalog.color(for: badge.key)
                         Button(action: { selectedBadge = badge }) {
                             VStack(spacing: 6) {
-                                HexagonBadgeShape()
+                                Circle()
                                     .fill(badge.earned ? color.opacity(0.22) : RUColor.card2)
-                                    .overlay(HexagonBadgeShape().stroke(badge.earned ? color.opacity(0.7) : RUColor.line, lineWidth: RUSpacing.hairline))
+                                    .overlay(Circle().stroke(badge.earned ? color.opacity(0.7) : RUColor.line, lineWidth: RUSpacing.hairline))
                                     .aspectRatio(1, contentMode: .fit)
                                     .overlay(Image(systemName: badge.symbole)
                                         .font(RUFont.icone(.xlarge, weight: .semibold))

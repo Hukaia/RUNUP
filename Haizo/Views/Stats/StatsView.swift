@@ -146,7 +146,7 @@ struct StatsView: View {
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .ruHeroCard()
+        .ruCard()
     }
 
     /// LES HUIT DERNIÈRES SEMAINES, de la plus ancienne à celle-ci.
@@ -937,7 +937,7 @@ struct StatsView: View {
             }
         }
         .padding(18)
-        .ruHeroCard()
+        .ruCard()
     }
 
     private func predictionTile(_ label: String, _ value: String, highlighted: Bool) -> some View {

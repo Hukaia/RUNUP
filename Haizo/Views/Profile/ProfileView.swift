@@ -472,7 +472,7 @@ struct ProfileView: View {
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .ruHeroCard()
+        .ruCard()
     }
 
     private func firstDayFact(icon: String, value: String, label: String) -> some View {
@@ -821,7 +821,7 @@ struct ProfileView: View {
     /// hexagones éteints sont le ressort, et ils étaient hors de l'écran, derrière un geste que
     /// rien ne signalait.
     ///
-    /// En grille, les seize tiennent d'un coup, et le vide occupe sa vraie place. `BadgeHexTile`
+    /// En grille, les seize tiennent d'un coup, et le vide occupe sa vraie place. `BadgeTile`
     /// l'attendait d'ailleurs : son paramètre `side` est documenté « la tuile prend la place
     /// qu'on lui donne et reste carrée — c'est ce dont une grille a besoin pour aligner ses
     /// colonnes ». Le composant était prêt, la grille n'existait pas.
@@ -839,7 +839,7 @@ struct ProfileView: View {
                     let color = ClubBadgeCatalog.color(for: badge.key)
                     Button(action: { selectedBadge = badge }) {
                         VStack(spacing: 6) {
-                            BadgeHexTile(symbole: badge.symbole, earned: badge.earned, color: color)
+                            BadgeTile(symbole: badge.symbole, earned: badge.earned, color: color)
                             Text(badge.name)
                                 .font(RUFont.sans(.micro, weight: .semibold))
                                 .foregroundColor(badge.earned ? RUColor.textPrimary : RUColor.text3)

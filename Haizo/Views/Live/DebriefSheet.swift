@@ -162,7 +162,7 @@ struct DebriefSheet: View {
                     }
                 }
                 .padding(18)
-                .ruHeroCard(radius: RUSpacing.radiusCard)
+                .ruCard()
                 .padding(.top, 18)
 
             }

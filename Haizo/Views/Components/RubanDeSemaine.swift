@@ -91,9 +91,15 @@ struct RubanDeSemaine: View {
     /// mesure. Le graphique du Plan n'a pas ce défaut parce qu'il a seize barres dans la même
     /// largeur — la finesse y vient du nombre.
     ///
-    /// À sept, la finesse se décide. Quatorze points de large, centrés dans leur colonne : la
-    /// hauteur redevient ce qu'on lit, et l'air entre les marques fait le rythme de la semaine.
-    static let largeurDeLaMarque: CGFloat = 14
+    /// À sept, la finesse se décide. Le brief du 15 novembre la fixe à HUIT points, centrés
+    /// dans leur colonne : la hauteur redevient ce qu'on lit, et l'air entre les marques fait le
+    /// rythme de la semaine.
+    ///
+    /// Quatorze jusqu'au 16 novembre, et le raisonnement qui avait donné quatorze pointe dans le
+    /// même sens que huit : il s'agissait d'empêcher une barre d'être aussi large que haute.
+    /// Huit le fait mieux. Ce n'est pas un revirement, c'est le même geste poussé jusqu'où il
+    /// allait.
+    static let largeurDeLaMarque: CGFloat = 8
 
     /// Un jour sans séance garde un trait. Un creux fait partie de la forme d'une semaine ; une
     /// colonne vide en ferait un trou.

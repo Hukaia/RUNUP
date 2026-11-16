@@ -8,27 +8,22 @@ struct CardBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(fill, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline)
-            )
-            // L'OMBRE REVIENT, MAIS SEULEMENT EN HABILLAGE TEINTÉ. `cardShadow` rend `.clear`
-            // en `classique`, donc rien n'est composé de plus pour qui n'a pas basculé — et en
-            // `trace`, c'est elle qui sépare puisque le filet, lui, tombe. Voir `RUColor`.
-            .shadow(color: RUColor.cardShadow, radius: 14, x: 0, y: 6)
-            // ── PLUS D'OMBRE PORTÉE (en habillage classique) ─────────────────────────────────
+            // L'OMBRE DU BRIEF : 0 2px 12px rgba(0,0,0,0.06).
             //
-            // Elle n'existait qu'en clair : les deux couches sont à opacité ZÉRO en sombre, où
-            // c'est l'écart de luminosité qui sépare. Une app dont la moitié des thèmes se passe
-            // d'ombre n'a pas besoin d'ombre — elle a besoin de ce que l'ombre remplaçait.
+            // SwiftUI compte son `radius` comme la MOITIÉ du flou CSS — 12 px de flou donnent
+            // donc 6. Le décalage vertical, lui, se lit tel quel.
             //
-            // Sur du papier, une ombre portée empile du gris sur un fond déjà gris. Ce qui sépare
-            // une feuille blanche d'une table, ce n'est pas le flou sous ses bords, c'est son
-            // BORD. `cardBorder` le dessine, et il monte de 5 à 10 % en même temps que l'ombre
-            // part — les deux changements n'ont de sens qu'ensemble.
+            // Elle était à `radius: 14, y: 6` et ne vivait qu'en habillage teinté, parce qu'elle
+            // devait y séparer une carte d'un fond coloré à elle seule. Celle-ci fait autre
+            // chose : elle pose une feuille sur une table. Resserrée, presque transparente, et
+            // partout.
             //
-            // Au passage : deux passes de composition en moins par carte, sur des écrans qui en
-            // affichent cinq.
+            // CE QUE ÇA DÉFAIT, ET POURQUOI C'EST ASSUMÉ. Le 12 novembre, l'ombre avait été
+            // retirée au profit du filet, avec un argument qui tenait : « sur du papier, une
+            // ombre portée empile du gris sur un fond déjà gris ». Il tenait pour une ombre à
+            // 16 % posée sur un fond teinté. À 6 % sur du blanc, ce n'est plus du gris empilé,
+            // c'est un bord qui s'adoucit — et c'est la seule chose que le brief demande.
+            .shadow(color: RUColor.cardShadow, radius: 6, x: 0, y: 2)
     }
 }
 
@@ -59,34 +54,21 @@ extension View {
         modifier(CardBackground(radius: radius, fill: fill))
     }
 
-    /// Le fond des cartes « héros » (forme du jour, relance du coach, résumé du programme) :
-    /// un lavis d'accent, à plat depuis que la règle 7 a vidé l'interface de ses dégradés.
-    func ruHeroCard(radius: CGFloat = RUSpacing.radiusCard, borderOpacity _: Double = 0.2) -> some View {
-        self
-            .background(RUColor.heroSurface, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
-            // LE CONTOUR TOMBE. C'était un accent dilué — 20 %, et jusqu'à 28 % chez certains
-            // appelants — posé dans le système de design lui-même, donc répété sur les onze
-            // cartes héros. La carte se distingue déjà par son lavis ; en thème sombre,
-            // `cardBorder` vaut d'ailleurs `.clear` pour exactement cette raison.
-            //
-            // `borderOpacity` reste au paramètre pour ne pas casser les appelants qui le passent,
-            // et il est désormais sans effet : le supprimer partout est un autre commit.
-            .overlay(
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline)
-            )
-            // ── PLUS D'OMBRE PORTÉE ──────────────────────────────────────────────────────────
-            //
-            // Elle n'existait qu'en clair : les deux couches sont à opacité ZÉRO en sombre, où
-            // c'est l'écart de luminosité qui sépare. Une app dont la moitié des thèmes se passe
-            // d'ombre n'a pas besoin d'ombre — elle a besoin de ce que l'ombre remplaçait.
-            //
-            // Sur du papier, une ombre portée empile du gris sur un fond déjà gris. Ce qui sépare
-            // une feuille blanche d'une table, ce n'est pas le flou sous ses bords, c'est son
-            // BORD. `cardBorder` le dessine, et il monte de 5 à 10 % en même temps que l'ombre
-            // part — les deux changements n'ont de sens qu'ensemble.
-            //
-            // Au passage : deux passes de composition en moins par carte, sur des écrans qui en
-            // affichent cinq.
-    }
+    // ── LA CARTE « HÉROS » N'EXISTE PLUS ────────────────────────────────────────────────────
+    //
+    // `ruHeroCard` posait un lavis d'accent sous sept cartes : la forme du jour, la relance du
+    // coach, le résumé du programme, la reprise après un objectif. C'était la DEUXIÈME surface
+    // de l'app, et le brief du 15 novembre n'en veut qu'une — « une seule carte : blanche,
+    // rayon 20, ombre 0 2px 12px, pas de contour ».
+    //
+    // CE QU'ELLE SERVAIT, ET CE QUI LE SERT MAINTENANT. Elle disait « celle-ci compte plus que
+    // les autres ». Une couleur de fond est la façon la plus coûteuse de le dire : elle ajoute
+    // une surface au vocabulaire pour hiérarchiser DEUX cartes dans un écran qui en porte cinq.
+    // La hiérarchie se dit par la place — la première carte sous l'en-tête — et par la taille
+    // du chiffre qu'elle porte. Les deux étaient déjà vraies ; le lavis les redisait.
+    //
+    // `heroSurface` n'est plus posé nulle part après ce commit : quatre écrans le peignaient
+    // encore À LA MAIN, hors du composant, et la suppression de `ruHeroCard` ne les aurait pas
+    // touchés. Un lavis écrit en direct est exactement ce qui fait survivre une surface qu'on
+    // croit avoir retirée.
 }

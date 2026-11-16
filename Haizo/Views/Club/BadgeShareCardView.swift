@@ -21,9 +21,9 @@ struct BadgeShareCardView: View {
             RadialGradient(colors: [color.opacity(0.22), RUColor.bg], center: .center, startRadius: 10, endRadius: 260)
 
             VStack(spacing: 18) {
-                HexagonBadgeShape()
+                Circle()
                     .fill(color.opacity(0.22))
-                    .overlay(HexagonBadgeShape().stroke(color.opacity(0.7), lineWidth: RUSpacing.hairline))
+                    .overlay(Circle().stroke(color.opacity(0.7), lineWidth: RUSpacing.hairline))
                     .frame(width: 132, height: 132)
                     .overlay(Image(systemName: badge.symbole)
                         .font(RUFont.icone(horsEchelle: 52, weight: .semibold))

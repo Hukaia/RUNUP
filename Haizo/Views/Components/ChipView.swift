@@ -84,8 +84,25 @@ struct StatChip: View {
             // Un fond neutre laisse la couleur au TEXTE, qui la porte mieux : une capsule grise
             // avec « J-32 » écrit en rose se lit rose, sans que la capsule ait à se salir pour
             // le dire. L'appelant garde `background` s'il a une raison de faire autrement.
-            .background(background ?? (RUColor.isLight ? Color.black.opacity(0.05)
-                                                       : Color.white.opacity(0.07)), in: Capsule())
+            // ── LE FOND DEVIENT UNE SURFACE DÉCLARÉE ────────────────────────────────────────
+            //
+            // Le brief du 15 novembre demande `#F3EEF4` : une surface OPAQUE, et non un noir
+            // dilué. La différence n'est pas qu'esthétique — une transparence se mélange à ce
+            // qui passe dessous, donc la même pastille ne rend pas la même couleur sur une
+            // carte blanche et sur une sous-surface. C'est le défaut que les jetons de texte
+            // ont corrigé le 12 novembre, un cran plus bas.
+            //
+            // LA VALEUR EST `card2`, PAS `#F3EEF4`, ET C'EST UNE DÉCISION ASSUMÉE. `#F3EEF4`
+            // est une lavande FROIDE ; les fonds clairs de l'app sont chauds depuis le
+            // 12 novembre, et `check_jetons_de_texte.py` tient la règle « la famille du fond ».
+            // Poser une surface froide sur une page chaude ferait exactement la tache que cette
+            // règle existe pour éviter. On garde donc la DIRECTION du brief — une surface
+            // déclarée — et la famille de la page : luminance 0,839 contre 0,867, soit un cran
+            // plus marqué, sur un jeton qui existait déjà et que les sous-surfaces emploient.
+            //
+            // Si Charlotte tranche que l'app passe au froid, cette ligne et `card2` bougent
+            // ensemble ; c'est une ligne, pas un chantier.
+            .background(background ?? RUColor.card2, in: Capsule())
     }
 }
 
