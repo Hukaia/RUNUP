@@ -33,6 +33,7 @@ est vérifiée par `graphies()`, qui ne couvre que les capitales.
 """
 import pathlib
 import re
+import subprocess
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -132,11 +133,47 @@ PORTEURS_DU_LOGO = {
 }
 
 
+def ignores_par_git(racine, chemins):
+    """Ce que git ignore, parmi ces chemins. Vide si git ne répond pas.
+
+    POURQUOI CE DÉTOUR. Le 16 novembre, TestFlight a refusé sur trois lignes de
+    `Haizo.xcodeproj/project.pbxproj` — un fichier que XcodeGen FABRIQUE au début du workflow et
+    que `.gitignore` écarte. Il n'existe pas en local. Ce contrôle lisait donc un ensemble de
+    fichiers EN LOCAL et un autre EN CI, sans que rien ne le dise : la barrière passait, la chaîne
+    refusait, et la différence n'était écrite nulle part.
+
+    Le groupe qu'il nommait, « RUNUP », est le nom du DÉPÔT — que Charlotte a gardé, au même titre
+    que `hukaia.github.io/RUNUP` juste au-dessus. Ce n'était pas un reste de marque dans le code :
+    c'était le garde qui jugeait une sortie de build.
+
+    Un contrôle qui dit ce que le DÉPÔT raconte doit lire ce que le dépôt CONTIENT. Git sait
+    exactement ce que c'est, et il le sait des deux côtés — c'est ce qui rend local et CI d'accord
+    par construction, au lieu de l'être par chance.
+    """
+    if not chemins:
+        return set()
+    try:
+        sortie = subprocess.run(
+            ["git", "check-ignore", "--stdin"], cwd=racine, text=True, timeout=30,
+            input="\n".join(str(c) for c in chemins), capture_output=True)
+    except (OSError, subprocess.SubprocessError):
+        return set()
+    # Code 0 : au moins un chemin ignoré. 1 : aucun. Autre : git n'a pas pu répondre.
+    if sortie.returncode not in (0, 1):
+        return set()
+    return {ligne.strip() for ligne in sortie.stdout.splitlines() if ligne.strip()}
+
+
 def fichiers(racine=RACINE):
+    candidats = []
     for p in sorted(racine.rglob("*")):
         if not p.is_file() or set(p.relative_to(racine).parts) & IGNORES:
             continue
         if p.suffix in EXTENSIONS or p.name in NOMS_EN_PLUS:
+            candidats.append(p)
+    ignores = ignores_par_git(racine, [c.relative_to(racine) for c in candidats])
+    for p in candidats:
+        if str(p.relative_to(racine)) not in ignores:
             yield p
 
 

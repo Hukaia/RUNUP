@@ -148,6 +148,50 @@ def _():
                      "      - claude/runup-ios-swiftui-app-5b1yv6\n") == []
 
 
+@cas_test("UN FICHIER QUE GIT IGNORE N'EST PAS JUGÉ — c'est l'échec de TestFlight 576")
+def _():
+    # `Haizo.xcodeproj/project.pbxproj` est FABRIQUÉ par XcodeGen au début du workflow et écarté
+    # par `.gitignore`. Il n'existe pas en local. Le contrôle lisait donc un ensemble de fichiers
+    # en local et un autre en CI, sans que rien ne le dise : la barrière passait, la chaîne
+    # refusait sur trois lignes, et le groupe qu'elle nommait était le nom du DÉPÔT.
+    import subprocess
+    with tempfile.TemporaryDirectory() as d:
+        racine = pathlib.Path(d)
+        for cmd in (["git", "init", "-q"], ["git", "config", "user.email", "x@y.z"],
+                    ["git", "config", "user.name", "x"]):
+            subprocess.run(cmd, cwd=racine, check=True, capture_output=True)
+        (racine / ".gitignore").write_text("*.xcodeproj/\n", encoding="utf-8")
+        (racine / "Haizo.xcodeproj").mkdir()
+        (racine / "Haizo.xcodeproj" / "project.pbxproj").write_text(
+            "name = RUNUP;\n", encoding="utf-8")
+        lus = {str(f.relative_to(racine)) for f in ck.fichiers(racine)}
+        assert "Haizo.xcodeproj/project.pbxproj" not in lus, lus
+        assert ".gitignore" in lus, "le .gitignore lui-même reste lu"
+
+
+@cas_test("mais un fichier SUIVI par git l'est, même avec la même extension")
+def _():
+    # L'exclusion porte sur « git l'ignore », pas sur « ça ressemble à une sortie de build ».
+    import subprocess
+    with tempfile.TemporaryDirectory() as d:
+        racine = pathlib.Path(d)
+        subprocess.run(["git", "init", "-q"], cwd=racine, check=True, capture_output=True)
+        (racine / "garde.pbxproj").write_text("name = RUNUP;\n", encoding="utf-8")
+        lus = {str(f.relative_to(racine)) for f in ck.fichiers(racine)}
+        assert "garde.pbxproj" in lus, lus
+
+
+@cas_test("sans git, le contrôle lit tout plutôt que de ne rien lire")
+def _():
+    # Un dossier qui n'est pas un dépôt : `git check-ignore` échoue. Se taire reviendrait à ne
+    # plus rien juger du tout, ce qui est pire que de juger un fichier de trop.
+    with tempfile.TemporaryDirectory() as d:
+        racine = pathlib.Path(d)
+        (racine / "a.swift").write_text("// RUNUP\n", encoding="utf-8")
+        assert ck.ignores_par_git(racine, [pathlib.Path("a.swift")]) == set()
+        assert {str(f.relative_to(racine)) for f in ck.fichiers(racine)} == {"a.swift"}
+
+
 @cas_test("CHAQUE TOLÉRANCE PORTE UNE RAISON ÉCRITE, pas seulement un motif")
 def _():
     for mot, raison in ck.TOLERES:
