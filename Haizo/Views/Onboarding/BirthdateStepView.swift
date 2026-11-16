@@ -10,7 +10,7 @@ struct BirthdateStepView: View {
             ScrollView {
                 ObTitle(
                     eyebrow: String(localized: "Étape 1 · \(who)"),
-                    title: "TA DATE DE NAISSANCE ?",
+                    title: "Ta date de naissance ?",
                     subtitle: "Ça aide ton coach à mieux te connaître."
                 )
                 VStack(alignment: .leading, spacing: 12) {

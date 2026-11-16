@@ -544,10 +544,7 @@ struct HomeView: View {
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.6)
                             Text("minutes")
-                                .font(RUFont.sans(.micro, weight: .medium))
-                                .tracking(0.9)
-                                .textCase(.uppercase)
-                                .foregroundColor(RUColor.text3)
+                                .metaStyle()
                         }
                         MetricColumn(value: seance.pace, label: "Allure")
                         MetricColumn(value: seance.zone, label: "Zone")
@@ -728,10 +725,7 @@ struct HomeView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.6)
                         Text("minutes")
-                            .font(RUFont.sans(.micro, weight: .medium))
-                            .tracking(0.9)
-                            .textCase(.uppercase)
-                            .foregroundColor(RUColor.text3)
+                            .metaStyle()
                     }
                     MetricColumn(value: session.pace, label: "Allure")
                     MetricColumn(value: session.zone, label: "Zone")
@@ -799,10 +793,7 @@ struct HomeView: View {
             RUFilet()
             HStack(alignment: .firstTextBaseline, spacing: 10) {
                 Text("Demain")
-                    .font(RUFont.sans(.micro, weight: .bold))
-                    .tracking(1.2)
-                    .textCase(.uppercase)
-                    .foregroundColor(RUColor.text3)
+                    .metaStyle()
                 Text(next.title)
                     .font(RUFont.sans(.label, weight: .semibold))
                     .foregroundColor(RUColor.text2)
@@ -927,7 +918,6 @@ struct HomeView: View {
             Text(LocalizedStringKey(label))
                 .font(RUFont.sans(.label, weight: .medium))
                 .foregroundColor(RUColor.text3)
-                .textCase(.uppercase)
                 .tracking(1.1)
                 .lineLimit(1).minimumScaleFactor(0.7)
         }
@@ -950,7 +940,6 @@ struct HomeView: View {
         Text("Ta journée")
             .font(RUFont.sans(.label, weight: .medium))
             .foregroundColor(RUColor.text3)
-            .textCase(.uppercase)
             .tracking(1.6)
     }
 

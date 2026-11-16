@@ -3447,23 +3447,6 @@
         }
       }
     },
-    "ACCÉLÈRE": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SPEED UP"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ACELERA"
-          }
-        }
-      }
-    },
     "AJOUTER UNE COURSE": {
       "extractionState": "manual",
       "localizations": {
@@ -3509,22 +3492,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "RITMO"
-          }
-        }
-      }
-    },
-    "ALLURE MOY": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AVG PACE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RITMO MED"
           }
         }
       }
@@ -3575,22 +3542,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "HOY · %@"
-          }
-        }
-      }
-    },
-    "AVANT DE CONTINUER": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BEFORE WE CONTINUE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ANTES DE CONTINUAR"
           }
         }
       }
@@ -3705,6 +3656,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aceptar a %@"
+          }
+        }
+      }
+    },
+    "Accélère": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed up"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acelera"
           }
         }
       }
@@ -4263,6 +4230,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ritmo objetivo"
+          }
+        }
+      }
+    },
+    "Allure moy.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avg pace"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ritmo med."
           }
         }
       }
@@ -5236,19 +5219,18 @@
         }
       }
     },
-    "BADGE DÉBLOQUÉ": {
-      "extractionState": "manual",
+    "Avant de continuer": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "BADGE UNLOCKED"
+            "value": "Before we continue"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "INSIGNIA DESBLOQUEADA"
+            "value": "Antes de continuar"
           }
         }
       }
@@ -5265,6 +5247,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "PPM MEDIA"
+          }
+        }
+      }
+    },
+    "Badge débloqué": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Badge unlocked"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insignia desbloqueada"
           }
         }
       }
@@ -5911,23 +5909,6 @@
         }
       }
     },
-    "CE QUE TU COURS DÉJÀ": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHAT YOU ALREADY RUN"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LO QUE YA CORRES"
-          }
-        }
-      }
-    },
     "CE SOIR · %@": {
       "extractionState": "manual",
       "localizations": {
@@ -5941,40 +5922,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "ESTA NOCHE · %@"
-          }
-        }
-      }
-    },
-    "CHAQUE SEMAINE": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EVERY WEEK"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CADA SEMANA"
-          }
-        }
-      }
-    },
-    "COMBIEN DE TEMPS ?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HOW MUCH TIME?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿CUÁNTO TIEMPO?"
           }
         }
       }
@@ -6008,38 +5955,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "¿CÓMO\nTE LLAMAS?"
-          }
-        }
-      }
-    },
-    "CONNECTE TA MONTRE": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CONNECT YOUR WATCH"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CONECTA TU RELOJ"
-          }
-        }
-      }
-    },
-    "CONNECTÉ ✓": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CONNECTED ✓"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CONECTADO ✓"
           }
         }
       }
@@ -6485,6 +6400,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lo que ven los demás"
+          }
+        }
+      }
+    },
+    "Ce que tu cours déjà": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What you already run"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo que ya corres"
           }
         }
       }
@@ -7624,6 +7555,22 @@
         }
       }
     },
+    "Combien de temps ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How much time?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cuánto tiempo?"
+          }
+        }
+      }
+    },
     "Comme la semaine dernière": {
       "extractionState": "manual",
       "localizations": {
@@ -7924,6 +7871,22 @@
         }
       }
     },
+    "Connecte ta montre": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect your watch"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conecta tu reloj"
+          }
+        }
+      }
+    },
     "Connecte-toi": {
       "localizations": {
         "en": {
@@ -8017,6 +7980,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Conectado como %@"
+          }
+        }
+      }
+    },
+    "Connecté ✓": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected ✓"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectado ✓"
           }
         }
       }
@@ -10182,54 +10161,6 @@
         }
       }
     },
-    "EN COURS": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RUNNING"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EN CURSO"
-          }
-        }
-      }
-    },
-    "EN DIRECT": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LIVE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EN DIRECTO"
-          }
-        }
-      }
-    },
-    "EN PAUSE": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PAUSED"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EN PAUSA"
-          }
-        }
-      }
-    },
     "ENREGISTRER": {
       "localizations": {
         "en": {
@@ -10606,6 +10537,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "En dos frases: quiénes sois, cuándo corréis"
+          }
+        }
+      }
+    },
+    "En direct": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En directo"
           }
         }
       }
@@ -11756,39 +11703,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pro de las series"
-          }
-        }
-      }
-    },
-    "G DE GLUCIDES / H": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "G OF CARBS / H"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "G DE CARBOHIDRATOS / H"
-          }
-        }
-      }
-    },
-    "G DE GLUCIDES SUR LE VÉLO": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "G OF CARBS ON THE BIKE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "G DE CARBOHIDRATOS EN LA BICI"
           }
         }
       }
@@ -13288,23 +13202,6 @@
         }
       }
     },
-    "JOUR": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DAY"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DÍA"
-          }
-        }
-      }
-    },
     "JOUR%@": {
       "localizations": {
         "en": {
@@ -13333,23 +13230,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "DÍA COMPLETADO"
-          }
-        }
-      }
-    },
-    "JOURS": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DAYS"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DÍAS"
           }
         }
       }
@@ -13706,6 +13586,22 @@
         }
       }
     },
+    "Jour": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Day"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Día"
+          }
+        }
+      }
+    },
     "Jour %lld sur %lld — la suite se débloque demain.": {
       "localizations": {
         "en": {
@@ -13832,6 +13728,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Día pasado"
+          }
+        }
+      }
+    },
+    "Jours": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Days"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Días"
           }
         }
       }
@@ -15904,22 +15816,6 @@
         }
       }
     },
-    "MARATHON": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MARATHON"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MARATÓN"
-          }
-        }
-      }
-    },
     "ME RECONNECTER": {
       "extractionState": "manual",
       "localizations": {
@@ -15933,87 +15829,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "VOLVER A ENTRAR"
-          }
-        }
-      }
-    },
-    "MEILLEURE ALLURE": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BEST PACE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MEJOR RITMO"
-          }
-        }
-      }
-    },
-    "MEILLEURE SEM.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BEST WK."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MEJOR SEM."
-          }
-        }
-      }
-    },
-    "MG DE SEL / H": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MG OF SODIUM / H"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MG DE SAL / H"
-          }
-        }
-      }
-    },
-    "ML DE BOISSON / H": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ML OF FLUID / H"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ML DE BEBIDA / H"
-          }
-        }
-      }
-    },
-    "ML À EMBARQUER": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ML TO CARRY"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ML PARA LLEVAR"
           }
         }
       }
@@ -16278,6 +16093,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "¡Mejor tiempo en este recorrido!"
+          }
+        }
+      }
+    },
+    "Meilleure allure": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best pace"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mejor ritmo"
+          }
+        }
+      }
+    },
+    "Meilleure sem.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best wk."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mejor sem."
           }
         }
       }
@@ -17137,23 +16984,6 @@
         }
       }
     },
-    "NAGE · EN DIRECT": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SWIM · LIVE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "NATACIÓN · EN VIVO"
-          }
-        }
-      }
-    },
     "NON MERCI": {
       "localizations": {
         "en": {
@@ -17215,6 +17045,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Natación importada"
+          }
+        }
+      }
+    },
+    "Nage · en direct": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swim · live"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Natación · en vivo"
           }
         }
       }
@@ -17857,22 +17703,6 @@
         }
       }
     },
-    "OBJECTIF": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "GOAL"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OBJETIVO"
-          }
-        }
-      }
-    },
     "OK": {
       "localizations": {
         "en": {
@@ -18320,22 +18150,6 @@
         }
       }
     },
-    "OÙ TU EN ES ?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHERE ARE YOU AT?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿EN QUÉ PUNTO ESTÁS?"
-          }
-        }
-      }
-    },
     "Où courir, ici ou en voyage": {
       "extractionState": "manual",
       "localizations": {
@@ -18420,6 +18234,22 @@
         }
       }
     },
+    "Où tu en es ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where are you at?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿En qué punto estás?"
+          }
+        }
+      }
+    },
     "PARCOURUS": {
       "localizations": {
         "en": {
@@ -18480,38 +18310,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "COMPARTIR MI CARRERA"
-          }
-        }
-      }
-    },
-    "PAUSE AUTO": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AUTO PAUSE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PAUSA AUTO"
-          }
-        }
-      }
-    },
-    "PLUS LONGUE": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LONGEST"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MÁS LARGA"
           }
         }
       }
@@ -19282,6 +19080,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cambiar a natación"
+          }
+        }
+      }
+    },
+    "Pause auto": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto pause"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausa auto"
           }
         }
       }
@@ -21109,89 +20923,6 @@
         }
       }
     },
-    "QUEL DUATHLON ?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHICH DUATHLON?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿QUÉ DUATLÓN?"
-          }
-        }
-      }
-    },
-    "QUEL HYROX ?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHICH HYROX?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿QUÉ HYROX?"
-          }
-        }
-      }
-    },
-    "QUEL TRIATHLON ?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHICH TRIATHLON?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿QUÉ TRIATLÓN?"
-          }
-        }
-      }
-    },
-    "QUEL ULTRA ?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHICH ULTRA?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿QUÉ ULTRA?"
-          }
-        }
-      }
-    },
-    "QUELLE COURSE ?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHICH RACE?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿QUÉ CARRERA?"
-          }
-        }
-      }
-    },
     "Quand ?": {
       "localizations": {
         "en": {
@@ -21221,6 +20952,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cuando tu franja habitual cae bajo la lluvia y otro momento del día está seco."
+          }
+        }
+      }
+    },
+    "Quel HYROX ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which HYROX?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué HYROX?"
+          }
+        }
+      }
+    },
+    "Quel duathlon ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which duathlon?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué duatlón?"
+          }
+        }
+      }
+    },
+    "Quel triathlon ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which triathlon?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué triatlón?"
+          }
+        }
+      }
+    },
+    "Quel ultra ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which ultra?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué ultra?"
+          }
+        }
+      }
+    },
+    "Quelle course ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which race?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué carrera?"
           }
         }
       }
@@ -21405,39 +21216,6 @@
         }
       }
     },
-    "RALENTIS": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EASE OFF"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AFLOJA"
-          }
-        }
-      }
-    },
-    "RECORD": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RECORD"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RÉCORD"
-          }
-        }
-      }
-    },
     "RETIRER": {
       "extractionState": "manual",
       "localizations": {
@@ -21583,6 +21361,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Haizo no vende nada ni garantiza nada: lo arregláis entre vosotros. La mayoría de los organizadores prohíben el traspaso de dorsal — consulta su reglamento. Correr con el nombre de otro es la descalificación, y servicios médicos leyendo la ficha equivocada."
+          }
+        }
+      }
+    },
+    "Ralentis": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ease off"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afloja"
           }
         }
       }
@@ -21745,6 +21539,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "El reconocimiento de voz no está disponible en este dispositivo."
+          }
+        }
+      }
+    },
+    "Record": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Récord"
           }
         }
       }
@@ -23122,22 +22932,6 @@
         }
       }
     },
-    "SON TEMPS": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "THEIR TIME"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SU TIEMPO"
-          }
-        }
-      }
-    },
     "STOP": {
       "localizations": {
         "en": {
@@ -24173,6 +23967,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Oscuro"
+          }
+        }
+      }
+    },
+    "Son temps": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Their time"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Su tiempo"
           }
         }
       }
@@ -25583,39 +25393,6 @@
         }
       }
     },
-    "TA DATE DE NAISSANCE ?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YOUR DATE OF BIRTH?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿TU FECHA DE NACIMIENTO?"
-          }
-        }
-      }
-    },
-    "TA DERNIÈRE SORTIE": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YOUR LAST RUN"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TU ÚLTIMA SALIDA"
-          }
-        }
-      }
-    },
     "TA PRIORITÉ": {
       "localizations": {
         "en": {
@@ -25660,38 +25437,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "TIEMPO ACTIVO"
-          }
-        }
-      }
-    },
-    "TES JOURS DE COURSE": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YOUR RUNNING DAYS"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TUS DÍAS DE CARRERA"
-          }
-        }
-      }
-    },
-    "TON POINT DE DÉPART": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YOUR STARTING POINT"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TU PUNTO DE PARTIDA"
           }
         }
       }
@@ -25742,40 +25487,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "TRAIL"
-          }
-        }
-      }
-    },
-    "TRAIL · EN DIRECT": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TRAIL · LIVE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TRAIL · EN VIVO"
-          }
-        }
-      }
-    },
-    "TU VEUX QUOI, AU JUSTE ?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHAT ARE YOU AFTER?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿QUÉ BUSCAS, EXACTAMENTE?"
           }
         }
       }
@@ -25841,6 +25552,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tu carrera debería caber en el día, pero lleva un frontal igual: una salida temprana, un bosque cerrado o dos horas más de lo previsto bastan."
+          }
+        }
+      }
+    },
+    "Ta date de naissance ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your date of birth?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Tu fecha de nacimiento?"
           }
         }
       }
@@ -27487,6 +27214,22 @@
         }
       }
     },
+    "Ton point de départ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your starting point"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu punto de partida"
+          }
+        }
+      }
+    },
     "Ton profil analysé": {
       "localizations": {
         "en": {
@@ -27866,6 +27609,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trail / senderos"
+          }
+        }
+      }
+    },
+    "Trail · en direct": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trail · live"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trail · en vivo"
           }
         }
       }
@@ -28387,6 +28146,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Estarás fresca, en grupo, y cinco o diez kilómetros no asustan cuando es tu distancia de entrenamiento. Justo por eso casi todo el mundo sale demasiado rápido."
+          }
+        }
+      }
+    },
+    "Tu veux quoi, au juste ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What are you after?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué buscas, exactamente?"
           }
         }
       }
@@ -29079,23 +28854,6 @@
         }
       }
     },
-    "VITESSE": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SPEED"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VELOCIDAD"
-          }
-        }
-      }
-    },
     "VOIR LE CALENDRIER": {
       "localizations": {
         "en": {
@@ -29478,23 +29236,6 @@
         }
       }
     },
-    "VÉLO · EN DIRECT": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CYCLING · LIVE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CICLISMO · EN VIVO"
-          }
-        }
-      }
-    },
     "Vélo": {
       "extractionState": "manual",
       "localizations": {
@@ -29508,6 +29249,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ciclismo"
+          }
+        }
+      }
+    },
+    "Vélo · en direct": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cycling · live"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciclismo · en vivo"
           }
         }
       }
@@ -30478,6 +30235,38 @@
         }
       }
     },
+    "g de glucides / h": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "g of carbs / h"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "g de carbohidratos / h"
+          }
+        }
+      }
+    },
+    "g de glucides sur le vélo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "g of carbs on the bike"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "g de carbohidratos en la bici"
+          }
+        }
+      }
+    },
     "inconnue du serveur": {
       "extractionState": "manual",
       "localizations": {
@@ -30969,6 +30758,22 @@
         }
       }
     },
+    "mg de sel / h": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mg of sodium / h"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mg de sal / h"
+          }
+        }
+      }
+    },
     "minutes": {
       "extractionState": "manual",
       "localizations": {
@@ -30982,6 +30787,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "minutos"
+          }
+        }
+      }
+    },
+    "ml de boisson / h": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ml of fluid / h"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ml de bebida / h"
+          }
+        }
+      }
+    },
+    "ml à embarquer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ml to carry"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ml para llevar"
           }
         }
       }

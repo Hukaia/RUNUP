@@ -393,6 +393,36 @@ extension Text {
         // écrans ont besoin de calme.
         self.font(RUFont.sans(.small, weight: .semibold)).tracking(0.2).foregroundColor(color)
     }
+
+    /// # LE LIBELLÉ D'UN CHIFFRE : 12 POINTS, GRIS, CASSE NORMALE
+    ///
+    /// « MINUTES » sous un 34, « ALLURE » sous un 6:18, « KM » sous une distance. C'est le plus
+    /// petit étage de la typographie, et c'était le plus bruyant : `.micro` en GRAS avec un
+    /// `tracking(1.5)`, c'est-à-dire des capitales espacées — « ce sont des labels en 12 gris,
+    /// casse normale », dit le point 1 du brief du 15 novembre.
+    ///
+    /// ## IL ÉTAIT ÉCRIT CINQ FOIS
+    ///
+    /// `.font(RUFont.sans(.micro, weight: .bold)).tracking(1.5)`, mot pour mot, dans
+    /// `LiveRunView` (trois fois), `RecapView`, `StatsView` et `RaceGoalView`. Cinq copies d'un
+    /// style, c'est cinq occasions de le corriger à moitié — et c'est exactement ce qui est
+    /// arrivé à `eyebrowStyle`, qui a perdu ses capitales le 15 novembre pendant que celui-ci
+    /// les gardait.
+    ///
+    /// ## POURQUOI `medium` ET PAS `bold`
+    ///
+    /// La graisse PERÇUE monte quand la taille baisse : un gras à 12 points pèse plus lourd
+    /// qu'un gras à 28. Le libellé doit nommer le chiffre, pas le concurrencer — c'est le même
+    /// raisonnement que `RUDisplaySize.grasse`, qui fait l'inverse en haut de l'échelle.
+    ///
+    /// ## ET PAS D'INTERLETTRAGE
+    ///
+    /// L'interlettrage positif existe pour rendre des CAPITALES lisibles : serrées, elles se
+    /// confondent. En casse normale, il ne fait qu'écarter les lettres d'un mot qui se lit très
+    /// bien sans. `eyebrowStyle` en garde 0,2 parce qu'il est à 14 et semi-gras ; ici, zéro.
+    func metaStyle(color: Color = RUColor.text3) -> some View {
+        self.font(RUFont.sans(.micro, weight: .medium)).foregroundColor(color)
+    }
 }
 
 /// Les sept crans de la police de titrage.

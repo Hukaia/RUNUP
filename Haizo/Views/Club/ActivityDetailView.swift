@@ -134,7 +134,7 @@ struct ActivityDetailView: View {
     private var pastilleDeRecord: some View {
         HStack(spacing: 4) {
             Image(systemName: "trophy.fill").font(RUFont.icone(.micro, weight: .bold))
-            Text("RECORD")
+            Text("Record")
         }
         .font(RUFont.sans(.micro, weight: .bold))
         .tracking(0.4)

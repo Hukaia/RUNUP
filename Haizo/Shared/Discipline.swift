@@ -175,9 +175,12 @@ enum Discipline: String, Codable, Equatable, CaseIterable {
         seLitEnAllure ? String(localized: "Allure") : String(localized: "Vitesse")
     }
 
-    var rythmeLabelMajuscules: String {
-        seLitEnAllure ? String(localized: "ALLURE") : String(localized: "VITESSE")
-    }
+    // `rythmeLabelMajuscules` A DISPARU LE 16 NOVEMBRE, avec la raison qui le faisait exister.
+    //
+    // Il rendait « ALLURE » / « VITESSE » là où `rythmeLabel` rend « Allure » / « Vitesse » : deux
+    // clés de catalogue, deux traductions à tenir, pour UN mot dont seule la casse changeait —
+    // parce que le libellé de l'écran de course était en capitales espacées. Il ne l'est plus,
+    // point 1 du brief, et les appelants lisent `rythmeLabel`.
 
     /// L'unité du rythme. Pas traduite — « km », « m » et « h » sont les mêmes symboles partout.
     ///

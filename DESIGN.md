@@ -368,9 +368,44 @@ page passe donc du demi-gras au gras. Le brief le demande — « titres d'écran
 `hero` et `banner` passent en grasse, les quatre crans du bas non.
 
 Une taille hors échelle s'écrit `display(horsEchelle: 52)`, et l'étiquette est là pour que
-l'exception se voie : un `grep horsEchelle` donne la liste complète.
+l'exception se voie : un `grep horsEchelle` donne la liste complète. Il y en a dix, dans cinq
+fichiers, et `check_echelle.py` tient le compte par fichier avec une raison par entrée.
 
-### 4.2 Les sept crans d'icône
+### 4.2 La casse : pas de capitales, sauf sur un bouton
+
+> « Supprimer les majuscules espacées ("TA JOURNÉE", "CE QU'IL REGARDE", "ALLURE CIBLE") : ce
+> sont des labels en 12 gris, casse normale. » — brief du 15 novembre, point 1.
+
+Les trois exemples sont des **labels**, et c'est ce que la règle vise. Un bouton en capitales est
+autre chose : une convention assumée, que le brief ne nomme nulle part. **`check_majuscules.py`
+le tient** — un libellé tout en capitales est refusé, sauf entrée comptée avec sa raison.
+
+Il y en a 67, dans 30 fichiers : des boutons, deux affiches qu'on exporte (la carte de partage et
+les images de la vidéo), l'onglet `RUN`, et une dette nommée — « EN PAUSE » et « EN COURS » sur
+la montre, parce que la capture livrée à Apple est empreintée contre toute la cible `HaizoWatch`
+et ne se refait pas sans machine macOS.
+
+**Les capitales vivaient de trois façons**, et retirer l'une laissait les deux autres : un
+`.textCase(.uppercase)` sur la vue, un `tracking` positif sur une chaîne déjà capitalisée, et les
+capitales **dans la chaîne elle-même**, au catalogue, en trois langues — quarante-trois clés.
+C'est la troisième qui demande un garde : les deux premières se voient en relisant une vue.
+
+### 4.3 Le libellé d'un chiffre : `metaStyle`
+
+12 points, gris, casse normale, **pas d'interlettrage**. L'interlettrage positif existe pour
+rendre des capitales lisibles ; en casse normale il ne fait qu'écarter les lettres d'un mot qui
+se lit très bien sans.
+
+Il était écrit **cinq fois** — `.font(RUFont.sans(.micro, weight: .bold)).tracking(1.5)`, mot
+pour mot, dans `LiveRunView` (trois fois), `RecapView`, `StatsView` et `RaceGoalView`. C'est ce
+qui a permis à `eyebrowStyle` de perdre ses capitales le 15 novembre pendant que les cinq autres
+gardaient les leurs.
+
+`medium` et non `bold` : la graisse perçue monte quand la taille baisse, et le libellé doit
+nommer le chiffre, pas le concurrencer — l'inverse exact de ce que fait `RUDisplaySize.grasse`
+en haut de l'échelle.
+
+### 4.4 Les sept crans d'icône
 
 `RUIconSize`, relevés sur les 170 appels existants plutôt qu'inventés : 9, 11, 13, 15, puis les
 trois crans hauts. Les deux plus employés — 13 et 15, 65 appels à eux deux — n'ont pas bougé.

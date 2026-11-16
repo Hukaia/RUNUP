@@ -135,7 +135,7 @@ struct RaceGoalView: View {
 
     /// Only goals that periodize toward a date have a real race day with a distance/chrono to
     /// pace against — for `.progress`/`.restart`/`.weight`/`.health` this screen used to show a
-    /// "JOURS" countdown to nothing, a fabricated "ALLURE" from `PaceModel`'s generic threshold,
+    /// "Jours" countdown to nothing, a fabricated "Allure" from `PaceModel`'s generic threshold,
     /// and a full race-day pacing table built on a hardcoded 10 km fallback (`?? 10` above) — all
     /// meaningless for a goal with no actual race.
     ///
@@ -178,20 +178,20 @@ struct RaceGoalView: View {
                         // de l'écran course — sortait en français partout.
                         tile(profile.daysUntilRace.map(String.init) ?? "—",
                              Pluriel.choisir(profile.daysUntilRace ?? 2,
-                                             String(localized: "JOUR"),
-                                             String(localized: "JOURS")),
+                                             String(localized: "Jour"),
+                                             String(localized: "Jours")),
                              highlighted: true)
-                        tile(goalTarget, "OBJECTIF", highlighted: false)
+                        tile(goalTarget, "Objectif", highlighted: false)
                         if let deniveleLabel {
                             tile(deniveleLabel, "D+", highlighted: false)
                         } else {
-                            tile(targetPaceLabel, "ALLURE", highlighted: false)
+                            tile(targetPaceLabel, "Allure", highlighted: false)
                         }
                     }
                 } else {
                     HStack(spacing: 10) {
                         tile("\(profile.weekNumber)", "SEMAINE", highlighted: true)
-                        tile(goalTarget, "OBJECTIF", highlighted: false)
+                        tile(goalTarget, "Objectif", highlighted: false)
                         tile("\(profile.streak)", "SÉRIE", highlighted: false)
                     }
                 }
@@ -472,7 +472,7 @@ struct RaceGoalView: View {
             // Was a bare `Text(label)` — never resolved through the String Catalog (pre-existing
             // gap on JOURS/OBJECTIF/ALLURE too), fixed in passing since this function was already
             // touched for the new SEMAINE/SÉRIE tiles.
-            Text(LocalizedStringKey(label)).font(RUFont.sans(.micro, weight: .bold)).tracking(1.5).foregroundColor(RUColor.text2)
+            Text(LocalizedStringKey(label)).metaStyle(color: RUColor.text2)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 18)

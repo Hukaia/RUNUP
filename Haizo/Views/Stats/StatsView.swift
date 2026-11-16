@@ -738,7 +738,7 @@ struct StatsView: View {
                     // L'ACCENT, PAS LE LIME. Le lime était là pour dire « le meilleur » ; mais
                     // la courbe elle-même est peinte à l'accent, et un sommet qui change de
                     // couleur se lit comme une autre donnée.
-                    Text("RECORD").font(RUFont.sans(.micro, weight: .bold)).foregroundColor(RUColor.rose)
+                    Text("Record").font(RUFont.sans(.micro, weight: .bold)).foregroundColor(RUColor.rose)
                 )
                 let labelSize = label.measure(in: size)
                 let fitsAbove = p.y - 14 - labelSize.height / 2 >= 1
@@ -811,9 +811,9 @@ struct StatsView: View {
                 // c'est une rangée ; au-delà, ce sont trois colonnes de mots coupés. Elles
                 // s'empilent plutôt — voir `RUTileRow`.
                 RUTileRow(spacing: 8) {
-                    predictionTile("PLUS LONGUE", longestRun.map { String(format: "%.1f km", locale: Locale.current, $0.distanceKm) } ?? "—", highlighted: false)
-                    predictionTile("MEILLEURE ALLURE", bestPaceSecPerKm.map { "\(PaceModel.formatDuration($0))/km" } ?? "—", highlighted: false)
-                    predictionTile("MEILLEURE SEM.", bestWeekKm > 0 ? String(format: "%.0f km", bestWeekKm) : "—", highlighted: false)
+                    predictionTile("Plus longue", longestRun.map { String(format: "%.1f km", locale: Locale.current, $0.distanceKm) } ?? "—", highlighted: false)
+                    predictionTile("Meilleure allure", bestPaceSecPerKm.map { "\(PaceModel.formatDuration($0))/km" } ?? "—", highlighted: false)
+                    predictionTile("Meilleure sem.", bestWeekKm > 0 ? String(format: "%.0f km", bestWeekKm) : "—", highlighted: false)
                 }
             }
         }
@@ -892,9 +892,9 @@ struct StatsView: View {
     /// that a 5K prediction stops being the useful end of the set.
     private var predictionDistances: [(String, Double)] {
         if let km = profile.effectiveRaceDistanceKm, km >= 28 {
-            return [("10 KM", 10), ("SEMI", 21.0975), ("MARATHON", 42.195)]
+            return [("10 km", 10), ("Semi", 21.0975), ("Marathon", 42.195)]
         }
-        return [("5 KM", 5), ("10 KM", 10), ("SEMI", 21.0975)]
+        return [("5 km", 5), ("10 km", 10), ("Semi", 21.0975)]
     }
 
     /// Which tile gets the "highlighted" treatment — used to always be a hardcoded 10K regardless
@@ -950,7 +950,7 @@ struct StatsView: View {
             // Catalog (only the `LocalizedStringKey` initializer does), so "5 KM"/"10 KM"/"SEMI"
             // silently never localized despite the app having EN/ES translations. Pre-existing gap,
             // fixed in passing since this function was already touched for the MARATHON tile.
-            Text(LocalizedStringKey(label)).font(RUFont.sans(.micro, weight: .bold)).tracking(1.5).foregroundColor(RUColor.text2)
+            Text(LocalizedStringKey(label)).metaStyle(color: RUColor.text2)
             Text(value).displayStyle(.title).foregroundColor(highlighted ? RUColor.rose2 : RUColor.textPrimary)
         }
         .frame(maxWidth: .infinity)

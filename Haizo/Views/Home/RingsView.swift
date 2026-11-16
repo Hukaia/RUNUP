@@ -193,7 +193,7 @@ struct RingsView: View {
                         // spring scale-in gives it the "achievement unlocked" beat the static text
                         // didn't have, matching the ring's own animate-on-appear fill above.
                         VStack(spacing: 6) {
-                            Text("JOURNÉE BOUCLÉE").displayStyle(.title).foregroundColor(RUColor.textPrimary)
+                            Text("Journée bouclée").displayStyle(.title).foregroundColor(RUColor.textPrimary)
                             Text("Tes \(p.dailyGoalsTotal) objectifs du jour atteints · +120 XP").font(RUFont.sans(.body)).foregroundColor(RUColor.text2)
                         }
                         .frame(maxWidth: .infinity)

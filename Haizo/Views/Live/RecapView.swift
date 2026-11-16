@@ -125,9 +125,9 @@ struct RecapView: View {
                             // `statTile` rend son libellé par un `Text(String)` nu — d'où les
                             // `String(localized:)`. « KM », « KCAL » et « D+ (m) » sont des
                             // symboles d'unité et restent tels quels.
-                            statTile(String(format: "%.2f", locale: Locale.current, run.distanceKm), "KM", index: 0)
-                            statTile(PaceModel.formatDuration(Double(run.durationSeconds)), String(localized: "TEMPS"), index: 1)
-                            statTile(run.avgPace, String(localized: "ALLURE MOY"), index: 2)
+                            statTile(String(format: "%.2f", locale: Locale.current, run.distanceKm), verbatim: "km", index: 0)
+                            statTile(PaceModel.formatDuration(Double(run.durationSeconds)), String(localized: "Temps"), index: 1)
+                            statTile(run.avgPace, String(localized: "Allure moy."), index: 2)
                         }
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                             // TROIS TUILES, TROIS COULEURS, AUCUNE RAISON — et `statTile` rend
@@ -579,7 +579,7 @@ struct RecapView: View {
     private func statTile(_ value: String, _ label: String, _ color: Color = RUColor.textPrimary, index: Int = 0) -> some View {
         VStack(spacing: 4) {
             Text(value).displayStyle(.title).foregroundColor(color)
-            Text(label).font(RUFont.sans(.micro, weight: .bold)).tracking(1.5).foregroundColor(RUColor.text2)
+            Text(label).metaStyle(color: RUColor.text2)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)

@@ -155,15 +155,15 @@ enum GoalType: String, Codable, CaseIterable, Identifiable {
 
     var etapeTitre: String {
         switch self {
-        case .race: return String(localized: "QUELLE COURSE ?")
-        case .progress: return String(localized: "TU VEUX QUOI, AU JUSTE ?")
-        case .restart: return String(localized: "TA DERNIÈRE SORTIE")
-        case .weight: return String(localized: "TON POINT DE DÉPART")
-        case .health: return String(localized: "COMBIEN DE TEMPS ?")
-        case .hyrox: return String(localized: "QUEL HYROX ?")
-        case .ultraTrail: return String(localized: "QUEL ULTRA ?")
-        case .triathlon: return String(localized: "QUEL TRIATHLON ?")
-        case .duathlon: return String(localized: "QUEL DUATHLON ?")
+        case .race: return String(localized: "Quelle course ?")
+        case .progress: return String(localized: "Tu veux quoi, au juste ?")
+        case .restart: return String(localized: "Ta dernière sortie")
+        case .weight: return String(localized: "Ton point de départ")
+        case .health: return String(localized: "Combien de temps ?")
+        case .hyrox: return String(localized: "Quel HYROX ?")
+        case .ultraTrail: return String(localized: "Quel ultra ?")
+        case .triathlon: return String(localized: "Quel triathlon ?")
+        case .duathlon: return String(localized: "Quel duathlon ?")
         }
     }
 

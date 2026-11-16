@@ -106,7 +106,7 @@ struct ClubEventsSection: View {
                             if event.repeatsWeekly == true {
                                 HStack(spacing: 4) {
                                     Image(systemName: "arrow.triangle.2.circlepath").font(RUFont.icone(.micro, weight: .bold))
-                                    Text("CHAQUE SEMAINE")
+                                    Text("Chaque semaine")
                                 }
                                 .font(RUFont.sans(.micro, weight: .bold)).tracking(0.4)
                                 .foregroundColor(RUColor.text3)

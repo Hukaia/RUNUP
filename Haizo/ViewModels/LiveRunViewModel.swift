@@ -310,7 +310,7 @@ final class LiveRunViewModel {
 
     /// Le libellé sous ce chiffre. Il devient le verbe du coach quand elle s'écarte de la cible
     /// — mais seulement en courant, puisque le plan ne vise rien à vélo.
-    var rythmeLibelle: String { discipline.rythmeLabelMajuscules }
+    var rythmeLibelle: String { discipline.rythmeLabel }
 
     /// L'allure récente face à la cible du jour.
     ///

@@ -17,7 +17,7 @@ struct HealthConnectStepView: View {
                 VStack(spacing: 0) {
                     ObTitle(
                         eyebrow: String(localized: "Étape 9 · tes données"),
-                        title: "CONNECTE TA MONTRE",
+                        title: "Connecte ta montre",
                         subtitle: "Pour une forme du jour plus précise — FC, sommeil, sorties passées. Facultatif, tu peux le faire plus tard."
                     )
                     VStack(spacing: 8) {
@@ -118,7 +118,7 @@ private struct ConnectRow: View {
                 } else if busy {
                     ProgressView().tint(RUColor.textPrimary)
                 } else if connected {
-                    Text("CONNECTÉ ✓").font(RUFont.sans(.small, weight: .bold)).foregroundColor(RUColor.lime)
+                    Text("Connecté ✓").font(RUFont.sans(.small, weight: .bold)).foregroundColor(RUColor.lime)
                 } else {
                     Text("Connecter")
                         .font(RUFont.sans(.small, weight: .semibold))

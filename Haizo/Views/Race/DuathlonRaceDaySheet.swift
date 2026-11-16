@@ -155,8 +155,8 @@ struct DuathlonRaceDaySheet: View {
 
             if connu {
                 HStack(spacing: 8) {
-                    chiffre(glucides, Text("G DE GLUCIDES SUR LE VÉLO"))
-                    chiffre(eau, Text("ML À EMBARQUER"))
+                    chiffre(glucides, Text("g de glucides sur le vélo"))
+                    chiffre(eau, Text("ml à embarquer"))
                 }
             }
 

@@ -567,6 +567,15 @@ jobs:
       - name: Vérifier que l'échelle de titrage reste fermée
         run: python3 ci_scripts/check_echelle.py
 
+      # Les capitales vivaient de TROIS façons : un `textCase` sur la vue, un `tracking` sur une
+      # chaîne déjà capitalisée, et les capitales DANS LA CHAÎNE, au catalogue, en trois langues.
+      # Les deux premières se voient en relisant une vue ; la troisième non — « ÉCHAUFFEMENT »
+      # est un littéral comme un autre, et il y en avait quarante-trois.
+      - name: Vérifier qu'aucun libellé n'est écrit tout en capitales
+        run: |
+          cd ci_scripts && python3 test_majuscules.py
+          cd .. && python3 ci_scripts/check_majuscules.py
+
       # Dix-neuf écarts verticaux continus de 0 à 22, et trente-trois valeurs de marge. `spacing: 9`
       # à côté de cent `spacing: 8` est un nombre parfaitement valide pour le compilateur, et c'est
       # comme ça que les dix-neuf sont arrivées — une par une, sans que personne ait à les défendre.

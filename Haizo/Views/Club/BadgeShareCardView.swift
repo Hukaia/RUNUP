@@ -31,7 +31,7 @@ struct BadgeShareCardView: View {
                     .shadow(color: color.opacity(0.45), radius: 30)
 
                 VStack(spacing: 6) {
-                    Text("BADGE DÉBLOQUÉ")
+                    Text("Badge débloqué")
                         .font(RUFont.sans(.body, weight: .bold))
                         .tracking(2.5)
                         .foregroundColor(color)

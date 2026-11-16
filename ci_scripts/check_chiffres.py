@@ -13,8 +13,16 @@ qui tombait sous la main — exactement comme les vingt-six tailles de titrage e
 écarts verticaux. À ceci près que celui-là porte sur l'objet le plus regardé d'une app de course.
 
 CE QUE LE SCRIPT CHERCHE. Un `HStack` aligné sur une ligne de base qui contient à la fois un
-`displayStyle` (donc un chiffre) et un `RUFont.sans` (donc son unité, composée à la main). C'est
-la forme exacte des neuf, et la seule façon d'en écrire un dixième.
+`displayStyle` (donc un chiffre) et une unité composée à la main. C'est la forme exacte des neuf,
+et la seule façon d'en écrire un dixième.
+
+TROIS ÉCRITURES POUR L'UNITÉ, ET IL EN MANQUAIT DEUX. Le motif ne connaissait que `RUFont.sans`.
+Le 16 novembre, le point 1 du brief a fait passer les libellés de chiffre par un style déclaré,
+`metaStyle` — et le dernier couple composé à la main de l'app a DISPARU DE LA VUE DU GARDE sans
+que rien ne change à l'écran. Il était toujours là, il ne s'écrivait plus pareil.
+
+C'est la même forme de trou que le dégradé peint dans un `Canvas` et que le 96 du compte à
+rebours : un garde ne voit que les orthographes qu'on lui a données.
 
 Aucun compilateur ne peut refuser ça : les deux lignes sont parfaitement valides séparément.
 """
@@ -54,7 +62,8 @@ for chemin in sorted(RACINE.rglob("*.swift")):
                 break
         if not any("displayStyle(" in b for b in utile):
             continue
-        if not any("RUFont.sans(" in b for b in utile):
+        if not any(("RUFont.sans(" in b or "metaStyle(" in b or "eyebrowStyle(" in b)
+                   for b in utile):
             continue
         compte[rel] = compte.get(rel, 0) + 1
         if rel in AUTORISE:

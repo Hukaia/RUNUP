@@ -463,13 +463,13 @@ struct LiveRunView: View {
     /// le jour où un compteur de longueurs existerait, cet écran n'aurait pas à être retouché, et
     /// en attendant le compilateur n'a pas à se faire taire avec un `default`.
     private var libelleEtat: LocalizedStringKey {
-        if vm?.isAutoPaused == true { return "PAUSE AUTO" }
-        if vm?.isPaused == true { return "EN PAUSE" }
+        if vm?.isAutoPaused == true { return "Pause auto" }
+        if vm?.isPaused == true { return "En pause" }
         switch vm?.discipline ?? .run {
-        case .run: return "EN DIRECT"
-        case .bike: return "VÉLO · EN DIRECT"
-        case .trail: return "TRAIL · EN DIRECT"
-        case .swim: return "NAGE · EN DIRECT"
+        case .run: return "En direct"
+        case .bike: return "Vélo · en direct"
+        case .trail: return "Trail · en direct"
+        case .swim: return "Nage · en direct"
         }
     }
 
@@ -680,9 +680,8 @@ struct LiveRunView: View {
                         .monospacedDigit()
                         .contentTransition(.numericText())
                         .animation(RUMotion.respecting(reduceMotion, RUMotion.digit), value: vm?.distanceKm ?? 0)
-                    Text(verbatim: "KM")
-                        .font(RUFont.sans(.micro, weight: .bold)).tracking(1.5)
-                        .foregroundColor(Ink.label)
+                    Text(verbatim: "km")
+                        .metaStyle(color: Ink.label)
                 }
             }
             .accessibilityElement(children: .combine)
@@ -870,9 +869,9 @@ struct LiveRunView: View {
         let drift: Bool = standing == .tooSlow || standing == .tooFast
         let label: String
         switch standing {
-        case .tooSlow: label = String(localized: "ACCÉLÈRE")
-        case .tooFast: label = String(localized: "RALENTIS")
-        case .onTarget, .unknown: label = vm?.rythmeLibelle ?? String(localized: "ALLURE")
+        case .tooSlow: label = String(localized: "Accélère")
+        case .tooFast: label = String(localized: "Ralentis")
+        case .onTarget, .unknown: label = vm?.rythmeLibelle ?? String(localized: "Allure")
         }
         let value = vm?.rythmeRecent ?? "--:--"
         // Pas le libellé affiché : « Allure 8:32 par kilomètre, ALLURE » est ce que donnerait sa
@@ -901,7 +900,7 @@ struct LiveRunView: View {
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
             Text(label)
-                .font(RUFont.sans(.micro, weight: .bold)).tracking(1.5)
+                .metaStyle(color: Ink.label)
                 .foregroundColor(drift ? Ink.amber : Ink.label)
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
@@ -942,7 +941,7 @@ struct LiveRunView: View {
             Text(value).displayStyle(.figure).foregroundColor(color)
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
-            Text(label).font(RUFont.sans(.micro, weight: .bold)).tracking(1.5).foregroundColor(Ink.label)
+            Text(label).metaStyle(color: Ink.label)
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
         }

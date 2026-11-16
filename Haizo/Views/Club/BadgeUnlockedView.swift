@@ -71,7 +71,7 @@ struct BadgeUnlockedView: View {
                 .frame(height: 180)
 
                 VStack(spacing: 8) {
-                    Text("BADGE DÉBLOQUÉ")
+                    Text("Badge débloqué")
                         .font(RUFont.sans(.small, weight: .bold))
                         .tracking(2.5)
                         .foregroundColor(RUColor.text3)

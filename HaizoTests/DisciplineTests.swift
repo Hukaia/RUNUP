@@ -116,7 +116,6 @@ final class DisciplineTests: XCTestCase {
                           "le vélo ne mesure pas une allure")
         for discipline in Discipline.allCases {
             XCTAssertFalse(discipline.rythmeLabel.isEmpty, "\(discipline) sans libellé")
-            XCTAssertFalse(discipline.rythmeLabelMajuscules.isEmpty, "\(discipline) sans capitales")
         }
     }
 

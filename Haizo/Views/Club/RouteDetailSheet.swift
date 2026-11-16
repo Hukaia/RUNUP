@@ -103,7 +103,7 @@ struct RouteDetailSheet: View {
     private var stats: some View {
         HStack(spacing: 10) {
             if let km = current.distanceKm {
-                statTile(String(format: "%.1f", locale: Locale.current, km), String(localized: "KM"))
+                statTile(String(format: "%.1f", locale: Locale.current, km), String(localized: verbatim: "km"))
             }
             if let elevation = current.elevationGainM, elevation > 0 {
                 statTile("\(elevation)", String(localized: "D+"))
@@ -111,7 +111,7 @@ struct RouteDetailSheet: View {
             // Le temps de la personne qui a publié, pas un objectif : le libellé le dit, sinon la
             // carte d'entraide devient un classement déguisé.
             if let seconds = current.durationSeconds, seconds > 0 {
-                statTile(PaceModel.formatDuration(Double(seconds)), String(localized: "SON TEMPS"))
+                statTile(PaceModel.formatDuration(Double(seconds)), String(localized: "Son temps"))
             }
             statTile("\(current.savesCount)", String(localized: "GARDÉ"))
         }

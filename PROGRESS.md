@@ -7155,3 +7155,65 @@ que 11 h est avant 18 h : la scène ne montre jamais une sortie pas encore couru
 
 Conséquence assumée : la date en haut de la fiche dira « dimanche 15 novembre » et non le jour de
 la campagne. C'est la scène.
+
+## 16 novembre 2026 — les majuscules espacées, et les trois façons dont elles vivaient
+
+> « Supprimer les majuscules espacées ("TA JOURNÉE", "CE QU'IL REGARDE", "ALLURE CIBLE") : ce
+> sont des labels en 12 gris, casse normale. » — point 1 du brief du 15 novembre.
+
+C'était le dernier morceau du brief qui restait, et il n'avait jamais été fait.
+
+### Trois façons, et retirer l'une laissait les deux autres
+
+1. **`.textCase(.uppercase)` posé sur la vue** — sept emplois, sur l'accueil et le Coach.
+2. **`tracking(1.5)` sur une chaîne déjà capitalisée.** Et ce style était **écrit cinq fois**,
+   mot pour mot : `LiveRunView` (trois fois), `RecapView`, `StatsView`, `RaceGoalView`. C'est ce
+   qui a permis à `eyebrowStyle` de perdre ses capitales le 15 novembre pendant que les cinq
+   autres gardaient les leurs. Un seul `metaStyle()` les coiffe — 12 points, gris, casse normale,
+   pas d'interlettrage.
+3. **Les capitales dans la chaîne elle-même**, au catalogue, en trois langues — **43 clés**.
+   Celles-là ne se voient pas en relisant une vue : « ÉCHAUFFEMENT » est un littéral comme un
+   autre. 34 clés en casse normale les remplacent, 9 existaient déjà.
+
+### Deux clés pour un mot dont seule la casse changeait
+
+`Discipline.rythmeLabel` rendait « Allure » ; `rythmeLabelMajuscules` rendait « ALLURE ». Deux
+traductions à tenir, dans trois langues, parce qu'un libellé d'écran était en capitales. Le
+jumeau est parti avec la raison qui le faisait exister.
+
+### Où passe la ligne, et comment la déplacer
+
+Les trois exemples du brief sont des **labels**. Un bouton en capitales est autre chose : une
+convention assumée, que le brief ne nomme nulle part. Restent donc **67 libellés dans 30
+fichiers** — des boutons, deux affiches qu'on exporte (la carte de partage, les images de la
+vidéo), l'onglet `RUN`, et une dette nommée.
+
+Le jour où Charlotte tranche que les boutons passent en casse normale, c'est la liste de
+`check_majuscules.py` qui se vide — et comme il compte dans les deux sens, il le dira.
+
+### La dette, et sa condition de levée
+
+« EN PAUSE » et « EN COURS » sur la montre **sont** des labels. `check_requis.py` a refusé le
+changement : la capture montre **livrée à Apple** est empreintée contre **tout** le code de la
+cible `HaizoWatch`, et elle ne se recompose pas dans ce conteneur — elle se prend sur un
+simulateur watchOS. Deux mots en casse normale contre une capture App Store qui montrerait autre
+chose que l'app : le marché est mauvais. Le widget les garde par symétrie — le même état écrit de
+deux façons sur deux surfaces serait pire.
+
+La condition de levée est écrite dans le garde : refaire la capture sur un Mac, puis ces deux
+entrées disparaissent.
+
+### Un troisième trou d'orthographe, après le dégradé et le 96
+
+`check_chiffres.py` refuse qu'un grand chiffre et son unité soient composés à la main, et il en
+tolère exactement un. Son motif cherchait `RUFont.sans`. En faisant passer l'unité par
+`metaStyle`, **le dernier couple à la main de l'app est sorti de son champ** sans que rien ne
+change à l'écran — toujours là, simplement plus écrit pareil.
+
+Trois fois dans la même journée : le dégradé peint dans un `Canvas`, le 96 du compte à rebours
+écrit avec `display(horsEchelle:)` plutôt que `displayStyle(horsEchelle:)`, et celui-ci. **Un
+garde ne voit que les orthographes qu'on lui a données** — et ça se vérifie en changeant une
+écriture, pas en relisant le garde.
+
+`check_cablage.py` a refusé aussi : le nouveau garde et ses cas ne tournaient dans aucun
+workflow. Il vérifie exactement ça, et c'est pour ça qu'il existe.

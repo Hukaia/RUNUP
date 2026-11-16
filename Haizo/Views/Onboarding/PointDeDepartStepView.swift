@@ -31,7 +31,7 @@ struct PointDeDepartStepView: View {
                 // écrans plus loin. Deux écrans d'une même inscription ne peuvent pas porter le
                 // même titre — on ne saurait plus lequel on est en train de lire.
                 ObTitle(eyebrow: "Étape 4 · ton point de départ",
-                        title: "CE QUE TU COURS DÉJÀ",
+                        title: "Ce que tu cours déjà",
                         subtitle: "Le plan part d'ici. Pas de ce que tu voudrais courir.")
 
                 VStack(alignment: .leading, spacing: 0) {

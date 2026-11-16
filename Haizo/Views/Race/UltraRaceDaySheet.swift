@@ -43,9 +43,9 @@ struct UltraRaceDaySheet: View {
             RUCardHeader(icon: "fork.knife", title: "Le ravitaillement")
 
             HStack(spacing: 8) {
-                chiffre(glucidesParHeure, Text("G DE GLUCIDES / H"))
-                chiffre(eauParHeure, Text("ML DE BOISSON / H"))
-                chiffre(sodiumParHeure, Text("MG DE SEL / H"))
+                chiffre(glucidesParHeure, Text("g de glucides / h"))
+                chiffre(eauParHeure, Text("ml de boisson / h"))
+                chiffre(sodiumParHeure, Text("mg de sel / h"))
             }
 
             if connu {
