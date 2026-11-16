@@ -5254,22 +5254,6 @@
         }
       }
     },
-    "BOUCLÉS": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DONE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "COMPLETADOS"
-          }
-        }
-      }
-    },
     "BPM MOY": {
       "localizations": {
         "en": {
@@ -5640,6 +5624,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gorro y guantes en cuanto la noche sea posible. El frío llega al pararse, no en movimiento."
+          }
+        }
+      }
+    },
+    "Bouclés": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completados"
           }
         }
       }

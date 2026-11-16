@@ -560,23 +560,21 @@ struct StatsView: View {
         .background(RUColor.card2, in: Capsule())
     }
 
-    /// # LA COURBE D'ALLURE EST LE DESSIN DE CET ÉCRAN
+    /// # LA COURBE D'ALLURE EST LE DESSIN DE CET ÉCRAN — SUR DU BLANC
     ///
-    /// Les Stats mesuraient 1,9 % de surface sombre en thème clair (DESIGN.md § 9) : quatre
-    /// tuiles à sparkline, une carte de semaine et cette courbe, toutes sur du blanc. Or la
-    /// courbe est la seule chose de l'écran qu'on REGARDE avant de lire — c'est elle qui dit en
-    /// un coup d'œil si ça monte ou si ça descend, et elle porte le point RECORD.
+    /// Elle l'est restée ; c'est le fond qui change. Du 13 au 16 novembre elle vivait sur une
+    /// carte de nuit, et le brief du 15 novembre la nomme : « la courbe de stats devient un
+    /// trait accent de 2 px sur fond blanc, avec un remplissage à 8 % d'opacité, sans glow, sur
+    /// carte blanche et non noire ».
     ///
-    /// Elle passe donc sur la nuit, avec l'allure et son écart posés dessus. Les règles sont
-    /// énoncées une fois dans `CarteDeNuit` ; ce qui est particulier ici :
+    /// CE QUE ÇA REND. Sur la nuit, la courbe était peinte à l'accent PLEINE FORCE, avec un
+    /// dégradé sous elle et un point RECORD en lime — trois intensités pour une seule donnée.
+    /// Sur du blanc il ne reste qu'un trait et son aplat : la forme se lit sans que rien d'autre
+    /// ne s'allume.
     ///
-    /// - Le SÉLECTEUR de fenêtre reste sur la page. C'est une commande, pas une donnée : une
-    ///   carte de nuit porte le dessin et sa légende, rien qu'on manipule.
-    /// - Les états vides n'ont PAS de carte de nuit, et c'est la règle 1 qui le décide — « un
-    ///   écran qui n'a rien à dessiner n'a pas de carte de nuit ». Moins de deux sorties, pas de
-    ///   courbe : une phrase sur une carte blanche, comme avant.
-    /// - Les extrêmes « Plus rapide / Plus lente » restent sous la carte, sur la page. Ce sont
-    ///   deux repères chiffrés qui commentent le dessin, pas le dessin.
+    /// Ce qui ne change pas : le SÉLECTEUR de fenêtre et les extrêmes « Plus rapide / Plus
+    /// lente » restent hors du dessin — l'un est une commande, les autres deux repères qui le
+    /// commentent. Et sous deux sorties il n'y a pas de courbe du tout : une phrase, rien d'autre.
     private var paceCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             RUCardHeader(icon: "speedometer",
@@ -585,14 +583,13 @@ struct StatsView: View {
                 rangePicker
             }
             if let recentAvgPace, recentPacesSecPerKm.count >= 2 {
-                CarteDeNuit(hauteur: 206, pose: .hautGauche, marge: 0) {
+                VStack(alignment: .leading, spacing: 12) {
+                    enteteDAllure(recentAvgPace)
                     courbeDAllure
-                        .padding(.horizontal, RUSpacing.cardPadding)
-                        .padding(.bottom, RUSpacing.cardPadding)
-                        .frame(maxHeight: .infinity, alignment: .bottom)
-                } legende: {
-                    enteteDAllure(recentAvgPace, surLaNuit: true)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(RUSpacing.cardPadding)
+                .ruCard()
                 if let minPace = recentPacesSecPerKm.min(), let maxPace = recentPacesSecPerKm.max(), minPace != maxPace {
                     HStack {
                         Text("Plus rapide \(PaceModel.formatDuration(minPace))/km")
@@ -612,7 +609,7 @@ struct StatsView: View {
                 // 7 derniers jours, c'est le message qui donne tort à l'app.
                 VStack(alignment: .leading, spacing: 8) {
                     if let recentAvgPace {
-                        enteteDAllure(recentAvgPace, surLaNuit: false)
+                        enteteDAllure(recentAvgPace)
                     }
                     Text(recentAvgPace == nil && runs.isEmpty
                          ? "Termine quelques courses pour voir ton allure évoluer ici."
@@ -633,31 +630,28 @@ struct StatsView: View {
     /// sans courbe avait silencieusement perdu l'écart avec la période précédente : une sortie
     /// dans la fenêtre suffit pourtant à le calculer, et c'est là qu'il est le plus utile.
     ///
-    /// `surLaNuit` décide de l'encre, pas de la mise en page. Un seul paramètre booléen plutôt
-    /// que trois couleurs passées à la main : les appelants ne choisissent pas des couleurs, ils
-    /// disent sur quel fond ils sont, et le composant sait le reste.
+    /// ELLE AVAIT UN PARAMÈTRE `surLaNuit`, ET IL EST PARTI AVEC LA NUIT. Les deux appelants
+    /// passent désormais la même valeur : un booléen qui ne prend qu'une valeur ne décrit plus
+    /// un choix, il entretient l'idée qu'il en reste un. Les encres de la page sont écrites ici
+    /// en clair.
     @ViewBuilder
-    private func enteteDAllure(_ allure: Double, surLaNuit: Bool) -> some View {
+    private func enteteDAllure(_ allure: Double) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(alignment: .lastTextBaseline, spacing: 6) {
                 RUChiffre(valeur: PaceModel.formatDuration(allure), unite: "/km", cran: .banner,
-                          couleur: surLaNuit ? RUColor.surLaNuit : RUColor.textPrimary,
-                          couleurDeLUnite: surLaNuit ? RUColor.surLaNuit2 : RUColor.text3)
+                          couleur: RUColor.textPrimary,
+                          couleurDeLUnite: RUColor.text3)
                 // Poussé au bord droit : collé au « /km », l'écart se lisait comme une deuxième
                 // unité accrochée au chiffre héros ; à l'opposé de la ligne, il se lit comme ce
                 // qu'il est — une comparaison, en vis-à-vis de l'allure qu'elle commente.
                 Spacer(minLength: 8)
                 if let previousAvgPace {
                     let delta = previousAvgPace - allure // positif = plus rapide maintenant
-                    // Le fond par défaut de la pastille est « noir à 5 % » en thème clair,
-                    // c'est-à-dire rien du tout sur la nuit. Le composant prévoit `background`
-                    // pour les fonds qui ne sont pas ceux du thème ; c'en est un.
                     StatChip(
                         text: delta >= 0 ? "▲ \(Int(delta.rounded()))″/km" : "▼ \(Int(-delta.rounded()))″/km",
                         // Même raison qu'au bilan de la semaine : la flèche porte le sens, la
                         // couleur ne faisait que le juger.
-                        color: surLaNuit ? RUColor.surLaNuit2 : RUColor.text2,
-                        background: surLaNuit ? RUColor.surLaNuit.opacity(0.10) : nil
+                        color: RUColor.text2
                     )
                 }
             }
@@ -665,17 +659,24 @@ struct StatsView: View {
                  String(localized: "\(chartRuns.count) sortie · \(selectedRange.caption)"),
                  String(localized: "\(chartRuns.count) sorties · \(selectedRange.caption)")))
                 .font(RUFont.sans(.small))
-                .foregroundColor(surLaNuit ? RUColor.surLaNuit2 : RUColor.text2)
+                .foregroundColor(RUColor.text2)
         }
     }
 
     /// La courbe elle-même : une sortie par point, la plus rapide en haut.
     ///
-    /// Elle est peinte avec les couleurs de la NUIT, pas celles de la page. `RUColor.rose` rend
-    /// la variante descendue pour le fond blanc dès que le thème est clair ; le point RECORD, en
-    /// `RUColor.lime`, tombait à 3,4:1 sur la nuit au lieu de 13,8. Et les deux `RUColor.card`
-    /// qui détouraient le point et son étiquette peignaient du BLANC : sur la nuit, détourer
-    /// veut dire reprendre le fond, donc `traceBackground`.
+    /// ELLE REVIENT SUR LES COULEURS DE LA PAGE. Le 13 novembre elle était passée sur la nuit, et
+    /// chaque encre avait suivi — l'accent pleine force, un détourage en `traceBackground`, une
+    /// plaque d'étiquette en blanc dilué. Le brief du 15 novembre la ramène sur du blanc, et
+    /// chacune de ces encres fait le chemin inverse : `RUColor.rose` rend ici la variante
+    /// descendue pour fond clair, et détourer veut de nouveau dire peindre la carte.
+    ///
+    /// TROIS VALEURS VIENNENT DU BRIEF, mot pour mot : « un trait accent de 2 px », « un
+    /// remplissage à 8 % d'opacité », « sans glow ». Le trait faisait 2,5 et l'aplat était un
+    /// DÉGRADÉ de 35 % à transparent — le seul dégradé de l'interface que `check_degrade.py` ne
+    /// pouvait pas voir, parce qu'il est peint dans un `Canvas` et non déclaré en SwiftUI. Son
+    /// en-tête le dit depuis le premier jour : « ce qu'il ne voit pas : un dégradé fabriqué
+    /// autrement, une image, un `Canvas` ».
     private var courbeDAllure: some View {
         Canvas { context, size in
             let points = recentPacesSecPerKm
@@ -703,19 +704,23 @@ struct StatsView: View {
             }
             fill.addLine(to: CGPoint(x: size.width - bord, y: size.height))
             fill.closeSubpath()
-            context.fill(fill, with: .linearGradient(Gradient(colors: [RUColor.accentDeLaNuit.opacity(0.35), .clear]), startPoint: .zero, endPoint: CGPoint(x: 0, y: size.height)))
-            context.stroke(line, with: .color(RUColor.accentDeLaNuit), lineWidth: 2.5)
-            context.fill(Path(ellipseIn: CGRect(x: lastPoint.x - 3.5, y: lastPoint.y - 3.5, width: 7, height: 7)), with: .color(RUColor.accentDeLaNuit))
+            context.fill(fill, with: .color(RUColor.rose.opacity(0.08)))
+            context.stroke(line, with: .color(RUColor.rose), lineWidth: 2)
+            context.fill(Path(ellipseIn: CGRect(x: lastPoint.x - 3.5, y: lastPoint.y - 3.5, width: 7, height: 7)), with: .color(RUColor.rose))
 
             // Her all-time best pace, marked right on the trend line instead of only
             // living in a separate "records" card further down — was invisible here
             // even when the exact point plotted WAS the record.
             if let recordIndex = recordPointIndex, recordIndex < pointPositions.count {
                 let p = pointPositions[recordIndex]
-                context.fill(Path(ellipseIn: CGRect(x: p.x - 4, y: p.y - 4, width: 8, height: 8)), with: .color(RUColor.limeSombre))
-                // Le détourage reprend le fond : sur la nuit, détourer veut dire creuser un
-                // liseré de nuit entre la pastille lime et le tracé qu'elle croise.
-                context.fill(Path(ellipseIn: CGRect(x: p.x - 5, y: p.y - 5, width: 10, height: 10)).strokedPath(StrokeStyle(lineWidth: 2)), with: .color(RUColor.traceBackground))
+                // L'ACCENT, PLUS LE LIME. Point 2 du brief, qui le nomme : « le lime de RECORD
+                // devient l'accent ». L'étiquette avait déjà fait ce chemin le 16 novembre, la
+                // pastille non — le mot et le point qu'il désigne étaient de deux couleurs.
+                context.fill(Path(ellipseIn: CGRect(x: p.x - 4, y: p.y - 4, width: 8, height: 8)), with: .color(RUColor.rose))
+                // Le détourage reprend le fond : sur la carte, c'est la carte. Il compte double
+                // maintenant que la pastille et le trait sont de la même couleur — sans ce
+                // liseré, le sommet se fondrait dans la courbe qu'il marque.
+                context.fill(Path(ellipseIn: CGRect(x: p.x - 5, y: p.y - 5, width: 10, height: 10)).strokedPath(StrokeStyle(lineWidth: 2)), with: .color(RUColor.card))
 
                 // Le mot était coupé par la courbe. Un record d'allure est un point
                 // BAS en valeur, donc HAUT à l'écran : `max(9, p.y - 14)` le plaquait
@@ -730,11 +735,10 @@ struct StatsView: View {
                 // derrière elle dans tous les cas, parce qu'au milieu d'un graphique
                 // aucune position n'est à l'abri d'un trait qui passe.
                 let label = context.resolve(
-                    // L'ACCENT, PAS LE LIME. Le lime de la nuit était là pour dire « le
-                    // meilleur » ; mais la courbe elle-même est peinte à l'accent, et un
-                    // sommet qui change de couleur se lit comme une autre donnée. Il garde
-                    // l'encre de la nuit — voir le commentaire de `courbeDAllure`.
-                    Text("RECORD").font(RUFont.sans(.micro, weight: .bold)).foregroundColor(RUColor.accentDeLaNuit)
+                    // L'ACCENT, PAS LE LIME. Le lime était là pour dire « le meilleur » ; mais
+                    // la courbe elle-même est peinte à l'accent, et un sommet qui change de
+                    // couleur se lit comme une autre donnée.
+                    Text("RECORD").font(RUFont.sans(.micro, weight: .bold)).foregroundColor(RUColor.rose)
                 )
                 let labelSize = label.measure(in: size)
                 let fitsAbove = p.y - 14 - labelSize.height / 2 >= 1
@@ -743,22 +747,22 @@ struct StatsView: View {
                 let labelX = min(max(p.x, halfWidth + 3), size.width - halfWidth - 3)
                 // UNE PASTILLE, ET NON UNE PLAQUE DE LA COULEUR DU FOND.
                 //
-                // Sur la carte blanche, le fond de l'étiquette était `RUColor.card` : du blanc sur
-                // du blanc, donc invisible — il ne faisait qu'effacer le trait derrière le mot.
-                // Repris tel quel sur la nuit, il est devenu un RECTANGLE SOMBRE posé sur la
-                // courbe : la capture du 13 novembre montre le tracé qui disparaît dessous et
-                // semble cassé.
+                // Elle a été les deux, et les deux étaient fausses. `RUColor.card` sur la carte
+                // blanche : du blanc sur du blanc, invisible — il ne faisait qu'effacer le trait
+                // derrière le mot. Repris tel quel sur la nuit : un RECTANGLE SOMBRE posé sur la
+                // courbe, et la capture du 13 novembre montre le tracé qui disparaît dessous.
                 //
-                // Un fond légèrement PLUS CLAIR que la nuit se lit comme un objet voulu, à l'image
-                // de la pastille d'écart juste au-dessus dans la même carte — qui porte exactement
-                // cette valeur. Et une capsule, parce qu'un coin de 4 points sur une étiquette de
-                // treize de haut n'est ni carré ni rond.
+                // De retour sur du blanc, elle ne reprend donc PAS `RUColor.card` : une surface
+                // déclarée, `card2`, qui se lit comme un objet voulu au lieu d'un trou. C'est le
+                // jeton que portent les pastilles depuis le point 4 du brief. Et une capsule,
+                // parce qu'un coin de 4 points sur une étiquette de treize de haut n'est ni
+                // carré ni rond.
                 let plate = CGRect(x: labelX - halfWidth - 7,
                                    y: labelY - labelSize.height / 2 - 3,
                                    width: labelSize.width + 14,
                                    height: labelSize.height + 6)
                 context.fill(Path(roundedRect: plate, cornerRadius: plate.height / 2),
-                             with: .color(RUColor.surLaNuit.opacity(0.10)))
+                             with: .color(RUColor.card2))
                 context.draw(label, at: CGPoint(x: labelX, y: labelY))
             }
         }

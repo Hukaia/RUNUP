@@ -7,9 +7,10 @@ import SwiftUI
 /// Ce n'est pas une répétition, c'est une grammaire : la forme d'un entraînement se lit en
 /// hauteurs côte à côte, qu'on regarde un bloc ou une semaine.
 ///
-/// IL VIT SUR LES DEUX FONDS. Né sur la carte de nuit du Coach — voir `CarteDeNuit` pour la
-/// règle —, il est devenu le 14 novembre la semaine de l'accueil aussi, sur carte blanche. Ses
-/// encres suivent donc `surLaNuit`, et non le thème.
+/// IL A VÉCU SUR LES DEUX FONDS, du 13 au 16 novembre : né sur la carte de nuit du Coach, puis
+/// posé sur la carte blanche de l'accueil le 14. Il recevait donc un booléen `surLaNuit` et
+/// calibrait ses encres sur le fond. Le brief du 15 novembre borne la nuit au tracé GPS et à
+/// l'écran de séance ; le Coach est passé en blanc, et le ruban n'a plus qu'un fond.
 ///
 /// # UNE SEULE SEMAINE DANS L'APP
 ///
@@ -39,13 +40,6 @@ struct RubanDeSemaine: View {
     var jours: [PlannedDay]
     /// 0 = lundi. Hors de 0...6, aucun jour n'est marqué.
     var aujourdHui: Int
-    /// Sur une carte de nuit, ou sur une carte blanche ?
-    ///
-    /// Le ruban est né sur la nuit du Coach, et l'accueil le pose sur du blanc depuis qu'il a
-    /// remplacé sa bande de semaine. Un booléen plutôt que des couleurs passées à la main :
-    /// l'appelant ne choisit pas une palette, il dit sur quel fond il est. Même règle que
-    /// `DailyGoalsBarsView` et que `RUColor.surLaNuit`.
-    var surLaNuit: Bool = true
     /// Afficher le quantième sous l'initiale.
     ///
     /// L'accueil s'en sert, le Coach non. C'est ce que la bande de l'accueil faisait de plus que
@@ -67,10 +61,10 @@ struct RubanDeSemaine: View {
     @Environment(\.dynamicTypeSize) private var tailleDuTexte
     private var montreLesQuantiemes: Bool { quantiemes && !tailleDuTexte.isAccessibilitySize }
 
-    /// L'encre pleine : blanche sur la nuit, celle du thème sur une carte.
-    private var encre: Color { surLaNuit ? RUColor.surLaNuit : RUColor.textPrimary }
+    /// L'encre pleine.
+    private var encre: Color { RUColor.textPrimary }
     /// L'encre seconde, pour les jours qui ne sont pas aujourd'hui.
-    private var encre2: Color { surLaNuit ? RUColor.surLaNuit2 : RUColor.text3 }
+    private var encre2: Color { RUColor.text3 }
 
     /// Le lundi de la semaine en cours, pour les quantièmes.
     ///
@@ -179,19 +173,15 @@ struct RubanDeSemaine: View {
     /// La couleur d'une marque, sur le fond où elle est posée.
     ///
     /// LE REPOS EST LE SEUL CAS QUI NE SUIT PAS `SessionFamily.tint`, et c'est une mesure qui l'a
-    /// décidé. Sur la nuit, un jour de repos est du blanc à 28 % : 2,50:1, il recule. Sur la
-    /// page, `tint` rend `RUColor.text3`, soit 7,25:1 — trois fois le poids, pour dire la même
-    /// chose. Le creux de la semaine avançait donc sur un fond et reculait sur l'autre.
-    ///
-    /// `text4` donne 2,10:1 : le même retrait. Et c'est bien un jeton du système, pas une valeur
-    /// trouvée à l'œil.
+    /// décidé. `tint` rend `RUColor.text3` pour le repos, soit 7,25:1 : trois fois le poids d'un
+    /// creux. `text4` donne 2,10:1 — le retrait qu'on veut, et c'est bien un jeton du système,
+    /// pas une valeur trouvée à l'œil.
     ///
     /// Le jeton partagé, lui, ne bouge PAS : il colore aussi le symbole de repos des lignes de
     /// jour du Plan — un croissant de lune de quinze points qu'il faut pouvoir lire. Une barre
     /// qui dit « creux » et un glyphe qui dit « repos » ne demandent pas le même poids.
     private func couleur(de famille: SessionFamily) -> Color {
-        if surLaNuit { return famille.tintSurLaNuit }
-        return famille == .rest ? RUColor.text4 : famille.tint
+        famille == .rest ? RUColor.text4 : famille.tint
     }
 
     /// Le quantième du jour `index` de la semaine en cours, ou `nil` si le calendrier n'a pas su.

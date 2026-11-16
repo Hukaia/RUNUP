@@ -709,24 +709,15 @@ extension SessionFamily {
         }
     }
 
-    /// Les mêmes sept, sur une carte de nuit.
-    ///
-    /// Six d'entre elles sont des couleurs sémantiques, dont le commentaire dit déjà que « les
-    /// valeurs du mode sombre sont calibrées pour ressortir sur du presque-noir » — et la nuit
-    /// EST du presque-noir, dans les deux thèmes. Le repos passe de `text3`, un gris sombre
-    /// invisible sur `#14131E`, à du blanc très voilé : un jour sans séance doit se lire comme
-    /// un creux, pas comme une absence de pixel.
-    var tintSurLaNuit: Color {
-        switch self {
-        case .rest: return RUColor.surLaNuit.opacity(0.28)
-        case .recovery: return RUColor.cyanSombre
-        case .endurance: return RUColor.limeSombre
-        case .longRun: return RUColor.grapeSombre
-        case .tempo: return RUColor.amberSombre
-        case .intervals: return RUColor.emberSombre
-        case .functional: return RUColor.azureSombre
-        }
-    }
+    // IL A EXISTÉ `tintSurLaNuit`, les mêmes sept familles sur une carte de nuit, du 13 au
+    // 16 novembre. Seul `RubanDeSemaine` l'appelait, et seulement quand le Coach le posait sur
+    // la nuit. Le brief du 15 novembre borne la nuit au tracé GPS et à l'écran de séance : plus
+    // aucune INTENSITÉ ne se peint sur du presque-noir, et la table n'avait plus de lecteur.
+    //
+    // Elle ne portait d'ailleurs aucune connaissance propre — six de ses sept cas rendaient les
+    // jumelles de nuit déjà déclarées plus haut, `limeSombre` et les cinq autres, qui restent et
+    // servent le thème sombre. Le septième, le repos en blanc voilé, est le seul qu'elle
+    // décidait, et le ruban peint maintenant `text4`, mesuré au même retrait.
 
     /// Le symbole qui accompagne la couleur.
     ///

@@ -29,8 +29,19 @@ sur la nuit, aucun jeton qui suit le thème. L'encre est `RUColor.surLaNuit*`, l
 
 Une vue tierce appelée depuis une carte de nuit : son corps est écrit ailleurs. C'est pourquoi
 `FICHIERS_DE_NUIT` existe — un composant qui ne vit que sur la nuit y est inscrit, et tout son
-fichier est tenu à la règle. Un composant qui vit sur les DEUX fonds ne s'y inscrit pas : il
-reçoit un paramètre (`surLaNuit`) et choisit, comme `DailyGoalsBarsView` et `RubanDeSemaine`.
+fichier est tenu à la règle.
+
+# CE QU'IL RESTE À TENIR, DEPUIS LE 16 NOVEMBRE
+
+Une seule carte de nuit : le tracé de la dernière sortie, sur l'accueil. Le brief du 15 novembre
+borne la nuit au tracé GPS et à l'écran de séance ; les Stats, le Plan, la Journée et le Coach
+sont repassés sur du blanc. Les trois composants qui recevaient un booléen `surLaNuit` pour vivre
+sur les deux fonds — `DailyGoalsBarsView`, `RubanDeSemaine`, la ligne d'allure des Stats — n'ont
+plus qu'un fond, et le booléen est parti avec.
+
+Ce garde n'en perd rien : il ne lit pas une liste d'écrans mais les appels à `CarteDeNuit` là où
+ils sont. Il tient donc exactement le même rôle pour une carte que pour cinq, et il le tiendra
+pour la suivante.
 """
 
 import pathlib

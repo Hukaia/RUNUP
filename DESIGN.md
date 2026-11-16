@@ -599,15 +599,22 @@ deux mois : trois nuanciers sur huit perdaient la moitié de l'éclat de leur tr
 
 Sur la nuit, on lit donc : `surLaNuit`, `surLaNuit2` (0,72) et `surLaNuit3` (0,16) pour l'encre ;
 `accentsDeLaNuit` ou `AccentTheme.current.*` pour l'accent ; `limeSombre`, `cyanSombre`,
-`amberSombre`, `emberSombre`, `azureSombre`, `grapeSombre` pour le sens ; `SessionFamily.tintSurLaNuit`
-pour les sept familles. **`check_nuit.py` le tient** — il refuse un jeton de page dans le corps
-d'un appel à `CarteDeNuit`, et dans les fichiers qui ne dessinent que sur la nuit.
+`amberSombre`, `emberSombre`, `azureSombre`, `grapeSombre` pour le sens. **`check_nuit.py` le
+tient** — il refuse un jeton de page dans le corps d'un appel à `CarteDeNuit`, et dans les
+fichiers qui ne dessinent que sur la nuit.
 
-Un composant qui vit sur les DEUX fonds ne choisit pas une palette : il reçoit un booléen
-`surLaNuit` et calibre ses encres. C'est le cas de `DailyGoalsBarsView`, posé sur la page à
-l'accueil et sur la nuit sur la Journée, et de la ligne d'allure des Stats. Une teinte qui doit
-*paraître* la même sur deux fonds différents n'a pas la même valeur sur les deux : c'est déjà le
-mécanisme de `primaryOnLight`, et ce n'est pas une divergence.
+**IL N'Y A PLUS QU'UNE CARTE DE NUIT DANS L'APP**, depuis le 16 novembre : le tracé de la
+dernière sortie, sur l'accueil. Le brief du 15 novembre la borne à deux emplois — « les cartes
+noires n'existent que pour un tracé GPS ou l'écran de séance » — et le dit une deuxième et une
+troisième fois sur deux écrans nommés : la courbe des Stats « sur carte blanche et non noire »,
+le bloc « Ce qu'il regarde » du Coach « passe en blanc ». Les quatre autres y sont donc
+repassées, avec le graphique du Plan et l'anneau de la Journée.
+
+Trois composants recevaient un booléen `surLaNuit` pour vivre sur les deux fonds —
+`DailyGoalsBarsView`, `RubanDeSemaine`, la ligne d'allure des Stats. Les trois n'ont plus qu'un
+fond, et le booléen est parti avec : **un paramètre qui ne prend plus qu'une valeur entretient
+l'idée qu'il reste un choix.** `SessionFamily.tintSurLaNuit`, que seul le ruban lisait, est parti
+de même.
 
 ### La Journée : tranché, et pourquoi
 

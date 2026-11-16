@@ -6868,3 +6868,79 @@ cette ligne et `card2` bougent ensemble ; c'est une ligne, pas un chantier.
 `radiusCard` passe de 24 à 20. Quatre points sur un angle **se voient**, contrairement aux deux
 points d'écart que la grille juge invisibles. `rayons` compte toujours cinq valeurs, et aucun
 rayon écrit à la main ne valait 24 : l'échelle ne s'ouvre pas.
+
+## 16 novembre 2026 — il ne reste qu'une carte de nuit, et c'est le tracé GPS
+
+Le brief du 15 novembre dit **trois fois la même chose**, sur trois écrans différents :
+
+> « Les cartes noires n'existent que pour un tracé GPS ou l'écran de séance. » (point 4)
+> « La courbe de stats devient un trait accent de 2 px sur fond blanc […] sur carte blanche et
+> non noire. » (point 3)
+> « Le bloc "Ce qu'il regarde" passe en blanc. » (point 5)
+
+L'app en avait **cinq** : la courbe des Stats, le graphique du Plan, l'anneau de la Journée, le
+ruban du Coach, et le tracé de l'accueil. Quatre repassent sur du blanc.
+
+**C'est une décision de Charlotte qui en renverse une autre.** Le 13 novembre elle avait demandé
+d'étendre la signature de nuit aux quatre écrans qui ne l'avaient pas ; `CarteDeNuit` existe pour
+ça, et son en-tête énonce les cinq règles qui font qu'un fond sombre est une signature plutôt
+qu'un goût. Le brief du 15 revient dessus. Une signature qui tient sur cinq écrans sur six n'en
+est plus une : elle devient le fond de l'app.
+
+Le composant reste, et ses règles aussi — il porte le tracé de l'accueil, et il portera le
+suivant. `check_nuit.py` ne perd rien non plus : il ne lit pas une liste d'écrans mais les appels
+à `CarteDeNuit` là où ils sont.
+
+### Ce que le retour sur la page a supprimé, et qui n'existait que pour la nuit
+
+**Trois booléens `surLaNuit`.** `DailyGoalsBarsView`, `RubanDeSemaine` et la ligne d'allure des
+Stats en recevaient un pour calibrer leurs encres sur le fond. Les trois n'ont plus qu'un fond.
+Un paramètre qui ne prend plus qu'une valeur ne décrit plus un choix : il entretient l'idée qu'il
+en reste un.
+
+**Deux tables de couleurs pour quatre blocs.** Le graphique du Plan avait
+`couleurDeBlocSurLaNuit` pour ses barres et `couleurDeBlocSurLaPage` pour les pastilles de sa
+propre légende, deux centimètres plus bas — parce que les deux objets n'étaient pas sur le même
+fond **dans la même carte**. Il n'en reste qu'une, et les barres reprennent exactement les
+couleurs que leur légende annonce.
+
+**`SessionFamily.tintSurLaNuit`**, les sept familles sur du presque-noir. Seul le ruban la
+lisait. Elle ne portait aucune connaissance propre : six de ses sept cas rendaient les jumelles
+de nuit déjà déclarées (`limeSombre` et les cinq autres, qui restent et servent le thème sombre).
+
+**`DailyGoalsBarsView.fillColorSurLaNuit`** et son jumeau `fillColorsSurLaNuit` — qui, lui,
+n'avait jamais eu d'appelant.
+
+### Le dégradé que le garde ne pouvait pas voir
+
+La courbe des Stats était peinte avec un **dégradé** sous elle, de 35 % à transparent. La règle 7
+interdit les dégradés dans l'interface depuis le 15 novembre et `check_degrade.py` les compte
+fichier par fichier — mais celui-ci est peint dans un `Canvas`, pas déclaré en SwiftUI. L'en-tête
+du garde l'annonce depuis son premier jour : *« ce qu'il ne voit pas : un dégradé fabriqué
+autrement, une image, un `Canvas` »*. Le brief le nomme, lui : « remplissage à 8 % d'opacité,
+sans glow ». Trait de 2,5 → **2 px**, dégradé → **aplat à 8 %**.
+
+Et la pastille du point RECORD passe du lime à l'accent. Son étiquette avait fait ce chemin le
+16 novembre au matin, **la pastille non** : le mot et le point qu'il désigne étaient de deux
+couleurs.
+
+### Le vide du Coach n'était pas sous le bloc, il était au-dessus du fil
+
+« L'écran Coach supprime le vide », dit le brief, « et le fil de conversation commence directement
+dessous ». Le fil était collé **au bas de l'écran** par une hauteur minimale égale à la hauteur
+visible : avec un seul message d'accueil, il restait plaqué contre la barre de saisie, six cents
+points sous le bloc. La raison écrite le jour où ce réglage est arrivé était « un seul message
+d'accueil restait sinon accroché en haut, avec six cents points de vide sous lui » — c'est-à-dire
+qu'on avait **déplacé** le vide, pas supprimé.
+
+Ce réglage n'avait d'effet que sur un fil plus court que l'écran. `onAppear` et `onChange` font
+déjà défiler jusqu'au dernier message : une vraie conversation ne change pas d'un point.
+
+Les deux branches du bloc n'en font plus qu'une — elles ne différaient que par le fond.
+
+### Et « BOUCLÉS » devient « Bouclés »
+
+Point 1 du brief, qui nomme le procédé. Les capitales étaient dans la **chaîne**, pas dans un
+`textCase` : c'est donc le catalogue qui change, dans les trois langues. `check_strings.py` a
+refusé le premier jet, parce que « Bouclés » n'y était pas encore — il a fait exactement ce pour
+quoi il existe.

@@ -149,46 +149,48 @@ struct PlanView: View {
     /// sont jointives, une frappe imprécise tombe sur la voisine et non dans le vide, et la zone
     /// tapable couvre toute la hauteur du graphique. Pour viser sans se tromper, le sélecteur
     /// juste en dessous offre deux vraies cibles de 44 pt.
-    /// # LA FORME DU PLAN EST LE DESSIN DE CET ÉCRAN
-    ///
-    /// Le graphique était une carte blanche de plus : un en-tête à icône, des barres roses et une
-    /// légende. Correct, et interchangeable avec n'importe quelle app de course — c'est ce que
-    /// mesurait DESIGN.md § 9, 1,3 % de surface sombre sur le Plan contre 15 % sur l'accueil.
+    /// # LA FORME DU PLAN EST LE DESSIN DE CET ÉCRAN — SUR DU BLANC
     ///
     /// Ces barres SONT le plan : seize semaines, leur volume, leurs phases, et les creux que le
     /// programme se prescrit à lui-même. C'est le seul objet de l'écran qu'on regarde avant de
-    /// lire. Il passe donc sur la nuit, aux mêmes règles que le tracé de l'accueil — voir
-    /// `CarteDeNuit`, qui les énonce.
+    /// lire, et ça n'a pas changé. Le FOND, si.
     ///
-    /// La légende se pose EN HAUT (`.hautGauche`) : les barres sont collées au bas du cadre, et
-    /// un voile par le bas éteindrait exactement ce qu'on vient d'allumer.
+    /// Elles ont vécu sur une carte de nuit du 13 au 16 novembre. Le brief du 15 novembre borne
+    /// la nuit à deux emplois — « les cartes noires n'existent que pour un tracé GPS ou l'écran
+    /// de séance » — et un graphique en barres n'est ni l'un ni l'autre.
+    ///
+    /// CE QUE LE RETOUR SUR LA PAGE SIMPLIFIE. Le graphique avait DEUX jeux de couleurs pour les
+    /// mêmes quatre blocs : `couleurDeBlocSurLaNuit` pour les barres, `couleurDeBlocSurLaPage`
+    /// pour les pastilles de la légende juste en dessous. Deux tables pour un vocabulaire, parce
+    /// que le fond différait d'un objet à l'autre dans la même carte. Il n'en reste qu'une.
     ///
     /// Les deux chiffres ne sont pas décoratifs et ne sont écrits nulle part ailleurs : le nombre
     /// de semaines, et le plus gros volume du plan. Ils se lisent sur les barres, et ils ne se
-    /// lisent que là.
-    ///
-    /// La barre de phases et la note de décharge RESTENT SUR LA PAGE, sous la carte. Ce sont une
-    /// légende et une phrase : les monter sur la nuit rendrait bavard un objet qui doit être muet.
-    /// Leurs couleurs restent celles de la page, et ce n'est pas une divergence — c'est le même
-    /// mécanisme que `primaryOnLight` : une teinte qui doit PARAÎTRE la même sur deux fonds
-    /// différents n'a pas la même valeur sur les deux.
+    /// lisent que là — ils passent donc AU-DESSUS du dessin plutôt que dessus.
     private var volumeChart: some View {
         let maxKm = max(1, weekSummaries.map(\.estimatedKm).max() ?? 1)
         return VStack(alignment: .leading, spacing: 14) {
-            CarteDeNuit(hauteur: 196, pose: .hautGauche, marge: 0) {
+            VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("La forme du plan, semaine par semaine")
+                        .font(RUFont.sans(.small, weight: .medium))
+                        .foregroundColor(RUColor.text3)
+                    HStack(alignment: .firstTextBaseline, spacing: 14) {
+                        RUChiffre(valeur: String(weekSummaries.count), unite: "semaines", cran: .subtitle,
+                                  couleur: RUColor.textPrimary, couleurDeLUnite: RUColor.text3)
+                        RUChiffre(valeur: String(maxKm), unite: "km au plus fort", cran: .subtitle,
+                                  couleur: RUColor.textPrimary, couleurDeLUnite: RUColor.text3)
+                    }
+                }
                 HStack(alignment: .bottom, spacing: 4) {
                     ForEach(weekSummaries) { week in
                         volumeBar(week, maxKm: maxKm)
                     }
                 }
-                .padding(.horizontal, RUSpacing.cardPadding)
-                .padding(.bottom, RUSpacing.cardPadding)
-                .frame(maxHeight: .infinity, alignment: .bottom)
-            } legende: {
-                LegendeDeNuit(surtitre: Text("La forme du plan, semaine par semaine"),
-                              chiffres: [ChiffreDeNuit(valeur: String(weekSummaries.count), unite: "semaines"),
-                                         ChiffreDeNuit(valeur: String(maxKm), unite: "km au plus fort")])
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(RUSpacing.cardPadding)
+            .ruCard()
             phaseBar
             deloadNote
         }
@@ -257,7 +259,7 @@ struct PlanView: View {
             VStack(spacing: 6) {
                 Spacer(minLength: 0)
                 RoundedRectangle(cornerRadius: 3, style: .continuous)
-                    .fill(couleurDeBlocSurLaNuit(week.block))
+                    .fill(couleurDeBloc(week.block))
                     // Les semaines faites reculent sans disparaître : elles font partie de la
                     // forme — c'est même par elles qu'on voit la progression — mais elles ne sont
                     // plus d'actualité.
@@ -265,11 +267,8 @@ struct PlanView: View {
                     .frame(height: height)
                 // Le repère de la semaine en cours. Il ne dépend pas de la sélection : on doit
                 // pouvoir regarder la semaine 12 sans perdre de vue où l'on en est.
-                // `surLaNuit` et non `textPrimary` : ce repère est sur la nuit, et `textPrimary`
-                // y serait du presque-noir sur du presque-noir en thème clair — le défaut même
-                // que l'anneau de départ du tracé portait depuis septembre.
                 Circle()
-                    .fill(week.isCurrent ? RUColor.surLaNuit : Color.clear)
+                    .fill(week.isCurrent ? RUColor.textPrimary : Color.clear)
                     .frame(width: 4, height: 4)
             }
             .frame(maxWidth: .infinity)
@@ -278,7 +277,7 @@ struct PlanView: View {
             .overlay(alignment: .bottom) {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .stroke(RUColor.surLaNuit.opacity(0.55), lineWidth: 1.5)
+                        .stroke(RUColor.textPrimary.opacity(0.45), lineWidth: 1.5)
                         .frame(height: height + 8)
                         .padding(.bottom, 6)
                 }
@@ -298,7 +297,7 @@ struct PlanView: View {
         return HStack(spacing: 14) {
             ForEach(seen, id: \.rawValue) { block in
                 HStack(spacing: 6) {
-                    Circle().fill(couleurDeBlocSurLaPage(block)).frame(width: 7, height: 7)
+                    Circle().fill(couleurDeBloc(block)).frame(width: 7, height: 7)
                     Text(block.label).font(RUFont.sans(.small)).foregroundColor(RUColor.text3)
                 }
             }
@@ -307,32 +306,17 @@ struct PlanView: View {
         .accessibilityHidden(true)
     }
 
-    /// La couleur d'une barre — SUR LA NUIT, puisque c'est là que les barres vivent maintenant.
+    /// LES QUATRE BLOCS, ET UNE SEULE TABLE DEPUIS LE 16 NOVEMBRE.
     ///
-    /// Elle a une JUMELLE, `couleurDeBlocSurLaPage`, et c'est voulu : la légende des nuanciers
-    /// ouverts est faite de pastilles posées sur la page claire. Leur donner ces valeurs-ci
-    /// rendrait la pastille de décharge — du blanc à 42 % — invisible sur un fond `#F5F4F1`.
+    /// Elle a eu une JUMELLE, `couleurDeBlocSurLaNuit`, tant que les barres vivaient sur la nuit
+    /// et que les pastilles de la légende vivaient sur la page — deux fonds, donc deux valeurs
+    /// pour un seul vocabulaire. La jumelle prenait les accents SANS la correction calculée pour
+    /// le fond blanc, et peignait la décharge en blanc voilé, `text3` n'y donnant que 2,54:1.
     ///
-    /// Les accents sont pris sans la correction calculée pour le fond blanc : `RUColor.rose` rend
-    /// `primaryOnLight` en thème clair, descendu pour rester lisible SUR DU BLANC, et il n'y a pas
-    /// de blanc ici. Trois nuanciers sur huit — cyan, ambre, lime — y perdaient la moitié de leur
-    /// éclat. La mesure complète est dans `RUColor.surLaNuit`.
-    ///
-    /// La décharge passe d'un gris sombre à du blanc voilé. `RUColor.text3` vaut `#5B5651` en
-    /// thème clair : 2,54:1 sur la nuit, c'est-à-dire une barre qu'on devine. 0,42 de blanc donne
-    /// 4,6:1 — assez présente pour être comptée, assez éteinte pour rester le creux qu'elle est.
-    /// La pastille de la note, elle, reste en `text3` : elle est sur la page, pas sur la nuit.
-    private func couleurDeBlocSurLaNuit(_ block: AdaptivePlanEngine.TrainingBlock) -> Color {
-        switch block {
-        case .base: return AccentTheme.current.primary
-        case .specifique: return AccentTheme.current.light
-        case .affutage: return AccentTheme.current.tail
-        case .deload: return RUColor.surLaNuit.opacity(0.42)
-        }
-    }
-
-    /// Les mêmes quatre blocs, pour une pastille posée SUR LA PAGE.
-    private func couleurDeBlocSurLaPage(_ block: AdaptivePlanEngine.TrainingBlock) -> Color {
+    /// Le graphique étant revenu sur du blanc, les deux objets sont sur le même fond : ces
+    /// valeurs-ci suffisent, et les barres reprennent exactement les couleurs que leur propre
+    /// légende annonce juste en dessous.
+    private func couleurDeBloc(_ block: AdaptivePlanEngine.TrainingBlock) -> Color {
         switch block {
         case .base: return RUColor.rose
         case .specifique: return RUColor.rose2

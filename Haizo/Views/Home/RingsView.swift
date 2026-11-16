@@ -125,42 +125,40 @@ struct RingsView: View {
 
                 dayNavigator
 
-                // # L'ANNEAU EST LE DESSIN DE CET ÉCRAN
+                // # L'ANNEAU EST LE DESSIN DE CET ÉCRAN — ET IL EST DE NOUVEAU SUR LA PAGE
                 //
-                // La Journée mesurait 1,6 % de surface sombre en thème clair (DESIGN.md § 9) :
-                // un anneau posé à même la page, puis trois cartes blanches. L'anneau EST les
-                // trois objectifs du jour — c'est la seule chose de l'écran qu'on lit sans lire.
+                // Il a passé trois jours sur une carte de nuit, du 13 au 16 novembre. Le brief
+                // du 15 novembre borne la nuit à deux emplois — « les cartes noires n'existent
+                // que pour un tracé GPS ou l'écran de séance » — et un anneau n'est ni l'un ni
+                // l'autre.
                 //
-                // Il reste en revanche posé sur la PAGE sur l'accueil, et ce n'est pas une
-                // divergence : là-bas il résume et renvoie ici, ici il est le sujet. Le composant
-                // reçoit `surLaNuit` et calibre ses deux encres sur le fond — même mécanisme que
-                // `primaryOnLight`, une teinte qui doit paraître la même sur deux fonds n'a pas
-                // la même valeur sur les deux.
+                // CE QUE ÇA RÉCONCILIE. L'anneau apparaît sur DEUX écrans : en résumé sur
+                // l'accueil, en sujet ici. Pendant trois jours il n'avait pas les mêmes encres
+                // aux deux endroits, et il fallait un booléen pour le dire. Le même objet se
+                // dessine de nouveau de la même façon partout où on le voit.
                 //
                 // Le centre n'est pas une légende posée sur le dessin mais son MOYEU : il est au
-                // milieu de l'anneau, pas en bas à gauche. La carte de nuit porte donc une
-                // légende vide, et le compte vit dans le dessin — c'est le seul des cinq écrans
-                // où les chiffres sont DANS la forme plutôt que dessus.
-                CarteDeNuit(hauteur: 236, marge: 0, voile: false) {
-                    ZStack {
-                        DailyGoalsBarsView(goals: displayGoals.map { .init(slot: $0.slot, progress: $0.progress) },
-                                           size: 196, animateOnAppear: true, surLaNuit: true)
-                        VStack(spacing: 2) {
-                            Text("\(displayDone) / \(displayTotal)")
-                                .displayStyle(.figure).foregroundColor(RUColor.surLaNuit)
-                            Text("BOUCLÉS")
-                                .font(RUFont.sans(.small, weight: .bold))
-                                .tracking(1.5)
-                                .foregroundColor(RUColor.surLaNuit2)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.75)
-                        }
+                // milieu de l'anneau, et le compte vit DANS la forme. C'est ce qui n'a jamais eu
+                // besoin de la nuit.
+                //
+                // « BOUCLÉS » perd ses capitales espacées — point 1 du brief, qui nomme ce
+                // procédé : « ce sont des labels en 12 gris, casse normale ».
+                ZStack {
+                    DailyGoalsBarsView(goals: displayGoals.map { .init(slot: $0.slot, progress: $0.progress) },
+                                       size: 196, animateOnAppear: true)
+                    VStack(spacing: 2) {
+                        Text("\(displayDone) / \(displayTotal)")
+                            .displayStyle(.figure).foregroundColor(RUColor.textPrimary)
+                        Text("Bouclés")
+                            .font(RUFont.sans(.small, weight: .medium))
+                            .foregroundColor(RUColor.text3)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                     }
-                    .opacity(isLoadingHistoricalDay ? 0.4 : 1)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } legende: {
-                    EmptyView()
                 }
+                .opacity(isLoadingHistoricalDay ? 0.4 : 1)
+                .frame(maxWidth: .infinity)
+                .frame(height: 236)
                 .animation(.easeOut(duration: 0.2), value: isLoadingHistoricalDay)
                 // LE SEUL GRAPHIQUE MUET DE L'APP, et c'était l'élément principal de l'écran
                 // entièrement consacré aux objectifs du jour. Au balayage VoiceOver, l'anneau de

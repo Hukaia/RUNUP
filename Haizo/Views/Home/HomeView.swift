@@ -397,7 +397,6 @@ struct HomeView: View {
     private var weekStrip: some View {
         RubanDeSemaine(jours: profile.weekSessions.sorted { $0.weekday < $1.weekday },
                        aujourdHui: indexDuJour,
-                       surLaNuit: false,
                        quantiemes: true)
             // PAS DE HAUTEUR FIXE : le ruban se mesure lui-même.
             //

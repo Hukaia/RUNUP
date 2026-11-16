@@ -54,60 +54,66 @@ struct CoachView: View {
             header
             ceQuIlRegarde
             ScrollViewReader { scrollProxy in
-                // `GeometryReader` uniquement pour connaître la hauteur visible du fil, qui sert de
-                // hauteur MINIMALE au contenu juste en dessous. C'est ce qui colle la conversation
-                // en bas de l'écran tant qu'elle est courte — un seul message d'accueil restait
-                // sinon accroché en haut, avec six cents points de vide sous lui. Au-delà de cette
-                // hauteur le minimum ne s'applique plus, donc un fil long se comporte exactement
-                // comme avant.
-                GeometryReader { geo in
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 10) {
-                            if messages.isEmpty {
-                                daySeparator(.now)
-                                coachBubble(welcomeMessage)
-                            }
-
-                            // Day separators between message groups ("AUJOURD'HUI" / "HIER" / date) —
-                            // the whole persisted history lives in one thread, and without them a
-                            // reply from last Tuesday read as part of today's conversation.
-                            ForEach(Array(messages.enumerated()), id: \.element.id) { index, message in
-                                if index == 0 || !Calendar.current.isDate(message.timestamp, inSameDayAs: messages[index - 1].timestamp) {
-                                    daySeparator(message.timestamp)
-                                }
-                                bubble(for: message)
-                                    .id(message.id)
-                            }
-
-                            if vm?.isTyping == true {
-                                typingIndicator
-                            }
-
-                            // L'échange verrouillé : sa question, puis la réponse qui explique
-                            // ce qu'il manque pour y répondre.
-                            if let demande = demandeVerrouillee {
-                                lockedAskBubble(demande)
-                                lockedReplyBubble
-                            }
-
-                            // Les suggestions restent, verrouillées ou non. Elles sont le chemin
-                            // le plus court vers la question — donc, sans abonnement, vers la
-                            // réponse qui dit ce que l'abonnement apporte.
-                            FlowChips(chips: chips) { send($0) }
-                                .padding(.vertical, 4)
+                // ── LE FIL COMMENCE SOUS LE BLOC, IL NE SE COLLE PLUS AU BAS ───────────────
+                //
+                // Un `GeometryReader` donnait au contenu une hauteur MINIMALE égale à la hauteur
+                // visible, alignée en bas : tant que le fil était court, le message d'accueil
+                // était plaqué contre la barre de saisie. La raison écrite le jour où c'est
+                // arrivé était « un seul message d'accueil restait sinon accroché en haut, avec
+                // six cents points de vide sous lui » — c'est-à-dire qu'on a DÉPLACÉ le vide, de
+                // dessous à dessus. Le brief du 15 novembre tranche dans l'autre sens : « le fil
+                // de conversation commence directement dessous ».
+                //
+                // Ce réglage n'avait d'effet QUE sur un fil plus court que l'écran. Au-delà,
+                // le minimum ne s'appliquait plus — et `onAppear` et `onChange` font déjà
+                // défiler jusqu'au dernier message, donc une vraie conversation se comporte
+                // exactement comme avant.
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
+                        if messages.isEmpty {
+                            daySeparator(.now)
+                            coachBubble(welcomeMessage)
                         }
-                        .padding(.horizontal, 18)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .frame(minHeight: geo.size.height, alignment: .bottom)
+
+                        // Day separators between message groups ("AUJOURD'HUI" / "HIER" / date) —
+                        // the whole persisted history lives in one thread, and without them a
+                        // reply from last Tuesday read as part of today's conversation.
+                        ForEach(Array(messages.enumerated()), id: \.element.id) { index, message in
+                            if index == 0 || !Calendar.current.isDate(message.timestamp, inSameDayAs: messages[index - 1].timestamp) {
+                                daySeparator(message.timestamp)
+                            }
+                            bubble(for: message)
+                                .id(message.id)
+                        }
+
+                        if vm?.isTyping == true {
+                            typingIndicator
+                        }
+
+                        // L'échange verrouillé : sa question, puis la réponse qui explique
+                        // ce qu'il manque pour y répondre.
+                        if let demande = demandeVerrouillee {
+                            lockedAskBubble(demande)
+                            lockedReplyBubble
+                        }
+
+                        // Les suggestions restent, verrouillées ou non. Elles sont le chemin
+                        // le plus court vers la question — donc, sans abonnement, vers la
+                        // réponse qui dit ce que l'abonnement apporte.
+                        FlowChips(chips: chips) { send($0) }
+                            .padding(.vertical, 4)
                     }
-                    .onChange(of: messages.count) {
-                        if let last = messages.last { withAnimation { scrollProxy.scrollTo(last.id, anchor: .bottom) } }
-                    }
-                    // Land on the latest message when (re)opening the tab — `onChange` alone only
-                    // fires on NEW messages, so a thread with history opened at the oldest bubble.
-                    .onAppear {
-                        if let last = messages.last { scrollProxy.scrollTo(last.id, anchor: .bottom) }
-                    }
+                    .padding(.horizontal, 18)
+                    .padding(.top, 6)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .onChange(of: messages.count) {
+                    if let last = messages.last { withAnimation { scrollProxy.scrollTo(last.id, anchor: .bottom) } }
+                }
+                // Land on the latest message when (re)opening the tab — `onChange` alone only
+                // fires on NEW messages, so a thread with history opened at the oldest bubble.
+                .onAppear {
+                    if let last = messages.last { scrollProxy.scrollTo(last.id, anchor: .bottom) }
                 }
             }
             // PLUS DE BANDEAU À LA PLACE DE LA SAISIE. Il la REMPLAÇAIT : on voyait l'écran du
@@ -157,73 +163,57 @@ struct CoachView: View {
     ///
     /// Chaque tuile disparaît quand sa donnée n'existe pas : une forme sans un seul ressenti
     /// derrière serait un nombre inventé, et « — » n'apprend rien à personne.
-    /// # ET CE QU'IL REGARDE DEVIENT LE DESSIN
+    /// # CE QU'IL REGARDE : LE DESSIN RESTE, LA NUIT PART
     ///
-    /// Le bloc disait la bonne chose avec le mauvais objet : trois tuiles blanches alignées, le
-    /// vocabulaire par défaut d'un tableau de bord. Le Coach mesurait 2,6 % de surface sombre en
-    /// thème clair (DESIGN.md § 9) alors que c'est l'écran qui a le plus à montrer — il se vend
-    /// sur « il connaît ton programme », et un programme a une FORME.
+    /// Le bloc a été une carte de nuit du 13 au 16 novembre, et le raisonnement d'alors tenait :
+    /// « le Coach se vend sur il connaît ton programme, et un programme a une FORME ». Le ruban
+    /// dessine cette forme — sept jours, leur famille en couleur, leur durée en hauteur — et il
+    /// la dessine toujours. Ce qui change, c'est le FOND.
     ///
-    /// Le ruban la dessine : sept jours, leur famille en couleur, leur durée en hauteur,
-    /// aujourd'hui marqué. C'est littéralement ce que le coach lit avant de répondre. Les trois
-    /// tuiles deviennent la légende posée dessus — elles disent les mêmes quatre chiffres,
-    /// elles ne les disent plus à la place du dessin.
+    /// Le brief du 15 novembre dit trois fois la même chose, sur trois écrans différents : « les
+    /// cartes noires n'existent que pour un tracé GPS ou l'écran de séance », « la courbe de
+    /// stats devient un trait accent sur carte blanche et non noire », et ici mot pour mot « le
+    /// bloc Ce qu'il regarde passe en blanc ». Une signature qui tient sur cinq écrans n'en est
+    /// plus une : elle devient le fond de l'app.
     ///
-    /// La règle 1 de `CarteDeNuit` s'applique ici aussi : sans plan, pas de forme, donc pas de
-    /// carte de nuit. Une semaine vide retombe sur les tuiles, sur la page, comme avant.
-    @ViewBuilder private var ceQuIlRegarde: some View {
+    /// LES DEUX BRANCHES N'EN FONT PLUS QU'UNE. Elles ne différaient que par le fond — nuit si la
+    /// semaine était complète, page sinon. Sur du blanc des deux côtés, il ne reste qu'une
+    /// question : y a-t-il une semaine à dessiner. Le ruban apparaît ou non ; les tuiles, le
+    /// libellé et la carte sont les mêmes.
+    ///
+    /// LE LIBELLÉ PERD SES CAPITALES ESPACÉES. Point 1 du brief, qui le nomme : « CE QU'IL
+    /// REGARDE » devient « Ce qu'il regarde », un label gris, casse normale.
+    private var ceQuIlRegarde: some View {
         let derniere = dernieresCourses.first
         let semaine = profile.weekSessions.sorted { $0.weekday < $1.weekday }
-        if semaine.count == 7 {
-            // 206 et non 182 : la légende tient deux lignes, et la marque la plus haute — le
-            // dimanche de la semaine de démonstration — montait derrière « 8,1 km · 5:18 » sur la
-            // capture du 13 novembre. Un dessin qui croise son propre libellé n'est pas un
-            // dessin qu'on a cadré.
-            CarteDeNuit(hauteur: 206, pose: .hautGauche, marge: 0) {
+        return VStack(alignment: .leading, spacing: 10) {
+            Text("Ce qu'il regarde")
+                .font(RUFont.sans(.label, weight: .medium))
+                .foregroundColor(RUColor.text3)
+            HStack(spacing: 8) {
+                if profile.hasReadinessData {
+                    tuileLue(nom: "Forme", valeur: "\(profile.readiness)/100", accent: true)
+                }
+                tuileLue(nom: "Aujourd'hui", valeur: profile.todaySession.displayTitle, accent: false)
+                if let derniere, derniere.distanceKm > 0 {
+                    tuileLue(nom: "Dernière sortie", valeur: resumeDeLaDerniere(derniere), accent: false)
+                }
+            }
+            // 96 ET NON 206. La carte de nuit en donnait 206 pour une raison écrite le
+            // 13 novembre : « la légende tient deux lignes, et la marque la plus haute montait
+            // derrière 8,1 km · 5:18 ». La légende n'est plus POSÉE SUR le dessin, elle est
+            // au-dessus de lui : le ruban n'a plus rien à croiser, et il lui reste la hauteur
+            // dont il a besoin pour que sept barres se comparent.
+            if semaine.count == 7 {
                 RubanDeSemaine(jours: semaine, aujourdHui: indexDuJour)
-                    .padding(.horizontal, RUSpacing.cardPadding)
-                    .padding(.bottom, RUSpacing.cardPadding)
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-            } legende: {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Ce qu'il regarde")
-                        .font(RUFont.sans(.label, weight: .medium))
-                        .foregroundColor(RUColor.surLaNuit2)
-                        .textCase(.uppercase)
-                        .tracking(1.4)
-                    HStack(spacing: 10) {
-                        if profile.hasReadinessData {
-                            mesureLue(nom: "Forme", valeur: "\(profile.readiness)/100")
-                        }
-                        mesureLue(nom: "Aujourd'hui", valeur: profile.todaySession.displayTitle)
-                        if let derniere, derniere.distanceKm > 0 {
-                            mesureLue(nom: "Dernière sortie", valeur: resumeDeLaDerniere(derniere))
-                        }
-                    }
-                }
+                    .frame(height: 96)
             }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 4)
-        } else {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Ce qu'il regarde")
-                    .font(RUFont.sans(.label, weight: .medium))
-                    .foregroundColor(RUColor.text3)
-                    .textCase(.uppercase)
-                    .tracking(1.4)
-                HStack(spacing: 8) {
-                    if profile.hasReadinessData {
-                        tuileLue(nom: "Forme", valeur: "\(profile.readiness)/100", accent: true)
-                    }
-                    tuileLue(nom: "Aujourd'hui", valeur: profile.todaySession.displayTitle, accent: false)
-                    if let derniere, derniere.distanceKm > 0 {
-                        tuileLue(nom: "Dernière sortie", valeur: resumeDeLaDerniere(derniere), accent: false)
-                    }
-                }
-            }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 4)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(RUSpacing.cardPadding)
+        .ruCard()
+        .padding(.horizontal, 18)
+        .padding(.bottom, 4)
     }
 
     /// Lundi = 0, comme `PlannedDay.weekday`. `Calendar` compte le dimanche comme 1.
@@ -239,22 +229,6 @@ struct CoachView: View {
     private func resumeDeLaDerniere(_ course: RunRecord) -> String {
         String(format: "%.1f km", locale: Locale.current, course.distanceKm)
             + " · " + PaceModel.paceText(Double(course.durationSeconds) / course.distanceKm)
-    }
-
-    /// Une mesure posée sur la nuit : pas de carte, pas de bordure — le fond est déjà l'objet.
-    private func mesureLue(nom: String, valeur: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(LocalizedStringKey(nom))
-                .font(RUFont.sans(.small))
-                .foregroundColor(RUColor.surLaNuit2)
-                .lineLimit(1).minimumScaleFactor(0.7)
-            Text(valeur)
-                .font(RUFont.sans(.label, weight: .semibold))
-                .foregroundColor(RUColor.surLaNuit)
-                .lineLimit(1).minimumScaleFactor(0.6)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
     }
 
     private func tuileLue(nom: String, valeur: String, accent: Bool) -> some View {
