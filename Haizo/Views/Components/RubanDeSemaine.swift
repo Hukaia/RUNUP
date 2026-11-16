@@ -104,6 +104,22 @@ struct RubanDeSemaine: View {
     /// colonne vide en ferait un trou.
     static let hauteurDuRepos: CGFloat = 14
 
+    /// LE PLAFOND D'UNE BARRE, ET POURQUOI IL EXISTE.
+    ///
+    /// Le brief du 15 novembre dit « hauteur proportionnelle » et ne donne pas de maximum. La
+    /// première écriture prenait 76 points, et la campagne 217 a montré ce que ça donne : des
+    /// barres de 66 points mesurés pour huit de large — un rapport de vingt-cinq contre un, des
+    /// aiguilles plutôt que des marques.
+    ///
+    /// Quarante, décidé par Charlotte le 16 novembre. L'écart entre une sortie longue et une
+    /// séance courte reste lisible, et la marque redevient une marque.
+    ///
+    /// CE PLAFOND NE RÈGLE PAS LE RUBAN COUPÉ, et c'est écrit ici pour qu'on ne le croie pas :
+    /// les quantièmes sont SOUS les barres, donc leur position ne dépend pas de la hauteur de
+    /// celles-ci. Seule la carte entière peut remonter, et c'est ce que fait l'en-tête plein
+    /// cadre. Les deux changements voyagent ensemble, ils ne se remplacent pas.
+    static let hauteurMaxDUneBarre: CGFloat = 40
+
     /// La plus longue séance de la semaine donne l'échelle. `max(1, …)` : une semaine entièrement
     /// au repos ne doit pas diviser par zéro, elle doit dessiner sept creux.
     private var plusLongue: Int {
@@ -144,7 +160,7 @@ struct RubanDeSemaine: View {
         let famille = jour.session?.family ?? .rest
         let minutes = jour.session?.durationMinutes ?? 0
         let hauteur = minutes == 0 ? Self.hauteurDuRepos
-            : max(22, CGFloat(minutes) / CGFloat(plusLongue) * 76)
+            : max(22, CGFloat(minutes) / CGFloat(plusLongue) * Self.hauteurMaxDUneBarre)
         return VStack(spacing: 6) {
             Spacer(minLength: 0)
             RoundedRectangle(cornerRadius: RUSpacing.radiusBar, style: .continuous)

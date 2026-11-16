@@ -41,20 +41,6 @@ import UIKit
 /// une pause tapée un peu bas, en courant, essoufflée, ouvrait le sélecteur d'applications au
 /// lieu d'arrêter le chrono. C'est le seul geste de l'écran qu'on fait sans regarder.
 ///
-/// Lu sur la fenêtre plutôt que sur l'environnement : à l'intérieur d'un `ignoresSafeArea()`,
-/// les encarts rapportés par la mise en page valent zéro — c'est précisément ce qu'on a demandé.
-/// Le même détour existe déjà dans `StravaService` pour la même raison.
-private enum ScreenEdges {
-    /// 34 points de repli : la valeur des modèles sans bouton d'accueil, c'est-à-dire la grande
-    /// majorité, et la seule erreur sans conséquence des deux (une marge un peu large sur un SE
-    /// plutôt qu'un bouton inatteignable sur un 15).
-    static var bottom: CGFloat {
-        UIApplication.shared.connectedScenes
-            .compactMap { ($0 as? UIWindowScene)?.keyWindow?.safeAreaInsets.bottom }
-            .first ?? 34
-    }
-}
-
 private enum Ink {
     /// L'accent de la coureuse, version fond sombre — quelle que soit l'apparence globale.
     static var accent: Color { AccentTheme.current.primary }
@@ -767,7 +753,7 @@ struct LiveRunView: View {
         // Le fond du panneau descend jusqu'au bord physique de l'écran. Son CONTENU, lui,
         // s'arrête au-dessus de la barre de geste : voir `ScreenEdges`. Le plancher à 16 garde
         // la marge d'origine sur les modèles à bouton d'accueil, où l'encart vaut zéro.
-        .padding(.bottom, max(16, ScreenEdges.bottom + 8))
+        .padding(.bottom, max(16, BordsDeLEcran.bas + 8))
         .frame(maxWidth: .infinity)
         // UN PANNEAU EST UNE SURFACE, ET UNE SURFACE A UNE COULEUR.
         //

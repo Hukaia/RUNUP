@@ -190,6 +190,36 @@ struct HomeView: View {
             // individuellement — une marge posée sur la pile entière rentrerait l'en-tête avec.
             .padding(.bottom, 130)
         }
+        // ── L'EN-TÊTE VA JUSQU'AU BORD HAUT DE LA DALLE ──────────────────────────────────────
+        //
+        // Point 5 du brief : « l'accueil ouvre sur une image PLEIN ÉCRAN en en-tête ». La campagne
+        // 217 a montré qu'il n'en était rien — un bandeau clair de 62 points, l'encart de
+        // sécurité, restait au-dessus. Invisible en thème sombre, où le fond de page est noir lui
+        // aussi ; visible en clair, et c'est le clair qui part sur la fiche App Store.
+        //
+        // `ignoresSafeArea` sur le DÉFILEMENT, pas sur un de ses enfants : la remarque est écrite
+        // dans `PaywallView` depuis longtemps — « `ignoresSafeArea` sur un enfant de `ScrollView`
+        // ne fait pas ce qu'on croit, la vue est disposée dans l'espace du défilement ». C'est
+        // aussi ce que fait `RecapView`, et sa capture le confirme : son fond atteint bien la
+        // première rangée de pixels.
+        .ignoresSafeArea(edges: .top)
+        // ── ET L'HEURE S'EFFACE, PLUTÔT QUE DE SE POSER SUR LA NUIT ─────────────────────────
+        //
+        // Une fois l'en-tête sous la barre d'état, l'heure, le wifi et la batterie se retrouvent
+        // en NOIR sur `#14131E` — 1,2:1, illisible. Les couleurs de Haizo suivent son propre
+        // réglage (`ThemeStore`) et non celui du système, donc les forcer en blanc demanderait
+        // soit de remplacer la voie de démarrage de l'app par un contrôleur maison, soit de faire
+        // basculer le thème de la fenêtre à chaque changement d'onglet.
+        //
+        // Décision de Charlotte, 16 novembre : on masque. C'est une ligne, c'est une API
+        // supportée, et ça ne met pas le démarrage de l'app en jeu. L'image devient vraiment
+        // plein cadre, sans rien en travers.
+        //
+        // LA FICHE APP STORE NE PERD PAS SON HEURE. `screenshots.py` repeint la bande du haut et
+        // redessine 9:41 — avec une encre qu'il choisit sur le fond, blanche quand il est sombre.
+        // Sa bande fait 185/2868 de la capture, soit exactement le bandeau qu'on vient de
+        // supprimer.
+        .statusBarHidden()
     }
 
     /// The week strip and the program teaser, merged into ONE card (owner's call — they're two

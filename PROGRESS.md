@@ -7421,3 +7421,90 @@ renommage cohérent partout passe quand même », qui est le défaut d'origine �
 Il s'est attrapé lui-même en chemin : la raison que j'écrivais pour dispenser `RELEASE.md` nommait
 les deux autres branches, et il a aussitôt compté quatre citations là où j'en déclarais deux.
 C'est exactement son travail.
+
+## 16 novembre 2026 — l'en-tête n'était pas plein cadre, et c'est ce qui coupait le ruban
+
+La campagne 217 a livré ses trente-neuf écrans. Les teintes sont au brief, mesurées sur la passe
+claire : `#2FB37A`, `#F0225F`, `#7B3FE4`, accent `#F0225F`, jours vides en gris, cartes blanches.
+La pastille ▼ est passée en gris, l'eyebrow dit « dimanche 15 novembre », et « Ta journée » est
+revenu à 2/3 — la régression de la veille est corrigée.
+
+**Et la capture n° 1, celle qui ouvre la fiche, portait deux défauts.**
+
+### Ils n'en faisaient qu'un
+
+Une coupe verticale dans la marge de page les a reliés :
+
+    page       0,0 →   62,0  ( 62,0 pt)   ← le bandeau clair
+    nuit      62,0 →  382,0  (320,0 pt)   ← l'en-tête
+    page     382,0 →  956,0
+
+Le bandeau mesure **exactement l'encart de sécurité du haut**. Et le ruban de la semaine, lui,
+était tranché : la barre du lundi en deux morceaux, 849,7 → 854,0 puis 910,0 → 915,7, séparés par
+168 px de barre d'onglets.
+
+**Les barres ne pouvaient rien donner.** Leur ligne de base est à 915,7 et la barre d'onglets
+s'arrête à 910 : toute barre de plus de six points passe derrière. Et les quantièmes sont SOUS
+les barres, donc leur position ne dépend pas de leur hauteur. Seule la carte entière pouvait
+remonter — de 89 points, pour que le bloc repasse au-dessus de 854.
+
+Soixante-deux de ces 89 étaient dans le bandeau. Vingt-sept dans la hauteur de l'en-tête, qui
+passe de 320 à 285. L'image n'est pas plus petite : elle commence au bord.
+
+### Ce que le brief demandait déjà
+
+Point 5 : « l'accueil ouvre sur une image **plein écran** en en-tête ». Ce n'était pas le cas, et
+**le défaut était invisible en thème sombre** — le fond de page est noir lui aussi, la bande se
+confond avec l'en-tête. Seule la passe claire le montre, et c'est elle qui part sur la fiche.
+
+Le dépôt avait déjà écrit la méthode. `PaywallView` : « `ignoresSafeArea` sur un enfant de
+`ScrollView` ne fait pas ce qu'on croit — la vue est disposée dans l'espace du défilement. »
+C'est donc le DÉFILEMENT qui l'ignore, comme le fait `RecapView`, dont la capture confirme que
+son fond atteint bien la première rangée de pixels.
+
+### L'heure, et une décision qui a changé en cours de route
+
+Une fois l'en-tête sous la barre d'état, l'heure devient noire sur `#14131E` : 1,2:1.
+
+J'ai d'abord proposé d'écrire le mécanisme, et Charlotte l'a choisi. **En cherchant comment,
+j'ai trouvé que ça coûtait plus cher que je ne l'avais dit** : les couleurs de Haizo suivent
+`ThemeStore`, son propre réglage, et non le système. Forcer l'heure en blanc demandait donc soit
+de remplacer la voie de démarrage de l'app par un contrôleur maison — un raté, et l'app ne
+s'ouvre plus — soit de faire basculer le thème de la fenêtre à chaque changement d'onglet.
+
+**Et une mesure a réduit la question.** `screenshots.py` repeint la bande du haut et redessine
+9:41, avec une encre qu'il choisit sur le fond : `blanc si sum(bg) < 384`. Sa bande fait 185/2868
+de la capture — exactement le bandeau supprimé. **L'image App Store était donc déjà protégée,
+sans une ligne de code.** Il ne restait que l'app réelle.
+
+Je suis retourné le dire avec le vrai coût. Décision : on masque l'heure sur l'accueil.
+`.statusBarHidden()`, une ligne, une API supportée, et le démarrage de l'app n'est pas en jeu.
+Un seul écran est rendu à la fois — `RootTabView` fait un `switch` — donc l'heure revient dès
+qu'on quitte l'accueil.
+
+### Le plafond des barres, et ce qu'il ne règle pas
+
+Soixante-six points mesurés pour huit de large : un rapport de vingt-cinq contre un. Le brief dit
+« hauteur proportionnelle » sans donner de maximum. Quarante, décidé par Charlotte.
+
+C'est écrit dans le code que **ce plafond ne règle pas le ruban coupé**, pour qu'on ne le croie
+pas plus tard : les deux changements voyagent ensemble, ils ne se remplacent pas.
+
+### Un détour en trois exemplaires devient un jeton
+
+`LiveRunView` portait un `ScreenEdges` privé pour lire l'encart du bas sur la FENÊTRE — « à
+l'intérieur d'un `ignoresSafeArea()`, les encarts rapportés par la mise en page valent zéro ». Son
+commentaire ajoutait : « le même détour existe déjà dans `StravaService` pour la même raison ». Il
+en aurait fallu un troisième ici. `BordsDeLEcran` les remplace, avec `haut` et `bas`.
+
+### Ce que la campagne 218 doit montrer
+
+- La nuit à la première rangée de pixels, plus aucun bandeau clair.
+- Aucune heure, aucun wifi, aucune batterie sur la capture brute — et 9:41 **en blanc** sur
+  l'image composée de la fiche.
+- Le ruban entier au-dessus de la barre d'onglets : barres vers 779 → 819, lettres et quantièmes
+  vers 825 → 846, pour un bord haut de barre d'onglets à 854.
+- La plus haute barre à 40 points au lieu de 66.
+
+Si le bandeau est toujours là, c'est que `ignoresSafeArea` sur le défilement ne suffit pas et il
+faudra le lire autrement. Si le ruban reste coupé, c'est mon calcul de 89 qui est faux.

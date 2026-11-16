@@ -70,10 +70,25 @@ struct EnTeteDAccueil: View {
     /// grand texte.
     ///
     /// 320 plutôt que 150, parce qu'il porte maintenant un prénom à 40 lourd en plus des deux
-    /// autres lignes. Plafonné à 460, soit 1,44 × : au-delà, l'en-tête occuperait la moitié d'un
+    /// autres lignes. Plafonné à 460, soit 1,61 × : au-delà, l'en-tête occuperait la moitié d'un
     /// iPhone et la carte de la séance du jour passerait sous la ligne de flottaison — ce qui
     /// défait exactement ce que l'ordre des cartes protège.
-    @ScaledMetric(relativeTo: .body) private var hauteur: CGFloat = 320
+    ///
+    /// 285 DEPUIS LE 16 NOVEMBRE, ET LE CHIFFRE EST MESURÉ. La campagne 217 montrait le ruban de
+    /// la semaine tranché en deux par la barre d'onglets : la barre du lundi en deux morceaux,
+    /// 849,7 → 854,0 puis 910,0 → 915,7 points. Pour que le bloc entier — barres, lettres,
+    /// quantièmes — repasse au-dessus du bord haut de la barre d'onglets, à 854, il fallait
+    /// remonter la carte de 89 points.
+    ///
+    /// SOIXANTE-DEUX VIENNENT DU BANDEAU, VINGT-SEPT DE LA HAUTEUR. Le bandeau clair au-dessus de
+    /// l'en-tête mesurait exactement l'encart de sécurité du haut, et l'en-tête commençait donc à
+    /// 62 et finissait à 382. En passant sous la barre d'état il part de zéro ; en descendant à
+    /// 285 il finit à 285, soit 97 points plus haut — les 89 nécessaires et huit de marge.
+    ///
+    /// L'IMAGE N'EST PAS PLUS PETITE, elle commence plus haut. Trois cent vingt points précédés
+    /// d'une bande claire se lisent comme une carte posée ; deux cent quatre-vingt-cinq depuis le
+    /// bord se lisent comme une image, et c'est ce que le point 5 du brief demande.
+    @ScaledMetric(relativeTo: .body) private var hauteur: CGFloat = 285
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -103,7 +118,12 @@ struct EnTeteDAccueil: View {
             }
             barreDeMarque
                 .padding(.horizontal, RUSpacing.pagePadding)
-                .padding(.top, 4)
+                // L'EN-TÊTE PASSE SOUS LA BARRE D'ÉTAT, PAS SON CONTENU. La nuit part du bord
+                // haut de la dalle ; le mot de la marque, la série et la cloche se reposent sous
+                // l'îlot dynamique. L'encart se lit sur la FENÊTRE : à l'intérieur d'un
+                // `ignoresSafeArea`, celui de la mise en page vaut zéro — c'est précisément ce
+                // qu'on a demandé. Voir `BordsDeLEcran`.
+                .padding(.top, BordsDeLEcran.haut + 4)
         }
     }
 
