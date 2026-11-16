@@ -149,24 +149,56 @@ la valeur de la DA donnait **1,006:1**, c'est-à-dire rien.
 `SessionFamily.tint`, dans `Colors.swift` et non dans le modèle : `SessionFamily` reste une
 classification d'entraînement, lisible et testable sans SwiftUI.
 
-| Famille | Teinte | Symbole |
-| --- | --- | --- |
-| Repos | `text3` | `moon.zzz.fill` |
-| Récupération | `cyan` | `leaf.fill` |
-| Endurance | `lime` | `figure.run` |
-| Sortie longue | `grape` | `arrow.right.to.line` |
-| Tempo | `amber` | `speedometer` |
-| Fractionné | `ember` | `bolt.fill` |
-| Fonctionnel | `azure` | — |
+| Famille | Teinte | Clair | Symbole |
+| --- | --- | --- | --- |
+| Repos | `text3` | `#5B5651` | `moon.zzz.fill` |
+| Récupération | `recuperation` | `#5AA9E6` | `leaf.fill` |
+| Endurance | `facile` | `#2FB37A` | `figure.run` |
+| Sortie longue | `sortieLongue` | `#7B3FE4` | `arrow.right.to.line` |
+| Tempo | `seuil` | `#F5A524` | `speedometer` |
+| Fractionné | `intervalles` | `#F0225F` | `bolt.fill` |
+| Fonctionnel | `fonctionnel` | `#44506B` | — |
 
 **Chaque famille porte aussi une forme, et ce n'est pas une décoration.** Environ un homme sur
 douze distingue mal le rouge du vert, et ce sont précisément les deux extrémités de cette palette
 — le footing facile et le fractionné.
 
-**Décision de Charlotte, 11 novembre 2026 : les sept teintes actuelles restent.** Le brief en
-donne cinq, en une seule valeur chacune, construites pour un fond sombre — `#F5A524` sur blanc
-donne 1,9:1, et le clair est désormais le thème par défaut. L'esprit du brief, une teinte fixe par
-intensité et la même partout, est déjà tenu.
+#### Ce tableau a changé d'avis, et les deux décisions sont de Charlotte
+
+**11 novembre 2026 — les sept teintes d'interface restent.** La raison était mesurée : les cinq
+valeurs du brief sont construites pour un fond sombre, `#F5A524` donne 1,9:1 sur blanc, et le
+clair venait de passer en thème par défaut.
+
+**15 novembre 2026 — le brief de direction artistique les redemande, nommément, en tête de ses
+cinq corrections obligatoires.** C'est la décision la plus récente, et elle est prise en
+connaissance du thème clair, puisque le même brief redessine le clair autour d'elles. Le tableau
+ci-dessus est donc celui du 15 novembre.
+
+CE QUE ÇA COÛTE, MESURÉ SUR BLANC ET NON ESTIMÉ :
+
+| Teinte | Avant | Après |
+| --- | --- | --- |
+| Récupération | `#0E9C8C` 3,41:1 | `#5AA9E6` **2,54:1** |
+| Endurance | `#6B9E00` 3,22:1 | `#2FB37A` **2,68:1** |
+| Tempo | `#B86A00` 4,12:1 | `#F5A524` **2,04:1** |
+| Fractionné | `#C2352A` 5,47:1 | `#F0225F` 4,12:1 |
+| Sortie longue | `#5B3FD6` 6,72:1 | `#7B3FE4` 5,72:1 |
+| Fonctionnel | `#0F62C8` 5,83:1 | `#44506B` 8,06:1 |
+
+Trois passent sous 3:1, le seuil demandé à un objet graphique PORTEUR DE SENS. Elles n'en sont
+pas : la famille est portée par la FORME, colonne de droite du tableau, et la couleur ne fait que
+l'appuyer. C'est la même raison qui justifiait déjà les symboles. Le chiffre est écrit ici parce
+qu'il est bas, pas parce qu'il est faux — et parce qu'une décision qui s'inverse doit laisser la
+mesure derrière elle, sinon elle s'inversera encore.
+
+**La sixième teinte est l'ardoise `#44506B`, tranchée le 15 novembre.** Les cinq autres sont des
+couleurs de course ; le renforcement n'en est pas une. Une teinte froide et sourde le range à part
+sans l'éteindre.
+
+**Ces six jetons ne sont PAS `lime` / `cyan` / `amber` / `ember` / `grape` / `azure`.** Ces
+six-là sont des couleurs sémantiques d'interface — `lime` veut dire MIEUX, `amber` veut dire MOINS
+BIEN — et `check_teintes.py` tient la liste fermée de leurs emplois. Les faire servir aussi de
+palette d'entraînement, c'était deux grammaires sur un même jeton.
 
 ### 2.4 Le texte
 
@@ -448,7 +480,13 @@ vivait que dans leur somme. `check_lancement.py` refait l'addition à chaque CI.
 | D1 à D4 tiennent, face au brief re-transmis | 11 novembre 2026 |
 | Le Club reste sous l'onglet Profil — **ne pas y revenir** | 11 novembre 2026 |
 | Les SF Symbols restent | 11 novembre 2026 |
-| Les sept teintes d'intensité actuelles restent | 11 novembre 2026 |
+| ~~Les sept teintes d'intensité actuelles restent~~ — **renversée le 15 novembre** | 11 novembre 2026 |
+| La signature de la carte de nuit s'étend aux quatre écrans qui ne l'avaient pas | 13 novembre 2026 |
+| **D1 amendée** — les huit nuanciers restent, et `#F0225F` devient le défaut | 15 novembre 2026 |
+| Le thème sombre survit, et sera redessiné APRÈS le clair | 15 novembre 2026 |
+| Les six teintes d'intensité du brief s'appliquent, ardoise `#44506B` comprise | 15 novembre 2026 |
+| L'en-tête d'accueil ne porte pas de photo : c'est le tracé GPS en grand | 15 novembre 2026 |
+| L'avatar et le récap de fin de course gardent leur dégradé, comme le logo | 15 novembre 2026 |
 
 ---
 
@@ -457,7 +495,8 @@ vivait que dans leur somme. `check_lancement.py` refait l'addition à chaque CI.
 | Question | L'état mesuré |
 | --- | --- |
 | La chaleur du fond de consultation | Le brief demande `#FBF9F7`, blanc chaud ; l'app porte `#F4F3F8`, gris-lavande froid. **C'est le plus grand écart visible qui reste**, et D2 a explicitement laissé le chaud non imposé. |
-| La nuance de l'accent par défaut | Le brief demande `#F0225F` ; le nuancier « Rose » porte `#FF0A78`. |
+| ~~La nuance de l'accent par défaut~~ | **Tranchée le 15 novembre** : `#F0225F` en clair, `#FF0A78` reste la valeur sombre tant que le thème sombre n'est pas redessiné. |
+| La teinte des surfaces secondaires | Le brief du 15 novembre demande `#F3EEF4` pour les pastilles et les sous-surfaces — une lavande FROIDE. Les fonds clairs sont passés au CHAUD le 12 novembre, et les quatre jetons de texte ont suivi la famille du fond le même jour. Adopter `#F3EEF4` tel quel remet du froid sur une page chaude ; c'est la même question que la ligne au-dessus, et elle se tranche avec elle. |
 | **L'app n'a de signature que sur deux écrans sur six** | Voir § 9. C'est la question qui reste après tout le reste. |
 
 

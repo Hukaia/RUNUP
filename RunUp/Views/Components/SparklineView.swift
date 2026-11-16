@@ -77,8 +77,13 @@ struct RUSparkline: View {
                         p.addLine(to: CGPoint(x: l, y: h))
                         p.closeSubpath()
                     }
-                    .fill(LinearGradient(colors: [couleur.opacity(0.22), couleur.opacity(0)],
-                                         startPoint: .top, endPoint: .bottom))
+                    // UN APLAT, ET PAS UN FONDU. Le brief du 15 novembre tranche : « courbe
+                    // de stats, trait d'accent de 2 points, remplissage à 8 % ». Le fondu
+                    // disait « ce n'est pas une surface pleine » ; huit pour cent le disent
+                    // aussi, et sans dégradé. La valeur haute tombe de 22 % à 8 : l'aire était
+                    // le deuxième objet le plus présent d'une carte de stats, derrière le
+                    // chiffre, pour une information que la ligne porte déjà seule.
+                    .fill(couleur.opacity(0.08))
                     Path { p in
                         p.move(to: points[0])
                         points.dropFirst().forEach { p.addLine(to: $0) }

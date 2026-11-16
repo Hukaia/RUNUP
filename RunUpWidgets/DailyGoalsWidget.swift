@@ -112,10 +112,6 @@ struct WidgetRingView: View {
         ZStack {
             ForEach(Array(goals.enumerated()), id: \.offset) { i, goal in
                 let color = colors[min(max(0, goal.slot), colors.count - 1)]
-                // Le voisin RÉELLEMENT dessiné, pas le numéro suivant : un jour de repos n'affiche
-                // que deux arcs. Voir `DailyGoalsBarsView`, dont ceci est le miroir.
-                let nextSlot = goals[(i + 1) % goals.count].slot
-                let nextColor = colors[min(max(0, nextSlot), colors.count - 1)]
                 let seg = RingSegmentGeometry.segment(at: i, count: goals.count)
                 let pct = max(0, min(1, goal.progress))
                 let fillEnd = seg.trimStart + (seg.trimEnd - seg.trimStart) * pct
@@ -130,28 +126,14 @@ struct WidgetRingView: View {
                     .stroke((isLight ? Color.black : Color.white).opacity(isLight ? Self.lightTrack : Self.darkTrack),
                             style: StrokeStyle(lineWidth: Self.stroke, lineCap: .round))
 
-                // Le dégradé balaie tout l'arc, pas seulement sa part remplie : se remplir en
-                // révèle davantage, d'où le « ça s'éclaire en se terminant » des anneaux d'Apple.
-                //
-                // Et son dernier arrêt est la couleur du VOISIN, pour que les deux se rencontrent
-                // dans la même teinte de part et d'autre de l'écart. Transition tardive : entre
-                // deux couleurs éloignées, le milieu de l'interpolation est plus terne que ses
-                // extrémités, et il ne doit occuper que quelques degrés.
+                // UN APLAT, COMME DANS L'APP. Le balayage dégradé et son dernier arrêt pris
+                // sur la couleur du voisin sont partis le 16 novembre, en même temps que ceux
+                // de `DailyGoalsBarsView` : ils servaient à relier trois teintes, et il n'y en
+                // a plus qu'une. L'anneau du widget et celui de l'app doivent rester le même
+                // dessin — sinon l'écran d'accueil et l'app se contredisent.
                 Circle()
                     .trim(from: seg.trimStart, to: fillEnd)
-                    .stroke(
-                        AngularGradient(
-                            gradient: Gradient(stops: [
-                                .init(color: color, location: 0),
-                                .init(color: color.vivid(0.22), location: 0.8),
-                                .init(color: nextColor, location: 1),
-                            ]),
-                            center: .center,
-                            startAngle: .degrees(seg.gradientStartDegrees),
-                            endAngle: .degrees(seg.gradientEndDegrees)
-                        ),
-                        style: StrokeStyle(lineWidth: Self.stroke, lineCap: .round)
-                    )
+                    .stroke(color, style: StrokeStyle(lineWidth: Self.stroke, lineCap: .round))
             }
         }
         // Le `trim` d'un cercle démarre à 3 heures : on tourne pour que le premier arc parte de midi.
@@ -196,8 +178,8 @@ struct DailyGoalsWidgetView: View {
     }
 
     private var isLight: Bool { snapshot.isLightMode }
-    /// [rose2, rose, violet] — l'accent qu'elle a réellement choisi dans l'app, jamais une couleur
-    /// fixe, et dans l'ordre où `DailyGoalsBarsView.fillColors` les rend en interne.
+    /// L'accent qu'elle a réellement choisi dans l'app, jamais une couleur fixe — et trois fois
+    /// le même depuis que l'anneau est mono-accent, comme `DailyGoalsBarsView.fillColors`.
     private var colors: [Color] { WidgetAccentPalette.ringColors(themeID: snapshot.accentThemeID, isLight: isLight) }
     private var bg: Color { isLight ? .white : .black }
     /// L'encre de l'app, RECOPIÉE et pas lue : la cible du widget ne compile pas

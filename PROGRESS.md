@@ -24,9 +24,13 @@ n'apparaît, l'avant/après est écrit ici, et les trois langues ont été véri
 | **D1 à D4 tiennent, face au brief re-transmis.** Le brief d'origine demande une couleur d'accent unique, un fond blanc chaud, trois entrées de barre basse et une inscription en trois questions. Les quatre décisions du 9 novembre les emportent. | Charlotte | 11 novembre 2026 |
 | **Le Club reste sous l'onglet Profil.** Mesuré : c'est le seul des trois différenciateurs annoncés qui soit à deux niveaux de profondeur, et le brief le voulait dans la barre. Proposé de le remonter à la place de Stats ; décision de ne pas le faire. Ne pas y revenir. | Charlotte | 11 novembre 2026 |
 | **SF Symbols restent.** Le brief demande Phosphor ou Lucide au trait 1,5 px. 200 appels, et les SF Symbols suivent seuls la ligne de base, le poids de la fonte et les tailles d'accessibilité. Gain esthétique, coût structurel : non. | Charlotte | 11 novembre 2026 |
-| **Les sept teintes d'intensité actuelles restent.** Le brief en donne cinq, en une seule valeur chacune ; l'app porte deux thèmes et huit accents, et `#F5A524` sur blanc donne 1,9:1. L'esprit du brief — une teinte fixe par intensité, la même partout — est déjà tenu. | Charlotte | 11 novembre 2026 |
+| ~~**Les sept teintes d'intensité actuelles restent.**~~ Le brief en donne cinq, en une seule valeur chacune ; l'app porte deux thèmes et huit accents, et `#F5A524` sur blanc donne 1,9:1. **Renversée le 15 novembre** — voir quatre lignes plus bas. | Charlotte | 11 novembre 2026 |
 | **D1 tient, avec un défaut imposé.** Le brief de direction artistique du 15 novembre demande « un seul accent #F0225F » ; les huit thèmes restent, et #F0225F devient le défaut. C'est lui que montrent la fiche, les captures et l'identité ; qui veut en changer le peut encore. | Charlotte | 15 novembre 2026 |
 | **Le thème sombre reste, et sera redessiné après le clair.** Le brief du 15 novembre ne décrit que le fond clair. Le sombre n'est pas abandonné : la même grammaire y sera déclinée une fois le clair refait. | Charlotte | 15 novembre 2026 |
+| **Les six teintes d'intensité du brief s'appliquent, et renversent la décision du 11 novembre.** Le 11, la raison était mesurée : ces valeurs sont construites pour un fond sombre. Le brief du 15 les redemande en tête de ses cinq corrections obligatoires, et il redessine le clair autour d'elles — c'est la décision la plus récente, prise en connaissance du thème. Trois des six passent sous 3:1 sur blanc ; la famille est portée par le SYMBOLE, pas par la couleur, et c'est déjà la raison pour laquelle chaque famille en a un. Les chiffres sont dans DESIGN.md § 2.3. | Charlotte | 15 novembre 2026 |
+| **La sixième teinte est l'ardoise `#44506B`**, pour le renforcement. Les cinq autres sont des couleurs de course ; celle-là n'en est pas une. | Charlotte | 15 novembre 2026 |
+| **L'avatar et le récap de fin de course gardent leur dégradé**, comme le logo. Tous les autres dégradés d'interface partent. | Charlotte | 15 novembre 2026 |
+| **L'en-tête d'accueil ne porte pas de photo** : c'est le tracé GPS en grand. | Charlotte | 15 novembre 2026 |
 | **Pas d'image iPad sur la fiche App Store.** « L'app iPad doit être différente, on ne va pas courir avec son iPad. » RUNUP est une app iPhone (`TARGETED_DEVICE_FAMILY` vaut 1) : Apple n'en demande aucune, et une mise en page iPhone étirée dans un cadre d'iPad n'est pas une app iPad. | Charlotte | 10 novembre 2026 |
 
 ## Ce qui attend une décision
@@ -6294,3 +6298,104 @@ Et la semaine passe en sous-titre. Elle était à `displayStyle(.subtitle)` — 
 pleine — soit la taille d'un titre de carte, juste sous un titre de carte. Deux titres empilés ne
 font pas une hiérarchie, ils font une hésitation. À 14 points en `text2`, elle rend six points de
 hauteur, qui sont exactement ce qui manquait en bas.
+
+---
+
+## 16 novembre 2026 — six teintes d'intensité, et plus un dégradé qui décore
+
+Points 2 et 3 du brief du 15 novembre, en un seul chantier parce qu'ils tombent sur les mêmes
+écrans : la couleur d'une séance et les dégradés qui l'entouraient se regardent sur la même
+capture.
+
+### Une décision du 11 novembre est renversée, et la raison est écrite des deux côtés
+
+DESIGN.md § 7 portait **« les sept teintes d'intensité actuelles restent »**, daté du 11, avec un
+argument mesuré : les valeurs du brief sont construites pour un fond sombre, et le clair venait de
+devenir le thème par défaut. Le brief du 15 les redemande nommément, en tête de ses cinq
+corrections obligatoires, et il redessine le clair AUTOUR d'elles. C'est la décision la plus
+récente, et elle est prise en connaissance du thème.
+
+La ligne du 11 est barrée, pas effacée — dans DESIGN.md comme ici. Une décision qui s'inverse doit
+laisser sa mesure derrière elle, sinon elle s'inversera encore.
+
+| Famille | Avant | Après |
+| --- | --- | --- |
+| Récupération | `#0E9C8C` 3,41:1 | `#5AA9E6` **2,54:1** |
+| Endurance | `#6B9E00` 3,22:1 | `#2FB37A` **2,68:1** |
+| Tempo | `#B86A00` 4,12:1 | `#F5A524` **2,04:1** |
+| Fractionné | `#C2352A` 5,47:1 | `#F0225F` 4,12:1 |
+| Sortie longue | `#5B3FD6` 6,72:1 | `#7B3FE4` 5,72:1 |
+| Fonctionnel | `#0F62C8` 5,83:1 | `#44506B` **8,06:1** |
+
+Mesuré sur blanc pur. Trois passent sous 3:1, le seuil demandé à un objet graphique **porteur de
+sens**. Elles n'en sont pas : chaque famille porte aussi une FORME, et c'est déjà la raison pour
+laquelle elle en a une — « environ un homme sur douze distingue mal le rouge du vert, et ce sont
+précisément les deux extrémités de cette palette ». La couleur appuie, elle ne porte pas.
+
+**Ce ne sont pas `lime` / `cyan` / `amber` / `ember` / `grape` / `azure`.** Ces six-là sont des
+couleurs sémantiques d'interface — `lime` veut dire MIEUX, `amber` veut dire MOINS BIEN — et
+`check_teintes.py` tient la liste fermée de leurs emplois pour que ce sens ne se dilue pas. Les
+faire servir aussi de palette d'entraînement, c'était deux grammaires sur un même jeton : un écart
+hebdo vert et un footing vert, à deux centimètres, sans rapport. Six jetons de rôle, donc, et les
+anciens gardent leur travail.
+
+### L'anneau perd ses trois couleurs
+
+Il portait `[rose, violet, cyan]` et un balayage par arc dont le dernier arrêt était la couleur du
+voisin, pour que les trois se lisent comme un ruban plutôt que comme trois bâtons posés en cercle.
+Tout ce mécanisme servait à réconcilier trois teintes ; avec une seule, il n'a plus rien à
+réconcilier — il ne restait qu'un éclaircissement décoratif, et le brief l'interdit.
+
+Ce qui sépare les trois objectifs reste ce qui les séparait vraiment, et que le commentaire de la
+piste grise disait déjà : **la légende les nomme en toutes lettres**, dans l'ordre où l'anneau les
+dessine. La pastille de légende ne désigne plus son arc, elle le puce.
+
+Trois choses sont mortes avec le dégradé : `gradientStartDegrees` et son jumeau, le cas de test
+qui ne comparait qu'eux, et `Color.vivid(_:)`, dont la première ligne de documentation disait
+« le pendant de `darkened` pour les dégradés d'accent ». Supprimés avec ce qu'ils servaient,
+plutôt que laissés à décrire une app qui n'existe plus.
+
+### Une dérive trouvée en chemin, et le garde qui ne la voyait pas
+
+Le widget recopie `AccentTheme.all` à la main — il tourne dans un autre processus et ne peut pas
+lire l'objet en mémoire — et `check_accent.py` tient la copie d'accord avec la source.
+
+**Mais l'app n'affiche pas `all` en thème clair.** Elle affiche `resolvedOnLight`, où le rose vaut
+`#F0225F` depuis le 15 novembre. Le miroir était donc exact sur la table qu'il copiait, et faux
+sur ce qui est dessiné : le widget rendait un `#FF0A78` assombri de 10 %. Deux roses voisins, sur
+deux écrans qu'on voit l'un après l'autre, et aucun garde pour le dire — **la copie surveillée
+était juste, c'est la table surveillée qui n'était pas celle qu'on regarde.**
+
+`check_accent.py` compare maintenant les deux tables claires aussi. Éprouvé en réintroduisant la
+faute dans les deux sens : valeur fausse, et ligne absente.
+
+### Le reste du point 3
+
+- L'aire sous la courbe des stats passe du fondu `22 % → 0` à un **aplat à 8 %**, la valeur du
+  brief. Le fondu disait « ce n'est pas une surface pleine » ; huit pour cent le disent aussi,
+  sans dégradé. L'aire était le deuxième objet le plus présent d'une carte de stats, derrière le
+  chiffre, pour une information que la ligne porte déjà seule.
+- Le tracé GPS perd son **halo** — une copie floutée du trait à 1,6 fois sa largeur, qui empâtait
+  les virages au lieu de les montrer — et la **lueur de sa tête**. Le trait passe de 3 à 4 points,
+  qui est ce que le halo donnait vraiment à lire. La tête reste : ce qui fait lire un déplacement,
+  c'est qu'un point avance, pas qu'il brille.
+
+### Trois exceptions sortent de `check_degrade.py`
+
+Sa quatrième catégorie, « la couleur porte une information », est fermée. Ses trois raisons
+étaient bonnes **dans leur cadre**, et le brief retire le cadre. Le script compte exactement par
+fichier, donc il se plaint aussi d'un dégradé qui MANQUE : l'oubli était impossible dans un sens
+comme dans l'autre. Il reste 10 dégradés autorisés dans 7 fichiers — la marque, trois images
+produites, deux voiles de lisibilité, et l'avatar que Charlotte a demandé à garder.
+
+### Et un cas de test réécrit plutôt que re-épinglé, pour la troisième fois cette semaine
+
+« une teinte de famille fausse est attrapée » substituait le littéral `ember` dans DESIGN.md. Le
+fractionné s'appelle `intervalles` depuis ce matin : la substitution ne trouvait plus rien, et le
+cas **passait en ne testant rien**. Il lit maintenant le jeton courant dans le code, et vérifie
+que les deux familles qu'il compare ne partagent pas la même valeur — sans quoi il ne prouverait
+plus rien le jour où elles la partageraient.
+
+Première version de la correction : substituer un nom inventé. Le garde se plaignait alors du
+COMPTE de lignes au lieu de nommer le fractionné, et le cas serait passé pour la mauvaise raison.
+C'est un autre jeton de famille qui est substitué.

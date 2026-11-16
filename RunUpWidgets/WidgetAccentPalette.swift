@@ -17,24 +17,33 @@ enum WidgetAccentPalette {
         "magenta": (0xD633B8, 0xF07ADB, 0x7C5CFF)
     ]
 
-    /// [rose2, rose, violet], in that order — same order `DailyGoalsBarsView.fillColors` returns
-    /// in-app, so the widget's ring reads identically to the in-app one for the same profile.
+    /// LE CLAIR N'EST PAS LA TABLE BRUTE, ET C'EST CE QUI A DÉRIVÉ.
+    ///
+    /// `swatches` ci-dessus recopie `AccentTheme.all`, et `check_accent.py` le vérifie. Mais
+    /// l'app n'affiche PAS `all` en thème clair : elle affiche `AccentTheme.resolvedOnLight`,
+    /// qui remplace le rose par la valeur de la maquette — `#F0225F` depuis le 15 novembre — et
+    /// descend les autres nuanciers au seuil de contraste. Le miroir était donc exact sur la
+    /// table qu'il copiait, et faux sur ce qui est dessiné : le widget rendait un rose
+    /// `#FF0A78` assombri de 10 %, l'app `#F0225F`. Deux roses voisins, sur deux écrans qu'on
+    /// voit l'un après l'autre.
+    ///
+    /// Les valeurs claires de la maquette sont donc recopiées ici aussi, et le repli — un
+    /// assombrissement de 10 % — reste ce qu'il était pour les nuanciers que la maquette ne
+    /// fixe pas. Ce n'est pas la dichotomie de contraste de l'app, et c'est volontaire : ce
+    /// fichier existe parce que la cible du widget ne compile pas `RunUp/DesignSystem`.
+    private static let mockupLight: [String: UInt32] = ["rose": 0xF0225F]
+
+    /// La couleur de l'anneau, trois fois — l'anneau est mono-accent depuis le 16 novembre, et
+    /// `DailyGoalsBarsView.fillColors` rend le même tableau de trois valeurs identiques.
     static func ringColors(themeID: String, isLight: Bool) -> [Color] {
         let swatch = swatches[themeID] ?? swatches["rose"]!
-        let primary = Color(hex: swatch.primary)
-        let light = Color(hex: swatch.light)
-        let tail = Color(hex: swatch.tail)
-        _ = light
-        // Trois objectifs, trois couleurs DISTINCTES — l'app vient de faire le même changement
-        // (voir `DailyGoalsBarsView.fillColors`). C'était `[rose2, primary, tail]`, soit deux
-        // teintes voisines sur trois : sur un anneau, elles se lisent comme un seul arc coupé.
-        //
-        // La troisième est un cyan FIXE et non une couleur du nuancier : un thème d'accent porte
-        // une teinte principale et sa queue, pas trois. C'est exactement ce que fait l'app, dont
-        // le `RUColor.cyan` ne suit pas non plus le nuancier choisi.
-        let cyan = Color(hex: isLight ? 0x0E9C8C : 0x38E0D0)
-        // Same light-mode darkening as RUColor.rose/.violet in-app — without it the widget's
-        // light ring was visibly more washed out than the identical in-app ring.
-        return isLight ? [primary.darkened(0.10), tail.darkened(0.10), cyan] : [primary, tail, cyan]
+        let accent: Color
+        if isLight {
+            accent = mockupLight[themeID].map { Color(hex: $0) }
+                ?? Color(hex: swatch.primary).darkened(0.10)
+        } else {
+            accent = Color(hex: swatch.primary)
+        }
+        return Array(repeating: accent, count: 3)
     }
 }

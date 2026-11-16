@@ -127,7 +127,18 @@ def _():
 
 @cas_test("une teinte de famille fausse est attrapée")
 def _():
-    doc = _fausse("| Fractionné | `ember` |", "| Fractionné | `azure` |")
+    # LA VALEUR EST LUE DANS LE CODE, PAS ÉCRITE ICI. Ce cas a été épinglé sur « ember » tant
+    # que le fractionné s'appelait ainsi ; le 16 novembre la famille est passée à `intervalles`
+    # et la fausse substitution ne trouvait plus rien à remplacer — le cas passait en ne testant
+    # rien, et c'est le garde de péremption de `_fausse` qui l'a dit. Réécrit sur le jeton
+    # courant, il survit au prochain changement de palette.
+    familles = ck.teintes_des_familles()
+    vrai, autre = familles["intervals"], familles["endurance"]
+    # Un AUTRE jeton de famille, et pas un nom inventé : avec un nom qui n'est pas une couleur,
+    # la ligne cesse d'être lisible et le garde se plaint du COMPTE de lignes au lieu de nommer
+    # le fractionné — le cas passerait alors pour la mauvaise raison.
+    assert vrai != autre, "les deux familles partagent un jeton, ce cas ne prouve plus rien"
+    doc = _fausse(f"| Fractionné | `{vrai}` |", f"| Fractionné | `{autre}` |")
     problemes = _sur(doc)
     assert any("Fractionné" in quoi for _, quoi, _ in problemes), problemes
 

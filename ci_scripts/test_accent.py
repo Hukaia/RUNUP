@@ -55,6 +55,26 @@ def _():
     p = ck.ecarts(ck.nuanciers(SOURCE), copie, "f.swift")
     assert len(p) == 1 and "ocre" in p[0], p
 
+@cas_test("LA TABLE CLAIRE EST LUE DERRIÈRE SON ANNOTATION DE TYPE")
+def _():
+    # Les deux déclarations portent un `[String: ...]` avant leurs valeurs. Une première version
+    # s'arrêtait sur ce crochet-là et lisait zéro nuancier : le contrôle refusait un dépôt juste.
+    src = ('    private static let mockupLightPalettes: [String: (primary: Color, light: Color, '
+           'tail: Color)] = [\n        "rose": (Color(hex: 0xF0225F), Color(hex: 0xF0225F), '
+           'Color(hex: 0x7B3FE4))\n    ]')
+    lu = ck.maquette_claire(src, "mockupLightPalettes", ck._MAQUETTE_SOURCE)
+    assert lu == {"rose": "0xf0225f"}, lu
+
+@cas_test("et le miroir du widget se lit de la même façon")
+def _():
+    src = '    private static let mockupLight: [String: UInt32] = ["rose": 0xF0225F]'
+    lu = ck.maquette_claire(src, "mockupLight", ck._MAQUETTE_MIROIR)
+    assert lu == {"rose": "0xf0225f"}, lu
+
+@cas_test("UNE TABLE CLAIRE ABSENTE EST UN SILENCE, PAS UN ACCORD")
+def _():
+    assert ck.maquette_claire("rien du tout", "mockupLight", ck._MAQUETTE_MIROIR) == {}
+
 @cas_test("les vrais fichiers du dépôt sont d'accord")
 def _():
     assert ck.main() == 0

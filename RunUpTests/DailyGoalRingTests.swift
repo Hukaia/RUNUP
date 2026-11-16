@@ -56,17 +56,6 @@ final class DailyGoalRingTests: XCTestCase {
         XCTAssertLessThan(first.trimEnd, 0.5, "Le premier arc s'arrête avant le départ du second : l'écart reste.")
     }
 
-    func testGradientDegreesDescribeTheSameArcAsTheTrim() {
-        for count in [2, 3] {
-            for index in 0..<count {
-                let seg = RingSegmentGeometry.segment(at: index, count: count)
-                XCTAssertEqual(seg.gradientStartDegrees, seg.trimStart * 360, accuracy: 0.0001)
-                XCTAssertEqual(seg.gradientEndDegrees, seg.trimEnd * 360, accuracy: 0.0001,
-                               "Le dégradé doit balayer exactement l'arc que le trim découpe — sinon il glisse.")
-            }
-        }
-    }
-
     // MARK: La fenêtre du plan ouvert (même logique que `PlanView.weekRange`)
 
     func testOpenProgramShapeIsUnbounded() {

@@ -1,25 +1,31 @@
 import SwiftUI
 
-/// The "3 daily goals" widget — one ring, split into 3 colored arc segments, instead of 3
-/// separate bars. Takes a little of its polish from Apple's Fitness/Activity rings (a glossy
-/// per-ring gradient sweep, a color-tinted track instead of flat gray) without
-/// copying the actual design: Apple's is 3 CONCENTRIC full rings in fixed Move/Exercise/Stand
-/// colors, this is a SINGLE ring split into 3 gapped arc segments in the app's own brand colors —
-/// a different principle, not just a different palette. The concentric-ring look itself is also
-/// reserved for the system Activity control by Apple's Human Interface Guidelines, and app review
-/// rejects lookalikes under guideline 5.2.5, so staying single-ring isn't just aesthetic. Each
-/// goal gets 120° of the circle minus a small gap on either side, so the 3 goals stay clearly
-/// distinct even though they now share one ring. Colors are the app's 3 core accent tones
-/// (`RUColor.rose2` → `.rose` → `.violet`, theme-aware) — the same logo gradient stops as before.
-/// Every legend dot (`RingsView`, `HomeView`) reads `fillColors` below, so they can never drift
-/// out of sync with what's actually drawn here. Drawn in a fixed 100×100 space then
-/// `scaleEffect`-ed to `size`, so stroke width, gaps, and shadow all stay in the same proportion
-/// to the ring at every size this is used at.
+/// The "3 daily goals" widget — one ring, split into 3 arc segments, instead of 3 separate bars.
+///
+/// Apple's is 3 CONCENTRIC full rings in fixed Move/Exercise/Stand colors; this is a SINGLE ring
+/// split into 3 gapped arc segments — a different principle, not just a different palette. The
+/// concentric-ring look is also reserved for the system Activity control by Apple's Human
+/// Interface Guidelines, and app review rejects lookalikes under guideline 5.2.5, so staying
+/// single-ring isn't just aesthetic. Each goal gets 120° of the circle minus a small gap on
+/// either side, so the 3 goals stay distinct even though they share one ring.
+///
+/// L'ANNEAU EST MONO-ACCENT DEPUIS LE 16 NOVEMBRE. Il portait trois teintes et un balayage
+/// dégradé par arc, repris du brillant des anneaux d'Apple ; le brief de direction artistique
+/// interdit l'un et l'autre. Ce qui sépare les trois objectifs, ce sont les écarts et l'ordre,
+/// et la légende qui les nomme. `fillColor` ci-dessous est la seule couleur, et toute légende
+/// (`RingsView`, `HomeView`) la lit là plutôt que d'en garder une copie.
+///
+/// Drawn in a fixed 100×100 space then `scaleEffect`-ed to `size`, so stroke width and gaps stay
+/// in the same proportion to the ring at every size this is used at.
 struct DailyGoalsBarsView: View {
     /// Un objectif de la journée : son rang d'origine dans [Séance, Calories, Pas], et où il en
-    /// est. Le rang voyage avec l'objectif au lieu d'être sa position dans le tableau : sans lui,
-    /// une journée de repos — deux objectifs — repeindrait « calories » de la couleur de la
-    /// séance, et les pastilles de légende suivraient le même glissement.
+    /// est. Le rang voyage avec l'objectif au lieu d'être sa position dans le tableau.
+    ///
+    /// Il servait à choisir une couleur parmi trois ; depuis que l'anneau est mono-accent, ce
+    /// n'est plus l'anneau qui le lit. Il reste parce que c'est l'identité de l'objectif, et que
+    /// la légende du widget, elle, s'en sert encore pour savoir quelle ligne elle écrit — une
+    /// journée de repos n'affiche que deux arcs, et le deuxième est « calories », pas
+    /// « séance ».
     struct Goal: Equatable {
         var slot: Int
         var progress: Double
@@ -74,25 +80,31 @@ struct DailyGoalsBarsView: View {
         _displayedProgress = State(initialValue: animateOnAppear ? goals.map { _ in 0 } : goals.map(\.progress))
     }
 
-    /// Each segment's fill color, in goal order — exposed so other views showing the same 3 goals
-    /// (the legend dots in `RingsView`, the stat labels in `HomeView`) draw from this instead of
-    /// keeping a second, driftable copy of the palette.
-    /// Trois objectifs, trois COULEURS distinctes.
+    /// LA COULEUR DE L'ANNEAU, ET IL N'Y EN A PLUS QU'UNE.
     ///
-    /// C'était `[rose2, rose, violet]` : deux roses sur trois. Sur un anneau, deux teintes voisines
-    /// se lisent comme un seul arc coupé, et sur un écran déjà largement rose elles n'ajoutaient
-    /// aucune information — la séance et les calories se distinguaient par leur position, pas par
-    /// leur couleur. Trois objectifs différents méritent trois signaux différents.
-    static var fillColors: [Color] { [RUColor.rose, RUColor.violet, RUColor.cyan] }
+    /// Exposée pour que les vues qui montrent les mêmes trois objectifs — les pastilles de
+    /// légende de `RingsView`, les libellés de `HomeView` — la lisent ici au lieu d'en garder
+    /// une deuxième copie qui dérive.
+    ///
+    /// ELLE ÉTAIT TROIS : `[rose, violet, cyan]`, sur l'argument « trois objectifs différents
+    /// méritent trois signaux différents ». Le brief du 15 novembre tranche l'inverse —
+    /// « anneau mono-accent » — et le prix est connu et accepté : la pastille de légende ne
+    /// désigne plus son arc, elle le PUCE. Ce qui identifie les trois objectifs reste ce qui
+    /// les identifiait déjà vraiment, et que le commentaire de la piste grise disait déjà :
+    /// la légende les nomme en toutes lettres, deux centimètres à droite, dans l'ordre où
+    /// l'anneau les dessine.
+    static var fillColor: Color { RUColor.rose }
 
-    /// Les mêmes trois, sur la nuit : sans la correction calculée pour le fond blanc.
+    /// La même, sur la nuit : sans la correction calculée pour le fond blanc.
+    static var fillColorSurLaNuit: Color { AccentTheme.current.primary }
+
+    /// Les trois, en tableau, pour les appelants qui indexent par objectif.
     ///
-    /// Exposé comme `fillColors` l'est, et pour la même raison — la légende à pastilles de
-    /// `RingsView` lit l'une ou l'autre selon le fond sur lequel ELLE est posée, au lieu d'en
-    /// garder une deuxième copie.
-    static var fillColorsSurLaNuit: [Color] {
-        [AccentTheme.current.primary, AccentTheme.current.tail, RUColor.cyanSombre]
-    }
+    /// Trois fois la même valeur : c'est voulu, et c'est ce qui fait qu'aucun appelant n'a eu à
+    /// changer de forme le jour où l'anneau est passé mono-accent. Le jour où il repasserait à
+    /// trois teintes, c'est ici que ça se déciderait, et nulle part ailleurs.
+    static var fillColors: [Color] { Array(repeating: fillColor, count: 3) }
+    static var fillColorsSurLaNuit: [Color] { Array(repeating: fillColorSurLaNuit, count: 3) }
 
     private static let canvasSize: CGFloat = 100
     /// 15 % du diamètre. C'était 12 %, aligné sur le widget après une comparaison côte à côte —
@@ -142,17 +154,8 @@ struct DailyGoalsBarsView: View {
 
     var body: some View {
         ZStack {
-            ForEach(Array(goals.enumerated()), id: \.offset) { i, goal in
-                let palette = surLaNuit ? Self.fillColorsSurLaNuit : Self.fillColors
-                let color = palette[min(max(0, goal.slot), palette.count - 1)]
-                // La couleur de l'arc SUIVANT, vers laquelle celui-ci va se fondre.
-                //
-                // Prise dans `goals` et non dans `fillColors` : un jour de repos n'affiche que
-                // deux objectifs, et l'arc qui suit visuellement n'est alors pas celui dont le
-                // numéro suit. C'est le voisin RÉELLEMENT dessiné qui compte, sinon la jonction se
-                // fondrait vers une couleur absente de l'anneau.
-                let nextSlot = goals[(i + 1) % goals.count].slot
-                let nextColor = palette[min(max(0, nextSlot), palette.count - 1)]
+            ForEach(Array(goals.enumerated()), id: \.offset) { i, _ in
+                let color = surLaNuit ? Self.fillColorSurLaNuit : Self.fillColor
                 let seg = RingSegmentGeometry.segment(at: i, count: goals.count)
                 let pct = max(0, min(1, i < displayedProgress.count ? displayedProgress[i] : 0))
                 let fillEnd = seg.trimStart + (seg.trimEnd - seg.trimStart) * pct
@@ -169,56 +172,22 @@ struct DailyGoalsBarsView: View {
                         style: StrokeStyle(lineWidth: stroke, lineCap: .round)
                     )
 
-                // Fill: from the same start point, out to `pct` of the way along the segment. The
-                // gradient sweep spans the segment's full angular range (not just the filled
-                // part), so the trim below reveals progressively more of the same fixed sweep —
-                // early progress sits at the base accent, filling all the way to the goal reaches
-                // its most intense form, the same "brightens as it completes" read Apple's rings
-                // have, without animating the gradient itself (only `trim` — a `Shape`'s own
-                // `animatableData` — needs to interpolate for this to animate smoothly).
+                // LE REMPLISSAGE : UN APLAT D'ACCENT.
                 //
-                // Le départ était `color.darkened(0.28)`, et c'est ce qui rendait l'anneau terne :
-                // en clair, l'arc « calories » partait d'un bordeaux. Un objectif
-                // ATTEINT révèle tout le balayage, donc cette bouillie restait affichée en
-                // permanence sur une bonne moitié de l'arc — l'inverse de ce que l'effet
-                // cherchait. Le dégradé va maintenant de l'accent vers sa version la plus vive
-                // (`#F50D7A` → `#FF007F`) : lumineux d'un bout à l'autre, et le sens « ça
-                // s'éclaire en se remplissant » est conservé.
+                // C'était un `AngularGradient` à trois arrêts, dont le dernier était la couleur
+                // du VOISIN : chaque arc gardait sa teinte sur ses quatre premiers cinquièmes
+                // puis virait vers celle de l'arc suivant, pour que l'anneau se lise comme un
+                // seul ruban qui change de couleur plutôt que comme trois bâtons posés en
+                // cercle. Tout ce mécanisme servait à réconcilier trois couleurs. Avec une
+                // seule, il n'a plus rien à réconcilier : il ne restait qu'un éclaircissement
+                // décoratif de l'accent vers sa version vive, et le brief du 15 novembre
+                // l'interdit.
+                //
+                // L'effet « ça s'éclaire en se remplissant » disparaît avec lui. Ce qui dit
+                // qu'un objectif avance reste ce qui le disait : la LONGUEUR de l'arc.
                 Circle()
                     .trim(from: seg.trimStart, to: fillEnd)
-                    .stroke(
-                        AngularGradient(
-                            // Trois arrêts, et le dernier est la couleur du VOISIN.
-                            //
-                            // Chaque arc garde sa propre couleur sur ses quatre premiers
-                            // cinquièmes — c'est là qu'on l'identifie — puis vire vers celle de
-                            // l'arc suivant sur le dernier. Les deux se rencontrent donc dans la
-                            // même teinte de part et d'autre de l'écart, et l'anneau se lit comme
-                            // un seul ruban qui change de couleur, au lieu de trois bâtons posés
-                            // en cercle.
-                            //
-                            // La transition est tardive et non centrée, pour une raison de
-                            // couleur : entre deux teintes éloignées, le milieu de l'interpolation
-                            // est toujours plus terne que ses extrémités — le cyan et le rose se
-                            // croisent dans un mauve gris. Reléguée au dernier cinquième, cette
-                            // zone terne tient dans quelques degrés au lieu d'occuper le tiers de
-                            // l'arc.
-                            //
-                            // Et le balayage couvre TOUT le segment, pas seulement sa part
-                            // remplie : le dégradé ne se déforme donc pas en se remplissant, et un
-                            // arc incomplet n'affiche jamais la couleur du voisin — la jonction
-                            // n'existe que quand les deux arcs l'atteignent.
-                            gradient: Gradient(stops: [
-                                .init(color: color, location: 0),
-                                .init(color: color.vivid(0.22), location: 0.8),
-                                .init(color: nextColor, location: 1),
-                            ]),
-                            center: .center,
-                            startAngle: .degrees(seg.gradientStartDegrees),
-                            endAngle: .degrees(seg.gradientEndDegrees)
-                        ),
-                        style: StrokeStyle(lineWidth: stroke, lineCap: .round)
-                    )
+                    .stroke(color, style: StrokeStyle(lineWidth: stroke, lineCap: .round))
                     .animation(reduceMotion ? nil : .easeOut(duration: 0.9), value: pct)
             }
         }

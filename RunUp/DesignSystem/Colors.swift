@@ -614,6 +614,51 @@ enum RUColor {
 
     /// L'accent principal sur la nuit, quand un seul suffit.
     static var accentDeLaNuit: Color { AccentTheme.current.primary }
+
+    // ── LES SIX TEINTES D'INTENSITÉ ──────────────────────────────────────────────────────────
+    //
+    // Le brief du 15 novembre les fixe nommément : « cinq teintes d'intensité fixes », plus une
+    // sixième tranchée après mesure pour la septième famille. Elles ne décorent rien. Elles
+    // disent À QUEL EFFORT une séance appartient, et c'est la seule information que l'app code
+    // en couleur.
+    //
+    // POURQUOI ELLES NE SONT PAS lime / amber / ember / cyan / grape / azure. Ces six-là sont des
+    // couleurs SÉMANTIQUES d'interface : `lime` veut dire MIEUX, `amber` veut dire MOINS BIEN,
+    // et `check_teintes.py` tient la liste fermée de leurs emplois pour que ce sens ne se dilue
+    // pas. Les faire servir aussi de palette d'entraînement, c'était deux grammaires sur un même
+    // jeton — un écart hebdo vert et un footing vert, à deux centimètres, sans rapport.
+    //
+    // CE QU'ELLES VALENT SUR BLANC, mesuré, et non estimé à l'œil :
+    //
+    //     facile       #2FB37A   2,68:1
+    //     seuil        #F5A524   2,04:1
+    //     intervalles  #F0225F   4,12:1
+    //     récupération #5AA9E6   2,54:1
+    //     sortie longue #7B3FE4  5,72:1
+    //     fonctionnel  #44506B   8,06:1
+    //
+    // Trois d'entre elles passent sous 3:1, le seuil que la règle d'accessibilité demande à un
+    // objet graphique PORTEUR DE SENS. Elles n'en sont pas : chaque famille porte AUSSI une
+    // forme — `SessionFamily.symbol` — et c'est la forme qui dit laquelle, pour les douze pour
+    // cent d'hommes qui distinguent mal le rouge du vert. La couleur appuie, elle ne porte pas.
+    // Le chiffre est consigné ici parce qu'il est bas, pas parce qu'il est faux.
+    //
+    // SEUL LE JOUR CHANGE. Les jumelles de nuit — `limeSombre` et les cinq autres — restent en
+    // place : elles sont calibrées contre du presque-noir, et le thème sombre est un chantier
+    // qui vient après celui-ci.
+    static var facile: Color { isLight ? Color(hex: 0x2FB37A) : limeSombre }
+    static var seuil: Color { isLight ? Color(hex: 0xF5A524) : amberSombre }
+    static var intervalles: Color { isLight ? Color(hex: 0xF0225F) : emberSombre }
+    static var recuperation: Color { isLight ? Color(hex: 0x5AA9E6) : cyanSombre }
+    static var sortieLongue: Color { isLight ? Color(hex: 0x7B3FE4) : grapeSombre }
+
+    /// L'ardoise du renforcement — la sixième, choisie par Charlotte le 15 novembre.
+    ///
+    /// Les cinq autres sont des couleurs de course. Le renforcement n'en est pas une : c'est le
+    /// travail qui se fait debout, sans montre et sans allure. Une teinte froide et sourde le
+    /// range à part sans l'éteindre, là où une septième couleur vive aurait simplement ajouté du
+    /// bruit à une semaine déjà peinte.
+    static var fonctionnel: Color { isLight ? Color(hex: 0x44506B) : azureSombre }
 }
 
 /// La palette des familles de séance : une couleur par famille, la même partout.
@@ -625,12 +670,12 @@ extension SessionFamily {
     var tint: Color {
         switch self {
         case .rest: return RUColor.text3
-        case .recovery: return RUColor.cyan
-        case .endurance: return RUColor.lime
-        case .longRun: return RUColor.grape
-        case .tempo: return RUColor.amber
-        case .intervals: return RUColor.ember
-        case .functional: return RUColor.azure
+        case .recovery: return RUColor.recuperation
+        case .endurance: return RUColor.facile
+        case .longRun: return RUColor.sortieLongue
+        case .tempo: return RUColor.seuil
+        case .intervals: return RUColor.intervalles
+        case .functional: return RUColor.fonctionnel
         }
     }
 

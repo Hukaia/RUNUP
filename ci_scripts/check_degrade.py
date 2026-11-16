@@ -83,20 +83,20 @@ PERMIS = {
         1, "Le fondu en bas du défilement : le contenu s'efface sous le bord au lieu d'y être "
            "coupé net."),
 
-    # ── 4. LA COULEUR PORTE UNE INFORMATION ───────────────────────────────────────────────────
-    "RunUp/Views/Components/DailyGoalsBarsView.swift": (
-        1, "L'anneau des objectifs du jour. Chaque arc garde sa couleur sur ses quatre premiers "
-           "cinquièmes puis vire vers celle de son VOISIN : les deux se rejoignent dans la même "
-           "teinte de part et d'autre de l'écart, et l'anneau se lit comme un seul ruban qui "
-           "change de couleur au lieu de trois bâtons posés en cercle. Le dégradé est ici la "
-           "frontière entre deux mesures, pas un ornement."),
-    "RunUpWidgets/DailyGoalsWidget.swift": (
-        1, "Le même anneau, dans le widget. Mêmes arcs, même raison — et il doit rester "
-           "identique à celui de l'app, sinon l'écran d'accueil et l'app se contredisent."),
-    "RunUp/Views/Components/SparklineView.swift": (
-        1, "L'aire sous la courbe, qui s'efface vers le bas. C'est la convention de lecture d'un "
-           "graphe : l'aire dit « voilà le volume », le fondu dit « ce n'est pas une surface "
-           "pleine ». Un aplat la ferait lire comme une barre."),
+    # ── 4. LA QUATRIÈME CATÉGORIE A ÉTÉ FERMÉE ────────────────────────────────────────────────
+    #
+    # Elle s'appelait « la couleur porte une information » et tenait trois entrées : l'anneau des
+    # objectifs, le même anneau dans le widget, et l'aire sous la courbe des stats. Les trois
+    # raisons étaient bonnes dans leur cadre — l'anneau reliait trois teintes par ses jonctions,
+    # l'aire disait « ce n'est pas une surface pleine » par son fondu.
+    #
+    # Le brief du 15 novembre retire le cadre : l'anneau est mono-accent, et il n'y a plus trois
+    # teintes à relier ; l'aire est un aplat à 8 %, et huit pour cent disent la même chose que le
+    # fondu sans dégradé. Une exception dont la raison a disparu n'est plus une exception, c'est
+    # un passe-droit — et le compte exact par fichier fait que le script le dit tout seul : il se
+    # plaint aussi d'un dégradé qui MANQUE.
+    #
+    # Les trois entrées sont donc parties avec les dégradés qu'elles couvraient, le 16 novembre.
 }
 
 

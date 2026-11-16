@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Le tracé d'une course qui se REDESSINE, du départ à l'arrivée, avec la tête lumineuse qui
-/// avance dessus.
+/// Le tracé d'une course qui se REDESSINE, du départ à l'arrivée, avec la tête qui avance dessus.
 ///
 /// # POURQUOI
 ///
@@ -14,9 +13,12 @@ import SwiftUI
 ///
 /// # LA TÊTE EST CE QUI FAIT LA DIFFÉRENCE
 ///
-/// Un trait qui s'allonge se lit comme un chargement. Le même trait avec un point lumineux à son
-/// extrémité se lit comme un déplacement — l'œil suit la tête, pas la longueur. Deux cercles : un
-/// net, un flou derrière, dans un calque à part pour que le flou ne mange pas le trait.
+/// Un trait qui s'allonge se lit comme un chargement. Le même trait avec un point à son extrémité
+/// se lit comme un déplacement — l'œil suit la tête, pas la longueur.
+///
+/// Elle était DEUX cercles, un net et un flou derrière, jusqu'au 16 novembre. Le flou est parti
+/// avec le halo du trait : ce qui fait le déplacement, c'est que le point avance, pas qu'il
+/// brille. Un seul disque blanc net, donc, et rien dans un calque à part.
 ///
 /// # LA GÉOMÉTRIE N'EST PAS RECOPIÉE
 ///
@@ -25,7 +27,7 @@ import SwiftUI
 /// course, visibles côte à côte dans l'historique.
 struct DrawnRoute: View, Animatable {
     var route: [RunRecord.RoutePoint]
-    var lineWidth: CGFloat = 3
+    var lineWidth: CGFloat = 4
     /// Le tracé est peint d'un dégradé d'accent : il part discret et arrive à pleine valeur, donc
     /// l'arrivée est le point le plus lumineux de la forme.
     ///
@@ -91,13 +93,11 @@ struct DrawnRoute: View, Animatable {
             context.stroke(full, with: .color(RUColor.surLaNuit.opacity(0.07)),
                            style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
 
-            // Le halo, dans son propre calque : un filtre appliqué au contexte principal flouterait
-            // aussi le trait net dessiné juste après.
-            context.drawLayer { halo in
-                halo.addFilter(.blur(radius: lineWidth * 2.2))
-                halo.stroke(drawn, with: shading,
-                            style: StrokeStyle(lineWidth: lineWidth * 1.6, lineCap: .round, lineJoin: .round))
-            }
+            // LE HALO EST PARTI. Il doublait le trait d'une copie floutée à 1,6 fois sa largeur :
+            // c'est précisément la lueur que le brief du 15 novembre interdit — « pas de halo,
+            // pas de glow, un trait net de 4 » — et sur un tracé dense il empâtait les virages
+            // au lieu de les montrer. Le trait passe de 3 à 4 points, qui est ce que le halo
+            // donnait vraiment à lire.
             context.stroke(drawn, with: shading,
                            style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
 
@@ -114,13 +114,10 @@ struct DrawnRoute: View, Animatable {
             // tracé fini n'est plus un déplacement, c'est une pastille de notification.
             if t > 0.01 && t < 0.995 {
                 let head = headPoint(of: full, at: t) ?? place(pts[0])
+                // LA LUEUR EST PARTIE AUSSI, ET LA TÊTE RESTE. Ce qui fait lire un déplacement
+                // plutôt qu'un chargement, c'est qu'un point AVANCE au bout du trait, pas qu'il
+                // brille : un disque blanc net sur un tracé d'accent se détache sans flou.
                 let r = lineWidth * 1.35
-                context.drawLayer { glow in
-                    glow.addFilter(.blur(radius: lineWidth * 3))
-                    glow.fill(Path(ellipseIn: CGRect(x: head.x - r * 2.2, y: head.y - r * 2.2,
-                                                     width: r * 4.4, height: r * 4.4)),
-                              with: .color(colors.last ?? RUColor.accentDeLaNuit))
-                }
                 context.fill(Path(ellipseIn: CGRect(x: head.x - r, y: head.y - r,
                                                     width: r * 2, height: r * 2)),
                              with: .color(RUColor.surLaNuit))
@@ -149,7 +146,7 @@ struct DrawnRoute: View, Animatable {
 /// interne qu'il n'a pas demandée.
 struct SelfDrawingRoute: View {
     var route: [RunRecord.RoutePoint]
-    var lineWidth: CGFloat = 3
+    var lineWidth: CGFloat = 4
     var colors: [Color] = RUColor.accentsDeLaNuit
     var targetPoints: Int = 220
     var showsStart = true

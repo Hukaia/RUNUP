@@ -1,11 +1,13 @@
 import Foundation
 
 /// Pure geometry for one segment of the "3 daily goals" single ring — shared by the in-app
-/// `DailyGoalsBarsView` and the widget extension's `WidgetRingView` (which this header already
-/// promised through a pass where the widget had dropped its ring, and which draws it again) so a tweak to gap size or
-/// segment count only ever needs to change in one place, and so the trim fractions and the
-/// gradient's degree range (which must describe the exact same arc) can't drift out of sync with
-/// each other the way two independently-computed copies could.
+/// `DailyGoalsBarsView` and the widget extension's `WidgetRingView`, so a tweak to gap size or
+/// segment count only ever needs to change in one place.
+///
+/// LE SEGMENT PORTAIT AUSSI SON ARC EN DEGRÉS, pour le `startAngle`/`endAngle` d'un
+/// `AngularGradient`. Les deux anneaux sont passés en aplat le 16 novembre et plus personne ne
+/// les lisait : deux champs calculés, un cas de test qui les comparait entre eux, et rien au
+/// bout. Ils sont partis avec le dégradé qu'ils servaient.
 enum RingSegmentGeometry {
     static let segmentCount = 3
     /// Degrees of empty space between adjacent segments. Round line caps eat into this visually,
@@ -17,12 +19,6 @@ enum RingSegmentGeometry {
         /// whole segment regardless of progress.
         let trimStart: Double
         let trimEnd: Double
-        /// The same segment, in degrees, for an `AngularGradient`'s `startAngle`/`endAngle` — kept
-        /// as a fixed full-segment sweep (not scaled by progress) so filling in more of the trim
-        /// below reveals progressively more of one consistent gradient instead of a gradient that
-        /// itself changes shape as it fills.
-        let gradientStartDegrees: Double
-        let gradientEndDegrees: Double
     }
 
     /// `count` plutôt que `segmentCount` en dur : un jour de repos ne compte que deux objectifs
@@ -32,11 +28,6 @@ enum RingSegmentGeometry {
         let spanDegrees = 360.0 / Double(max(1, count))
         let startDeg = Double(index) * spanDegrees
         let endDeg = startDeg + (spanDegrees - gapDegrees)
-        return Segment(
-            trimStart: startDeg / 360,
-            trimEnd: endDeg / 360,
-            gradientStartDegrees: startDeg,
-            gradientEndDegrees: endDeg
-        )
+        return Segment(trimStart: startDeg / 360, trimEnd: endDeg / 360)
     }
 }
