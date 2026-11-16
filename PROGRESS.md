@@ -6268,3 +6268,29 @@ deux échelles, donc cette prémisse ne peut plus s'écrire. Le supprimer aurait
 protection contre un contrôle qui mélangerait les deux tables. Il porte maintenant sur la
 propriété qui rendait le défaut possible : **l'étanchéité** — un cran de chiffre n'apparaît
 jamais dans l'échelle du texte, et réciproquement.
+
+### Le ruban passait sous la barre d'onglets, et la carte du programme a rendu la ligne
+
+Comparé à pleine résolution, campagne 208 contre campagne 210 : avant, les quantièmes
+« 9 10 11 12 13 14 15 » étaient lisibles au-dessus de la barre d'onglets ; après, **coupés en
+deux**. Les lettres des jours ont grossi avec l'échelle et ont poussé la rangée des nombres de
+douze pixels — assez pour qu'elle passe sous la barre flottante.
+
+Rien n'est perdu, l'écran défile. Mais sur la première hauteur, le ruban de la semaine n'est plus
+qu'à moitié lisible, sur l'écran le plus ouvert de l'app. Un nombre coupé en deux n'est le choix
+de personne.
+
+**Charlotte a tranché : alléger ce qui est au-dessus.** Et une précision de méthode qui compte —
+retirer la pastille d'écart n'aurait rien gagné : elle partage sa ligne avec « 28,3 / 24 km ».
+Pour remonter le ruban il faut retirer de la HAUTEUR, pas des éléments.
+
+**Deux changements, une seule ligne rendue.**
+
+L'objectif sort de l'en-tête. Il disait « Ton programme · 10 km · 47:30 » ; la distance et le
+chrono vivent déjà sur le profil, dans la pastille « 10 km · 47:30 · 27 décembre 2026 », et sur
+l'écran du plan dont cette carte est le bouton. C'était la troisième copie.
+
+Et la semaine passe en sous-titre. Elle était à `displayStyle(.subtitle)` — 20 points, encre
+pleine — soit la taille d'un titre de carte, juste sous un titre de carte. Deux titres empilés ne
+font pas une hiérarchie, ils font une hésitation. À 14 points en `text2`, elle rend six points de
+hauteur, qui sont exactement ce qui manquait en bas.

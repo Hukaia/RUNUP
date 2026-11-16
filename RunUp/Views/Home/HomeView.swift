@@ -275,7 +275,14 @@ struct HomeView: View {
         let block = AdaptivePlanEngine.trainingBlock(forWeek: profile.weekNumber, shape: shape)
         // Nommé ici parce qu'un bloc `ViewBuilder` n'accepte pas de déclaration, et que les deux
         // branches ci-dessous — avec ou sans date de course — portent le même titre.
-        let titreDuProgramme = String(localized: "Ton programme · \(profile.goalDisplay)")
+        //
+        // L'OBJECTIF SORT DE L'EN-TÊTE, ET C'EST UNE LIGNE RENDUE AU RUBAN.
+        //
+        // Il disait « Ton programme · 10 km · 47:30 ». La distance et le chrono cible vivent
+        // déjà sur le profil, dans la pastille « 10 km · 47:30 · 27 décembre 2026 », et sur
+        // l'écran du plan dont cette carte est le bouton. Les répéter ici était la troisième
+        // copie, sur l'écran dont Charlotte dit depuis le 14 novembre qu'il porte trop.
+        let titreDuProgramme = String(localized: "Ton programme")
         return Button(action: { appState.go(.plan) }) {
             VStack(alignment: .leading, spacing: 12) {
                 // Combiné à part du ruban ci-dessous : il expose déjà un élément par jour, avec
@@ -305,7 +312,19 @@ struct HomeView: View {
                         } else {
                             RUCardHeader(icon: "map.fill", title: titreDuProgramme)
                         }
-                        Text("\(weekEyebrow) · Bloc \(block.label)").displayStyle(.subtitle).foregroundColor(RUColor.textPrimary)
+                        // LA SEMAINE PASSE EN SOUS-TITRE, au lieu d'être un second titre.
+                        //
+                        // Elle était à `displayStyle(.subtitle)` — 20 points, encre pleine —
+                        // soit la taille d'un titre de carte, juste sous un titre de carte. Deux
+                        // titres empilés ne font pas une hiérarchie, ils font une hésitation.
+                        //
+                        // Et c'est cette ligne-là qui a poussé le ruban sous la barre d'onglets
+                        // quand l'échelle a grandi : 20 points au lieu de 14, c'est six points
+                        // de hauteur qui manquaient en bas de l'écran. Mesuré sur les captures
+                        // des campagnes 208 et 210, à pleine résolution.
+                        Text("\(weekEyebrow) · Bloc \(block.label)")
+                            .font(RUFont.sans(.small, weight: .medium))
+                            .foregroundColor(RUColor.text2)
                     }
                 }
                 .accessibilityElement(children: .combine)
