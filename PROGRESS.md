@@ -7092,3 +7092,66 @@ l'accueil** — l'écran qu'on ouvre tous les jours.
 `RUCardHeader(tint:)` et `RUStatTile(tint:)`. Une couleur posée en `.foregroundColor` directe est
 hors de sa portée. Le relevé complet en donne **74 dans 32 fichiers** — c'est un chantier à part,
 et le garde doit grandir avec lui.
+
+## 16 novembre 2026 — figer la graine ne figeait rien
+
+Ce matin j'ai écrit : « l'horloge de la démonstration est figée », et j'ai fait une prédiction
+vérifiable — « on est lundi, et l'accueil devra montrer **28,3 / 24 km** avec la pastille
+« ▼ 1,2 km ». Si c'est 0,0, mon calcul est faux. »
+
+**La campagne 214 a livré 0,0 / 24 km et « ▼ 14,2 km »**, sur l'image composée de la fiche, pas
+seulement sur la capture brute. Mon calcul était faux.
+
+### Pourquoi
+
+J'ai figé l'horloge de la **graine**, pas celle de l'**app**. Les seize sorties sont posées à
+« dimanche dernier 18 h moins 2, 4, 6 jours » — vendredi 13, mercredi 11, lundi 9 novembre,
+toutes dans la semaine du 9 au 15. L'écran, lui, demande au calendrier réel ce que contient
+« cette semaine » : lundi 16, donc du 16 au 22. Aucune.
+
+Figer un seul des deux ne fige rien. C'est la même erreur de raisonnement que le `0.90` du mois
+dernier : j'ai lu un mécanisme à moitié et je l'ai annoncé comme un résultat.
+
+### Et le cas de test ne protégeait rien
+
+Il était écrit comme ça : « quel que soit le jour, la semaine de la démonstration porte au moins
+trois sorties et plus de 20 km ». Il prenait le début de semaine de **l'instant figé** et comptait
+les sorties entre ce début et lui. Vert d'office : il mesurait la semaine que la graine venait de
+remplir.
+
+L'écran ne fait pas ça. Il appelle `SemaineComparable.kilometres`, dont le paramètre `maintenant`
+valait `.now`.
+
+**Un banc qui refait le travail au lieu de l'appeler ne surveille que lui-même.** C'est la
+troisième fois que cette forme coûte quelque chose — après le verdict du film, qui réimplémentait
+sa propre sélection, et le ruban. Le cas appelle maintenant la fonction que l'écran appelle, avec
+l'instant que l'écran utilise.
+
+### La correction
+
+`Demonstration.maintenant` : l'instant figé quand la démonstration tourne, `.now` partout
+ailleurs. Trois lectures y passent, et seulement celles qui décident de **ce que la semaine
+courante contient** — `SemaineComparable.kilometres`, `AdaptivePlanEngine.currentWeekRange`,
+l'index du jour.
+
+Ce qu'on **écrit** garde l'horloge réelle : la date de départ d'un programme, l'instant d'un
+débriefing. En démonstration on n'écrit rien, et une horloge figée qui se propagerait aux
+écritures serait un piège pour la première fonctionnalité qui en dépendrait.
+
+### Éprouvé en Python avant de dépenser une campagne — sur l'écran, cette fois
+
+Quatorze jours × quatre heures, en modélisant ce que `SemaineComparable` rendra :
+
+```
+campagne lancée le      instant figé      sorties   km affichés
+Mon 16 Nov 11h          Sun 15 Nov 18h          3      28,3
+…
+Sun 22 Nov 11h          Sun 15 Nov 18h          3      28,3
+Mon 23 Nov 11h          Sun 22 Nov 18h          3      28,3
+```
+
+Toujours trois sorties et 28,3 km. Le dimanche à 11 h renvoie au dimanche **précédent**, parce
+que 11 h est avant 18 h : la scène ne montre jamais une sortie pas encore courue.
+
+Conséquence assumée : la date en haut de la fiche dira « dimanche 15 novembre » et non le jour de
+la campagne. C'est la scène.

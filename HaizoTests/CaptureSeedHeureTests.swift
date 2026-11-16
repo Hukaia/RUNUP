@@ -231,20 +231,45 @@ final class CaptureSeedHeureTests: XCTestCase {
     /// CE QUE TOUT CECI PROTÈGE VRAIMENT : LA VITRINE N'EST JAMAIS VIDE.
     ///
     /// Les trois cas ci-dessus décrivent le MOYEN ; celui-ci décrit la fin. Quel que soit le jour
-    /// où la campagne tourne, la semaine en cours de la démonstration porte des sorties — donc
-    /// l'accueil ne montre jamais « 0,0 / 24 km » et une barre grise sur la fiche App Store.
-    func testLaSemaineDeLaDemonstrationNEstJamaisVide() {
-        var cal = calendrier
-        cal.firstWeekday = 2                 // la semaine commence le lundi, comme le ruban
+    /// où la campagne tourne, l'accueil ne montre jamais « 0,0 / 24 km » sur la fiche App Store.
+    ///
+    /// # CE CAS A DÉJÀ PASSÉ PENDANT QUE L'ÉCRAN ÉTAIT VIDE, ET VOICI POURQUOI
+    ///
+    /// Sa première version REFAISAIT le filtre de la semaine à la main : elle prenait le début de
+    /// semaine de l'instant figé et comptait les sorties entre ce début et lui. Évidemment vert —
+    /// elle mesurait la semaine que la graine venait de remplir.
+    ///
+    /// L'écran, lui, ne fait pas ça. Il appelle `SemaineComparable.kilometres`, dont le paramètre
+    /// `maintenant` valait `.now` : la semaine affichée était celle du calendrier RÉEL, pas celle
+    /// du dimanche figé. Un lundi, les deux ne se recouvrent pas du tout — et la campagne 214 a
+    /// livré une fiche à « 0,0 / 24 km » avec ce cas au vert.
+    ///
+    /// Il APPELLE donc maintenant la fonction que l'écran appelle, avec l'instant que l'écran
+    /// utilise. Un banc qui refait le travail au lieu de l'appeler ne surveille que lui-même.
+    func testLaSemaineAFFICHÉENEstJamaisVide() {
         for jour in 16...29 {
-            let fige = CaptureSeed.maintenantDeLaDemonstration(le(jour, 11), calendrier: calendrier)
-            let debut = cal.dateInterval(of: .weekOfYear, for: fige)!.start
-            let dedans = CaptureSeed.historique(maintenant: fige)
-                .filter { $0.date >= debut && $0.date <= fige }
-            XCTAssertGreaterThanOrEqual(dedans.count, 3,
-                "le \(jour), la semaine de la démonstration ne porte que \(dedans.count) sortie(s)")
-            let km = dedans.reduce(0.0) { $0 + $1.distanceKm }
-            XCTAssertGreaterThan(km, 20, "le \(jour), la semaine ne totalise que \(km) km")
+            // L'instant que l'app emploiera : `Demonstration.maintenant` rend exactement ça
+            // quand la démonstration tourne.
+            let fige = Demonstration.instantFige(le(jour, 11), calendrier: calendrier)
+            let sorties = CaptureSeed.historique(maintenant: fige)
+            let semaine = SemaineComparable.kilometres(sorties, maintenant: fige,
+                                                       calendar: calendrier)
+            XCTAssertGreaterThan(semaine.cette, 20,
+                "le \(jour), l'accueil afficherait \(semaine.cette) km cette semaine")
+        }
+    }
+
+    /// ET L'INSTANT DE L'ÉCRAN EST BIEN CELUI DE LA GRAINE.
+    ///
+    /// Les deux ont vécu séparément une demi-journée : `CaptureSeed` figeait le sien, l'écran
+    /// gardait `.now`. Ils sont la même fonction maintenant, et ce cas le dit — sinon la
+    /// prochaine personne qui déplace l'un des deux ne verra rien.
+    func testLaGraineEtLÉcranPartagentLeMêmeInstant() {
+        for jour in 16...29 {
+            let horloge = le(jour, 11)
+            XCTAssertEqual(
+                CaptureSeed.maintenantDeLaDemonstration(horloge, calendrier: calendrier),
+                Demonstration.instantFige(horloge, calendrier: calendrier))
         }
     }
 }

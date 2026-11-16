@@ -51,8 +51,11 @@ enum SemaineComparable {
     /// leur côté : `check_disciplines.py` exige que le site d'agrégation dise de quoi il parle,
     /// et c'est la bonne exigence — un total qui hérite sa discipline de son appelant ne peut
     /// pas être relu tout seul.
+    /// `Demonstration.maintenant` et non `.now` : hors démonstration les deux sont identiques,
+    /// et en démonstration c'est ce qui fait que la semaine affichée est celle où la graine a
+    /// posé ses sorties. Sans ça, la fiche App Store montre « 0,0 / 24 km » un lundi sur deux.
     static func kilometres(_ toutesLesCourses: [RunRecord],
-                           maintenant: Date = .now,
+                           maintenant: Date = Demonstration.maintenant,
                            calendar: Calendar = .current) -> (cette: Double, passee: Double) {
         let courses = toutesLesCourses.onFoot
         let semaine = AdaptivePlanEngine.currentWeekRange(from: maintenant)

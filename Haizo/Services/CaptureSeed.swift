@@ -78,16 +78,17 @@ enum CaptureSeed {
     ///
     /// Un dimanche à venir serait dans le FUTUR, et la démonstration montrerait des sorties pas
     /// encore courues. On prend donc le dernier instant qui satisfait la règle et qui est passé.
+    /// # ET POURQUOI LE CALCUL VIT AILLEURS DEPUIS LE 16 NOVEMBRE
+    ///
+    /// Il est descendu dans `Demonstration`, parce que la graine n'est pas la seule à en avoir
+    /// besoin : l'ÉCRAN aussi doit croire qu'on est ce dimanche-là, sinon il demande au calendrier
+    /// réel ce que contient « cette semaine » et répond « rien » un lundi. La campagne 214 l'a
+    /// montré noir sur blanc — fiche à « 0,0 / 24 km » avec la graine pourtant figée.
+    ///
+    /// Ce nom reste parce qu'il dit à quoi l'instant sert ICI : la date des seize sorties.
     static func maintenantDeLaDemonstration(_ horloge: Date = .now,
                                             calendrier: Calendar = .current) -> Date {
-        // `weekday: 1` EST LE DIMANCHE, et ça ne dépend pas de `firstWeekday`. Les deux se
-        // confondent facilement : `firstWeekday` dit par quel jour une SEMAINE commence — lundi
-        // ici, comme le ruban — tandis que `weekday` numérote les jours du calendrier grégorien,
-        // où 1 est toujours le dimanche. Un premier jet posait `firstWeekday = 2` juste au-dessus
-        // de cette ligne, ce qui ne changeait rien et laissait croire que 1 valait lundi.
-        let dimanche = DateComponents(hour: 18, minute: 0, second: 0, weekday: 1)
-        return calendrier.nextDate(after: horloge, matching: dimanche,
-                                   matchingPolicy: .nextTime, direction: .backward) ?? horloge
+        Demonstration.instantFige(horloge, calendrier: calendrier)
     }
 
     /// `--film` : on FILME, on ne photographie pas.

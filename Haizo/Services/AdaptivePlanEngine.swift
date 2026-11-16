@@ -179,7 +179,9 @@ enum AdaptivePlanEngine {
     /// The current Monday-to-Monday week, as a half-open range (`WeeklyRecapView` filters
     /// `RunRecord.date` against this) — same Monday-first week the plan/week strip already use,
     /// so "this week" means the same thing everywhere in the app.
-    static func currentWeekRange(from date: Date = .now) -> Range<Date> {
+    ///
+    /// `Demonstration.maintenant` et non `.now` : voir le jeton, qui porte la mesure.
+    static func currentWeekRange(from date: Date = Demonstration.maintenant) -> Range<Date> {
         let cal = mondayCalendar
         let start = cal.dateInterval(of: .weekOfYear, for: date)?.start ?? date
         let end = cal.date(byAdding: .day, value: 7, to: start) ?? date
@@ -463,7 +465,7 @@ enum AdaptivePlanEngine {
     /// real calendar date rather than hardcoded — `Calendar.component(.weekday)` is Sunday-first
     /// (1...7), so this remaps it.
     static func currentWeekdayIndex() -> Int {
-        weekdayIndex(for: .now)
+        weekdayIndex(for: Demonstration.maintenant)
     }
 
     /// L'index lundi-first (0 = lundi) d'une date quelconque. Extrait de `currentWeekdayIndex`

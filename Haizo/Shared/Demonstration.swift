@@ -49,6 +49,53 @@ enum Demonstration {
     /// la cinquante et unième dehors sans que rien ne le dise.
     static var animationsFigees: Bool { enCours && !filme }
 
+    /// # L'HEURE QU'IL EST, OU L'HEURE DE LA SCÈNE
+    ///
+    /// En démonstration, l'app ne doit pas seulement afficher les mêmes DONNÉES d'une campagne à
+    /// l'autre : elle doit les afficher au même INSTANT. Sinon la graine pose ses sorties autour
+    /// d'un dimanche figé pendant que l'écran, lui, demande au calendrier réel ce que contient
+    /// « cette semaine » — et un lundi, la réponse est « rien ».
+    ///
+    /// C'est exactement ce qu'a montré la campagne 214 : la fiche App Store affichait
+    /// « 0,0 / 24 km » et « ▼ 14,2 km » alors que l'horloge de la graine était figée depuis le
+    /// matin. Figer la graine sans figer l'app ne fige rien : les sorties étaient dans la semaine
+    /// du 9 au 15, l'app regardait celle du 16 au 22.
+    ///
+    /// ## CE QUE ÇA NE FIGE PAS
+    ///
+    /// Seules les lectures qui décident de CE QUE LA SEMAINE COURANTE CONTIENT passent par ici —
+    /// `SemaineComparable.kilometres`, `AdaptivePlanEngine.currentWeekRange`, l'index du jour. Ce
+    /// qu'on ÉCRIT (la date de départ d'un programme, l'instant d'un débriefing) garde l'horloge
+    /// réelle : en démonstration on n'écrit rien, et une horloge figée qui se propagerait aux
+    /// écritures serait un piège pour la première fonctionnalité qui en dépendrait.
+    ///
+    /// ## HORS DÉMONSTRATION, C'EST `.now`
+    ///
+    /// Le drapeau est écrit une seule fois, au lancement, et il est faux partout ailleurs. Aucun
+    /// appel ne change de comportement pour une utilisatrice.
+    static var maintenant: Date { enCours ? instantFige() : .now }
+
+    /// Le dernier dimanche 18 h révolu.
+    ///
+    /// `weekday: 1` EST LE DIMANCHE, et ça ne dépend pas de `firstWeekday`. Les deux se confondent
+    /// facilement : `firstWeekday` dit par quel jour une SEMAINE commence — lundi ici, comme le
+    /// ruban — tandis que `weekday` numérote les jours du calendrier grégorien, où 1 est toujours
+    /// le dimanche. Un premier jet posait `firstWeekday = 2` juste au-dessus de cette ligne, ce
+    /// qui ne changeait rien et laissait croire que 1 valait lundi.
+    ///
+    /// LE DERNIER, et pas celui de cette semaine : un dimanche à venir serait dans le futur, et la
+    /// démonstration montrerait des sorties pas encore courues.
+    ///
+    /// DIX-HUIT HEURES, parce que `CaptureSeed.historique` choisit l'heure d'une sortie selon son
+    /// type et que l'activité du club est bornée au matin même : une campagne lancée à 23 h et une
+    /// autre à 7 h ne rendraient pas les mêmes écrans. Dix-huit heures laisse la journée derrière
+    /// elle.
+    static func instantFige(_ horloge: Date = .now, calendrier: Calendar = .current) -> Date {
+        let dimanche = DateComponents(hour: 18, minute: 0, second: 0, weekday: 1)
+        return calendrier.nextDate(after: horloge, matching: dimanche,
+                                   matchingPolicy: .nextTime, direction: .backward) ?? horloge
+    }
+
     #if DEBUG
     static func commencer() { enCours = true }
     static func filmer() { filme = true }

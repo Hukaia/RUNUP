@@ -218,7 +218,7 @@ struct CoachView: View {
 
     /// Lundi = 0, comme `PlannedDay.weekday`. `Calendar` compte le dimanche comme 1.
     private var indexDuJour: Int {
-        (Calendar.current.component(.weekday, from: .now) + 5) % 7
+        (Calendar.current.component(.weekday, from: Demonstration.maintenant) + 5) % 7
     }
 
     /// « 8,1 km · 5:18 ».
