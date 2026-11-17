@@ -7996,3 +7996,61 @@ particulier, c'est la limite de la page.
 non. La liste `PERMIS` de `check_majuscules.py` tolère les capitales d'un bouton, et sa raison
 écrite le dit : « le jour où elle tranche l'inverse, c'est cette liste qui se vide ». Cette image
 est la première à montrer les deux conventions côte à côte.
+
+## 17 novembre 2026 — « il faut un Mac » était faux depuis sept jours, et c'est moi qui l'avais écrit
+
+TestFlight 585 vert, le troisième d'affilée. En vérifiant ce que ma poussée avait déclenché, j'ai
+trouvé un workflow dont j'ignorais l'existence : **« Capture de la montre »**, à sa 38ᵉ exécution.
+
+### Ce que j'avais écrit, et depuis quand c'était faux
+
+Le 16 novembre, dans la liste d'exceptions de `check_majuscules.py` :
+
+> « EN PAUSE » et « EN COURS » sont une dette nommée — la capture montre livrée à Apple est
+> empreintée contre toute la cible et **ne se refait pas sans machine macOS**.
+
+`.github/workflows/montre.yml` existe depuis le **9 novembre**. Il construit `HaizoWatch` pour un
+simulateur watchOS, pose la langue sur l'appareil, photographie les trois langues et publie les
+images. Cinq à huit minutes. Les runs 36, 37 et 38 sont verts.
+
+J'ai écrit cette phrase sept jours après la naissance du workflow, sans vérifier, et elle a fait
+porter à Charlotte une tâche qui ne lui revenait pas. C'est la troisième fois cette semaine qu'une
+phrase fausse écrite par moi coûte quelque chose — après « le plafond des barres ne peut rien
+pour le ruban » et « probablement sans conséquence » sur la bande d'état.
+
+### Le vrai chaînon manquant, lui, était réel
+
+L'artefact publiait `appstore/raw-montre/**` et `appstore/requis/montre/**` — les images — mais
+pas `appstore/requis/SOURCES.json`, qui porte les empreintes.
+
+Et sans elles, les images ne servent à rien. `check_requis.py` compare `empreinte_code` au hachage
+du dossier `HaizoWatch` **tel qu'il est maintenant** : si le code a changé, l'image est classée
+périmée et le contrôle refuse. Il est câblé dans **quatre** workflows, TestFlight compris.
+
+C'est un mécanisme, pas un défaut, et sa raison est écrite sur place : « une capture ne vieillit
+pas toute seule, c'est l'app qui bouge sous elle » — c'est exactement ainsi que le bouton de la
+montre est passé de la pilule au cercle le 6 août sans que l'image livrée bouge pendant trois mois.
+
+Recalculer l'empreinte à la main après coup est précisément ce que `requis.py` dit d'éviter :
+« une empreinte reposée à part, après coup, pourrait… ». Il fallait donc la faire voyager avec
+l'image. Une ligne.
+
+### Une faute attrapée en l'écrivant
+
+J'ai d'abord posé les commentaires **dans** le bloc `path: |`. Un bloc littéral YAML n'a pas de
+commentaires : un `#` y est du texte, donc un motif de chemin. Les quinze lignes d'explication
+seraient devenues quinze motifs d'artefact. Aucun garde du dépôt ne regarde l'intérieur d'un
+scalaire littéral, et `if-no-files-found: error` ne se serait pas déclenché puisque les trois
+autres motifs correspondent. Corrigé avant le gate.
+
+### Le cycle, maintenant qu'il est possible
+
+1. cette ligne, qui laisse tout vert et prouve que les empreintes arrivent dans l'artefact ;
+2. « EN PAUSE » → « En pause » et « EN COURS » → « En cours », dans `HaizoWatch/WatchViews.swift`
+   **et** `HaizoWidgets/DailyGoalsWidget.swift` — les deux entrées voyagent ensemble, « le même
+   état écrit de deux façons sur deux surfaces est pire que les deux en capitales » ;
+3. récupérer l'artefact, poser les trois images et `SOURCES.json` ;
+4. vider les deux entrées de `PERMIS` — « le compte à zéro fera parler le garde tout seul ».
+
+Le rouge entre 2 et 3 est le mécanisme qui parle, pas une panne : c'est l'empreinte qui refuse une
+image que le code a dépassée. Huit minutes, le temps du workflow.

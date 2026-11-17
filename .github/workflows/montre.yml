@@ -310,6 +310,19 @@ jobs:
           python3 ci_scripts/requis.py fr-FR en-US es-ES
           python3 ci_scripts/check_requis.py
 
+      # ET LES EMPREINTES VOYAGENT AVEC LES IMAGES, SANS QUOI ELLES NE SERVENT À RIEN.
+      #
+      # `requis.py` écrit l'image livrable ET son empreinte dans le même geste — « la seule qui
+      # sache de quoi elle a fabriqué ». L'artefact ne publiait que l'image : on pouvait la
+      # récupérer, mais pas la POSER, parce que `check_requis.py` compare `empreinte_code` à ce
+      # que `HaizoWatch` contient MAINTENANT, et classe l'image périmée sans elle.
+      #
+      # Recalculer l'empreinte à la main après coup est précisément ce que `requis.py` dit
+      # d'éviter.
+      #
+      # C'est ce qui manquait pour que la dette des capitales de la montre — « EN PAUSE »,
+      # « EN COURS » — se lève depuis une machine Linux. Elle attendait « un Mac » depuis le
+      # 16 novembre, sur une raison écrite sans vérifier : ce workflow existe depuis le 9.
       - name: Publier les captures de la montre
         if: always()
         uses: actions/upload-artifact@v4
@@ -318,5 +331,6 @@ jobs:
           path: |
             appstore/raw-montre/**
             appstore/requis/montre/**
+            appstore/requis/SOURCES.json
           if-no-files-found: error
           retention-days: 30
