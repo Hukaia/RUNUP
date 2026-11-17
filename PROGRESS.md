@@ -8467,3 +8467,16 @@ n'est jamais écrite**. Les trois chemins passaient par une même fonction gard�
 de fermeture (`choisir: ((Int) -> Void)?` avec `.disabled(choisir == nil)`). Chemin simplifié : la
 fermeture est obligatoire, le verrou est un paramètre à part, la garde a disparu de la fonction. Un
 compteur `demandes` (DEBUG) dit si l'action s'exécute. Cause non établie à cette ligne.
+
+### Plan : relevé 7 — la rangée des jours est le seul bouton de la page qui ne répond pas
+
+Quatre lancements, un geste chacun : le retour du plan répond, la carte du jour répond (la feuille
+de la séance s'ouvre), la recherche de l'accueil répond, « Déplacer » répondait ; la rangée des jours
+non, même après 5 s d'attente (`demandes=0`). Le défaut est donc propre à la rangée, ni la page ni
+les couches de la racine. Ce qui la distingue : son bouton vivait dans un composant et recevait son
+action par une propriété de type fermeture ; les autres ont leur action écrite dans la vue. Je n'ai
+pas d'explication de SwiftUI pour cela. Le composant ne dessine plus que la colonne
+(`HZColonneDeJour`), le bouton est posé par l'écran.
+
+(`test01Planche` a échoué sur cette exécution de `refonte.yml` : la planche de l'étape 1, non
+touchée. À surveiller ; elle n'avait jamais échoué avant.)

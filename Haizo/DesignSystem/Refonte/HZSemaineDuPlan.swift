@@ -1,59 +1,39 @@
 import SwiftUI
 
-/// LA RANGÉE DES SEPT JOURS DU PLAN, sur le noir.
+/// UNE COLONNE DE LA RANGÉE DES SEPT JOURS DU PLAN, sur le noir : une initiale, et dessous un point à
+/// la couleur du jour.
 ///
-/// Une initiale, et dessous un point à la couleur du jour. Le jour choisi se lit à DEUX choses —
-/// son initiale passe en blanc et en gras, son point s'allonge en pilule — pour que la couleur ne
-/// porte pas seule ce qui est choisi. Les autres jours sont des points ronds, à la couleur de leur
-/// séance : on lit la forme de la semaine avant d'avoir lu un mot.
+/// Le jour choisi se lit à DEUX choses — son initiale passe en blanc et en gras, son point s'allonge
+/// en pilule — pour que la couleur ne porte pas seule ce qui est choisi. Les autres jours sont des
+/// points ronds, à la couleur de leur séance : on lit la forme de la semaine avant d'avoir lu un mot.
 ///
-/// Chaque jour est un bouton de la largeur d'un septième de l'écran, sur toute la hauteur de la
-/// rangée : bien plus que la pastille qu'il dessine.
-struct HZRangeeDesJours: View {
-    struct Jour: Identifiable {
-        let id: Int
-        let initiale: String
-        /// « Mardi 17 novembre » : ce que lit VoiceOver, et ce que la carte porte en haut.
-        let nom: String
-        let point: Color
-    }
-
-    let jours: [Jour]
-    let choisi: Int
-    /// Faux : les jours ne se choisissent pas (le plan est verrouillé).
-    var actif: Bool = true
-    let choisir: (Int) -> Void
+/// # ELLE NE PORTE PAS LE BOUTON
+///
+/// La rangée était d'abord un composant à part entière, avec ses boutons et une fermeture reçue en
+/// paramètre. Sur le simulateur, ces boutons existaient, étaient touchables, aux bons cadres — et
+/// leur action ne partait JAMAIS (un compteur écrit à la première ligne de la fonction restait à
+/// zéro), alors que « Déplacer », le retour et la carte du jour, dont l'action est écrite dans la
+/// vue, répondaient. Le bouton est donc posé par l'écran, et ce composant ne dessine que la colonne.
+/// Elle occupe un septième de l'écran sur toute la hauteur de la rangée : bien plus que la pastille
+/// qu'elle dessine.
+struct HZColonneDeJour: View {
+    let initiale: String
+    let point: Color
+    let choisi: Bool
 
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(jours) { jour in
-                Button {
-                    choisir(jour.id)
-                } label: {
-                    colonne(jour, choisi: jour.id == choisi)
-                }
-                .buttonStyle(.plain)
-                .disabled(!actif)
-                .accessibilityLabel(jour.nom)
-                .accessibilityIdentifier("rangee-des-jours-\(jour.id)")
-                .accessibilityAddTraits(jour.id == choisi ? .isSelected : [])
-            }
-        }
-    }
-
-    private func colonne(_ jour: Jour, choisi: Bool) -> some View {
         VStack(spacing: 0) {
-            Text(jour.initiale)
+            Text(initiale)
                 .hzTexte(.c12, choisi ? .gras : .semi)
                 .foregroundStyle(choisi ? HZCouleur.blanc : HZCouleur.secondaireSurSombre)
             Spacer(minLength: 0)
             // Le point qui n'est pas choisi remonte d'un point : le canvas le pose ainsi, et la
             // pilule, plus haute, garde le bas de la colonne.
             Capsule()
-                .fill(jour.point)
-                .frame(width: choisi ? HZRangeeDesJours.pastilleChoisie.width : HZRangeeDesJours.point,
-                       height: choisi ? HZRangeeDesJours.pastilleChoisie.height : HZRangeeDesJours.point)
-                .padding(.bottom, choisi ? 0 : HZRangeeDesJours.remonteeDuPoint)
+                .fill(point)
+                .frame(width: choisi ? HZColonneDeJour.pastilleChoisie.width : HZColonneDeJour.point,
+                       height: choisi ? HZColonneDeJour.pastilleChoisie.height : HZColonneDeJour.point)
+                .padding(.bottom, choisi ? 0 : HZColonneDeJour.remonteeDuPoint)
         }
         .frame(maxWidth: .infinity)
         .frame(height: HZPlan.rangeeDesJours)

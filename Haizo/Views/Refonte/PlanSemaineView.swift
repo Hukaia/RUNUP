@@ -99,8 +99,7 @@ struct PlanSemaineView: View {
             entete
             titre
             if !visibles.isEmpty {
-                HZRangeeDesJours(jours: jours.map(pastille), choisi: choisi, actif: planDebloque,
-                                 choisir: selectionner)
+                rangeeDesJours
                     .padding(.horizontal, HZEspace.marge)
                     .padding(.top, HZPlan.sousLEntete)
                 carrousel
@@ -172,11 +171,25 @@ struct PlanSemaineView: View {
 
     // MARK: - Les jours
 
-    private func pastille(_ jour: PlanSemaineModele.Jour) -> HZRangeeDesJours.Jour {
-        HZRangeeDesJours.Jour(id: jour.id,
-                              initiale: PlanSemaineModele.initiale(duJour: jour.id),
-                              nom: AccueilModele.dateDuJour(jour.date),
-                              point: couleurs(de: jour).point)
+    /// Sept boutons, un par jour. L'action est écrite ICI, dans la vue : posée dans un composant et
+    /// reçue en paramètre, elle ne partait jamais (voir `HZColonneDeJour`).
+    private var rangeeDesJours: some View {
+        HStack(spacing: 0) {
+            ForEach(jours) { jour in
+                Button {
+                    selectionner(jour.id)
+                } label: {
+                    HZColonneDeJour(initiale: PlanSemaineModele.initiale(duJour: jour.id),
+                                    point: couleurs(de: jour).point,
+                                    choisi: jour.id == choisi)
+                }
+                .buttonStyle(.plain)
+                .disabled(!planDebloque)
+                .accessibilityLabel(AccueilModele.dateDuJour(jour.date))
+                .accessibilityIdentifier("rangee-des-jours-\(jour.id)")
+                .accessibilityAddTraits(jour.id == choisi ? .isSelected : [])
+            }
+        }
     }
 
     private struct Couleurs {
