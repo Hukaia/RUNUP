@@ -33,6 +33,12 @@ on:
       - ".github/workflows/refonte.yml"
       - "Haizo/DesignSystem/Refonte/**"
       - "Haizo/Views/Refonte/**"
+      # La barre flottante vit dans RootTabView et la logique de l'Accueil dans ses modèles : un
+      # changement là-bas se voit sur la capture, et ne la relançait pas (le correctif de la barre
+      # du 17 novembre n'a produit aucune image).
+      - "Haizo/Views/Home/RootTabView.swift"
+      - "Haizo/Models/AccueilModele.swift"
+      - "Haizo/Models/PourquoiCetteSeance.swift"
       - "HaizoUITests/RefonteUITests.swift"
       - "Haizo/Resources/Fonts/**"
 
