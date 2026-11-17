@@ -200,10 +200,20 @@ final class AccueilModeleTests: XCTestCase {
     }
 
     func testLeTraceTientDansLeCarreUnite() throws {
-        let points = (0..<50).map { (lat: 48.85 + Double($0) * 0.0004, lng: 2.35 + sin(Double($0) / 5) * 0.003) }
+        var points: [(lat: Double, lng: Double)] = []
+        for indice in 0..<50 {
+            let pas = Double(indice)
+            let latitude: Double = 48.85 + pas * 0.0004
+            let longitude: Double = 2.35 + sin(pas / 5) * 0.003
+            points.append((lat: latitude, lng: longitude))
+        }
         let trace = try XCTUnwrap(HZMiniatureDeSortie.normaliser(points))
-        XCTAssertTrue(trace.allSatisfy { (0...1).contains($0.x) && (0...1).contains($0.y) })
-        XCTAssertEqual(trace.map(\.y).min() ?? 1, 0, accuracy: 0.001, "le trace touche un bord : il est à l'échelle")
+        for point in trace {
+            XCTAssertTrue(point.x >= 0 && point.x <= 1, "x hors du carré : \(point.x)")
+            XCTAssertTrue(point.y >= 0 && point.y <= 1, "y hors du carré : \(point.y)")
+        }
+        let hauteurs: [CGFloat] = trace.map { $0.y }
+        XCTAssertEqual(hauteurs.min() ?? 1, 0, accuracy: 0.001, "le tracé touche un bord : il est à l'échelle")
     }
 
     func testLeNordEstEnHaut() throws {
@@ -212,7 +222,12 @@ final class AccueilModeleTests: XCTestCase {
     }
 
     func testUnLongParcoursEstReduit() throws {
-        let points = (0..<5000).map { (lat: 48.85 + Double($0) * 0.00001, lng: 2.35 + Double($0 % 7) * 0.00001) }
+        var points: [(lat: Double, lng: Double)] = []
+        for indice in 0..<5000 {
+            let latitude: Double = 48.85 + Double(indice) * 0.00001
+            let longitude: Double = 2.35 + Double(indice % 7) * 0.00001
+            points.append((lat: latitude, lng: longitude))
+        }
         let trace = try XCTUnwrap(HZMiniatureDeSortie.normaliser(points))
         XCTAssertLessThan(trace.count, 200, "une vignette n'a pas besoin de cinq mille points")
         XCTAssertGreaterThan(trace.count, 50)

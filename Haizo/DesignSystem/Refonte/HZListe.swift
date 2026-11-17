@@ -35,6 +35,22 @@ struct HZLigneDeListe<Tete: View, Queue: View>: View {
     @ViewBuilder var queue: () -> Queue
 
     var body: some View {
+        // Le filet est une BORDURE : en CSS, `border-bottom: 1px` s'ajoute à la hauteur de la
+        // ligne (12 + 48 + 12 + 1 = 73), il ne se superpose pas à elle. Posé en superposition, il
+        // faisait des lignes de 72 : une sortie de plus dans la liste, un point de moins par
+        // ligne, cumulé.
+        VStack(spacing: 0) {
+            contenu
+            if filet {
+                Rectangle()
+                    .fill(HZCouleur.filetFeuille)
+                    .frame(height: HZMesuresDeLigne.filet)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private var contenu: some View {
         HStack(spacing: HZMesuresDeLigne.ecart) {
             tete()
             VStack(alignment: .leading, spacing: 0) {
@@ -52,14 +68,6 @@ struct HZLigneDeListe<Tete: View, Queue: View>: View {
             queue()
         }
         .padding(.vertical, marge)
-        .overlay(alignment: .bottom) {
-            if filet {
-                Rectangle()
-                    .fill(HZCouleur.filetFeuille)
-                    .frame(height: HZMesuresDeLigne.filet)
-            }
-        }
-        .accessibilityElement(children: .combine)
     }
 }
 

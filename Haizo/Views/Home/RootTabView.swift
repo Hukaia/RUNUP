@@ -154,6 +154,9 @@ struct RootTabView: View {
             if showBar && barreRefaite {
                 HZBarreFlottante(selection: ongletRefait)
                     .padding(.bottom, HZEspace.sousLaBarre)
+                    // 28 points DU BORD DE L'ÉCRAN, comme dans le canvas — pas 28 au-dessus de la
+                    // zone de l'indicateur d'accueil, qui la montait de 34 points.
+                    .ignoresSafeArea(edges: .bottom)
             }
 
             if showBar && !barreRefaite {
