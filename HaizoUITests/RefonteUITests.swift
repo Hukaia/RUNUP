@@ -329,6 +329,8 @@ final class RefonteUITests: XCTestCase {
         var passes: [(String, [String])] = [("sonde seule", [])]
         for bloc in blocs { passes.append(("sans \(bloc)", ["--sans-\(bloc)"])) }
         passes.append(("sans rien", blocs.map { "--sans-\($0)" }))
+        let page = ["fond", "zonesure", "statusbar", "recouvrement", "defilement"]
+        passes.append(("sans rien, ni modificateurs de page", (blocs + page).map { "--sans-\($0)" }))
         var rapport = "passe | la sonde suit ?\n"
         for (index, passe) in passes.enumerated() {
             let plan = lancer(arguments: ["--ecran=plan", "--sans-sonde"] + passe.1)

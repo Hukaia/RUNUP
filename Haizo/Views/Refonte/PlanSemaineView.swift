@@ -71,7 +71,6 @@ struct PlanSemaineView: View {
             // coins arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la
             // capture, où le coin était carré.
             VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {
-                sonde
                 hautDePage
                 if !DiagnosticRefonte.sans("feuille") { feuille }
             }
@@ -90,6 +89,9 @@ struct PlanSemaineView: View {
         }
         .ignoresSafeArea(edges: DiagnosticRefonte.sans("zonesure") ? [] : .top)
         .statusBarHidden(!DiagnosticRefonte.sans("statusbar"))
+        // La sonde est posée PAR-DESSUS la page : dans la pile, le haut de page remonte sur elle (espacement
+        // négatif) et la cache — la première découpe a touché le noir, pas le bouton.
+        .overlay(alignment: .topLeading) { sonde.padding(.top, HZEspace.haut) }
         .modifier(CouvertureDuPlan(ouverte: $planCompletOuvert))
     }
 
