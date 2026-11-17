@@ -76,7 +76,7 @@ struct RootTabView: View {
     /// libre et son cadran de discipline — reste donc joignable depuis tout écran qui n'est pas
     /// l'accueil. Voir PROGRESS.md : le canvas n'a pas de bouton de course dans la barre.
     private var barreRefaite: Bool {
-        (appState.screen == .home || appState.screen == .plan) && !DiagnosticRefonte.sans("barre")
+        appState.screen == .home || appState.screen == .plan
     }
 
     private var ongletRefait: Binding<HZOnglet> {
@@ -101,7 +101,6 @@ struct RootTabView: View {
     }
 
     var body: some View {
-        let _ = DiagnosticRefonte.noter("RootTabView.body screen=\(appState.screen.rawValue)")
         ZStack(alignment: .bottom) {
             RUColor.bg.ignoresSafeArea()
 
@@ -109,7 +108,7 @@ struct RootTabView: View {
                 // Chaque écran emporte la sienne — voir `AppScreen.transitionDecran`. Celle qui
                 // était écrite ici était symétrique : les deux écrans partaient vers la droite
                 // et se croisaient, la gauche vide.
-                .transition(DiagnosticRefonte.sans("transition") ? .identity : appState.screen.transitionDecran)
+                .transition(appState.screen.transitionDecran)
                 .id(appState.screen)
 
             if showBar && appState.isRunActive {
@@ -224,7 +223,7 @@ struct RootTabView: View {
         //
         // Et elle respecte « Réduire les animations », ce qu'elle ne faisait pas : la valeur
         // saute, elle ne s'anime pas plus vite.
-        .animation(DiagnosticRefonte.sans("transition") ? nil : RUMotion.respecting(reduceMotion, RUMotion.settle), value: appState.screen)
+        .animation(RUMotion.respecting(reduceMotion, RUMotion.settle), value: appState.screen)
         // Un seul point d'émission pour toute l'app : chaque écran passe par ce `switch`, donc
         // rien ne peut être oublié ni compté deux fois. `onChange` plutôt qu'un `onAppear` par
         // écran, qui se serait redéclenché à chaque retour de feuille modale.
@@ -300,15 +299,9 @@ struct RootTabView: View {
     private var currentScreen: some View {
         switch appState.screen {
         case .home:
-            if DiagnosticRefonte.sans("nu") { DiagnosticNuAccueil() } else { AccueilView() }
+            AccueilView()
         case .plan:
-            if let niveau = DiagnosticEchelle.Niveau.demande() {
-                DiagnosticEchelle(niveau: niveau)
-            } else if DiagnosticRefonte.sans("nu") {
-                DiagnosticNuPlan()
-            } else {
-                PlanSemaineView()
-            }
+            PlanSemaineView()
         case .rings: RingsView()
         case .live: LiveRunView()
         case .recap: RecapView()

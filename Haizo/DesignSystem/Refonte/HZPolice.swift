@@ -317,19 +317,14 @@ private struct HZBoiteDeLigne: ViewModifier {
     let taille: CGFloat
     let hauteur: CGFloat
 
-    @ViewBuilder
     func body(content: Content) -> some View {
-        if DiagnosticRefonte.sans("ligne") {
-            content
-        } else {
-            content
-                .lineLimit(1)
-                .fixedSize(horizontal: false, vertical: true)
-                .alignmentGuide(.top) { dimensions in
-                    dimensions[.firstTextBaseline] - HZLigne.base(taille: taille, hauteur: hauteur)
-                }
-                .frame(height: hauteur, alignment: .top)
-        }
+        content
+            .lineLimit(1)
+            .fixedSize(horizontal: false, vertical: true)
+            .alignmentGuide(.top) { dimensions in
+                dimensions[.firstTextBaseline] - HZLigne.base(taille: taille, hauteur: hauteur)
+            }
+            .frame(height: hauteur, alignment: .top)
     }
 }
 

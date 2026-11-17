@@ -50,9 +50,6 @@ enum HZEspace {
     static let sousUnTitre: CGFloat = 14
     /// Entre deux sections d'une feuille.
     static let entreSections: CGFloat = 28
-    /// Ce dont le contenu descend sous l'encart de sécurité du haut. Le canvas pose ses
-    /// premières commandes à 60 points du bord, sur un téléphone dont l'encart en fait 59.
-    static let sousLEncart: CGFloat = 1
     /// Ce dont la barre flottante se tient au-dessus du bord bas de l'écran.
     static let sousLaBarre: CGFloat = 28
 }
@@ -66,8 +63,17 @@ extension HZEspace {
     ///
     /// Soixante points, comme le canvas, sur un téléphone à encoche (encart de 47) comme sur un
     /// téléphone à îlot (encart de 59) : dans les deux cas le contenu passe sous la barre d'état.
-    /// Si un appareil réclame un jour un encart plus profond, le contenu descend avec lui.
-    static var haut: CGFloat {
-        DiagnosticRefonte.sans("bords") ? hautDuCanvas : max(BordsDeLEcran.haut + sousLEncart, hautDuCanvas)
-    }
+    ///
+    /// # UNE CONSTANTE, ET PAS LA ZONE SÛRE DE LA FENÊTRE
+    ///
+    /// Cette valeur lisait `BordsDeLEcran.haut`, c'est-à-dire `keyWindow.safeAreaInsets`, à chaque
+    /// évaluation d'une vue. Sur l'Accueil et le Plan refaits, cela suffisait à figer le contenu
+    /// qui défile : un bouton répondait, son état changeait, et l'écran ne changeait pas. Mesuré
+    /// sur le simulateur : sur le plan complet, la rangée des jours ne modifiait jamais l'image
+    /// (3 essais sur 3) ; avec cette constante à la place, elle la modifiait à chaque fois (3 sur
+    /// 3), et une sonde posée dans le contenu qui défile suivait de la même façon (6 sur 6, contre
+    /// 0 sur 6). Le mécanisme exact n'est PAS établi — seulement que la lecture de la fenêtre dans
+    /// le corps d'une vue est la cause. Ne pas la remettre ici : si un jour un encart plus profond
+    /// est nécessaire, il se lira hors du corps d'une vue, et se mesurera de la même façon.
+    static let haut: CGFloat = hautDuCanvas
 }

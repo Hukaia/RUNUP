@@ -44,7 +44,6 @@ struct AccueilView: View {
     private var planDebloque: Bool { subscriptions.unlocks(.adaptivePlan) }
 
     var body: some View {
-        let _ = DiagnosticRefonte.noter("AccueilView.body")
         Group {
             switch planDebloque ? profile.programPhase : .active {
             case .recovery: RecoveryView()
@@ -57,10 +56,10 @@ struct AccueilView: View {
     // MARK: - La page
 
     private var page: some View {
-        DiagnosticDefilement {
+        ScrollView {
             // La feuille REMONTE sur le haut de page d'un rayon de coin : l'accent passe derrière
             // ses coins arrondis (ils étaient blancs sur du blanc).
-            VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {
+            VStack(alignment: .leading, spacing: -HZRayon.feuille) {
                 hautDePage
                 feuille
             }
@@ -69,16 +68,14 @@ struct AccueilView: View {
         // Deux moitiés de fond : l'accent en haut, le blanc en bas. Un défilement qui dépasse son
         // bord — vers le haut comme vers le bas — montre alors la couleur de ce qui s'y trouve.
         .background {
-            if !DiagnosticRefonte.sans("fond") {
-                VStack(spacing: 0) {
-                    HZCouleur.accent
-                    HZCouleur.blanc
-                }
-                .ignoresSafeArea()
+            VStack(spacing: 0) {
+                HZCouleur.accent
+                HZCouleur.blanc
             }
+            .ignoresSafeArea()
         }
-        .ignoresSafeArea(edges: DiagnosticRefonte.sans("zonesure") ? [] : .top)
-        .statusBarHidden(!DiagnosticRefonte.sans("statusbar"))
+        .ignoresSafeArea(edges: .top)
+        .statusBarHidden()
         .sheet(item: $sortieOuverte) { course in
             RecapView(historicalRun: course)
         }
@@ -233,7 +230,6 @@ struct AccueilView: View {
                 }
             }
             HZAction(dessin: .bulle, libelle: String(localized: "Coach")) {
-                DiagnosticRefonte.noter("AccueilView: action Coach")
                 appState.go(.coach)
             }
             if planDebloque {

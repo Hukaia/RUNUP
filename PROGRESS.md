@@ -8504,3 +8504,44 @@ d'avoir un seul message qui le dise.
 `--sans-ligne` retire l'enveloppe de ligne du texte de la refonte ; `--sans-defilement` retire le
 `ScrollView`. `test09Bissection` rejoue les deux défauts avec chacun. Si l'écran trivial se remplace, la
 cause est dans le sous-arbre de l'écran refait. À retirer ensuite : `DiagnosticRefonte.swift` et ses appels.
+
+### Plan et Accueil : la cause des boutons morts, trouvée et corrigée (relevés 14 à 30)
+
+**Cause : la lecture de la zone sûre de la fenêtre dans le corps d'une vue.** `HZEspace.haut` — la marge
+du haut de tous les écrans refaits — lisait `BordsDeLEcran.haut`, soit `keyWindow.safeAreaInsets`, à chaque
+évaluation. Mesures, toutes sur le simulateur de 390 pt, toutes concordantes :
+
+| mesure | avec la lecture de la fenêtre | avec la constante du canvas (60 pt) |
+|---|---|---|
+| page réduite au titre : un compteur change-t-il l'écran ? | 0 sur 5 | 5 sur 5 |
+| écran complet : une sonde posée DANS le contenu qui défile suit-elle ? | 0 sur 3 | 3 sur 3 |
+| écran complet : le jeudi de la rangée change-t-il l'image ? | 0 sur 3 | 3 sur 3 |
+
+**Mécanisme : NON établi.** On sait que cette lecture est la cause, pas pourquoi elle fige le contenu qui
+défile. Le commentaire de `HZEspace.haut` le dit, et interdit d'y remettre la lecture de la fenêtre.
+Une valeur fixe de 60 pt est celle du canvas ; sur un téléphone à îlot (encart de 59 pt) le contenu
+commence donc 1 pt sous l'encart, sur un téléphone à encoche (47 pt) 13 pt dessous.
+
+**Ce que ça explique, et ce que je ne sais pas.** Ça explique l'Accueil et le Plan (ils utilisent tous deux
+cette marge), les boutons « morts » sur le téléphone de Charlotte, l'ancienne barre qui restait sur
+l'Accueil. Je n'ai pas expliqué pourquoi la sonde posée par-dessus la page suivait sur l'écran complet alors
+que le contenu dessous non ; je n'ai pas vérifié l'Accueil par la même mesure (il est dans le test de
+non-régression, ci-dessous).
+
+**Les anciens écrans lisent encore la fenêtre, dans leur corps** : `EnTeteDAccueil` (`.padding(.top,
+BordsDeLEcran.haut)`) et `LiveRunView` (`BordsDeLEcran.bas`). Ils fonctionnent aujourd'hui ; ils disparaissent
+avec l'ancien système de design. À ne pas copier dans un écran refait.
+
+**Mes fautes dans ce chantier**, à garder écrites, en plus des précédentes :
+- Plusieurs « false » de mes sondes ne prouvaient rien : la première, posée dans une pile dont le haut de page
+  remontait sur elle (espacement négatif), était cachée — le test touchait le fond noir. Je l'ai vu en
+  regardant la capture, après avoir lu le résultat. Règle : **regarder la capture avant de lire le rapport.**
+- L'arbre d'accessibilité et le journal de l'app m'ont donné des états faux ou en retard (`demandes=0` alors que
+  le journal disait `choix=3`). Seule la comparaison des octets de la capture avant et après un geste est fiable.
+- Trois exécutions de `refonte.yml` ont été annulées par le runner macOS après 15 minutes de file, sans démarrer :
+  ce n'est pas le code, mais cela m'a coûté plus d'une heure.
+
+**Ce qui reste du chantier.** `DiagnosticRefonte.swift` et tous ses appels sont supprimés. `RefonteUITests`
+ne garde que la planche, l'Accueil, le Plan, et un test de non-régression qui échoue si une touche ne change pas
+l'image (recherche de l'accueil, retour du plan, carte du jour, jeudi de la rangée), avec un témoin de stabilité.
+Le Plan et l'Accueil ne sont validés qu'une fois ce test vert ET les captures comparées à la référence.

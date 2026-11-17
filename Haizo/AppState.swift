@@ -983,11 +983,6 @@ final class AppState {
     /// qu'une septième se glisse ailleurs et reparte sans animation, ce qui ramènerait le trou
     /// de trois images décrit dans `RUMotion.ecran`.
     func go(_ screen: AppScreen) {
-        DiagnosticRefonte.noter("AppState.go \(self.screen.rawValue) -> \(screen.rawValue)")
-        if DiagnosticRefonte.sans("transition") {
-            self.screen = screen
-            return
-        }
         withAnimation(RUMotion.ecran) { self.screen = screen }
     }
 

@@ -29,9 +29,6 @@ struct PlanSemaineView: View {
 
     /// Le jour regardé. `nil` tant qu'on n'a rien touché : c'est alors aujourd'hui.
     @State private var choix: Int?
-    /// Combien de fois la sélection d'un jour a été demandée. Diagnostic : trois gestes ne
-    /// changeaient rien, et il fallait savoir si l'action s'exécute.
-    @State private var demandes = 0
     @State private var planCompletOuvert = false
 
     private var profile: UserProfile { appState.profile }
@@ -65,63 +62,30 @@ struct PlanSemaineView: View {
     // MARK: - La page
 
     var body: some View {
-        let _ = DiagnosticRefonte.sans("journal") ? () : DiagnosticRefonte.noter("PlanSemaineView.body choix=\(String(describing: choix)) demandes=\(demandes)")
-        if DiagnosticRefonte.sans("modificateur") {
-            habillee
-        } else {
-            habillee.modifier(CouvertureDuPlan(ouverte: $planCompletOuvert))
-        }
-    }
-
-    /// La pile de la page : le haut sur le noir, la feuille blanche qui remonte dessus.
-    ///
-    /// La feuille REMONTE sur le haut de page d'un rayon de coin : le noir passe derrière ses coins
-    /// arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la capture.
-    @ViewBuilder private var pile: some View {
-        VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {
-            if DiagnosticRefonte.sans("surcouche") { sonde }
-            if !DiagnosticRefonte.sans("hautdepage") { hautDePage }
-            if !DiagnosticRefonte.sans("feuille") { feuille }
-        }
-    }
-
-    @ViewBuilder private var defilement: some View {
-        if DiagnosticRefonte.sans("enveloppe") {
-            ScrollView { pile }
-        } else {
-            DiagnosticDefilement { pile }
-        }
-    }
-
-    private var habillee: some View {
-        defilement
-            .scrollIndicators(DiagnosticRefonte.sans("indicateurs") ? .automatic : .hidden)
-            // Deux moitiés de fond : le noir en haut, le blanc en bas — un défilement qui dépasse son
-            // bord montre la couleur de ce qui s'y trouve.
-            .background {
-                if !DiagnosticRefonte.sans("fond") {
-                    VStack(spacing: 0) {
-                        HZCouleur.noir
-                        HZCouleur.blanc
-                    }
-                    .ignoresSafeArea()
-                }
+        ScrollView {
+            // La feuille REMONTE sur le haut de page d'un rayon de coin : le noir passe derrière ses
+            // coins arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la
+            // capture, où le coin était carré.
+            VStack(alignment: .leading, spacing: -HZRayon.feuille) {
+                hautDePage
+                feuille
             }
-            .ignoresSafeArea(edges: DiagnosticRefonte.sans("zonesure") ? [] : .top)
-            .statusBarHidden(!DiagnosticRefonte.sans("statusbar"))
-            // La sonde est posée PAR-DESSUS la page : dans la pile, le haut de page remonte sur elle
-            // (espacement négatif) et la cache.
-            .overlay(alignment: .center) {
-                if !DiagnosticRefonte.sans("surcouche") { sonde }
+        }
+        .scrollIndicators(.hidden)
+        // Deux moitiés de fond : le noir en haut, le blanc en bas — un défilement qui dépasse son
+        // bord montre la couleur de ce qui s'y trouve.
+        .background {
+            VStack(spacing: 0) {
+                HZCouleur.noir
+                HZCouleur.blanc
             }
-    }
-
-    /// DIAGNOSTIC : un bouton et un compteur sans rien d'autre, pour savoir si un `@State` de CET
-    /// écran le réévalue.
-    @ViewBuilder private var sonde: some View {
-        if DiagnosticRefonte.sans("sonde") {
-            Button { demandes += 1 } label: { Text(verbatim: "sonde-\(demandes)").foregroundStyle(HZCouleur.blanc) }
-                .background(HZCouleur.noir)
+            .ignoresSafeArea()
+        }
+        .ignoresSafeArea(edges: .top)
+        .statusBarHidden()
+        .fullScreenCover(isPresented: $planCompletOuvert) {
+            PlanView(retour: { planCompletOuvert = false })
+                .background(RUColor.bg.ignoresSafeArea())
         }
     }
 
@@ -129,19 +93,15 @@ struct PlanSemaineView: View {
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if !DiagnosticRefonte.sans("entete") { entete }
-            if DiagnosticRefonte.sans("titre") { Text(verbatim: "t") } else { titre }
+            entete
+            titre
             if !visibles.isEmpty {
-                if !DiagnosticRefonte.sans("rangee") {
-                    rangeeDesJours
-                        .padding(.horizontal, HZEspace.marge)
-                        .padding(.top, HZPlan.sousLEntete)
-                }
-                if !DiagnosticRefonte.sans("carrousel") {
-                    carrousel
-                        .padding(.top, HZPlan.sousLesJours)
-                }
-                if !DiagnosticRefonte.sans("boutons") { boutons }
+                rangeeDesJours
+                    .padding(.horizontal, HZEspace.marge)
+                    .padding(.top, HZPlan.sousLEntete)
+                carrousel
+                    .padding(.top, HZPlan.sousLesJours)
+                boutons
             }
         }
         .padding(.top, HZEspace.haut)
@@ -149,8 +109,8 @@ struct PlanSemaineView: View {
         // la feuille. Posé en marge de la feuille, cet espace montrait le fond de la page — du blanc
         // dans la moitié basse de l'écran, donc des coins blancs sur du blanc.
         .padding(.bottom, HZPlan.sousLesBoutons + HZRayon.feuille)
-        .frame(maxWidth: DiagnosticRefonte.sans("cadre") ? nil : .infinity, alignment: .leading)
-        .background(DiagnosticRefonte.sans("fondhaut") ? Color.clear : HZCouleur.noir)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(HZCouleur.noir)
     }
 
     private var entete: some View {
@@ -178,13 +138,7 @@ struct PlanSemaineView: View {
             Text(String(localized: "Ta semaine"))
                 .hzAffichage(.titreDePage)
                 .foregroundStyle(HZCouleur.blanc)
-                #if DEBUG
-                // L'ÉTAT DE LA SÉLECTION, lisible par le test de capture : trois gestes de suite ne
-                // changeaient aucun pixel, et l'image seule ne dit pas si l'action s'est déclenchée.
-                .accessibilityIdentifier("plan-diagnostic")
-                .accessibilityValue(DiagnosticRefonte.sans("titrediag") ? "" : "choix=\(String(describing: choix)) choisi=\(choisi) debloque=\(planDebloque) visibles=\(visibles.count) demandes=\(demandes)")
-                #endif
-            Text(DiagnosticRefonte.sans("soustitre") ? "" : sousLeTitre)
+            Text(sousLeTitre)
                 .hzTexte(.c15, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurSombre)
         }
@@ -252,13 +206,7 @@ struct PlanSemaineView: View {
     /// Les appelants ont déjà tenu compte du verrou : la rangée est éteinte quand le plan l'est, et
     /// le glissement le vérifie lui-même.
     private func selectionner(_ jour: Int) {
-        demandes += 1
-        DiagnosticRefonte.noter("PlanSemaineView.selectionner jour=\(jour)")
-        if DiagnosticRefonte.sans("animation") {
-            choix = jour
-        } else {
-            withAnimation(HZCarrousel.animation) { choix = jour }
-        }
+        withAnimation(HZCarrousel.animation) { choix = jour }
         Haptics.selection()
     }
 
@@ -476,21 +424,5 @@ struct PlanSemaineView: View {
         }
         .buttonStyle(.plain)
         .padding(.top, HZPlan.avantLePlanComplet)
-    }
-}
-
-/// Le plein écran de l'ancien plan, posé en modificateur pour que le diagnostic puisse le retirer.
-private struct CouvertureDuPlan: ViewModifier {
-    @Binding var ouverte: Bool
-
-    func body(content: Content) -> some View {
-        if DiagnosticRefonte.sans("couverture") {
-            content
-        } else {
-            content.fullScreenCover(isPresented: $ouverte) {
-                PlanView(retour: { ouverte = false })
-                    .background(RUColor.bg.ignoresSafeArea())
-            }
-        }
     }
 }
