@@ -370,37 +370,43 @@ final class RefonteUITests: XCTestCase {
         ecrire("echelle.txt", rapport)
     }
 
-    /// RÉPÉTITIONS : un seul lancement par configuration ne dit pas si le défaut est constant ou
-    /// intermittent (l'écran complet suivait la sonde une fois, et ne la suivait pas les fois
-    /// d'avant). Chaque configuration est lancée plusieurs fois, avec deux délais avant le tap.
+    /// DANS LE DÉFILEMENT : la sonde en surcouche suit sur l'écran complet, mais les vrais boutons des
+    /// jours, eux, ne changeaient rien. Deux mesures sur l'écran complet, avec et sans `bords` :
+    /// la sonde posée DANS le contenu qui défile, et la vraie rangée des jours — où l'on compare les
+    /// images (octets des captures) avant et après le tap, sans passer par l'arbre d'accessibilité,
+    /// qui peut ne pas être à jour.
     func test12Reste() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
                           "réservé à refonte.yml")
-        let base = ["feuille", "carrousel", "rangee", "boutons", "entete", "couverture",
-                    "fond", "zonesure", "statusbar", "recouvrement", "defilement",
-                    "titrediag", "soustitre", "journal", "enveloppe", "modificateur", "indicateurs"]
-        let configurations: [(String, [String])] = [
-            ("ÉCRAN COMPLET", []),
-            ("ÉCRAN COMPLET + bords", ["bords"]),
-            ("base minimale", base),
-            ("base + bords", base + ["bords"]),
-        ]
-        let delais: [TimeInterval] = [2, 2, 2, 8, 8]
-        var rapport = "configuration | délai avant le tap | la sonde suit ?\n"
-        var numero = 0
+        var rapport = "mesure | configuration | essai | résultat\n"
+        let configurations: [(String, [String])] = [("complet", []), ("complet + bords", ["bords"])]
         for (nom, retraits) in configurations {
-            for delai in delais {
+            for essai in 1...3 {
                 let options = retraits.map { "--sans-\($0)" }
-                let plan = lancer(arguments: ["--ecran=plan", "--sans-sonde"] + options, attente: delai)
-                let sonde = plan.buttons.matching(NSPredicate(format: "label BEGINSWITH 'sonde-'")).firstMatch
+
+                // 1. la sonde dans le contenu qui défile (sans recouvrement, pour qu'elle reste visible)
+                let dedans = lancer(arguments: ["--ecran=plan", "--sans-sonde", "--sans-surcouche",
+                                                "--sans-recouvrement"] + options)
+                let sonde = dedans.buttons.matching(NSPredicate(format: "label BEGINSWITH 'sonde-'")).firstMatch
                 if sonde.waitForExistence(timeout: 5) { sonde.tap() }
                 Thread.sleep(forTimeInterval: 1.5)
-                let suit = plan.buttons["sonde-1"].exists
-                if !suit { photographier("repetition-\(numero)", app: plan) }
-                plan.terminate()
-                rapport += "\(nom) | \(Int(delai)) s | \(suit)\n"
-                ecrire("repetitions.txt", rapport)
-                numero += 1
+                let suit = dedans.buttons["sonde-1"].exists
+                dedans.terminate()
+                rapport += "sonde dans le défilement | \(nom) | \(essai) | \(suit)\n"
+
+                // 2. la vraie rangée des jours : l'image change-t-elle ?
+                let reel = lancer(arguments: ["--ecran=plan"] + options)
+                let jeudi = reel.buttons["rangee-des-jours-3"]
+                _ = jeudi.waitForExistence(timeout: 5)
+                let avant = reel.screenshot().pngRepresentation
+                jeudi.tap()
+                Thread.sleep(forTimeInterval: 1.5)
+                let apres = reel.screenshot().pngRepresentation
+                let change = avant != apres
+                if essai == 1 { photographier("jeudi-\(nom.replacingOccurrences(of: " ", with: ""))", app: reel) }
+                reel.terminate()
+                rapport += "vrai jeudi, image changée | \(nom) | \(essai) | \(change)\n"
+                ecrire("defilement.txt", rapport)
             }
         }
     }
