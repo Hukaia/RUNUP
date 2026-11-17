@@ -66,33 +66,54 @@ struct PlanSemaineView: View {
 
     var body: some View {
         let _ = DiagnosticRefonte.sans("journal") ? () : DiagnosticRefonte.noter("PlanSemaineView.body choix=\(String(describing: choix)) demandes=\(demandes)")
-        DiagnosticDefilement {
-            // La feuille REMONTE sur le haut de page d'un rayon de coin : le noir passe derrière ses
-            // coins arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la
-            // capture, où le coin était carré.
-            VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {
-                if !DiagnosticRefonte.sans("hautdepage") { hautDePage }
-                if !DiagnosticRefonte.sans("feuille") { feuille }
-            }
+        if DiagnosticRefonte.sans("modificateur") {
+            habillee
+        } else {
+            habillee.modifier(CouvertureDuPlan(ouverte: $planCompletOuvert))
         }
-        .scrollIndicators(.hidden)
-        // Deux moitiés de fond : le noir en haut, le blanc en bas — un défilement qui dépasse son
-        // bord montre la couleur de ce qui s'y trouve.
-        .background {
-            if !DiagnosticRefonte.sans("fond") {
-                VStack(spacing: 0) {
-                    HZCouleur.noir
-                    HZCouleur.blanc
+    }
+
+    /// La pile de la page : le haut sur le noir, la feuille blanche qui remonte dessus.
+    ///
+    /// La feuille REMONTE sur le haut de page d'un rayon de coin : le noir passe derrière ses coins
+    /// arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la capture.
+    @ViewBuilder private var pile: some View {
+        VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {
+            if DiagnosticRefonte.sans("surcouche") { sonde }
+            if !DiagnosticRefonte.sans("hautdepage") { hautDePage }
+            if !DiagnosticRefonte.sans("feuille") { feuille }
+        }
+    }
+
+    @ViewBuilder private var defilement: some View {
+        if DiagnosticRefonte.sans("enveloppe") {
+            ScrollView { pile }
+        } else {
+            DiagnosticDefilement { pile }
+        }
+    }
+
+    private var habillee: some View {
+        defilement
+            .scrollIndicators(DiagnosticRefonte.sans("indicateurs") ? .automatic : .hidden)
+            // Deux moitiés de fond : le noir en haut, le blanc en bas — un défilement qui dépasse son
+            // bord montre la couleur de ce qui s'y trouve.
+            .background {
+                if !DiagnosticRefonte.sans("fond") {
+                    VStack(spacing: 0) {
+                        HZCouleur.noir
+                        HZCouleur.blanc
+                    }
+                    .ignoresSafeArea()
                 }
-                .ignoresSafeArea()
             }
-        }
-        .ignoresSafeArea(edges: DiagnosticRefonte.sans("zonesure") ? [] : .top)
-        .statusBarHidden(!DiagnosticRefonte.sans("statusbar"))
-        // La sonde est posée PAR-DESSUS la page : dans la pile, le haut de page remonte sur elle (espacement
-        // négatif) et la cache — la première découpe a touché le noir, pas le bouton.
-        .overlay(alignment: .topLeading) { sonde.padding(.top, HZEspace.haut) }
-        .modifier(CouvertureDuPlan(ouverte: $planCompletOuvert))
+            .ignoresSafeArea(edges: DiagnosticRefonte.sans("zonesure") ? [] : .top)
+            .statusBarHidden(!DiagnosticRefonte.sans("statusbar"))
+            // La sonde est posée PAR-DESSUS la page : dans la pile, le haut de page remonte sur elle
+            // (espacement négatif) et la cache.
+            .overlay(alignment: .topLeading) {
+                if !DiagnosticRefonte.sans("surcouche") { sonde.padding(.top, HZEspace.haut) }
+            }
     }
 
     /// DIAGNOSTIC : un bouton et un compteur sans rien d'autre, pour savoir si un `@State` de CET

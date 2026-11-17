@@ -370,28 +370,30 @@ final class RefonteUITests: XCTestCase {
         ecrire("echelle.txt", rapport)
     }
 
-    /// DERNIÈRE DÉCOUPE : à partir du vrai écran sans aucun bloc (que l'échelle, elle, suit), on
-    /// retire un à un ce qui reste — les marqueurs du titre, le sous-titre, le journal, le haut de page.
+    /// L'HÔTE : le vrai écran sans aucun bloc (que l'échelle, elle, suit), puis ses différences de
+    /// structure avec l'échelle retirées une à une. Le rapport est réécrit après CHAQUE passe : un
+    /// test interrompu ne perd plus ce qu'il avait déjà appris.
     func test12Reste() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
                           "réservé à refonte.yml")
         let blocs = ["feuille", "carrousel", "rangee", "boutons", "entete", "couverture",
-                     "fond", "zonesure", "statusbar", "recouvrement", "defilement"]
-        let restes = ["titrediag", "soustitre", "journal", "hautdepage"]
-        var rapport = "reste retiré | la sonde suit ?\n"
-        for fin in 0...restes.count {
-            let retires = Array(restes.prefix(fin))
+                     "fond", "zonesure", "statusbar", "recouvrement", "defilement",
+                     "titrediag", "soustitre", "journal"]
+        let differences = ["surcouche", "enveloppe", "modificateur", "indicateurs", "hautdepage"]
+        var rapport = "retiré en plus | la sonde suit ?\n"
+        for fin in 0...differences.count {
+            let retires = Array(differences.prefix(fin))
             let options = (blocs + retires).map { "--sans-\($0)" }
             let plan = lancer(arguments: ["--ecran=plan", "--sans-sonde"] + options)
             let sonde = plan.buttons.matching(NSPredicate(format: "label BEGINSWITH 'sonde-'")).firstMatch
             if sonde.waitForExistence(timeout: 5) { sonde.tap() }
             Thread.sleep(forTimeInterval: 2.0)
             let suit = plan.buttons["sonde-1"].exists
-            photographier("reste-\(fin)", app: plan)
+            photographier("hote-\(fin)", app: plan)
             plan.terminate()
             rapport += "\(retires.joined(separator: "+")) | \(suit)\n"
+            ecrire("hote.txt", rapport)
         }
-        ecrire("reste.txt", rapport)
     }
 
     private func ecrire(_ nom: String, _ texte: String) {
