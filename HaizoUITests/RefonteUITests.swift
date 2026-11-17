@@ -370,37 +370,38 @@ final class RefonteUITests: XCTestCase {
         ecrire("echelle.txt", rapport)
     }
 
-    /// LE HAUT DE PAGE : `hautDePage` est le seul bloc dont le retrait rend la sonde vivante, même
-    /// réduit au titre, aux marges et au fond. Chacun de ses restes est retiré à son tour, sur la
-    /// base qui échoue, puis `bords` (la lecture de la zone sûre de la fenêtre) sur le VRAI écran
-    /// complet. Le rapport est réécrit après chaque passe.
+    /// RÉPÉTITIONS : un seul lancement par configuration ne dit pas si le défaut est constant ou
+    /// intermittent (l'écran complet suivait la sonde une fois, et ne la suivait pas les fois
+    /// d'avant). Chaque configuration est lancée plusieurs fois, avec deux délais avant le tap.
     func test12Reste() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
                           "réservé à refonte.yml")
         let base = ["feuille", "carrousel", "rangee", "boutons", "entete", "couverture",
                     "fond", "zonesure", "statusbar", "recouvrement", "defilement",
                     "titrediag", "soustitre", "journal", "enveloppe", "modificateur", "indicateurs"]
-        let passes: [(String, [String])] = [
-            ("base minimale (témoin)", base),
-            ("base + bords", base + ["bords"]),
-            ("base + fondhaut", base + ["fondhaut"]),
-            ("base + cadre", base + ["cadre"]),
-            ("base + titre", base + ["titre"]),
-            ("ÉCRAN COMPLET (témoin)", []),
+        let configurations: [(String, [String])] = [
+            ("ÉCRAN COMPLET", []),
             ("ÉCRAN COMPLET + bords", ["bords"]),
+            ("base minimale", base),
+            ("base + bords", base + ["bords"]),
         ]
-        var rapport = "passe | la sonde suit ?\n"
-        for (index, passe) in passes.enumerated() {
-            let options = passe.1.map { "--sans-\($0)" }
-            let plan = lancer(arguments: ["--ecran=plan", "--sans-sonde"] + options)
-            let sonde = plan.buttons.matching(NSPredicate(format: "label BEGINSWITH 'sonde-'")).firstMatch
-            if sonde.waitForExistence(timeout: 5) { sonde.tap() }
-            Thread.sleep(forTimeInterval: 2.0)
-            let suit = plan.buttons["sonde-1"].exists
-            photographier("hote-\(index)", app: plan)
-            plan.terminate()
-            rapport += "\(passe.0) | \(suit)\n"
-            ecrire("hote.txt", rapport)
+        let delais: [TimeInterval] = [2, 2, 2, 8, 8]
+        var rapport = "configuration | délai avant le tap | la sonde suit ?\n"
+        var numero = 0
+        for (nom, retraits) in configurations {
+            for delai in delais {
+                let options = retraits.map { "--sans-\($0)" }
+                let plan = lancer(arguments: ["--ecran=plan", "--sans-sonde"] + options, attente: delai)
+                let sonde = plan.buttons.matching(NSPredicate(format: "label BEGINSWITH 'sonde-'")).firstMatch
+                if sonde.waitForExistence(timeout: 5) { sonde.tap() }
+                Thread.sleep(forTimeInterval: 1.5)
+                let suit = plan.buttons["sonde-1"].exists
+                if !suit { photographier("repetition-\(numero)", app: plan) }
+                plan.terminate()
+                rapport += "\(nom) | \(Int(delai)) s | \(suit)\n"
+                ecrire("repetitions.txt", rapport)
+                numero += 1
+            }
         }
     }
 
