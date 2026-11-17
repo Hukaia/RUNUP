@@ -160,6 +160,10 @@ struct RootTabView: View {
                 // zone sûre. C'est une surface qui OCCUPE l'écran qui l'ignore, et la barre y est
                 // posée en bas.
                 Color.clear
+                    // La surface couvre l'écran : sans ceci, elle recevrait les touches destinées à
+                    // la page dessous. Posé AVANT l'`overlay`, le réglage ne touche que la surface ;
+                    // la barre, elle, reste touchable.
+                    .allowsHitTesting(false)
                     .overlay(alignment: .bottom) {
                         HZBarreFlottante(selection: ongletRefait)
                             .padding(.bottom, HZEspace.sousLaBarre)

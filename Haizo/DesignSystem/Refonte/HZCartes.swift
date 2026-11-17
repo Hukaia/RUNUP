@@ -155,7 +155,7 @@ struct HZTuile: View {
                 // Une durée de plus de quatre signes (« 1h20 ») remplit les 132 points de la
                 // tuile : elle rétrécit plutôt que de se couper — une durée tronquée est une durée
                 // fausse. Le canvas, lui, laisse le texte déborder sous le bord de la tuile.
-                .minimumScaleFactor(HZTuile.retrait)
+                .minimumScaleFactor(format == .objectif ? HZTuile.retraitDUnObjectif : HZTuile.retrait)
         }
         .padding(.top, HZEspace.tuile)
         .padding(.horizontal, HZEspace.tuile)
@@ -166,6 +166,9 @@ struct HZTuile: View {
     }
 
     static let retrait: CGFloat = 0.8
+    /// Un nom d'objectif est un mot que rien ne coupe — « (Re)commencer » fait 190 points à
+    /// 24 de corps, la tuile en offre 122. Il rétrécit plutôt que de finir en points de suspension.
+    static let retraitDUnObjectif: CGFloat = 0.6
 }
 
 /// UNE TUILE ET SA LÉGENDE : la tuile de couleur, puis dessous le titre et sa précision.

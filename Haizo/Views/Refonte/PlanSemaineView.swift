@@ -103,6 +103,10 @@ struct PlanSemaineView: View {
             }
         }
         .padding(.top, HZEspace.haut)
+        // Le noir se prolonge SOUS les boutons : c'est lui qui est derrière les coins arrondis de
+        // la feuille. Posé en marge de la feuille, cet espace montrait le fond de la page — du blanc
+        // dans la moitié basse de l'écran, donc des coins blancs sur du blanc.
+        .padding(.bottom, HZPlan.sousLesBoutons)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(HZCouleur.noir)
     }
@@ -324,7 +328,6 @@ struct PlanSemaineView: View {
             }
             Color.clear.frame(height: HZPlan.basDePage)
         }
-        .padding(.top, HZPlan.sousLesBoutons)
         .frame(minHeight: HZPlan.hauteurMiniDeLaFeuille, alignment: .top)
     }
 

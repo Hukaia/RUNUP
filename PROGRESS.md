@@ -8417,3 +8417,23 @@ Tests : `PlanSemaineModeleTests` (24 cas : les cinq états d'une carte, repos, s
 même, séance de nage sans allure, lundi d'un dimanche, semaine à cheval sur deux mois).
 Capture : `RefonteUITests.test03Plan` (`plan`, `plan-mardi`, `plan-bas`) ; `refonte.yml` se lance
 désormais aussi sur `PlanView.swift`, `PlanSemaineModele.swift`, `RootTabView.swift`.
+
+### Plan : premier relevé (commit `c4a2110`) et ce qu'il a trouvé
+
+TestFlight 596 verte (les 24 cas du Plan passent). Mesuré sur la capture, contenu différent mis à
+part (le canvas dessine un mardi de fractionné, la capture un dimanche de sortie longue) : le haut
+de page (retour, pastille, titre, dates, rangée des jours) à 0,0 pt ; la carte 430 pt de haut,
+même pas de 330 ; Démarrer et Déplacer à 0,0 pt ; bandeau du coach à 22 pt du coin de la feuille ;
+tuiles d'objectif de 150 × 170, à 1 pt près.
+
+Trois défauts, trouvés sur l'image, corrigés :
+1. **La surface pleine écran qui porte la barre flottante absorbait les touches** (`Color.clear`
+   sur tout l'écran, posée par RootTabView au relevé précédent, pour passer la barre sous la zone
+   sûre). Le test a touché le mardi dans la rangée des jours : rien ne s'est passé. C'était aussi
+   le cas de l'Accueil depuis ce commit — aucune capture n'y touche rien, donc rien ne l'avait
+   montré. `allowsHitTesting(false)` sur la surface, posé avant la barre.
+2. **Les coins arrondis de la feuille étaient blancs sur du blanc** : l'espace de 26 pt entre les
+   boutons et la feuille était une marge de la feuille, et laissait voir le fond de la page, blanc
+   dans la moitié basse. Il fait maintenant partie du haut de page, noir.
+3. **« (Re)commencer » finissait en points de suspension** dans sa tuile d'objectif : un mot que
+   rien ne coupe, 190 pt à 24 de corps pour 122 disponibles. Réduction jusqu'à 0,6.
