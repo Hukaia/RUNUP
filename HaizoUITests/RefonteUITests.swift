@@ -180,6 +180,37 @@ final class RefonteUITests: XCTestCase {
         app.terminate()
     }
 
+    /// LES SORTIES DE L'ACCUEIL. Un appui sur la recherche laisse l'accueil affiché sous l'ancienne
+    /// barre (constaté sur la capture ET sur le téléphone de Charlotte). Trois sorties, un
+    /// lancement chacune, trois secondes d'attente, l'image et l'arbre d'accessibilité : le
+    /// contenu a-t-il changé, ou seulement la barre ?
+    func test06Sorties() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let recherche = lancer(arguments: ["--ecran=prog"])
+        recherche.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.095)).tap()
+        Thread.sleep(forTimeInterval: 3.0)
+        photographier("sortie-recherche", app: recherche)
+        ecrire("arbre-sortie-recherche.txt", recherche.debugDescription)
+        recherche.terminate()
+
+        let coach = lancer(arguments: ["--ecran=prog"])
+        if coach.buttons["Coach"].firstMatch.waitForExistence(timeout: 5) {
+            coach.buttons["Coach"].firstMatch.tap()
+        }
+        Thread.sleep(forTimeInterval: 3.0)
+        photographier("sortie-coach", app: coach)
+        coach.terminate()
+
+        let stats = lancer(arguments: ["--ecran=prog"])
+        if stats.buttons["Statistiques"].firstMatch.waitForExistence(timeout: 5) {
+            stats.buttons["Statistiques"].firstMatch.tap()
+        }
+        Thread.sleep(forTimeInterval: 3.0)
+        photographier("sortie-stats", app: stats)
+        stats.terminate()
+    }
+
     private func ecrire(_ nom: String, _ texte: String) {
         guard let dossier = ProcessInfo.processInfo.environment["Haizo_CAPTURES_DIR"] else { return }
         let url = URL(fileURLWithPath: dossier).appendingPathComponent(nom)
