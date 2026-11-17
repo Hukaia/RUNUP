@@ -302,7 +302,13 @@ struct RootTabView: View {
         case .home:
             if DiagnosticRefonte.sans("nu") { DiagnosticNuAccueil() } else { AccueilView() }
         case .plan:
-            if DiagnosticRefonte.sans("nu") { DiagnosticNuPlan() } else { PlanSemaineView() }
+            if let niveau = DiagnosticEchelle.Niveau.demande() {
+                DiagnosticEchelle(niveau: niveau)
+            } else if DiagnosticRefonte.sans("nu") {
+                DiagnosticNuPlan()
+            } else {
+                PlanSemaineView()
+            }
         case .rings: RingsView()
         case .live: LiveRunView()
         case .recap: RecapView()

@@ -345,6 +345,25 @@ final class RefonteUITests: XCTestCase {
         ecrire("decoupe.txt", rapport)
     }
 
+    /// L'ÉCHELLE : à chaque échelon un ingrédient de plus autour de la sonde. Le premier où elle ne
+    /// suit plus est le coupable.
+    func test11Echelle() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        var rapport = "echelon | la sonde suit ?\n"
+        for echelon in ["etat", "profil", "abonnement", "modele", "polices", "defilement", "page"] {
+            let plan = lancer(arguments: ["--ecran=plan", "--echelle=\(echelon)"])
+            let sonde = plan.buttons.matching(NSPredicate(format: "label BEGINSWITH 'sonde-'")).firstMatch
+            if sonde.waitForExistence(timeout: 5) { sonde.tap() }
+            Thread.sleep(forTimeInterval: 2.0)
+            let suit = plan.buttons["sonde-1"].exists
+            photographier("echelle-\(echelon)", app: plan)
+            plan.terminate()
+            rapport += "\(echelon) | \(suit)\n"
+        }
+        ecrire("echelle.txt", rapport)
+    }
+
     private func ecrire(_ nom: String, _ texte: String) {
         guard let dossier = ProcessInfo.processInfo.environment["Haizo_CAPTURES_DIR"] else { return }
         let url = URL(fileURLWithPath: dossier).appendingPathComponent(nom)

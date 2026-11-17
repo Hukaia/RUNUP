@@ -90,3 +90,94 @@ struct DiagnosticDefilement<Contenu: View>: View {
         }
     }
 }
+
+/// UNE ÉCHELLE D'ÉCRANS QUI AJOUTENT UN INGRÉDIENT À LA FOIS à une sonde (un bouton et son compteur),
+/// du `@State` seul jusqu'au décor de la page. Le premier échelon où le compteur cesse de suivre
+/// désigne l'ingrédient qui casse le suivi des états : `--echelle=<nom>`.
+struct DiagnosticEchelle: View {
+    enum Niveau: String, CaseIterable {
+        case etat, profil, abonnement, modele, polices, defilement, page
+
+        /// Le niveau demandé au lancement, s'il y en a un. Hors DEBUG : jamais.
+        static func demande() -> Niveau? {
+            #if DEBUG
+            let prefixe = "--echelle="
+            guard let argument = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix(prefixe) })
+            else { return nil }
+            return Niveau(rawValue: String(argument.dropFirst(prefixe.count)))
+            #else
+            return nil
+            #endif
+        }
+
+        func atteint(_ autre: Niveau) -> Bool {
+            let tous = Niveau.allCases
+            return (tous.firstIndex(of: self) ?? 0) >= (tous.firstIndex(of: autre) ?? 0)
+        }
+    }
+
+    let niveau: Niveau
+    @Environment(AppState.self) private var appState
+    @Environment(SubscriptionService.self) private var subscriptions
+    @State private var compteur = 0
+
+    var body: some View {
+        let _ = DiagnosticRefonte.noter("DiagnosticEchelle.body \(niveau.rawValue) compteur=\(compteur)")
+        if niveau.atteint(.defilement) {
+            ScrollView { contenu }
+                .modifier(Decor(actif: niveau.atteint(.page)))
+        } else {
+            contenu
+        }
+    }
+
+    private var contenu: some View {
+        VStack(alignment: .leading, spacing: HZEspace.groupe) {
+            Button { compteur += 1 } label: {
+                Text(verbatim: "sonde-\(compteur)").foregroundStyle(HZCouleur.noir)
+            }
+            if niveau.atteint(.profil) {
+                Text(verbatim: "seances \(appState.profile.weekSessions.count)")
+            }
+            if niveau.atteint(.abonnement) {
+                Text(verbatim: "ouvert \(subscriptions.unlocks(.adaptivePlan))")
+            }
+            if niveau.atteint(.modele) {
+                Text(verbatim: "jours \(jours.count)")
+            }
+            if niveau.atteint(.polices) {
+                Text(verbatim: "Ta semaine").hzAffichage(.titreDePage)
+                Text(verbatim: "sous-titre").hzTexte(.c15, .semi)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var jours: [PlanSemaineModele.Jour] {
+        PlanSemaineModele.jours(appState.profile.weekSessions,
+                                aujourdHui: PlanSemaineModele.indiceDuJour(Demonstration.maintenant),
+                                lundi: PlanSemaineModele.lundi(de: Demonstration.maintenant),
+                                titreDuRepos: String(localized: "Jour de repos"))
+    }
+
+    private struct Decor: ViewModifier {
+        let actif: Bool
+
+        func body(content: Content) -> some View {
+            if actif {
+                content
+                    .background {
+                        VStack(spacing: 0) {
+                            HZCouleur.noir
+                            HZCouleur.blanc
+                        }
+                        .ignoresSafeArea()
+                    }
+                    .ignoresSafeArea(edges: .top)
+                    .statusBarHidden(true)
+            } else {
+                content
+            }
+        }
+    }
+}
