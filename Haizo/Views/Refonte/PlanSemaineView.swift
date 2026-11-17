@@ -71,8 +71,9 @@ struct PlanSemaineView: View {
             // coins arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la
             // capture, où le coin était carré.
             VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {
+                sonde
                 hautDePage
-                feuille
+                if !DiagnosticRefonte.sans("feuille") { feuille }
             }
         }
         .scrollIndicators(.hidden)
@@ -89,9 +90,15 @@ struct PlanSemaineView: View {
         }
         .ignoresSafeArea(edges: DiagnosticRefonte.sans("zonesure") ? [] : .top)
         .statusBarHidden(!DiagnosticRefonte.sans("statusbar"))
-        .fullScreenCover(isPresented: $planCompletOuvert) {
-            PlanView(retour: { planCompletOuvert = false })
-                .background(RUColor.bg.ignoresSafeArea())
+        .modifier(CouvertureDuPlan(ouverte: $planCompletOuvert))
+    }
+
+    /// DIAGNOSTIC : un bouton et un compteur sans rien d'autre, pour savoir si un `@State` de CET
+    /// écran le réévalue.
+    @ViewBuilder private var sonde: some View {
+        if DiagnosticRefonte.sans("sonde") {
+            Button { demandes += 1 } label: { Text(verbatim: "sonde-\(demandes)").foregroundStyle(HZCouleur.blanc) }
+                .background(HZCouleur.noir)
         }
     }
 
@@ -99,15 +106,19 @@ struct PlanSemaineView: View {
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            entete
+            if !DiagnosticRefonte.sans("entete") { entete }
             titre
             if !visibles.isEmpty {
-                rangeeDesJours
-                    .padding(.horizontal, HZEspace.marge)
-                    .padding(.top, HZPlan.sousLEntete)
-                carrousel
-                    .padding(.top, HZPlan.sousLesJours)
-                boutons
+                if !DiagnosticRefonte.sans("rangee") {
+                    rangeeDesJours
+                        .padding(.horizontal, HZEspace.marge)
+                        .padding(.top, HZPlan.sousLEntete)
+                }
+                if !DiagnosticRefonte.sans("carrousel") {
+                    carrousel
+                        .padding(.top, HZPlan.sousLesJours)
+                }
+                if !DiagnosticRefonte.sans("boutons") { boutons }
             }
         }
         .padding(.top, HZEspace.haut)
@@ -442,5 +453,21 @@ struct PlanSemaineView: View {
         }
         .buttonStyle(.plain)
         .padding(.top, HZPlan.avantLePlanComplet)
+    }
+}
+
+/// Le plein écran de l'ancien plan, posé en modificateur pour que le diagnostic puisse le retirer.
+private struct CouvertureDuPlan: ViewModifier {
+    @Binding var ouverte: Bool
+
+    func body(content: Content) -> some View {
+        if DiagnosticRefonte.sans("couverture") {
+            content
+        } else {
+            content.fullScreenCover(isPresented: $ouverte) {
+                PlanView(retour: { ouverte = false })
+                    .background(RUColor.bg.ignoresSafeArea())
+            }
+        }
     }
 }

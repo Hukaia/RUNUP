@@ -320,6 +320,29 @@ final class RefonteUITests: XCTestCase {
         ecrire("bissection.txt", rapport)
     }
 
+    /// DÉCOUPE DU PLAN : une sonde (bouton + compteur) en tête de page, et à chaque passe un bloc de
+    /// plus retiré. La première passe où le compteur suit désigne le bloc coupable.
+    func test10Decoupe() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let blocs = ["feuille", "carrousel", "rangee", "boutons", "entete", "couverture"]
+        var passes: [(String, [String])] = [("sonde seule", [])]
+        for bloc in blocs { passes.append(("sans \(bloc)", ["--sans-\(bloc)"])) }
+        passes.append(("sans rien", blocs.map { "--sans-\($0)" }))
+        var rapport = "passe | la sonde suit ?\n"
+        for (index, passe) in passes.enumerated() {
+            let plan = lancer(arguments: ["--ecran=plan", "--sans-sonde"] + passe.1)
+            let sonde = plan.buttons.matching(NSPredicate(format: "label BEGINSWITH 'sonde-'")).firstMatch
+            if sonde.waitForExistence(timeout: 5) { sonde.tap() }
+            Thread.sleep(forTimeInterval: 2.0)
+            let suit = plan.buttons["sonde-1"].exists
+            photographier("decoupe-\(index)", app: plan)
+            plan.terminate()
+            rapport += "\(passe.0) | \(suit)\n"
+        }
+        ecrire("decoupe.txt", rapport)
+    }
+
     private func ecrire(_ nom: String, _ texte: String) {
         guard let dossier = ProcessInfo.processInfo.environment["Haizo_CAPTURES_DIR"] else { return }
         let url = URL(fileURLWithPath: dossier).appendingPathComponent(nom)
