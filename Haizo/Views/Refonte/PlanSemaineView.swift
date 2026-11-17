@@ -111,8 +111,8 @@ struct PlanSemaineView: View {
             .statusBarHidden(!DiagnosticRefonte.sans("statusbar"))
             // La sonde est posée PAR-DESSUS la page : dans la pile, le haut de page remonte sur elle
             // (espacement négatif) et la cache.
-            .overlay(alignment: .topLeading) {
-                if !DiagnosticRefonte.sans("surcouche") { sonde.padding(.top, HZEspace.haut) }
+            .overlay(alignment: .center) {
+                if !DiagnosticRefonte.sans("surcouche") { sonde }
             }
     }
 
@@ -130,7 +130,7 @@ struct PlanSemaineView: View {
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
             if !DiagnosticRefonte.sans("entete") { entete }
-            titre
+            if DiagnosticRefonte.sans("titre") { Text(verbatim: "t") } else { titre }
             if !visibles.isEmpty {
                 if !DiagnosticRefonte.sans("rangee") {
                     rangeeDesJours
@@ -149,8 +149,8 @@ struct PlanSemaineView: View {
         // la feuille. Posé en marge de la feuille, cet espace montrait le fond de la page — du blanc
         // dans la moitié basse de l'écran, donc des coins blancs sur du blanc.
         .padding(.bottom, HZPlan.sousLesBoutons + HZRayon.feuille)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(HZCouleur.noir)
+        .frame(maxWidth: DiagnosticRefonte.sans("cadre") ? nil : .infinity, alignment: .leading)
+        .background(DiagnosticRefonte.sans("fondhaut") ? Color.clear : HZCouleur.noir)
     }
 
     private var entete: some View {

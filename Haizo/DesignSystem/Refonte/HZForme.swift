@@ -67,5 +67,7 @@ extension HZEspace {
     /// Soixante points, comme le canvas, sur un téléphone à encoche (encart de 47) comme sur un
     /// téléphone à îlot (encart de 59) : dans les deux cas le contenu passe sous la barre d'état.
     /// Si un appareil réclame un jour un encart plus profond, le contenu descend avec lui.
-    static var haut: CGFloat { max(BordsDeLEcran.haut + sousLEncart, hautDuCanvas) }
+    static var haut: CGFloat {
+        DiagnosticRefonte.sans("bords") ? hautDuCanvas : max(BordsDeLEcran.haut + sousLEncart, hautDuCanvas)
+    }
 }
