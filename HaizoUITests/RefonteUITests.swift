@@ -74,6 +74,8 @@ final class RefonteUITests: XCTestCase {
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.244, dy: 0.26)).tap()
         Thread.sleep(forTimeInterval: 1.0)
         photographier("plan-tap-coordonnees", app: app)
+        let apresLeTap = app.staticTexts["plan-diagnostic"]
+        rapport += "Après le tap par coordonnées : \(apresLeTap.exists ? "\(apresLeTap.value ?? "?")" : "absent")\n"
 
         // (2) Le même geste par l'identifiant d'accessibilité.
         let jeudi = app.buttons["rangee-des-jours-3"]
@@ -87,6 +89,10 @@ final class RefonteUITests: XCTestCase {
         depart.press(forDuration: 0.1, thenDragTo: arrivee)
         Thread.sleep(forTimeInterval: 1.0)
         photographier("plan-mardi", app: app)
+
+        // L'état de la sélection lu dans l'app après chacun des trois gestes.
+        let diagnostic = app.staticTexts["plan-diagnostic"]
+        rapport += "Après les trois gestes : \(diagnostic.exists ? "\(diagnostic.value ?? "?")" : "absent")\n"
 
         defiler(app)
         photographier("plan-bas", app: app)

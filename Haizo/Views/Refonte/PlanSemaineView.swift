@@ -139,6 +139,12 @@ struct PlanSemaineView: View {
             Text(String(localized: "Ta semaine"))
                 .hzAffichage(.titreDePage)
                 .foregroundStyle(HZCouleur.blanc)
+                #if DEBUG
+                // L'ÉTAT DE LA SÉLECTION, lisible par le test de capture : trois gestes de suite ne
+                // changeaient aucun pixel, et l'image seule ne dit pas si l'action s'est déclenchée.
+                .accessibilityIdentifier("plan-diagnostic")
+                .accessibilityValue("choix=\(String(describing: choix)) choisi=\(choisi) debloque=\(planDebloque) visibles=\(visibles.count)")
+                #endif
             Text(sousLeTitre)
                 .hzTexte(.c15, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurSombre)
