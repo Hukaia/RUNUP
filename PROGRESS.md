@@ -8454,3 +8454,16 @@ par coordonnées (`plan-tap-coordonnees`), par identifiant d'accessibilité (`pl
 sur le quatrième jour), et par glissement de la carte (`plan-mardi`). Le résultat dira si c'est la
 position du tap, la rangée, ou une couche qui prend les touches. Tant que ce n'est pas élucidé, le
 Plan n'est pas validé : un écran qui s'affiche bien et ne répond pas ne vaut rien.
+
+### Plan : le changement de jour ne se faisait pas (relevés 3 à 5)
+
+Constats, dans l'ordre : le tap par coordonnées, le tap par identifiant d'accessibilité et le
+glissement de la carte laissent l'écran **pixel pour pixel identique** (0 pixel de différence) ;
+« Déplacer », sur la même page, ouvre bien sa feuille ; les sept boutons de la rangée existent,
+sont touchables, aux bons cadres. Ce n'est donc ni une couche qui prend les touches (la surface de
+la barre a quand même été corrigée, c'était une vraie erreur), ni la position du tap.
+L'état lu dans l'app : `choix=nil`, `debloque=true`, `visibles=7` après les gestes — **la sélection
+n'est jamais écrite**. Les trois chemins passaient par une même fonction gardée, et un optionnel
+de fermeture (`choisir: ((Int) -> Void)?` avec `.disabled(choisir == nil)`). Chemin simplifié : la
+fermeture est obligatoire, le verrou est un paramètre à part, la garde a disparu de la fonction. Un
+compteur `demandes` (DEBUG) dit si l'action s'exécute. Cause non établie à cette ligne.

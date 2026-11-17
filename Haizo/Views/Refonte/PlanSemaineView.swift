@@ -29,6 +29,9 @@ struct PlanSemaineView: View {
 
     /// Le jour regardé. `nil` tant qu'on n'a rien touché : c'est alors aujourd'hui.
     @State private var choix: Int?
+    /// Combien de fois la sélection d'un jour a été demandée. Diagnostic : trois gestes ne
+    /// changeaient rien, et il fallait savoir si l'action s'exécute.
+    @State private var demandes = 0
     @State private var planCompletOuvert = false
 
     private var profile: UserProfile { appState.profile }
@@ -96,8 +99,8 @@ struct PlanSemaineView: View {
             entete
             titre
             if !visibles.isEmpty {
-                HZRangeeDesJours(jours: jours.map(pastille), choisi: choisi,
-                                 choisir: planDebloque ? selectionner : nil)
+                HZRangeeDesJours(jours: jours.map(pastille), choisi: choisi, actif: planDebloque,
+                                 choisir: selectionner)
                     .padding(.horizontal, HZEspace.marge)
                     .padding(.top, HZPlan.sousLEntete)
                 carrousel
@@ -143,7 +146,7 @@ struct PlanSemaineView: View {
                 // L'ÉTAT DE LA SÉLECTION, lisible par le test de capture : trois gestes de suite ne
                 // changeaient aucun pixel, et l'image seule ne dit pas si l'action s'est déclenchée.
                 .accessibilityIdentifier("plan-diagnostic")
-                .accessibilityValue("choix=\(String(describing: choix)) choisi=\(choisi) debloque=\(planDebloque) visibles=\(visibles.count)")
+                .accessibilityValue("choix=\(String(describing: choix)) choisi=\(choisi) debloque=\(planDebloque) visibles=\(visibles.count) demandes=\(demandes)")
                 #endif
             Text(sousLeTitre)
                 .hzTexte(.c15, .semi)
@@ -196,10 +199,12 @@ struct PlanSemaineView: View {
         return Couleurs(fond: intensite.couleur, point: intensite.point, encre: HZCouleur.blanc)
     }
 
+    /// Les appelants ont déjà tenu compte du verrou : la rangée est éteinte quand le plan l'est, et
+    /// le glissement le vérifie lui-même.
     private func selectionner(_ jour: Int) {
-        guard planDebloque else { return }
-        Haptics.selection()
+        demandes += 1
         withAnimation(HZCarrousel.animation) { choix = jour }
+        Haptics.selection()
     }
 
     // MARK: - Le carrousel

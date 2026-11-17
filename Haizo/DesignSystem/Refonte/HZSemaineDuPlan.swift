@@ -20,19 +20,20 @@ struct HZRangeeDesJours: View {
 
     let jours: [Jour]
     let choisi: Int
-    /// `nil` : les jours ne se choisissent pas (le plan est verrouillé).
-    var choisir: ((Int) -> Void)?
+    /// Faux : les jours ne se choisissent pas (le plan est verrouillé).
+    var actif: Bool = true
+    let choisir: (Int) -> Void
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(jours) { jour in
                 Button {
-                    choisir?(jour.id)
+                    choisir(jour.id)
                 } label: {
                     colonne(jour, choisi: jour.id == choisi)
                 }
                 .buttonStyle(.plain)
-                .disabled(choisir == nil)
+                .disabled(!actif)
                 .accessibilityLabel(jour.nom)
                 .accessibilityIdentifier("rangee-des-jours-\(jour.id)")
                 .accessibilityAddTraits(jour.id == choisi ? .isSelected : [])
