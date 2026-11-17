@@ -715,6 +715,12 @@ jobs:
       - name: Vérifier ce que l'envoi des captures décide hors ligne
         run: cd ci_scripts && python3 test_asc_captures.py
 
+      # Le NOM de l'app n'a jamais été envoyé par `push-metadata` : il est resté sur la page web
+      # tel qu'il était avant le renommage. `push-name` l'envoie, et ses cas disent sur une fausse
+      # API ce qu'il écrit — le nom et rien d'autre — et ce qu'il refuse.
+      - name: Vérifier que l'envoi du nom n'écrit que le nom
+        run: cd ci_scripts && python3 test_asc_nom.py
+
       # Le build 1177 a planté au lancement chez tout le monde sur une ligne qui compilait et
       # dont les tests passaient : une propriété de type personnalisé, non optionnelle, ajoutée à
       # un modèle SwiftData. La migration réussit, ajoute la colonne à NULL, et le premier accès

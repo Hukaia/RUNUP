@@ -25,9 +25,11 @@ l'envoie tel quel.
 #     python3 ci_scripts/asc.py push-metadata 2.5 --dry-run   # afficher sans rien envoyer
 #     python3 ci_scripts/asc.py submit 2.5          # attacher la build et envoyer en revue
 
-Ce que le script NE fait PAS, parce que l'API ne l'expose pas ou mal : les captures d'écran, le
-questionnaire de confidentialité, la classification d'âge, et le nom et le sous-titre de l'app
-(`appInfoLocalizations`, qui ne dépendent pas d'une version). Ceux-là restent sur le web.
+Ce que le script NE fait PAS, parce que l'API ne l'expose pas ou mal : le questionnaire de
+confidentialité, la classification d'âge, et le sous-titre de l'app. Ceux-là restent sur le web.
+
+LE NOM, lui, se pousse : `push-name`. Il ne dépend pas d'une version (`appInfoLocalizations`), et
+`push-metadata` ne l'envoie PAS — c'est pourquoi le nom d'avant le renommage est resté sur la fiche.
 """
 import argparse, base64, datetime, hashlib, json, os, pathlib, re, subprocess, sys, tempfile, time
 import urllib.request, urllib.error
@@ -43,6 +45,8 @@ import apercu  # noqa: E402
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 LISTING = ROOT / "APP_STORE_LISTING.md"
 BUNDLE_ID = "com.hicsuntco.runup"
+# La limite d'Apple pour le nom d'une app, en caractères.
+LIMITE_DU_NOM = 30
 API = "https://api.appstoreconnect.apple.com/v1"
 
 # (locale App Store, ancre de section, titres des champs dans cette langue)
@@ -683,6 +687,73 @@ def cmd_push_metadata(args):
     pousser_l_url_de_confidentialite(aid, args.dry_run)
     if args.dry_run:
         print("\n(--dry-run : rien n'a été envoyé)")
+
+
+def cmd_push_name(args):
+    """LE NOM de l'app, pour chaque langue de la fiche, et RIEN D'AUTRE.
+
+    # POURQUOI UNE COMMANDE À PART
+
+    `push-metadata` envoie la description, les mots-clés, le texte promotionnel, les notes de
+    version et les deux adresses ; elle n'a jamais envoyé le nom. Il a été posé à la main, un
+    jour, sur la page web, et le renommage du 16 novembre ne l'a donc pas atteint : la fiche du
+    dépôt dit « Haizo : Coach de Course », la page de l'App Store disait encore l'ancien nom.
+
+    Le nom n'est pas rangé avec le reste parce que ce n'est pas le même objet. Les textes
+    appartiennent à une VERSION ; le nom appartient à l'`appInfo` de l'app. Et il ne s'écrit que
+    sur un `appInfo` éditable : celui de la version en vente le REFUSE. Cette commande les essaie
+    donc tous, dit lequel a accepté, lequel a refusé et pourquoi, et n'échoue que si une langue
+    n'a été acceptée par aucun.
+
+    # CE QU'ELLE NE TOUCHE PAS
+
+    Ni le sous-titre, ni la description, ni aucune autre langue que celles de la fiche. Le nom
+    est lu dans `APP_STORE_LISTING.md`, qui est la source ; `check_listing.py` en tient la
+    longueur (30 caractères, la limite d'Apple).
+    """
+    aid, _ = app_id()
+    cible = {locale: champs["name"] for locale, champs in listing().items()}
+    for locale, nom in cible.items():
+        if not nom or len(nom) > LIMITE_DU_NOM:
+            sys.exit(f"Nom de {locale} : « {nom} » ({len(nom)} car.) — la limite d'Apple est "
+                     f"{LIMITE_DU_NOM}.")
+
+    acceptes, refuses, deja = set(), {}, set()
+    for info in call("GET", f"apps/{aid}/appInfos")["data"]:
+        etat = info["attributes"].get("state") or info["attributes"].get("appStoreState") or "?"
+        print(f"\n── appInfo {info['id'][:8]} · {etat} " + "─" * 30)
+        for il in call("GET", f"appInfos/{info['id']}/appInfoLocalizations")["data"]:
+            locale = il["attributes"].get("locale")
+            if locale not in cible:
+                continue
+            avant, apres = il["attributes"].get("name"), cible[locale]
+            if avant == apres:
+                print(f"  {locale} : « {apres} » déjà à jour")
+                deja.add(locale)
+                continue
+            print(f"  {locale} : « {avant} » → « {apres} »")
+            if args.dry_run:
+                continue
+            try:
+                call("PATCH", f"appInfoLocalizations/{il['id']}",
+                     {"data": {"type": "appInfoLocalizations", "id": il["id"],
+                               "attributes": {"name": apres}}}, strict=False)
+                acceptes.add(locale)
+                print(f"      accepté")
+            except ErreurApple as e:
+                refuses.setdefault(locale, []).append(f"{etat} : {e}")
+                print(f"      refusé ({etat}) : {e}")
+
+    if args.dry_run:
+        print("\n(--dry-run : rien n'a été envoyé)")
+        return
+    manquantes = [l for l in cible if l not in acceptes and l not in deja]
+    if manquantes:
+        sys.exit("\nNom non accepté pour : " + ", ".join(manquantes) + ".\n"
+                 + "\n".join(f"  {l} — {' | '.join(refuses.get(l, ['aucune fiche pour cette langue']))}"
+                             for l in manquantes)
+                 + "\nUn nom ne se change que sur une version éditable : `creer-la-version` d'abord.")
+    print("\nLe nom change à la mise en vente de la prochaine version, pas avant.")
 
 
 def pousser_l_url_de_confidentialite(aid: str, a_blanc: bool) -> None:
@@ -1956,6 +2027,8 @@ def main():
     xc.set_defaults(func=cmd_xcode_cloud)
     sub.add_parser("xcode-cloud-on").set_defaults(func=cmd_xcode_cloud_on)
     c = sub.add_parser("create-version"); c.add_argument("version"); c.set_defaults(func=cmd_create_version)
+    nm = sub.add_parser("push-name")
+    nm.add_argument("--dry-run", action="store_true"); nm.set_defaults(func=cmd_push_name)
     m = sub.add_parser("push-metadata"); m.add_argument("version")
     m.add_argument("--dry-run", action="store_true"); m.set_defaults(func=cmd_push_metadata)
     s = sub.add_parser("submit"); s.add_argument("version")

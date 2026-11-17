@@ -19,6 +19,8 @@ on:
         options:
           - status
           - creer-la-version
+          - pousser-le-nom-essai
+          - pousser-le-nom
           - pousser-la-fiche-essai
           - pousser-la-fiche
           - composer-les-captures
@@ -172,6 +174,11 @@ jobs:
         if: startsWith(inputs.action, 'pousser-l-apercu')
         run: cd ci_scripts && python3 test_asc_captures.py
 
+      # Même principe pour le nom : ce que la commande écrit se vérifie juste avant qu'elle écrive.
+      - name: Éprouver l'envoi du nom
+        if: startsWith(inputs.action, 'pousser-le-nom')
+        run: cd ci_scripts && python3 test_asc_nom.py
+
       # LES IMAGES NE SONT PAS DANS LE DÉPÔT — `appstore/out/` est ignoré par git, et c'est
       # juste : dix-huit PNG de 900 ko regénérés à chaque changement d'accroche n'ont rien à
       # faire dans un historique. Elles vivent dans l'artéfact de « Captures App Store », qu'on
@@ -250,6 +257,8 @@ jobs:
           case "$WHAT" in
             status)                   python3 ci_scripts/asc.py status ;;
             creer-la-version)         python3 ci_scripts/asc.py create-version "$VERSION" ;;
+            pousser-le-nom-essai)     python3 ci_scripts/asc.py push-name --dry-run ;;
+            pousser-le-nom)           python3 ci_scripts/asc.py push-name ;;
             pousser-la-fiche-essai)   python3 ci_scripts/asc.py push-metadata "$VERSION" --dry-run ;;
             pousser-la-fiche)         python3 ci_scripts/asc.py push-metadata "$VERSION" ;;
             composer-les-captures)    python3 ci_scripts/screenshots.py "$LANGUE" ;;
