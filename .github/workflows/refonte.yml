@@ -152,6 +152,21 @@ jobs:
           done
           ls -la refonte/*/
 
+      # LE JOURNAL SYSTÈME DE L'APP, même quand un test échoue. Sur l'accueil et le plan refaits, le
+      # contenu cesse de se mettre à jour après un premier changement d'état (l'app sait qu'elle est
+      # sur le Coach, la barre change, le contenu non). SwiftUI consigne ses cycles d'attributs et
+      # ses mises à jour illicites dans le journal du système ; c'est là qu'est la cause.
+      - name: Journal système de l'app
+        if: always()
+        run: |
+          mkdir -p refonte
+          xcrun simctl spawn "${{ steps.sim.outputs.udid }}" log show --last 60m --style compact \
+            --predicate 'process CONTAINS[c] "Haizo" AND (eventMessage CONTAINS[c] "cycle" OR eventMessage CONTAINS[c] "AttributeGraph" OR eventMessage CONTAINS[c] "SwiftUI" OR eventMessage CONTAINS[c] "update" OR messageType == fault OR messageType == error)' \
+            > refonte/journal-systeme.txt 2>&1 || true
+          xcrun simctl spawn "${{ steps.sim.outputs.udid }}" log show --last 60m --style compact \
+            --predicate 'process CONTAINS[c] "Haizo"' 2>&1 | tail -n 5000 > refonte/journal-complet.txt || true
+          wc -l refonte/journal-systeme.txt refonte/journal-complet.txt || true
+
       - name: Publier les captures de la refonte
         if: always()
         uses: actions/upload-artifact@v4

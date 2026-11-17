@@ -152,8 +152,9 @@ final class RefonteUITests: XCTestCase {
     /// rangée est à 191-235 pt ; si elle ne répond qu'à une autre hauteur, la zone touchable n'est
     /// pas là où elle est dessinée.
     func test05Balayage() throws {
-        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
-                          "réservé à refonte.yml")
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil
+                          && ProcessInfo.processInfo.environment["Haizo_SONDES_LONGUES"] != nil,
+                          "sonde longue : réservée à un diagnostic")
         let app = lancer(arguments: ["--ecran=plan"], attente: 4.0)
         let hauteur: CGFloat = 844
         let largeur: CGFloat = 390
@@ -185,8 +186,9 @@ final class RefonteUITests: XCTestCase {
     /// lancement chacune, trois secondes d'attente, l'image et l'arbre d'accessibilité : le
     /// contenu a-t-il changé, ou seulement la barre ?
     func test06Sorties() throws {
-        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
-                          "réservé à refonte.yml")
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil
+                          && ProcessInfo.processInfo.environment["Haizo_SONDES_LONGUES"] != nil,
+                          "sonde longue : réservée à un diagnostic")
         let recherche = lancer(arguments: ["--ecran=prog"])
         recherche.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.095)).tap()
         Thread.sleep(forTimeInterval: 3.0)
@@ -217,8 +219,9 @@ final class RefonteUITests: XCTestCase {
     /// bouton « Démarrer » de l'accueil existe encore ensuite, le contenu n'a pas changé) ; le
     /// plan, un appui sur le jeudi (est-il sélectionné ensuite ?). Une ligne par variante.
     func test07Variantes() throws {
-        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
-                          "réservé à refonte.yml")
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil
+                          && ProcessInfo.processInfo.environment["Haizo_SONDES_LONGUES"] != nil,
+                          "sonde longue : réservée à un diagnostic")
         var rapport = "variante | accueil : contenu remplacé ? | plan : jeudi sélectionné ?\n"
         for variante in ["aucune", "transition", "animation", "tout"] {
             let option = variante == "aucune" ? [] : ["--sans-\(variante)"]
