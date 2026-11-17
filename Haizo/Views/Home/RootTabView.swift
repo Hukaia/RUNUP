@@ -152,10 +152,18 @@ struct RootTabView: View {
             }
 
             if showBar && barreRefaite {
-                HZBarreFlottante(selection: ongletRefait)
-                    .padding(.bottom, HZEspace.sousLaBarre)
-                    // 28 points DU BORD DE L'ÉCRAN, comme dans le canvas — pas 28 au-dessus de la
-                    // zone de l'indicateur d'accueil, qui la montait de 34 points.
+                // 28 points DU BORD DE L'ÉCRAN, comme dans le canvas — pas 28 au-dessus de la
+                // zone de l'indicateur d'accueil, qui la montait de 34 points.
+                //
+                // `ignoresSafeArea` posé sur la barre elle-même ne faisait rien (capture : 63 pt
+                // du bord au lieu de 28) : une vue de taille fixe garde sa taille et reste dans la
+                // zone sûre. C'est une surface qui OCCUPE l'écran qui l'ignore, et la barre y est
+                // posée en bas.
+                Color.clear
+                    .overlay(alignment: .bottom) {
+                        HZBarreFlottante(selection: ongletRefait)
+                            .padding(.bottom, HZEspace.sousLaBarre)
+                    }
                     .ignoresSafeArea(edges: .bottom)
             }
 

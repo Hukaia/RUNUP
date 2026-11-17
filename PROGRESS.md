@@ -8344,3 +8344,26 @@ l'offre en bas de feuille), aucune sortie (une phrase, pas une liste vide).
    écrans hors canvas : il sera habillé avec les mêmes composants et montré avant validation.
 7. **Récupération et choix**, les deux phases du programme, ont leurs écrans et ne sont pas
    refaits.
+8. **« Niveau 2 » dans le bandeau du coach.** Le moteur écrit dans `adjustment` soit la raison d'un
+   allègement (une phrase), soit l'étiquette de palier « Niveau N » (`AdaptivePlanEngine`, ligne
+   1714). L'ancien écran affichait l'étiquette comme une pastille ; le bandeau du canvas attend une
+   phrase, et l'étiquette seule s'y lit mal (c'est vrai, mais ce n'est pas un message). Je n'ai rien
+   inventé : question posée — pastille à part, ou phrase à écrire ensemble ?
+
+### Deuxième relevé (commit `22ba46d`, simulateur 390 pt)
+
+TestFlight 593 verte (les 27 cas passent, après les trois expressions réécrites). Mesuré sur
+la capture, contenu différent mis à part (le canvas dessine un mardi de fractionné, la capture un
+dimanche de sortie longue, donc seules les positions comptent) :
+
+| Mesure | Canvas | Capture |
+|---|---|---|
+| pas d'une ligne de « Dernières sorties » | 73 pt | 73 pt |
+| hauteur de la barre flottante | 60 pt | 59 pt |
+| haut de page (recherche, lettres, points, date) | — | mêmes ordonnées |
+| bas de la barre au bord de l'écran | 28 pt | **63 pt** — écart |
+
+L'écart de la barre : `.ignoresSafeArea` posé sur la barre elle-même ne fait rien, une vue de
+taille fixe reste dans la zone sûre (34 pt de plus). Corrigé en posant la barre en bas d'une
+surface qui occupe l'écran et l'ignore. Les vignettes en forme de « bird » sont la boucle à lobes
+du profil de démonstration (`CaptureSeed.trace`), pas un défaut de dessin.
