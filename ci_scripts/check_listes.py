@@ -65,6 +65,10 @@ DISPENSES = {
     ("PublicProfileView.swift", "gagnes"):
         "Les badges gagnés par quelqu'un : un sous-ensemble du catalogue, donc borné par lui. "
         "Même bande horizontale, mêmes tuiles de largeur fixe.",
+    ("AccueilView.swift", "prochaines"):
+        "« La suite » de l'accueil : les séances de la semaine EN COURS, après aujourd'hui. "
+        "`weekSessions` a exactement sept jours, donc six tuiles au plus, de largeur fixe, en "
+        "bande horizontale. Rien n'y croît avec l'usage.",
 }
 
 

@@ -128,6 +128,9 @@ PERMIS_A_LA_VOLEE: dict = {
     "Haizo/DesignSystem/Refonte/HZBoutons.swift": (
         1, "`HZAvatar.initiales` — l'avatar de la refonte, deux initiales au lieu d'une : celle "
            "du prénom, celle du nom. Des lettres, pas un mot."),
+    "Haizo/Models/AccueilModele.swift": (
+        1, "la capitale initiale d'une date — « Mardi 17 novembre » : le gabarit du système "
+           "l'écrit en minuscule en français. Une lettre, pas un libellé en capitales."),
 }
 
 PERMIS = {

@@ -32,7 +32,29 @@ final class RefonteUITests: XCTestCase {
         }
     }
 
+    /// L'ACCUEIL, avec la graine des captures : le haut, puis le bas.
+    ///
+    /// Le canvas fait 1 400 points de haut ; l'écran en fait 844. Le haut (la séance du jour, les
+    /// quatre actions) se compare au haut de la référence ; le bas (le coach, la suite, Explorer,
+    /// les dernières sorties) après un glissement. `--ecran=prog` : l'accueil, dont la valeur
+    /// brute reste celle de l'ancien onglet « Prog ».
+    func test02Accueil() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=prog"])
+        photographier("accueil", app: app)
+        defiler(app)
+        photographier("accueil-bas", app: app)
+        app.terminate()
+    }
+
     private func prendre(_ nom: String, arguments: [String], attente: TimeInterval = 2.0) {
+        let app = lancer(arguments: arguments, attente: attente)
+        photographier(nom, app: app)
+        app.terminate()
+    }
+
+    private func lancer(arguments: [String], attente: TimeInterval = 2.0) -> XCUIApplication {
         let app = XCUIApplication()
         // `--captures` même pour la planche, qui ne lit aucune donnée : c'est ce drapeau qui coupe
         // Santé, et la construction non signée d'un simulateur plante au premier appel HealthKit.
@@ -43,7 +65,19 @@ final class RefonteUITests: XCTestCase {
         app.launch()
         _ = app.wait(for: .runningForeground, timeout: 30)
         Thread.sleep(forTimeInterval: attente)
+        return app
+    }
 
+    /// Un glissement vers le haut, par coordonnées — la page défile jusqu'au bout.
+    private func defiler(_ app: XCUIApplication) {
+        let depart = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+        let arrivee = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05))
+        depart.press(forDuration: 0.1, thenDragTo: arrivee)
+        depart.press(forDuration: 0.1, thenDragTo: arrivee)
+        Thread.sleep(forTimeInterval: 1.0)
+    }
+
+    private func photographier(_ nom: String, app: XCUIApplication) {
         let capture = XCUIScreen.main.screenshot()
         let piece = XCTAttachment(screenshot: capture)
         piece.name = nom
@@ -60,6 +94,5 @@ final class RefonteUITests: XCTestCase {
                 XCTFail("capture non écrite sur l'hôte : \(error)")
             }
         }
-        app.terminate()
     }
 }

@@ -282,23 +282,6 @@ struct PlancheView: View {
 
     // MARK: - 4. Sur la feuille : le bas de l'accueil du canvas
 
-    private func tuileLegendee(_ jour: String, _ duree: String, _ fond: Color,
-                               _ titre: String, _ precision: String) -> some View {
-        VStack(alignment: .leading, spacing: HZAction.ecart) {
-            HZTuile(libelle: jour, valeur: duree, fond: fond)
-            VStack(alignment: .leading, spacing: 0) {
-                Text(verbatim: titre)
-                    .hzTexte(.c15, .gras)
-                    .foregroundStyle(HZCouleur.encre)
-                Text(verbatim: precision)
-                    .hzTexte(.c13, .medium)
-                    .foregroundStyle(HZCouleur.secondaireSurClair)
-            }
-            .lineLimit(1)
-        }
-        .frame(width: HZFormatDeTuile.seance.largeur, alignment: .leading)
-    }
-
     private var accueilBas: some View {
         HZFeuille(retrait: .ample) {
             HZBandeauDuCoach(texte: "Tu as peu dormi. J'ai gardé le fractionné et allégé dimanche.")
@@ -306,10 +289,10 @@ struct PlancheView: View {
                 .padding(.top, HZEspace.entreSections)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: HZEspace.entreTuiles) {
-                    tuileLegendee("Jeudi", "50'", HZIntensite.recuperation.couleur,
-                                  "Sortie avec le club", "19h · récupération")
-                    tuileLegendee("Dimanche", "1h20", HZIntensite.longue.couleur,
-                                  "Sortie longue", "Endurance · allégée")
+                    HZTuileLegendee(libelle: "Jeudi", valeur: "50'", titre: "Sortie avec le club",
+                                    precision: "19h · récupération", fond: HZIntensite.recuperation.couleur)
+                    HZTuileLegendee(libelle: "Dimanche", valeur: "1h20", titre: "Sortie longue",
+                                    precision: "Endurance · allégée", fond: HZIntensite.longue.couleur)
                     RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular)
                         .fill(HZIntensite.facile.couleur)
                         .frame(width: HZFormatDeTuile.seance.largeur,

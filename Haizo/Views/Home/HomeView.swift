@@ -618,20 +618,7 @@ struct HomeView: View {
     /// qu'`adjustment` : elle est recopiée dans le sous-titre de la séance (voir
     /// `WorkoutSession.displaySubtitle`), donc la raison est déjà à l'écran.
     private func pourquoiCetteSeance(_ session: WorkoutSession, estUnJourDeRepos: Bool) -> String? {
-        let shape = AdaptivePlanEngine.ProgramShape.compute(
-            goal: profile.goalId, raceDate: profile.raceDate,
-            from: profile.programStartDate ?? .now)
-        let jours = profile.raceDate.map {
-            Calendar.current.dateComponents([.day], from: .now, to: $0).day ?? 0
-        }
-        return PourquoiCetteSeance.phrase(.init(
-            bloc: AdaptivePlanEngine.trainingBlock(forWeek: profile.weekNumber, shape: shape),
-            semaine: profile.weekNumber,
-            semainesEnTout: shape.totalWeeks,
-            joursAvantLaCourse: jours,
-            dejaExplique: session.adjustment != nil || session.adaptationNote != nil,
-            estUnJourDeRepos: estUnJourDeRepos,
-            estEnCourseLibre: isFreeRun))
+        PourquoiCetteSeance.phrase(pour: profile, session: session, estUnJourDeRepos: estUnJourDeRepos)
     }
 
     private var sessionCard: some View {

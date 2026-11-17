@@ -37,6 +37,23 @@ enum HZAccueil {
     static let avantUneSectionBasse: CGFloat = 30
     /// Sous le titre « Dernières sorties » : la première ligne, qui porte déjà sa propre marge.
     static let sousLeTitreDesSorties: CGFloat = 4
+    /// Sous le dernier bloc : de quoi dégager la barre flottante (60 de haut, à 28 du bas) et
+    /// laisser un peu d'air au-dessus.
+    static let basDePage: CGFloat = 112
+    /// La feuille descend toujours jusqu'au bas de l'écran, même quand elle a peu à dire.
+    static let hauteurMiniDeLaFeuille: CGFloat = 440
+    /// Le très grand chiffre rétrécit jusqu'à la moitié plutôt que de se couper : « 1600 » en 128
+    /// points ne tient pas dans 342.
+    static let reductionDuNombre: CGFloat = 0.5
+    /// Combien de dernières sorties l'écran montre.
+    static let sortiesAffichees = 2
+    /// L'unité d'une allure de course à pied : la même dans les trois langues.
+    static let uniteDAllure = "/km"
+    /// Les sorties qui comptent pour « Dernières sorties » : celles des six dernières semaines.
+    static let semainesDHistorique = 6
+    static let joursParSemaine = 7
+    /// `Calendar.weekday` compte de 1 (dimanche) à 7 (samedi) ; avec ce décalage, lundi vaut 0.
+    static let decalageDuLundi = 5
 }
 
 enum HZPlan {

@@ -64,6 +64,35 @@ struct RootTabView: View {
     /// champ de recherche ou de code d'invitation.
     private var typesText: Bool { appState.screen == .coach || appState.screen == .club }
 
+    // MARK: - La barre de la refonte
+
+    /// Les écrans déjà refaits portent la barre flottante ; les autres gardent l'ancienne, jusqu'à
+    /// ce que chacun soit refait. Un écran bascule d'un bloc, barre comprise : le canvas dessine
+    /// la barre dans CHAQUE planche, elle fait partie de l'écran.
+    ///
+    /// Tant que les deux coexistent, chacune mène à tous les écrans de l'autre : l'ancienne
+    /// barre garde « Prog », qui ouvre l'accueil refait, et la nouvelle ouvre Coach, Stats et
+    /// Club, qui ont encore l'ancienne. Ce qui n'existe que dans l'ancienne — le bouton de course
+    /// libre et son cadran de discipline — reste donc joignable depuis tout écran qui n'est pas
+    /// l'accueil. Voir PROGRESS.md : le canvas n'a pas de bouton de course dans la barre.
+    private var barreRefaite: Bool { appState.screen == .home }
+
+    private var ongletRefait: Binding<HZOnglet> {
+        Binding(
+            get: { .aujourdhui },
+            set: { onglet in
+                Haptics.selection()
+                switch onglet {
+                case .aujourdhui: appState.go(.home)
+                // PROVISOIRE : Explorer n'est pas encore un écran. Les parcours, les courses et les
+                // clubs vivent aujourd'hui dans le hub du Club, qui s'ouvre pour les deux entrées.
+                case .explorer, .club: appState.go(.club)
+                case .stats: appState.go(.stats)
+                case .coach: appState.go(.coach)
+                }
+            })
+    }
+
     private func fermerLeChoix() {
         glissement = .zero
         withAnimation(RUMotion.snap) { choixDisciplineOuvert = false }
@@ -122,7 +151,12 @@ struct RootTabView: View {
                 .transition(.scale(scale: 0.6, anchor: .bottom).combined(with: .opacity))
             }
 
-            if showBar {
+            if showBar && barreRefaite {
+                HZBarreFlottante(selection: ongletRefait)
+                    .padding(.bottom, HZEspace.sousLaBarre)
+            }
+
+            if showBar && !barreRefaite {
                 TabBarView(
                     selected: tabSelection,
                     onSelect: { appState.go($0) },
@@ -247,7 +281,7 @@ struct RootTabView: View {
     @ViewBuilder
     private var currentScreen: some View {
         switch appState.screen {
-        case .home: HomeView()
+        case .home: AccueilView()
         case .plan: PlanView()
         case .rings: RingsView()
         case .live: LiveRunView()

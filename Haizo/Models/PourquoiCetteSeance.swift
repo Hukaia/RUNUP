@@ -98,3 +98,28 @@ enum PourquoiCetteSeance {
         }
     }
 }
+
+extension PourquoiCetteSeance {
+    /// La raison d'être de la séance d'aujourd'hui, pour un profil.
+    ///
+    /// Elle était écrite DANS `HomeView`. L'accueil refait en a besoin aussi, et la recopier aurait
+    /// fait deux endroits où dire pourquoi on court : le jour où l'un changerait, l'autre
+    /// continuerait de dire l'ancienne raison.
+    static func phrase(pour profile: UserProfile, session: WorkoutSession,
+                       estUnJourDeRepos: Bool) -> String? {
+        let forme = AdaptivePlanEngine.ProgramShape.compute(
+            goal: profile.goalId, raceDate: profile.raceDate,
+            from: profile.programStartDate ?? .now)
+        let jours = profile.raceDate.map {
+            Calendar.current.dateComponents([.day], from: .now, to: $0).day ?? 0
+        }
+        return phrase(.init(
+            bloc: AdaptivePlanEngine.trainingBlock(forWeek: profile.weekNumber, shape: forme),
+            semaine: profile.weekNumber,
+            semainesEnTout: forme.totalWeeks,
+            joursAvantLaCourse: jours,
+            dejaExplique: session.adjustment != nil || session.adaptationNote != nil,
+            estUnJourDeRepos: estUnJourDeRepos,
+            estEnCourseLibre: profile.programPhase == .freerun))
+    }
+}

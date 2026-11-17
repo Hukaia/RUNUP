@@ -8269,3 +8269,78 @@ C'est un piège qui reviendra sur chaque écran plus haut que 844 pt, c'est-à-d
 Règle pour les écrans de la refonte : la racine d'un écran est une surface de la taille de
 l'écran avec le contenu en `overlay(alignment: .top)`, jamais un `.frame(maxHeight: .infinity)`
 autour d'un contenu qui peut dépasser.
+
+## 17 novembre 2026 — le nom de l'app sur App Store Connect, et l'Accueil de la refonte
+
+Charlotte a approuvé la planche (« commence par l'accueil ») et demandé que le nom de l'app change
+aussi sur App Store Connect, avec un push sur `main`.
+
+### Le nom : il n'avait jamais été envoyé
+
+`asc.py push-metadata` envoie la description, les mots-clés, le texte promotionnel, les notes de
+version et les deux adresses. **Jamais le nom.** Il avait été posé à la main sur la page web, et le
+renommage du 16 novembre ne l'a donc pas atteint. L'essai à blanc l'a montré noir sur blanc :
+« RUNUP : Coach de Course » dans les TROIS langues — l'anglais et l'espagnol portaient le nom
+français, avec l'ancien nom.
+
+`push-name` ne change que le nom, par langue, sur chaque `appInfo`. Il y en avait deux :
+`READY_FOR_DISTRIBUTION` (la fiche en vente, qui REFUSE un changement de nom) et
+`PREPARE_FOR_SUBMISSION` (la prochaine version), qui a ACCEPTÉ les trois. Le nom change donc à la
+mise en vente de la 3.4, pas avant. Huit cas de test contre une fausse API d'Apple, câblés dans
+TestFlight et dans le workflow « App Store » lui-même.
+
+**Ce que j'ai appris sur `main`.** Je croyais qu'il fallait y pousser quatre fichiers. `main` ne
+contient que le SERVEUR (`api`, `db`, `lib`, les pages publiques) et un seul workflow,
+`appstore.yml`. Le formulaire de lancement se lit sur `main` ; le script, lui, est cherché sur la
+branche iOS (`branche: claude/runup-ios-swiftui-app-5b1yv6`). Un seul fichier est donc allé sur
+`main` (`6acb8e7`), et je l'ai dit à Charlotte plutôt que de pousser les quatre qu'elle avait
+autorisés. Ma référence locale `origin/main` était en retard sur le dépôt distant : elle disait
+l'ancien commit alors que la poussée avait réussi. `git ls-remote` est la seule source.
+
+### L'Accueil : le premier écran de la refonte
+
+Refait à partir des composants, dans `Haizo/Views/Refonte/AccueilView.swift`. La logique de ce
+qu'on affiche est dans `Haizo/Models/AccueilModele.swift`, sans une vue, et se teste
+(`AccueilModeleTests`, vingt-sept cas).
+
+**D'où vient chaque chose du canvas.**
+
+| Dans le canvas | Dans l'app |
+| --- | --- |
+| « CG » | initiales du prénom et du nom du profil |
+| sept points | `profile.weekSessions` : fait, aujourd'hui, à venir, repos |
+| « Mardi 17 novembre » | la date du jour, par le gabarit du système |
+| « 5 × » et « 500 » | `session.intervals` (répétitions × mètres) ; sinon la durée (« 40' », « 1h20 ») |
+| « Fractionné léger » | `session.displayTitle` |
+| « 45 min · 4:22/km · Z3 » | durée, allure SI c'EN est une, zone SI elle existe |
+| le bandeau du coach | l'ajustement de la séance, sinon `PourquoiCetteSeance` ; rien s'il n'a rien à dire |
+| « La suite » | les séances à venir cette semaine, après aujourd'hui |
+| les cinq catégories | cinq boutons vers le hub du Club (provisoire, voir plus bas) |
+| « Dernières sorties » | les deux dernières courses, avec LEUR tracé GPS dans la vignette |
+
+**Les états que le canvas ne dessine pas**, et ce que j'en ai fait : jour de repos (« Off »),
+séance faite (la pilule dit « Fait », comme la carte du plan), plan prévu en repos mais on court
+quand même (« Libre »), plan verrouillé (pas de semaine, pas de « Déplacer » ni de « Semaine »,
+l'offre en bas de feuille), aucune sortie (une phrase, pas une liste vide).
+
+### Ce qui est une hypothèse de ma part, et attend une décision
+
+1. **Explorer n'est pas un écran de l'app.** L'entrée de la barre, la recherche et les cinq
+   catégories mènent toutes au hub du Club, où vivent aujourd'hui les parcours, les courses et les
+   clubs. Provisoire, jusqu'à l'écran Explorer (huitième de l'ordre).
+2. **La barre du canvas n'a pas de bouton de course.** L'ancienne en avait un, avec le cadran de
+   discipline (course, vélo, trail, nage). Sur l'Accueil on démarre la séance du jour. La course
+   libre d'une autre discipline reste joignable depuis tout écran qui garde l'ancienne barre —
+   donc partout sauf l'Accueil — mais c'est un trou : où va-t-elle dans le design ?
+3. **Une séance passée et non faite** s'affiche comme un repos (point éteint). Le canvas n'a que
+   quatre états. VoiceOver, lui, dit la vérité.
+4. **La couleur du fractionné, du seuil et du renforcement.** Le canvas n'a que trois
+   intensités (vert, bleu, violet). Ces trois-là prennent l'accent, avec son encre.
+5. **Ce que le canvas retire de l'Accueil** : l'anneau des objectifs du jour, la carte de la
+   semaine du programme, la ligne « demain », les premiers jalons, le « + » qui ajoute une séance
+   déjà faite, et le point rouge des notifications non lues (la cloche garde son nombre pour
+   VoiceOver). Leurs destinations existent toujours ; leur entrée, plus.
+6. **L'état « plan verrouillé »** garde l'ancienne carte d'offre en bas de feuille. C'est l'un des
+   écrans hors canvas : il sera habillé avec les mêmes composants et montré avant validation.
+7. **Récupération et choix**, les deux phases du programme, ont leurs écrans et ne sont pas
+   refaits.

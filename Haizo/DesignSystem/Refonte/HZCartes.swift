@@ -164,6 +164,37 @@ struct HZTuile: View {
     static let retrait: CGFloat = 0.8
 }
 
+/// UNE TUILE ET SA LÉGENDE : la tuile de couleur, puis dessous le titre et sa précision.
+///
+/// C'est « Jeudi · 50' · Sortie avec le club · récupération » de l'accueil. Elle vivait en privé
+/// dans la planche ; l'accueil réel en a besoin, et deux copies finissent par diverger.
+struct HZTuileLegendee: View {
+    let libelle: String
+    let valeur: String
+    let titre: String
+    let precision: String
+    var fond: Color
+    var encreDuLibelle: Color = HZCouleur.blanc
+    var graisseDuLibelle: HZGraisse = .semi
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: HZAction.ecart) {
+            HZTuile(libelle: libelle, valeur: valeur, fond: fond, encreDuLibelle: encreDuLibelle,
+                    graisseDuLibelle: graisseDuLibelle)
+            VStack(alignment: .leading, spacing: 0) {
+                Text(titre)
+                    .hzTexte(.c15, .gras)
+                    .foregroundStyle(HZCouleur.encre)
+                Text(precision)
+                    .hzTexte(.c13, .medium)
+                    .foregroundStyle(HZCouleur.secondaireSurClair)
+            }
+            .lineLimit(1)
+        }
+        .frame(width: HZFormatDeTuile.seance.largeur, alignment: .leading)
+    }
+}
+
 /// Où une tuile de chiffre est posée.
 enum HZFormatDeChiffre {
     /// La grille des stats.

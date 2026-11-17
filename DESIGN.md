@@ -744,6 +744,16 @@ exemples : chaque écran branche les vraies données de l'app à leur place. Les
 de Resume sont dessinées à la main dans la maquette ; l'app garde sa vraie carte, avec le tracé
 dans la couleur d'accent sur liseré blanc.
 
+### Les écrans refaits
+
+| Écran | Où | Commit |
+| --- | --- | --- |
+| **Accueil** | `Haizo/Views/Refonte/AccueilView.swift`, logique dans `Haizo/Models/AccueilModele.swift` | 17 novembre |
+
+Les autres (Plan, Run, Resume, Stats, Coach, Club, Explorer, Profil, Reglages) gardent leur
+ancien habillage et l'ancienne barre d'onglets jusqu'à leur tour. La barre flottante est posée par
+`RootTabView` sur les écrans de cette liste, et seulement sur eux.
+
 ### Les gardes de la refonte
 
 - `check_valeurs.py` — une vue de la refonte ne contient pas un nombre. Toute mesure porte un

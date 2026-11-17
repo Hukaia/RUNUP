@@ -5892,6 +5892,22 @@
         }
       }
     },
+    "Clubs": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clubs"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clubes"
+          }
+        }
+      }
+    },
     "COMMENCER": {
       "localizations": {
         "en": {
@@ -8823,6 +8839,22 @@
         }
       }
     },
+    "Dernières sorties": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest runs"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Últimas salidas"
+          }
+        }
+      }
+    },
     "DISTANCE": {
       "localizations": {
         "en": {
@@ -9844,6 +9876,22 @@
         }
       }
     },
+    "Démarrer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empezar"
+          }
+        }
+      }
+    },
     "Démarrer une course": {
       "extractionState": "manual",
       "localizations": {
@@ -10005,6 +10053,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Departamento o número"
+          }
+        }
+      }
+    },
+    "Déplacer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover"
           }
         }
       }
@@ -11048,6 +11112,22 @@
         }
       }
     },
+    "Fait": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hecho"
+          }
+        }
+      }
+    },
     "FC moy %lld": {
       "localizations": {
         "en": {
@@ -11946,6 +12026,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hyrox"
+          }
+        }
+      }
+    },
+    "HYROX": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HYROX"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HYROX"
           }
         }
       }
@@ -13943,6 +14039,22 @@
         }
       }
     },
+    "La suite": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coming up"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo que viene"
+          }
+        }
+      }
+    },
     "LE PLUS DE DÉNIVELÉ": {
       "extractionState": "manual",
       "localizations": {
@@ -15630,6 +15742,22 @@
         }
       }
     },
+    "Ma semaine": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My week"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mi semana"
+          }
+        }
+      }
+    },
     "ME RECONNECTER": {
       "extractionState": "manual",
       "localizations": {
@@ -16814,6 +16942,22 @@
         }
       }
     },
+    "Notifications, %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications, %lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notificaciones, %lld"
+          }
+        }
+      }
+    },
     "NOUVEAU RECORD": {
       "localizations": {
         "en": {
@@ -17500,6 +17644,22 @@
         }
       }
     },
+    "Off": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        }
+      }
+    },
     "OK": {
       "localizations": {
         "en": {
@@ -17960,6 +18120,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dónde correr, aquí o de viaje"
+          }
+        }
+      }
+    },
+    "Où cours-tu aujourd'hui ?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where are you running today?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Dónde corres hoy?"
           }
         }
       }
@@ -21013,6 +21189,22 @@
         }
       }
     },
+    "Renforcement": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strength"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fuerza"
+          }
+        }
+      }
+    },
     "RETIRER": {
       "extractionState": "manual",
       "localizations": {
@@ -22712,6 +22904,22 @@
         }
       }
     },
+    "Semaine": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Week"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Semana"
+          }
+        }
+      }
+    },
     "SEMI": {
       "localizations": {
         "en": {
@@ -22724,6 +22932,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "MEDIA"
+          }
+        }
+      }
+    },
+    "Seuil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Threshold"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umbral"
           }
         }
       }
@@ -25237,6 +25461,22 @@
         }
       }
     },
+    "Tes sorties apparaîtront ici.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your runs will show up here."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus salidas aparecerán aquí."
+          }
+        }
+      }
+    },
     "TON RYTHME IDÉAL": {
       "localizations": {
         "en": {
@@ -25249,6 +25489,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "TU RITMO IDEAL"
+          }
+        }
+      }
+    },
+    "Tout voir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See all"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver todo"
           }
         }
       }
@@ -28596,6 +28852,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "CONFIRMAR Y ACTUALIZAR"
+          }
+        }
+      }
+    },
+    "Voir la semaine": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View the week"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver la semana"
           }
         }
       }
