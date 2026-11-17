@@ -62,9 +62,9 @@ enum HZPolice {
 
     // MARK: - Les deux registres
 
-    static func affichage(_ taille: CGFloat) -> Font {
+    static func affichage(_ taille: CGFloat, tabulaire: Bool = true) -> Font {
         Font(uiFonte(taille: taille, graisse: graisseDAffichage, largeur: largeurDAffichage,
-                     tabulaire: true) as CTFont)
+                     tabulaire: tabulaire) as CTFont)
     }
 
     static func texte(_ corps: HZCorps, _ graisse: HZGraisse, tabulaire: Bool = false) -> Font {
@@ -191,14 +191,21 @@ struct HZAffichage: Equatable {
     let interlettrage: CGFloat
     /// En multiple du corps, comme le canvas l'écrit. `nil` : la hauteur naturelle.
     let interligne: CGFloat?
+    /// Le canvas ne met pas `font-variant-numeric: tabular-nums` partout, et le « 1 » d'un chiffre
+    /// proportionnel est plus étroit : « 1h20 » rend 2 % plus large en tabulaire. Les très grands
+    /// chiffres, les records et les mesures le sont ; les titres, les préfixes (« 5 × ») et la
+    /// durée des tuiles de l'accueil ne le sont pas. Relevé sur les dix écrans, héritage compris.
+    let tabulaire: Bool
 
-    init(_ taille: CGFloat, _ interlettrage: CGFloat, _ interligne: CGFloat? = nil) {
+    init(_ taille: CGFloat, _ interlettrage: CGFloat, _ interligne: CGFloat? = nil,
+         tabulaire: Bool = true) {
         self.taille = taille
         self.interlettrage = interlettrage
         self.interligne = interligne
+        self.tabulaire = tabulaire
     }
 
-    var fonte: Font { HZPolice.affichage(taille) }
+    var fonte: Font { HZPolice.affichage(taille, tabulaire: tabulaire) }
 }
 
 extension HZAffichage {
@@ -224,15 +231,15 @@ extension HZAffichage {
     /// Stats : un record.
     static let record = HZAffichage(52, -2.5, 1)
     /// Accueil : la durée d'une séance à venir.
-    static let tuile = HZAffichage(46, -2, 1)
+    static let tuile = HZAffichage(46, -2, 1, tabulaire: false)
     /// Explorer : la distance d'une course.
-    static let tuileDeCourse = HZAffichage(44, -2, 1)
+    static let tuileDeCourse = HZAffichage(44, -2, 1, tabulaire: false)
 
     // Ce qui précède un grand chiffre.
     /// Accueil : « 5 × ».
-    static let prefixeDeSeance = HZAffichage(44, -1.5, 1)
+    static let prefixeDeSeance = HZAffichage(44, -1.5, 1, tabulaire: false)
     /// Plan : le même, sur une carte.
-    static let prefixeDeCarte = HZAffichage(40, -1.5, 1)
+    static let prefixeDeCarte = HZAffichage(40, -1.5, 1, tabulaire: false)
 
     // Les chiffres de tuile.
     /// Coach, et l'allure moyenne des stats.
@@ -250,31 +257,31 @@ extension HZAffichage {
     /// Coach : la séance du jour, « 5×500 ».
     static let seanceDuCoach = HZAffichage(21, -1, 1)
     /// Coach : la durée d'une proposition, dans sa vignette.
-    static let duree = HZAffichage(20, -1)
+    static let duree = HZAffichage(20, -1, tabulaire: false)
     /// Profil : la marque d'un badge.
     static let badge = HZAffichage(17, -0.6)
 
     // Les titres.
     /// Profil : le prénom.
-    static let prenom = HZAffichage(36, -1.6, 1.05)
+    static let prenom = HZAffichage(36, -1.6, 1.05, tabulaire: false)
     /// Plan : « Ta semaine ».
-    static let titreDePage = HZAffichage(34, -1.4, 1.1)
+    static let titreDePage = HZAffichage(34, -1.4, 1.1, tabulaire: false)
     /// Club : le nom du club, sur sa carte.
-    static let titreDeCarte = HZAffichage(34, -1.6, 1)
+    static let titreDeCarte = HZAffichage(34, -1.6, 1, tabulaire: false)
     /// Réglages : le titre de l'écran.
-    static let titreDeReglages = HZAffichage(32, -1.2)
+    static let titreDeReglages = HZAffichage(32, -1.2, tabulaire: false)
     /// Réglages : « Haizo Plus ».
-    static let offre = HZAffichage(30, -1.2, 1)
+    static let offre = HZAffichage(30, -1.2, 1, tabulaire: false)
     /// Profil : les initiales, dans l'avatar.
-    static let initiales = HZAffichage(30, -1)
+    static let initiales = HZAffichage(30, -1, tabulaire: false)
     /// Le titre d'un écran d'onglet : Stats, Club.
-    static let titreDEcran = HZAffichage(26, -0.8)
+    static let titreDEcran = HZAffichage(26, -0.8, tabulaire: false)
     /// Coach : le même, au-dessus d'un sous-titre.
-    static let titreDuCoach = HZAffichage(26, -0.8, 1.1)
+    static let titreDuCoach = HZAffichage(26, -0.8, 1.1, tabulaire: false)
     /// Plan : le nom d'un objectif, sur sa tuile.
-    static let titreDeTuile = HZAffichage(24, -1, 1.05)
+    static let titreDeTuile = HZAffichage(24, -1, 1.05, tabulaire: false)
     /// Le titre d'une section, dans une feuille.
-    static let section = HZAffichage(22, -0.6)
+    static let section = HZAffichage(22, -0.6, tabulaire: false)
 }
 
 private struct HZAffichageModifier: ViewModifier {

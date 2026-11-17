@@ -8211,3 +8211,37 @@ l'envers dans son commentaire.
 copier : la barre d'état (le canvas n'en dessine pas), les tracés des vignettes de sorties (le
 canvas les dessine à la main ; l'app y mettra le vrai tracé), le graphique d'allure des stats
 (pas un composant de base), la rangée des jours du plan (idem).
+
+### Le deuxième tour (run 2 de `refonte.yml`) : ce que les corrections ont donné, et trois choses de plus
+
+TestFlight 588 vert. Mesuré sur la capture du commit `65be49d`, contre le rendu du canvas :
+
+| | avant | après |
+| --- | --- | --- |
+| Accueil, haut : décalage vertical par bande | jusqu'à 1,0 pt | 0,00 pt jusqu'aux actions, 0,33 pt ensuite |
+| Anneau du jour (semaine) | 140,3 à 154,3 | **141,0 à 155,0**, exactement la référence |
+| Bandeau du coach | 64,0 pt | 62,4 pt, pour 62,7 dans la référence |
+| Tuiles de stats : hauteur | 86,33 pt | **86,00 pt**, décalage constant de 0,33 pt au lieu de cumulé |
+| Plan : pixels en écart | 51,7 % | 10,8 % |
+| Bas de l'accueil : pixels en écart | 4,5 % | 1,7 % |
+
+« 1h20 » s'affiche en entier. Le plan est à sa place : en-tête, titre, carte du jour à 36 pt, les
+deux boutons en pilules, la barre flottante.
+
+**Trois choses que ce tour a montrées en plus.**
+
+1. *Le tabulaire n'est pas partout.* « 1h20 » restait 2 % plus étroit que dans le canvas, et la
+   mise à l'échelle que j'avais ajoutée en secours se déclenchait — la preuve que mon texte était
+   plus large AVANT. La cause : j'imposais `tnum` à tout l'affichage. Le canvas ne le pose que sur
+   certains éléments, et `font-variant-numeric` s'hérite. Relevé sur les dix écrans, avec
+   l'héritage : les très grands chiffres (156 à 64), les records, les chiffres de stats et de
+   mesure sont tabulaires ; les titres, les préfixes (« 5 × ») et la durée des tuiles de l'accueil
+   ne le sont pas. Chaque style porte donc son drapeau. Un premier relevé, sans l'héritage, avait
+   donné un résultat faux (le 36 de stats « proportionnel ») : c'est ce qui a fait ajouter
+   l'héritage, et c'est le même piège que `check_valeurs` évite en lisant tout nombre.
+2. *Le plan restait 5 pt trop haut.* Le contenu fait 849 pt dans un écran de 844 ; une pile
+   alignée en bas remonte de son dépassement. La pile est maintenant alignée en haut, et la
+   barre flottante posée par-dessus, en bas.
+3. *Le bandeau du coach se tronquait en « Si… »* quand la feuille manquait de hauteur. Un
+   paragraphe ne se coupe jamais en hauteur : c'est l'écran qui coupe la feuille, comme dans le
+   canvas.

@@ -77,6 +77,9 @@ struct HZBandeauDuCoach: View {
             Text(texte)
                 .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
                 .foregroundStyle(HZCouleur.encre)
+                // Un paragraphe ne se coupe jamais en hauteur : sur un écran plus court que son
+                // contenu, c'est l'écran qui coupe la feuille, comme dans le canvas.
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, HZEspace.groupe)

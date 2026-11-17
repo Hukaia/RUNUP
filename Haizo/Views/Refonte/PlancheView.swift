@@ -342,7 +342,7 @@ struct PlancheView: View {
     // MARK: - 5. Sur le noir : le haut du plan du canvas
 
     private var plan: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     HZBoutonRond(dessin: .retour, nom: "Retour", fond: HZCouleur.surfaceSombre,
@@ -420,6 +420,7 @@ struct PlancheView: View {
 
             HZBarreFlottante(selection: $onglet)
                 .padding(.bottom, HZEspace.sousLaBarre)
+                .frame(maxHeight: .infinity, alignment: .bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(HZCouleur.noir)
@@ -428,7 +429,7 @@ struct PlancheView: View {
     // MARK: - 6. Sur le noir, puis sur la feuille : le haut des stats du canvas
 
     private var stats: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(verbatim: "Stats")
@@ -499,6 +500,7 @@ struct PlancheView: View {
 
             HZBarreFlottante(selection: $ongletDesStats)
                 .padding(.bottom, HZEspace.sousLaBarre)
+                .frame(maxHeight: .infinity, alignment: .bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(HZCouleur.noir)
