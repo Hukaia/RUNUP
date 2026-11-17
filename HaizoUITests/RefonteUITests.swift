@@ -147,6 +147,39 @@ final class RefonteUITests: XCTestCase {
         ecrire("touches.txt", rapport)
     }
 
+    /// OÙ LA RANGÉE DES JOURS RÉPOND-ELLE ? Une touche à plusieurs hauteurs au milieu de l'écran,
+    /// puis une sur chacune des sept colonnes, et le compteur de l'app lu après chaque touche. La
+    /// rangée est à 191-235 pt ; si elle ne répond qu'à une autre hauteur, la zone touchable n'est
+    /// pas là où elle est dessinée.
+    func test05Balayage() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=plan"], attente: 4.0)
+        let hauteur: CGFloat = 844
+        let largeur: CGFloat = 390
+        func demandes() -> String {
+            let diagnostic = app.staticTexts["plan-diagnostic"]
+            guard diagnostic.exists, let valeur = diagnostic.value as? String else { return "absent" }
+            return valeur.components(separatedBy: " ").last(where: { $0.hasPrefix("demandes=") }) ?? "?"
+        }
+        var rapport = "Avant tout geste : \(demandes())\n\nBalayage vertical, x = 195 (jeudi)\n"
+        for y in stride(from: 150 as CGFloat, through: 270, by: 10) {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 195 / largeur, dy: y / hauteur)).tap()
+            Thread.sleep(forTimeInterval: 0.6)
+            rapport += "  y = \(Int(y)) pt : \(demandes())\n"
+        }
+        rapport += "\nBalayage horizontal, y = 213\n"
+        for colonne in 0..<7 {
+            let x = 20 + 50 * CGFloat(colonne) + 25
+            app.coordinate(withNormalizedOffset: CGVector(dx: x / largeur, dy: 213 / hauteur)).tap()
+            Thread.sleep(forTimeInterval: 0.6)
+            rapport += "  colonne \(colonne) (x = \(Int(x)) pt) : \(demandes())\n"
+        }
+        ecrire("balayage.txt", rapport)
+        photographier("balayage", app: app)
+        app.terminate()
+    }
+
     private func ecrire(_ nom: String, _ texte: String) {
         guard let dossier = ProcessInfo.processInfo.environment["Haizo_CAPTURES_DIR"] else { return }
         let url = URL(fileURLWithPath: dossier).appendingPathComponent(nom)
