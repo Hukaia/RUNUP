@@ -39,6 +39,8 @@ on:
       - "Haizo/Views/Home/RootTabView.swift"
       - "Haizo/Models/AccueilModele.swift"
       - "Haizo/Models/PourquoiCetteSeance.swift"
+      - "Haizo/Models/PlanSemaineModele.swift"
+      - "Haizo/Views/Home/PlanView.swift"
       - "HaizoUITests/RefonteUITests.swift"
       - "Haizo/Resources/Fonts/**"
 

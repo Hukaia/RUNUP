@@ -838,6 +838,23 @@
         }
       }
     },
+    "%lld %@ au %lld %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%2$@ %1$lld to %4$@ %3$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld de %2$@ al %3$lld de %4$@"
+          }
+        }
+      }
+    },
     "%lld / %lld XP": {
       "localizations": {
         "en": {
@@ -882,6 +899,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld / %lld km recorridos juntos"
+          }
+        }
+      }
+    },
+    "%lld au %lld %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%3$@ %1$lld to %2$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld al %2$lld de %3$@"
           }
         }
       }
@@ -5972,6 +6006,40 @@
         }
       }
     },
+    "Course et force": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Running and strength"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correr y fuerza"
+          }
+        }
+      }
+    },
+    "Course et équilibre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Running and balance"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correr y equilibrio"
+          }
+        }
+      }
+    },
     "CRÉER LA PAGE": {
       "extractionState": "manual",
       "localizations": {
@@ -8855,6 +8923,23 @@
         }
       }
     },
+    "Deux courses, un vélo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two runs, one ride"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dos carreras, una bici"
+          }
+        }
+      }
+    },
     "DISTANCE": {
       "localizations": {
         "en": {
@@ -9959,6 +10044,23 @@
         }
       }
     },
+    "Dénivelé": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elevation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desnivel"
+          }
+        }
+      }
+    },
     "Dénivelé / trail": {
       "localizations": {
         "en": {
@@ -10119,6 +10221,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Expandir"
+          }
+        }
+      }
+    },
+    "En douceur": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Easing in"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con calma"
           }
         }
       }
@@ -11732,6 +11851,23 @@
         }
       }
     },
+    "Glisse une carte pour changer de jour. Déplacer te laisse changer le jour d'une séance de cette semaine.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipe a card to change day. Move lets you change the day of a session this week."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desliza una tarjeta para cambiar de día. Mover te deja cambiar el día de una sesión de esta semana."
+          }
+        }
+      }
+    },
     "Groupe %@": {
       "extractionState": "manual",
       "localizations": {
@@ -13175,6 +13311,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "ESTOY LISTA"
+          }
+        }
+      }
+    },
+    "Jour de repos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rest day"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Día de descanso"
           }
         }
       }
@@ -18223,6 +18376,23 @@
         }
       }
     },
+    "par km": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "per km"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "por km"
+          }
+        }
+      }
+    },
     "PARCOURUS": {
       "localizations": {
         "en": {
@@ -18283,6 +18453,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "COMPARTIR MI CARRERA"
+          }
+        }
+      }
+    },
+    "Passer à un objectif": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch to a goal"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasar a un objetivo"
           }
         }
       }
@@ -22855,6 +23042,23 @@
         }
       }
     },
+    "Sans course précise": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No specific race"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin carrera concreta"
+          }
+        }
+      }
+    },
     "SE CONNECTER": {
       "localizations": {
         "en": {
@@ -25429,6 +25633,40 @@
         }
       }
     },
+    "Ta semaine": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your week"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu semana"
+          }
+        }
+      }
+    },
+    "Ta semaine apparaîtra ici dès que ton plan sera prêt.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your week will appear here as soon as your plan is ready."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu semana aparecerá aquí en cuanto tu plan esté listo."
+          }
+        }
+      }
+    },
     "TEMPS": {
       "localizations": {
         "en": {
@@ -25505,6 +25743,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ver todo"
+          }
+        }
+      }
+    },
+    "Toutes les semaines du programme": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every week of the plan"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas las semanas del programa"
           }
         }
       }
@@ -27715,6 +27970,23 @@
         }
       }
     },
+    "Trois sports": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Three sports"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tres deportes"
+          }
+        }
+      }
+    },
     "Trop de courses créées aujourd'hui. Réessaie demain.": {
       "extractionState": "manual",
       "localizations": {
@@ -28299,6 +28571,23 @@
         }
       }
     },
+    "Un dossard en vue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A race bib in sight"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un dorsal a la vista"
+          }
+        }
+      }
+    },
     "Un dossard en vue — on construit le plan pour le jour J": {
       "extractionState": "manual",
       "localizations": {
@@ -28720,6 +29009,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Una duda, un consejo, una referencia del recorrido…"
+          }
+        }
+      }
+    },
+    "Une routine": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A routine"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una rutina"
           }
         }
       }
@@ -29367,6 +29673,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zona"
+          }
+        }
+      }
+    },
+    "zone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zone"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zona"
           }
         }
       }
@@ -34531,6 +34854,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hay que cambiarlas"
+          }
+        }
+      }
+    },
+    "À venir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upcoming"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próxima"
           }
         }
       }

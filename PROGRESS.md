@@ -8367,3 +8367,53 @@ L'écart de la barre : `.ignoresSafeArea` posé sur la barre elle-même ne fait 
 taille fixe reste dans la zone sûre (34 pt de plus). Corrigé en posant la barre en bas d'une
 surface qui occupe l'écran et l'ignore. Les vignettes en forme de « bird » sont la boucle à lobes
 du profil de démonstration (`CaptureSeed.trace`), pas un défaut de dessin.
+
+## 17 novembre 2026 — Charlotte laisse les huit hypothèses à ma décision ; le Plan, écran 2 sur 10
+
+Message de Charlotte : « Fait tout comme il te semble parfait, ajoute s'il faut ajouter, enlève
+s'il faut enlever, et on tranchera une fois qu'on aura la maquette sous les yeux. » Les huit
+hypothèses de l'Accueil restent donc **telles que je les ai écrites** (ce sont mes décisions
+provisoires, à revoir sur la maquette), et je passe au Plan sans attendre une validation écrite
+de l'Accueil — sa capture lui a été montrée côte à côte.
+
+### Le Plan : `PlanSemaineView` (Haizo/Views/Refonte), logique dans `PlanSemaineModele`
+
+Le canvas : « Ta semaine », la rangée des sept jours (initiale + point à la couleur du jour, le
+jour choisi en pilule), sept cartes qu'on fait glisser (318 × 430, pas de 330), « Démarrer » et
+« Déplacer », puis la feuille : le coach, « Passer à un objectif ».
+
+**Branché sur les vraies données** : les dates (« 16 au 22 novembre »), le nombre de séances, les
+sept cartes (grand nombre, préfixe, titre, mesures : ceux de l'accueil, par `AccueilModele.hero`),
+l'état de chaque jour, les objectifs (`GoalType`, hors celui qu'on suit).
+
+**Ce que j'ai décidé, faute de canvas** (à revoir sur la maquette) :
+1. **L'écran de la forme du plan n'est pas dans le canvas** (une barre par semaine, les phases, les
+   autres semaines). C'est ce que Haizo Plus vend : je ne le supprime pas. « Le plan complet » reste
+   joignable sous les objectifs et ouvre l'ancien écran par-dessus ; il sera habillé comme les
+   autres (écran hors canvas, à montrer avant validation).
+2. **Une séance passée et non faite** : pilule « Non faite » sur sa carte (le canvas n'a que Fait,
+   Aujourd'hui, À venir, Repos). La rangée la peint à la couleur de sa séance.
+3. **Couleur des cartes** : l'accent pour aujourd'hui, le noir doux pour un repos, vert / bleu /
+   violet pour l'endurance / la récupération / la sortie longue ; seuil, fractionné et renforcement
+   prennent l'accent (même hypothèse que l'accueil).
+4. **« Démarrer » n'est actif que sur la carte d'aujourd'hui.** Sur un autre jour il reste là,
+   éteint, plutôt que de faire sauter la mise en page.
+5. **Le bandeau du coach** : le canvas dit « Si tu déplaces une séance, je réorganise le reste ».
+   Le déplacement (`enregistrerDeplacement`) change le jour d'UNE séance et avertit si deux séances
+   dures se touchent ; il ne réorganise rien. Écrire le canvas aurait été écrire une chose fausse
+   sur l'entraînement : « Déplacer te laisse changer le jour d'une séance de cette semaine. »
+6. **« Passer à un objectif »** : une tuile par objectif proposable (`estProposable`), quatre au
+   plus ; toucher une tuile ouvre l'assistant de programme, sans présélection de l'objectif (il n'en
+   a pas la possibilité aujourd'hui). La ligne du haut de chaque tuile est une phrase courte écrite
+   pour l'occasion (neuf textes, trois langues) ; le canvas n'en montre que trois.
+7. **La pastille du haut** : « Mode course libre » en course libre (comme le canvas), sinon
+   l'objectif du programme en cours.
+8. **Plan verrouillé** : la carte d'aujourd'hui seule, les autres jours ne se choisissent pas, et
+   l'offre Plus remplace le coach et les objectifs.
+9. **« 1h20 » et quatre signes** : le canvas règle le corps carte par carte (112, ou 84 pour « 1h20 »).
+   Règle tirée : quatre signes ou plus passent au corps réduit.
+
+Tests : `PlanSemaineModeleTests` (24 cas : les cinq états d'une carte, repos, séance faite le jour
+même, séance de nage sans allure, lundi d'un dimanche, semaine à cheval sur deux mois).
+Capture : `RefonteUITests.test03Plan` (`plan`, `plan-mardi`, `plan-bas`) ; `refonte.yml` se lance
+désormais aussi sur `PlanView.swift`, `PlanSemaineModele.swift`, `RootTabView.swift`.

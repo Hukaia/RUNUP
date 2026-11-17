@@ -26,6 +26,14 @@ struct PlanView: View {
     @Environment(AppState.self) private var appState
     private var profile: UserProfile { appState.profile }
 
+    /// Ce que fait le bouton de retour. `nil` : revenir à l'accueil, comme quand l'écran était un
+    /// écran de l'app. Depuis « Ta semaine » (refonte), l'écran s'ouvre PAR-DESSUS et se referme.
+    private let retour: (() -> Void)?
+
+    init(retour: (() -> Void)? = nil) {
+        self.retour = retour
+    }
+
     /// La semaine que la page détaille. `nil` avant le premier calcul, puis toujours une valeur —
     /// la semaine en cours à l'ouverture.
     @State private var selectedWeek: Int?
@@ -96,7 +104,7 @@ struct PlanView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 BackTitleHeaderView(eyebrow: String(localized: "Ton programme · \(profile.goalDisplay)"), title: "Le plan complet") {
-                    appState.go(.home)
+                    if let retour { retour() } else { appState.go(.home) }
                 }
 
                 // Le plan COMPLET est ce que Plus vend : la périodisation sur plusieurs

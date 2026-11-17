@@ -749,8 +749,9 @@ dans la couleur d'accent sur liseré blanc.
 | Écran | Où | Commit |
 | --- | --- | --- |
 | **Accueil** | `Haizo/Views/Refonte/AccueilView.swift`, logique dans `Haizo/Models/AccueilModele.swift` | 17 novembre |
+| **Plan** (« Ta semaine ») | `Haizo/Views/Refonte/PlanSemaineView.swift`, logique dans `Haizo/Models/PlanSemaineModele.swift`, rangée des jours et mouvement du carrousel dans `HZSemaineDuPlan.swift` | 17 novembre |
 
-Les autres (Plan, Run, Resume, Stats, Coach, Club, Explorer, Profil, Reglages) gardent leur
+Les autres (Run, Resume, Stats, Coach, Club, Explorer, Profil, Reglages) gardent leur
 ancien habillage et l'ancienne barre d'onglets jusqu'à leur tour. La barre flottante est posée par
 `RootTabView` sur les écrans de cette liste, et seulement sur eux.
 

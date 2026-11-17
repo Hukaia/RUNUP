@@ -106,13 +106,16 @@ enum HZFormatDeTuile {
     case course
     /// Un record, dans les stats.
     case record
+    /// Un objectif, dans le plan : le nom en grand sur trois lignes au plus, une précision en haut.
+    case objectif
 
-    var largeur: CGFloat { self == .record ? 150 : 160 }
+    var largeur: CGFloat { self == .record || self == .objectif ? 150 : 160 }
 
     var hauteur: CGFloat {
         switch self {
         case .seance: return 190
         case .course, .record: return 150
+        case .objectif: return 170
         }
     }
 
@@ -121,12 +124,13 @@ enum HZFormatDeTuile {
         case .seance: return .tuile
         case .course: return .tuileDeCourse
         case .record: return .record
+        case .objectif: return .titreDeTuile
         }
     }
 
     /// Le chiffre est plus près du bord bas que le libellé du bord haut : le canvas le pose à
     /// douze points, le reste à quatorze.
-    var sousLeChiffre: CGFloat { self == .record ? 14 : 12 }
+    var sousLeChiffre: CGFloat { self == .record || self == .objectif ? 14 : 12 }
 }
 
 /// LA TUILE DE COULEUR : un libellé en haut, un grand chiffre en bas.

@@ -73,6 +73,24 @@ enum HZPlan {
     static let sousLaCarte: CGFloat = 18
     /// Sous les deux boutons : la feuille.
     static let sousLesBoutons: CGFloat = 26
+    /// Sous le bandeau du coach : « Passer à un objectif ».
+    static let avantLesObjectifs: CGFloat = 26
+    /// Sous les objectifs : l'accès au plan complet.
+    static let avantLePlanComplet: CGFloat = 22
+    /// La page finit sous la barre flottante : sa hauteur, plus le jeu que le canvas lui laisse.
+    static let basDePage: CGFloat = 112
+    /// La feuille ne descend pas sous cette hauteur, pour que le blanc remplisse l'écran même
+    /// quand il n'y a presque rien dessus.
+    static let hauteurMiniDeLaFeuille: CGFloat = 400
+    /// Une carte et l'espace qui la sépare de la suivante : le pas du carrousel.
+    static var pasDuCarrousel: CGFloat { HZCarteAffiche.largeur + HZEspace.entreTuiles }
+    /// Une carte au moins : un nombre de quatre signes ou plus passe au corps réduit.
+    static let signesDuGrandNombre = 4
+    /// L'opacité d'un bouton éteint, et celle d'un bouton allumé.
+    static let eteint: Double = 0.4
+    static let pleine: Double = 1
+    /// Un objectif proposé à la fois au plus : au-delà, la rangée n'est plus un choix.
+    static let objectifsAffiches = 4
 }
 
 enum HZStats {

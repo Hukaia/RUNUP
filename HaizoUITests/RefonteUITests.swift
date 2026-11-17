@@ -48,6 +48,26 @@ final class RefonteUITests: XCTestCase {
         app.terminate()
     }
 
+    /// « TA SEMAINE » : le jour d'aujourd'hui, puis le mardi (la carte que le canvas met au premier
+    /// plan), puis le bas de la feuille.
+    ///
+    /// Le « maintenant » de la graine est un dimanche : la capture montre donc la carte du
+    /// dimanche, et la référence celle du mardi. On touche le deuxième jour de la rangée pour
+    /// comparer la même position de carte. Par coordonnées, comme tout ce fichier.
+    func test03Plan() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=plan"])
+        photographier("plan", app: app)
+        // Le deuxième des sept jours : (20 + 50 × 1,5) / 390 de la largeur, au milieu de la rangée.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.244, dy: 0.26)).tap()
+        Thread.sleep(forTimeInterval: 1.0)
+        photographier("plan-mardi", app: app)
+        defiler(app)
+        photographier("plan-bas", app: app)
+        app.terminate()
+    }
+
     private func prendre(_ nom: String, arguments: [String], attente: TimeInterval = 2.0) {
         let app = lancer(arguments: arguments, attente: attente)
         photographier(nom, app: app)
