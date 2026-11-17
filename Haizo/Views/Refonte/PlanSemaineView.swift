@@ -63,7 +63,10 @@ struct PlanSemaineView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+            // La feuille REMONTE sur le haut de page d'un rayon de coin : le noir passe derrière ses
+            // coins arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la
+            // capture, où le coin était carré.
+            VStack(alignment: .leading, spacing: -HZRayon.feuille) {
                 hautDePage
                 feuille
             }
@@ -106,7 +109,7 @@ struct PlanSemaineView: View {
         // Le noir se prolonge SOUS les boutons : c'est lui qui est derrière les coins arrondis de
         // la feuille. Posé en marge de la feuille, cet espace montrait le fond de la page — du blanc
         // dans la moitié basse de l'écran, donc des coins blancs sur du blanc.
-        .padding(.bottom, HZPlan.sousLesBoutons)
+        .padding(.bottom, HZPlan.sousLesBoutons + HZRayon.feuille)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(HZCouleur.noir)
     }

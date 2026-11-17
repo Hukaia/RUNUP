@@ -57,7 +57,9 @@ struct AccueilView: View {
 
     private var page: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+            // La feuille REMONTE sur le haut de page d'un rayon de coin : l'accent passe derrière
+            // ses coins arrondis (ils étaient blancs sur du blanc).
+            VStack(alignment: .leading, spacing: -HZRayon.feuille) {
                 hautDePage
                 feuille
             }
@@ -91,6 +93,7 @@ struct AccueilView: View {
             actions
         }
         .padding(.top, HZEspace.haut)
+        .padding(.bottom, HZRayon.feuille)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(HZCouleur.accent)
     }

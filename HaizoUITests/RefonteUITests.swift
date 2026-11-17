@@ -59,10 +59,31 @@ final class RefonteUITests: XCTestCase {
                           "réservé à refonte.yml")
         let app = lancer(arguments: ["--ecran=plan"])
         photographier("plan", app: app)
-        // Le deuxième des sept jours : (20 + 50 × 1,5) / 390 de la largeur, au milieu de la rangée.
+
+        // TROIS CHEMINS POUR CHANGER DE JOUR, un par image : un seul ne dirait pas LEQUEL manque.
+        // (1) La rangée des jours, touchée par coordonnées : le deuxième des sept jours,
+        //     (20 + 50 × 1,5) / 390 de la largeur, au milieu de la rangée.
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.244, dy: 0.26)).tap()
         Thread.sleep(forTimeInterval: 1.0)
+        photographier("plan-tap-coordonnees", app: app)
+
+        // (2) Le même jour, par son identifiant d'accessibilité : si celui-ci marche et pas le
+        //     précédent, c'est la position qui est fausse ; si aucun ne marche, c'est que quelque
+        //     chose recouvre la rangée et prend les touches.
+        let jour = app.buttons["rangee-des-jours-3"]
+        let existe = jour.waitForExistence(timeout: 5)
+        XCTContext.runActivity(named: "rangee-des-jours-3 existe : \(existe)") { _ in }
+        if existe { jour.tap() }
+        Thread.sleep(forTimeInterval: 1.0)
+        photographier("plan-tap-identifiant", app: app)
+
+        // (3) Un glissement horizontal sur la carte, vers la gauche : le jour suivant.
+        let depart = app.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
+        let arrivee = app.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5))
+        depart.press(forDuration: 0.1, thenDragTo: arrivee)
+        Thread.sleep(forTimeInterval: 1.0)
         photographier("plan-mardi", app: app)
+
         defiler(app)
         photographier("plan-bas", app: app)
         app.terminate()

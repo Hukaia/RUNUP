@@ -34,6 +34,7 @@ struct HZRangeeDesJours: View {
                 .buttonStyle(.plain)
                 .disabled(choisir == nil)
                 .accessibilityLabel(jour.nom)
+                .accessibilityIdentifier("rangee-des-jours-\(jour.id)")
                 .accessibilityAddTraits(jour.id == choisi ? .isSelected : [])
             }
         }

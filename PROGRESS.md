@@ -8437,3 +8437,20 @@ Trois défauts, trouvés sur l'image, corrigés :
    dans la moitié basse. Il fait maintenant partie du haut de page, noir.
 3. **« (Re)commencer » finissait en points de suspension** dans sa tuile d'objectif : un mot que
    rien ne coupe, 190 pt à 24 de corps pour 122 disponibles. Réduction jusqu'à 0,6.
+
+### Plan : deuxième relevé (commit `b5a8765`)
+
+Mesuré sur l'image : **le coin de la feuille était toujours carré** — le blanc commence à la même
+ligne à 3 pt du bord et à 20 pt, alors que dans le canvas il commence 20 pt plus bas à 3 pt (le coin
+est arrondi, avec du noir derrière). Mon correctif du premier relevé ne l'avait pas réglé : le noir
+s'arrêtait AU bord haut de la feuille, donc rien ne passait derrière le coin. **L'Accueil a le même
+défaut, et je ne l'avais pas vu** (je l'avais jugé « arrondi » à l'œil sur le côte à côte ; la
+mesure dit le contraire). Corrigé sur les deux : la feuille REMONTE sur le haut de page d'un rayon
+de coin (`spacing: -HZRayon.feuille`), et le bloc de couleur descend d'autant sous elle.
+
+**Le tap sur « mardi » ne change toujours pas le jour** malgré le correctif de la surface de la
+barre. Je ne sais pas encore pourquoi. Le test fait désormais trois essais, une image chacun :
+par coordonnées (`plan-tap-coordonnees`), par identifiant d'accessibilité (`plan-tap-identifiant`,
+sur le quatrième jour), et par glissement de la carte (`plan-mardi`). Le résultat dira si c'est la
+position du tap, la rangée, ou une couche qui prend les touches. Tant que ce n'est pas élucidé, le
+Plan n'est pas validé : un écran qui s'affiche bien et ne répond pas ne vaut rien.
