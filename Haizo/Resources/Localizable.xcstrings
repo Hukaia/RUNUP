@@ -2390,22 +2390,6 @@
         }
       }
     },
-    "%lld′ · %@ · c'est la seconde moitié de ta course, en répétition — et elle doit être inconfortable": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld′ · %@ · this is the second half of your race, rehearsed — and it's meant to feel uncomfortable"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld′ · %@ · es la segunda mitad de tu carrera, ensayada, y tiene que resultar incómoda"
-          }
-        }
-      }
-    },
     "%lld′ · %@ · demain tu repars dessus, donc garde-en": {
       "localizations": {
         "en": {
@@ -8259,40 +8243,6 @@
         }
       }
     },
-    "Courir, rouler, courir — et c'est la seconde course qui décide de la journée.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Run, ride, run — and it's the second run that decides the day."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Correr, pedalear, correr — y es la segunda carrera la que decide el día."
-          }
-        }
-      }
-    },
-    "Courir, rouler, courir — et tenir la seconde course": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Run, ride, run — and hold on through the second run"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Correr, pedalear, correr — y aguantar la segunda carrera"
-          }
-        }
-      }
-    },
     "Cours comme\nsi tu avais\nun coach": {
       "localizations": {
         "en": {
@@ -9268,22 +9218,6 @@
         }
       }
     },
-    "Des bâtons si tu t'en sers — et seulement si tu t'en es servi à l'entraînement.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Poles if you use them — and only if you've used them in training."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bastones si los usas, y solo si los has usado entrenando."
-          }
-        }
-      }
-    },
     "Descentes répétées": {
       "localizations": {
         "en": {
@@ -9312,22 +9246,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dos frontales, con pilas de repuesto para cada una."
-          }
-        }
-      }
-    },
-    "Deux frontales, parce qu'une frontale qui s'éteint en descente technique arrête la course — et parce que la plupart des grands trails les exigent au contrôle du sac.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Two headlamps, because one that dies on a technical descent ends the race — and because most big trail races require both at kit check."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dos frontales, porque uno que se apaga en una bajada técnica termina la carrera, y porque la mayoría de los grandes trails los exigen en el control."
           }
         }
       }
@@ -9659,22 +9577,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Doce momentos del recorrido: la app se abre, se completa un paso, empieza una carrera. Nunca lo que escribes, nunca tu ubicación, nunca nada de Apple Salud. Si dices que no, no se envía ninguna estadística y lo que estaba guardado se borra."
-          }
-        }
-      }
-    },
-    "Du salé dès la première heure. Six heures de sucré, personne ne les tient — et c'est le dégoût, pas la faim, qui fait arrêter de manger.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Something savoury from the first hour. Nobody gets through six hours of sweet — and it's disgust, not hunger, that makes people stop eating."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Algo salado desde la primera hora. Seis horas de dulce nadie las aguanta, y es el asco, no el hambre, lo que hace dejar de comer."
           }
         }
       }
@@ -10433,23 +10335,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Están a salvo en tu teléfono: Haizo no responde, se reintentará más tarde."
-          }
-        }
-      }
-    },
-    "Elles restent sur ton téléphone, rien n'est perdu — mais ta session a expiré : reconnecte-toi pour les publier.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "They're safe on your phone — but your session has expired: sign in again to publish them."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Están a salvo en tu teléfono, pero tu sesión ha caducado: vuelve a iniciar sesión para publicarlas."
           }
         }
       }
@@ -13924,23 +13809,6 @@
         }
       }
     },
-    "L'app fonctionne, mais rien de cette session ne sera enregistré. Tes courses, ton programme et tes messages sont toujours sur ton téléphone — ils n'ont pas été supprimés — et devraient réapparaître après une mise à jour de l'app.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The app works, but nothing from this session will be saved. Your runs, your plan and your messages are still on your phone — nothing has been deleted — and should reappear after an app update."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La app funciona, pero nada de esta sesión se guardará. Tus carreras, tu plan y tus mensajes siguen en tu teléfono — no se han borrado — y deberían reaparecer tras una actualización de la app."
-          }
-        }
-      }
-    },
     "L'app s'est fermée pendant ta sortie — %@ km avaient été enregistrés. Valide ton ressenti pour les garder.": {
       "extractionState": "manual",
       "localizations": {
@@ -14343,40 +14211,6 @@
         }
       }
     },
-    "La natation ne permet aucun ravitaillement, et la combinaison comprime l'estomac. Ta nutrition commence à la sortie de l'eau — alors qu'une partie de l'effort est déjà faite.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swimming allows no fuelling at all, and the wetsuit compresses your stomach. Your nutrition starts when you leave the water — with part of the effort already behind you."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La natación no permite ninguna alimentación, y el neopreno comprime el estómago. Tu nutrición empieza al salir del agua — con parte del esfuerzo ya hecho."
-          }
-        }
-      }
-    },
-    "La natation partira de zéro, et c'est très bien — mais apprendre à durer dans l'eau demande un bassin et quelqu'un sur le bord, pas une case de plus dans un plan. Le programme construira le vélo et la course, et montera la natation prudemment.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swimming will start from scratch, and that's fine — but learning to last in the water takes a pool and someone on the edge, not one more box in a plan. The program will build the bike and the run, and raise the swimming carefully."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La natación partirá de cero, y está muy bien — pero aprender a durar en el agua requiere una piscina y alguien en el borde, no una casilla más en un plan. El programa construirá la bici y la carrera, y subirá la natación con prudencia."
-          }
-        }
-      }
-    },
     "La nuit": {
       "extractionState": "manual",
       "localizations": {
@@ -14731,22 +14565,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "El coach no ha podido responder a eso: reformúlalo."
-          }
-        }
-      }
-    },
-    "Le coach n'a pas pu répondre à ça. Reformule autrement — et si c'est une douleur qui dure, parles-en à un médecin.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your coach couldn't answer that one. Try putting it differently — and if it's pain that lasts, see a doctor."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tu coach no ha podido responder a eso. Pruébalo de otra forma; y si es un dolor que persiste, consulta a un médico."
           }
         }
       }
@@ -17091,23 +16909,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nadar, pedalear, correr — en ese orden, y cansada de la anterior cada vez."
-          }
-        }
-      }
-    },
-    "Nager, rouler, courir — et surtout enchaîner les trois": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swim, bike, run — and above all, link the three"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nadar, pedalear, correr — y sobre todo enlazar los tres"
           }
         }
       }
@@ -25452,23 +25253,6 @@
         }
       }
     },
-    "TOUT CE QUI SERA NÉCESSAIRE POUR LA COURSE SE PREND SUR LE VÉLO. Pas idéalement : c'est la règle. À pied, après des heures de selle, l'estomac refuse presque tout — et c'est pour ça qu'on peut bien nager, bien rouler, et s'arrêter de courir.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EVERYTHING THE RUN WILL NEED IS TAKEN ON THE BIKE. Not ideally — that's the rule. On foot, after hours in the saddle, the stomach refuses almost everything — which is why you can swim well, ride well, and stop running."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TODO LO QUE NECESITARÁ LA CARRERA SE TOMA EN LA BICI. No idealmente: es la regla. A pie, tras horas en el sillín, el estómago rechaza casi todo — y por eso se puede nadar bien, pedalear bien, y dejar de correr."
-          }
-        }
-      }
-    },
     "TRAIL": {
       "extractionState": "manual",
       "localizations": {
@@ -27654,39 +27438,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Triatlón"
-          }
-        }
-      }
-    },
-    "Trois choses décident d'un triathlon, et aucune n'est ton entraînement. Elles se préparent — et elles se testent à l'entraînement, jamais le jour J.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Three things decide a triathlon, and none of them is your training. They can be prepared — and they get tested in training, never on race day."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tres cosas deciden un triatlón, y ninguna es tu entrenamiento. Se preparan — y se prueban entrenando, nunca el día de la carrera."
-          }
-        }
-      }
-    },
-    "Trois choses décident d'un ultra, et aucune n'est ton entraînement. Elles se préparent — et elles se testent sur tes sorties longues, jamais le jour J.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Three things decide an ultra, and none of them is your training. They can be prepared — and they get tested on your long runs, never on race day."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tres cosas deciden un ultra, y ninguna es tu entrenamiento. Se preparan, y se prueban en tus tiradas largas, nunca el día de la carrera."
           }
         }
       }
@@ -33164,19 +32915,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pas de mur, pas de ligne au fond. Relever la tête pour viser s'apprend — et jamais seule."
+            "value": "Pas de mur, pas de ligne au fond. Relever la tête pour viser s'apprend, et jamais seule."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No wall, no line on the bottom. Lifting your head to sight takes practice — and never alone."
+            "value": "No wall, no line on the bottom. Lifting your head to sight takes practice, and never alone."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sin muro, sin línea en el fondo. Levantar la cabeza para orientarse se aprende — y nunca sola."
+            "value": "Sin muro, sin línea en el fondo. Levantar la cabeza para orientarse se aprende, y nunca sola."
           }
         }
       }
@@ -33768,13 +33519,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "past a certain gradient, hiking is faster and cheaper — and it is a skill"
+            "value": "past a certain gradient, hiking is faster and cheaper, and it is a skill"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "a partir de cierta pendiente, andar es más rápido y menos costoso — y se aprende"
+            "value": "a partir de cierta pendiente, andar es más rápido y menos costoso, y se aprende"
           }
         }
       }
@@ -35430,6 +35181,255 @@
           "stringUnit": {
             "state": "translated",
             "value": "✓ Terminado"
+          }
+        }
+      }
+    },
+    "%lld′ · %@ · c'est la seconde moitié de ta course, en répétition, et elle doit être inconfortable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · %@ · this is the second half of your race, rehearsed, and it's meant to feel uncomfortable"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · %@ · es la segunda mitad de tu carrera, ensayada, y tiene que resultar incómoda"
+          }
+        }
+      }
+    },
+    "Courir, rouler, courir : c'est la seconde course qui décide de la journée.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run, ride, run: it's the second run that decides the day."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correr, pedalear, correr: es la segunda carrera la que decide el día."
+          }
+        }
+      }
+    },
+    "Courir, rouler, courir, et tenir la seconde course": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run, ride, run, and hold on through the second run"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correr, pedalear, correr, y aguantar la segunda carrera"
+          }
+        }
+      }
+    },
+    "Des bâtons si tu t'en sers, et seulement si tu t'en es servi à l'entraînement.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poles if you use them, and only if you've used them in training."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bastones si los usas, y solo si los has usado entrenando."
+          }
+        }
+      }
+    },
+    "Deux frontales, parce qu'une frontale qui s'éteint en descente technique arrête la course, et parce que la plupart des grands trails les exigent au contrôle du sac.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two headlamps, because one that dies on a technical descent ends the race, and because most big trail races require both at kit check."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dos frontales, porque uno que se apaga en una bajada técnica termina la carrera, y porque la mayoría de los grandes trails los exigen en el control."
+          }
+        }
+      }
+    },
+    "Du salé dès la première heure. Six heures de sucré, personne ne les tient, et c'est le dégoût, pas la faim, qui fait arrêter de manger.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something savoury from the first hour. Nobody gets through six hours of sweet, and it's disgust, not hunger, that makes people stop eating."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algo salado desde la primera hora. Seis horas de dulce nadie las aguanta, y es el asco, no el hambre, lo que hace dejar de comer."
+          }
+        }
+      }
+    },
+    "Elles restent sur ton téléphone, rien n'est perdu, mais ta session a expiré : reconnecte-toi pour les publier.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They're safe on your phone, but your session has expired: sign in again to publish them."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Están a salvo en tu teléfono, pero tu sesión ha caducado: vuelve a iniciar sesión para publicarlas."
+          }
+        }
+      }
+    },
+    "La natation ne permet aucun ravitaillement, et la combinaison comprime l'estomac. Ta nutrition commence à la sortie de l'eau, alors qu'une partie de l'effort est déjà faite.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swimming allows no fuelling at all, and the wetsuit compresses your stomach. Your nutrition starts when you leave the water, with part of the effort already behind you."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La natación no permite ninguna alimentación, y el neopreno comprime el estómago. Tu nutrición empieza al salir del agua, con parte del esfuerzo ya hecho."
+          }
+        }
+      }
+    },
+    "La natation partira de zéro, et c'est très bien, mais apprendre à durer dans l'eau demande un bassin et quelqu'un sur le bord, pas une case de plus dans un plan. Le programme construira le vélo et la course, et montera la natation prudemment.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swimming will start from scratch, and that's fine, but learning to last in the water takes a pool and someone on the edge, not one more box in a plan. The program will build the bike and the run, and raise the swimming carefully."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La natación partirá de cero, y está muy bien, pero aprender a durar en el agua requiere una piscina y alguien en el borde, no una casilla más en un plan. El programa construirá la bici y la carrera, y subirá la natación con prudencia."
+          }
+        }
+      }
+    },
+    "Le coach n'a pas pu répondre à ça. Reformule autrement. Et si c'est une douleur qui dure, parles-en à un médecin.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your coach couldn't answer that one. Try putting it differently. And if it's pain that lasts, see a doctor."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu coach no ha podido responder a eso. Pruébalo de otra forma; y si es un dolor que persiste, consulta a un médico."
+          }
+        }
+      }
+    },
+    "Nager, rouler, courir, et surtout enchaîner les trois": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swim, bike, run, and above all link the three"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nadar, pedalear, correr, y sobre todo enlazar los tres"
+          }
+        }
+      }
+    },
+    "TOUT CE QUI SERA NÉCESSAIRE POUR LA COURSE SE PREND SUR LE VÉLO. Pas idéalement : c'est la règle. À pied, après des heures de selle, l'estomac refuse presque tout, et c'est pour ça qu'on peut bien nager, bien rouler, et s'arrêter de courir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EVERYTHING THE RUN WILL NEED IS TAKEN ON THE BIKE. Not ideally: that's the rule. On foot, after hours in the saddle, the stomach refuses almost everything, which is why you can swim well, ride well, and stop running."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TODO LO QUE NECESITARÁ LA CARRERA SE TOMA EN LA BICI. No idealmente: es la regla. A pie, tras horas en el sillín, el estómago rechaza casi todo, y por eso se puede nadar bien, pedalear bien, y dejar de correr."
+          }
+        }
+      }
+    },
+    "Trois choses décident d'un triathlon, et aucune n'est ton entraînement. Elles se préparent, et elles se testent à l'entraînement, jamais le jour J.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Three things decide a triathlon, and none of them is your training. They can be prepared, and they get tested in training, never on race day."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tres cosas deciden un triatlón, y ninguna es tu entrenamiento. Se preparan, y se prueban entrenando, nunca el día de la carrera."
+          }
+        }
+      }
+    },
+    "Trois choses décident d'un ultra, et aucune n'est ton entraînement. Elles se préparent, et elles se testent sur tes sorties longues, jamais le jour J.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Three things decide an ultra, and none of them is your training. They can be prepared, and they get tested on your long runs, never on race day."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tres cosas deciden un ultra, y ninguna es tu entrenamiento. Se preparan, y se prueban en tus tiradas largas, nunca el día de la carrera."
+          }
+        }
+      }
+    },
+    "L'app fonctionne, mais rien de cette session ne sera enregistré. Tes courses, ton programme et tes messages sont toujours sur ton téléphone : rien n'a été supprimé. Ils devraient réapparaître après une mise à jour de l'app.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app works, but nothing from this session will be saved. Your runs, your plan and your messages are still on your phone: nothing has been deleted. They should reappear after an app update."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La app funciona, pero nada de esta sesión se guardará. Tus carreras, tu plan y tus mensajes siguen en tu teléfono: no se ha borrado nada. Deberían reaparecer tras una actualización de la app."
           }
         }
       }

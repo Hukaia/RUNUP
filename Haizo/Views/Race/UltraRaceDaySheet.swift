@@ -23,7 +23,7 @@ struct UltraRaceDaySheet: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Le jour J").displayStyle(.title).foregroundColor(RUColor.textPrimary).padding(.top, 8)
-                Text("Trois choses décident d'un ultra, et aucune n'est ton entraînement. Elles se préparent — et elles se testent sur tes sorties longues, jamais le jour J.")
+                Text("Trois choses décident d'un ultra, et aucune n'est ton entraînement. Elles se préparent, et elles se testent sur tes sorties longues, jamais le jour J.")
                     .font(RUFont.sans(.body)).foregroundColor(RUColor.text2).lineSpacing(3)
 
                 ravitaillement
@@ -64,7 +64,7 @@ struct UltraRaceDaySheet: View {
                 Accord.selon(
                     f: String(localized: "Une prise toutes les \(UltraRaceDay.minutesEntreDeuxPrises) minutes, à la montre. « Manger régulièrement » ne se fait pas : une consigne sans horloge ne tient pas quand on est fatiguée."),
                     m: String(localized: "Une prise toutes les \(UltraRaceDay.minutesEntreDeuxPrises) minutes, à la montre. « Manger régulièrement » ne se fait pas : une consigne sans horloge ne tient pas quand on est fatigué.")),
-                String(localized: "Du salé dès la première heure. Six heures de sucré, personne ne les tient — et c'est le dégoût, pas la faim, qui fait arrêter de manger."),
+                String(localized: "Du salé dès la première heure. Six heures de sucré, personne ne les tient, et c'est le dégoût, pas la faim, qui fait arrêter de manger."),
                 String(localized: "Bois par petites gorgées, souvent. Un demi-litre avalé d'un coup au ravitaillement ressort au premier raidillon."),
                 String(localized: "Rien de nouveau le jour J. Ce que tu mangeras en course, tu l'as déjà mangé en sortie longue — c'est aussi à ça qu'elles servent.")
             ])
@@ -95,7 +95,7 @@ struct UltraRaceDaySheet: View {
                 String(localized: "Téléphone chargé, en mode économie d'énergie, avec les numéros de l'organisation."),
                 String(localized: "Une réserve alimentaire que tu ne touches pas : elle est là pour l'heure où tout le reste est fini."),
                 String(localized: "Bonnet et gants dès que la nuit est possible. On a froid à l'arrêt, pas en mouvement."),
-                String(localized: "Des bâtons si tu t'en sers — et seulement si tu t'en es servi à l'entraînement.")
+                String(localized: "Des bâtons si tu t'en sers, et seulement si tu t'en es servi à l'entraînement.")
             ])
         }
         .padding(RUSpacing.cardPadding)
@@ -111,7 +111,7 @@ struct UltraRaceDaySheet: View {
                 .font(RUFont.sans(.body)).foregroundColor(RUColor.text2).lineSpacing(3)
 
             puces([
-                String(localized: "Deux frontales, parce qu'une frontale qui s'éteint en descente technique arrête la course — et parce que la plupart des grands trails les exigent au contrôle du sac."),
+                String(localized: "Deux frontales, parce qu'une frontale qui s'éteint en descente technique arrête la course, et parce que la plupart des grands trails les exigent au contrôle du sac."),
                 String(localized: "Le creux de trois à cinq heures du matin est physiologique, pas un mauvais jour. Mange chaud, marche, remets-toi en mouvement : ça passe."),
                 Accord.selon(
                     f: String(localized: "La veste s'enfile AVANT d'entrer au ravitaillement, pas après. Dix minutes assise sans se couvrir coûtent une heure à se réchauffer."),

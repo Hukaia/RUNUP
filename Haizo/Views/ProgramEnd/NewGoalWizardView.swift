@@ -314,7 +314,7 @@ struct NewGoalWizardView: View {
     private var avertissement: LocalizedStringKey? {
         guard let niveau = nageNiveau, niveau.ecartNotable(pour: triathlonFormat) else { return nil }
         guard let metres = niveau.metresEnContinu else {
-            return "La natation partira de zéro, et c'est très bien — mais apprendre à durer dans l'eau demande un bassin et quelqu'un sur le bord, pas une case de plus dans un plan. Le programme construira le vélo et la course, et montera la natation prudemment."
+            return "La natation partira de zéro, et c'est très bien, mais apprendre à durer dans l'eau demande un bassin et quelqu'un sur le bord, pas une case de plus dans un plan. Le programme construira le vélo et la course, et montera la natation prudemment."
         }
         return "\(triathlonFormat.nageMetres) m le jour J, contre \(metres) m aujourd'hui. Le plan montera progressivement, et la natation sera la discipline qui prend le plus de place dans ta semaine."
     }

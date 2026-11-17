@@ -101,7 +101,7 @@ private struct RootView: View {
             // Says the two things that actually matter, in that order: nothing is being saved this
             // session, and nothing has been lost. The old "delete the store and carry on" behaviour
             // would have made the second half a lie.
-            Text("L'app fonctionne, mais rien de cette session ne sera enregistré. Tes courses, ton programme et tes messages sont toujours sur ton téléphone — ils n'ont pas été supprimés — et devraient réapparaître après une mise à jour de l'app.")
+            Text("L'app fonctionne, mais rien de cette session ne sera enregistré. Tes courses, ton programme et tes messages sont toujours sur ton téléphone : rien n'a été supprimé. Ils devraient réapparaître après une mise à jour de l'app.")
         }
         .onAppear {
             if appState == nil {

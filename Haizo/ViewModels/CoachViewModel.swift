@@ -118,7 +118,7 @@ final class CoachViewModel {
                 // l'envoyer retaper trois fois une question qui ne passera pas.
                 let message: String
                 if case CoachServiceError.refused = error {
-                    message = String(localized: "Le coach n'a pas pu répondre à ça. Reformule autrement — et si c'est une douleur qui dure, parles-en à un médecin.")
+                    message = String(localized: "Le coach n'a pas pu répondre à ça. Reformule autrement. Et si c'est une douleur qui dure, parles-en à un médecin.")
                 } else {
                     // « Connexion coupée » affirmait une panne de réseau pour un serveur en
                     // panne comme pour une session expirée — les deux seules autres façons dont

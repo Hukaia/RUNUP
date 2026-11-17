@@ -226,7 +226,7 @@ struct SessionDetailSheet: View {
             ]
         case .ultraBackToBackDay2:
             return [
-                (String(localized: "Sur les jambes de la veille"), String(localized: "\(session.durationMinutes)′ · \(session.zone) · c'est la seconde moitié de ta course, en répétition — et elle doit être inconfortable"), RUColor.rose),
+                (String(localized: "Sur les jambes de la veille"), String(localized: "\(session.durationMinutes)′ · \(session.zone) · c'est la seconde moitié de ta course, en répétition, et elle doit être inconfortable"), RUColor.rose),
                 ravitaillement
             ]
         default:

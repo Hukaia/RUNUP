@@ -7948,3 +7948,51 @@ assez ; ici, il se propagerait trop.
 `accueil-verrouille.png` et `accueil-verrouille-bas.png`, en diagnostic, dans les trois langues.
 La carte du programme absente, `PlusLockCard` en bas, pas de ligne de coach. Et surtout : les six
 images de la fiche **inchangées** — si l'une d'elles porte un verrou, le drapeau fuit.
+
+## 17 novembre 2026 — la campagne 223 : l'écran que personne n'avait vu, et le verrou n'a pas fui
+
+TestFlight 584 est vert — le Swift compile, XcodeGen a pris le fichier de cas neuf, les quatre cas
+du verrou passent. Deux builds verts d'affilée après quatre rouges.
+
+### Les trois contrôles, dans l'ordre d'importance
+
+| ce qu'il fallait prouver | mesuré sur la 223 |
+| --- | --- |
+| les deux captures existent, 3 langues × 2 thèmes | **12 images**, le compte passe de 28 à 30 par langue et par thème |
+| **le verrou n'a pas fui sur la fiche** | « Ton programme · Semaine 1/6 · 28,3 / 24 km · J-40 » toujours présent sur `1-accueil.png` |
+| rien d'autre n'a bougé | tracé 0 px (0 → 185), nuit 0,0 → 285,0 pt, bande d'état 0 px hors `#14131E`, barre du lundi 748,0 → 780,7 pt |
+
+Le second est le contrôle qui compte, et il fallait choisir la bonne mesure. J'ai d'abord comparé
+les six images de la fiche par **empreinte**, 222 contre 223 : les six sont ressorties
+« différentes », ce qui ne prouvait RIEN — l'anticrénelage du simulateur varie d'une exécution à
+l'autre, et les quatre mesures structurelles étaient identiques au dixième de point.
+
+La bonne mesure était ailleurs : la carte « Ton programme » est précisément celle qui disparaît
+quand `planUnlocked` est faux. Sa présence sur l'image de la fiche est la preuve directe que le
+drapeau ne traverse pas les prises.
+
+### Ce que l'écran montre, maintenant qu'on peut le regarder
+
+Le commentaire de `HomeView` affirmait depuis des semaines : « à la troisième place sur trois,
+cette carte était un mur ; sous quatre blocs de contenu réel, c'est une proposition. »
+
+**C'est vrai.** La carte dit « Haizo PLUS · Ton programme qui s'adapte · Un plan périodisé calé sur
+ton objectif, qui se recalcule après chaque sortie selon ta forme et ton ressenti », avec un seul
+bouton. Au-dessus d'elle : une séance à faire aujourd'hui, avec sa durée, son allure, sa zone et
+son bouton de départ ; le ruban des sept jours ; les anneaux du jour. Une personne qui n'a pas
+payé a de quoi courir tout de suite, et la proposition arrive après, pas avant.
+
+Les trois questions de la direction artistique : une débutante y trouve une séance et un bouton,
+sans rien de bloqué ; un traileur y trouve allure, zone et durée ; rien n'y sent la génération.
+
+### Deux constats que cet écran a révélés
+
+**La carte « 2/3 · Ta journée » passe sous la barre d'onglets ici aussi** — troisième écran après
+l'accueil abonné et l'accueil libre. C'est #52, confirmé une fois de plus : ce n'est pas un cas
+particulier, c'est la limite de la page.
+
+**Deux boutons roses pleins, deux casses, sur le même écran.** « DÉMARRER » à deux cartes de
+« Découvrir Haizo Plus ». Même forme, même couleur, même rôle visuel — l'un en capitales, l'autre
+non. La liste `PERMIS` de `check_majuscules.py` tolère les capitales d'un bouton, et sa raison
+écrite le dit : « le jour où elle tranche l'inverse, c'est cette liste qui se vide ». Cette image
+est la première à montrer les deux conventions côte à côte.

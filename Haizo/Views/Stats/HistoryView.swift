@@ -146,7 +146,7 @@ struct HistoryView: View {
     private var raisonDeLAttente: String {
         switch appState.pendingActivityBlocker {
         case .session:
-            return String(localized: "Elles restent sur ton téléphone, rien n'est perdu — mais ta session a expiré : reconnecte-toi pour les publier.")
+            return String(localized: "Elles restent sur ton téléphone, rien n'est perdu, mais ta session a expiré : reconnecte-toi pour les publier.")
         case .serveur:
             return String(localized: "Elles restent sur ton téléphone, rien n'est perdu — Haizo ne répond pas, nouvelle tentative plus tard.")
         case .reseau, .none:

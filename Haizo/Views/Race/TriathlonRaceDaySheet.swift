@@ -26,7 +26,7 @@ struct TriathlonRaceDaySheet: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Le jour J").displayStyle(.title).foregroundColor(RUColor.textPrimary).padding(.top, 8)
-                Text("Trois choses décident d'un triathlon, et aucune n'est ton entraînement. Elles se préparent — et elles se testent à l'entraînement, jamais le jour J.")
+                Text("Trois choses décident d'un triathlon, et aucune n'est ton entraînement. Elles se préparent, et elles se testent à l'entraînement, jamais le jour J.")
                     .font(RUFont.sans(.body)).foregroundColor(RUColor.text2).lineSpacing(3)
 
                 journee
@@ -110,7 +110,7 @@ struct TriathlonRaceDaySheet: View {
         VStack(alignment: .leading, spacing: 10) {
             RUCardHeader(icon: "fork.knife", title: "On ne mange pas dans l'eau")
 
-            Text("La natation ne permet aucun ravitaillement, et la combinaison comprime l'estomac. Ta nutrition commence à la sortie de l'eau — alors qu'une partie de l'effort est déjà faite.")
+            Text("La natation ne permet aucun ravitaillement, et la combinaison comprime l'estomac. Ta nutrition commence à la sortie de l'eau, alors qu'une partie de l'effort est déjà faite.")
                 .font(RUFont.sans(.small)).foregroundColor(RUColor.text2).lineSpacing(2)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -121,7 +121,7 @@ struct TriathlonRaceDaySheet: View {
                 }
             }
 
-            Text("TOUT CE QUI SERA NÉCESSAIRE POUR LA COURSE SE PREND SUR LE VÉLO. Pas idéalement : c'est la règle. À pied, après des heures de selle, l'estomac refuse presque tout — et c'est pour ça qu'on peut bien nager, bien rouler, et s'arrêter de courir.")
+            Text("TOUT CE QUI SERA NÉCESSAIRE POUR LA COURSE SE PREND SUR LE VÉLO. Pas idéalement : c'est la règle. À pied, après des heures de selle, l'estomac refuse presque tout, et c'est pour ça qu'on peut bien nager, bien rouler, et s'arrêter de courir.")
                 .font(RUFont.sans(.small)).foregroundColor(RUColor.text2).lineSpacing(2)
                 .fixedSize(horizontal: false, vertical: true)
         }

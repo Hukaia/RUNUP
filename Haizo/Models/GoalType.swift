@@ -38,8 +38,8 @@ enum GoalType: String, Codable, CaseIterable, Identifiable {
         case .health: return String(localized: "Une routine régulière qui tient dans ta semaine")
         case .hyrox: return String(localized: "8 × 1 km de course + stations fonctionnelles — un vrai plan hybride")
         case .ultraTrail: return String(localized: "Dénivelé, descente technique et sorties enchaînées — un plan qui compte en heures")
-        case .triathlon: return String(localized: "Nager, rouler, courir — et surtout enchaîner les trois")
-        case .duathlon: return String(localized: "Courir, rouler, courir — et tenir la seconde course")
+        case .triathlon: return String(localized: "Nager, rouler, courir, et surtout enchaîner les trois")
+        case .duathlon: return String(localized: "Courir, rouler, courir, et tenir la seconde course")
         }
     }
 
@@ -197,7 +197,7 @@ enum GoalType: String, Codable, CaseIterable, Identifiable {
                 f: String(localized: "Nager, rouler, courir — dans cet ordre, et fatiguée de la précédente à chaque fois."),
                 m: String(localized: "Nager, rouler, courir — dans cet ordre, et fatigué de la précédente à chaque fois."))
         case .duathlon:
-            return String(localized: "Courir, rouler, courir — et c'est la seconde course qui décide de la journée.")
+            return String(localized: "Courir, rouler, courir : c'est la seconde course qui décide de la journée.")
         }
     }
 
