@@ -65,6 +65,7 @@ struct PlanSemaineView: View {
     // MARK: - La page
 
     var body: some View {
+        let _ = DiagnosticRefonte.noter("PlanSemaineView.body choix=\(String(describing: choix)) demandes=\(demandes)")
         ScrollView {
             // La feuille REMONTE sur le haut de page d'un rayon de coin : le noir passe derrière ses
             // coins arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la
@@ -218,7 +219,12 @@ struct PlanSemaineView: View {
     /// le glissement le vérifie lui-même.
     private func selectionner(_ jour: Int) {
         demandes += 1
-        withAnimation(HZCarrousel.animation) { choix = jour }
+        DiagnosticRefonte.noter("PlanSemaineView.selectionner jour=\(jour)")
+        if DiagnosticRefonte.sans("animation") {
+            choix = jour
+        } else {
+            withAnimation(HZCarrousel.animation) { choix = jour }
+        }
         Haptics.selection()
     }
 

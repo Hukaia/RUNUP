@@ -44,6 +44,7 @@ struct AccueilView: View {
     private var planDebloque: Bool { subscriptions.unlocks(.adaptivePlan) }
 
     var body: some View {
+        let _ = DiagnosticRefonte.noter("AccueilView.body")
         Group {
             switch planDebloque ? profile.programPhase : .active {
             case .recovery: RecoveryView()
@@ -232,6 +233,7 @@ struct AccueilView: View {
                 }
             }
             HZAction(dessin: .bulle, libelle: String(localized: "Coach")) {
+                DiagnosticRefonte.noter("AccueilView: action Coach")
                 appState.go(.coach)
             }
             if planDebloque {

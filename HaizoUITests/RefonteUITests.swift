@@ -220,7 +220,7 @@ final class RefonteUITests: XCTestCase {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
                           "réservé à refonte.yml")
         var rapport = "variante | accueil : contenu remplacé ? | plan : jeudi sélectionné ?\n"
-        for variante in ["aucune", "statusbar", "fond", "zonesure", "recouvrement", "barre", "tout"] {
+        for variante in ["aucune", "transition", "animation", "tout"] {
             let option = variante == "aucune" ? [] : ["--sans-\(variante)"]
 
             let accueil = lancer(arguments: ["--ecran=prog"] + option)
@@ -241,6 +241,33 @@ final class RefonteUITests: XCTestCase {
             rapport += "\(variante) | \(remplace) | \(selectionne)\n"
         }
         ecrire("variantes.txt", rapport)
+    }
+
+    /// LE JOURNAL DE L'APP. Deux défauts, deux scénarios, et à la fin le fichier que l'app a écrit
+    /// elle-même (`DiagnosticRefonte.noter`) : l'action est-elle partie ? `go()` a-t-elle été
+    /// appelée ? les vues ont-elles été réévaluées ? Une ligne par événement, avec l'heure.
+    func test08Journal() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let chemin = "/tmp/haizo-diag.log"
+        func lire() -> String { (try? String(contentsOfFile: chemin, encoding: .utf8)) ?? "(aucun journal)" }
+
+        try? FileManager.default.removeItem(atPath: chemin)
+        let accueil = lancer(arguments: ["--ecran=prog"])
+        try? FileManager.default.removeItem(atPath: chemin)
+        accueil.coordinate(withNormalizedOffset: CGVector(dx: 0.615, dy: 0.545)).tap()
+        Thread.sleep(forTimeInterval: 3.0)
+        ecrire("journal-accueil.txt", lire())
+        accueil.terminate()
+
+        try? FileManager.default.removeItem(atPath: chemin)
+        let plan = lancer(arguments: ["--ecran=plan"])
+        try? FileManager.default.removeItem(atPath: chemin)
+        let jeudi = plan.buttons["rangee-des-jours-3"]
+        if jeudi.waitForExistence(timeout: 5) { jeudi.tap() }
+        Thread.sleep(forTimeInterval: 3.0)
+        ecrire("journal-plan.txt", lire())
+        plan.terminate()
     }
 
     private func ecrire(_ nom: String, _ texte: String) {
