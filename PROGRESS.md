@@ -8245,3 +8245,27 @@ deux boutons en pilules, la barre flottante.
 3. *Le bandeau du coach se tronquait en « Si… »* quand la feuille manquait de hauteur. Un
    paragraphe ne se coupe jamais en hauteur : c'est l'écran qui coupe la feuille, comme dans le
    canvas.
+
+### Le troisième tour : le plan montait encore, et la cause n'était pas celle que je croyais
+
+TestFlight 589 vert, campagne 225 verte (elle est allée au bout ; je n'ai pas comparé ses images à
+celles de la précédente, donc je ne dis pas qu'aucun écran n'a bougé : seul `HaizoApp.swift`
+touche l'app, et il ne route vers la planche que sous `--planche`).
+
+Mesuré sur `bf0edff` : l'accueil et les stats sont à 0,00 à 0,33 pt de la référence sur toutes les
+bandes, « 1h20 » a exactement l'étendue de la référence sans réduction. Le plan, lui, montait de
+16 pt au lieu de 6.
+
+Mon explication du tour précédent (« une pile alignée en bas remonte de son dépassement ») était
+juste à moitié. Le vrai mécanisme : un cadre souple, `.frame(maxHeight: .infinity)`, GRANDIT avec
+son contenu quand celui-ci dépasse, puis son parent le recentre. Aligner la pile en haut n'y
+changeait rien, parce que ce n'est pas la pile qui était recentrée mais le cadre qui la porte. Le
+bandeau du coach ayant cessé de se tronquer, il a ajouté une ligne, le dépassement a doublé, et
+le décalage avec lui. La planche pose maintenant sa page en superposition sur une surface de la
+taille de l'écran : le dépassement tombe vers le bas, comme dans le canvas, où l'écran coupe la
+feuille.
+
+C'est un piège qui reviendra sur chaque écran plus haut que 844 pt, c'est-à-dire presque tous.
+Règle pour les écrans de la refonte : la racine d'un écran est une surface de la taille de
+l'écran avec le contenu en `overlay(alignment: .top)`, jamais un `.frame(maxHeight: .infinity)`
+autour d'un contenu qui peut dépasser.

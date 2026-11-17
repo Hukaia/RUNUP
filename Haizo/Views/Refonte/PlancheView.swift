@@ -27,18 +27,29 @@ struct PlancheView: View {
     @State private var ongletDesStats: HZOnglet = .stats
 
     var body: some View {
-        Group {
-            switch page {
-            case .jetons: jetons
-            case .typographie: typographie
-            case .accueilHaut: accueilHaut
-            case .accueilBas: accueilBas
-            case .plan: plan
-            case .stats: stats
+        // UNE SURFACE DE LA TAILLE DE L'ÉCRAN, la page posée dessus en superposition, alignée en
+        // haut. Un cadre souple (`.frame(maxHeight: .infinity)`) grandit avec son contenu quand
+        // celui-ci dépasse, et son parent le recentre : le plan, qui fait plus de 844 points,
+        // remontait de la moitié de son dépassement — 6 points, puis 16 quand le bandeau a cessé
+        // de se tronquer. Dans le canvas l'écran coupe la feuille ; ici, le dépassement tombe
+        // vers le bas, et le haut de la page ne bouge pas.
+        Color.clear
+            .overlay(alignment: .top) {
+                contenu(page)
             }
+            .ignoresSafeArea()
+    }
+
+    @ViewBuilder
+    private func contenu(_ page: HZPlanche.Page) -> some View {
+        switch page {
+        case .jetons: jetons
+        case .typographie: typographie
+        case .accueilHaut: accueilHaut
+        case .accueilBas: accueilBas
+        case .plan: plan
+        case .stats: stats
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .ignoresSafeArea()
     }
 
     private func legende(_ texte: String) -> some View {
