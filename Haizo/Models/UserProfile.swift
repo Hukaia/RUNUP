@@ -448,8 +448,24 @@ final class UserProfile {
 
     // MARK: Derived
 
+    /// LE JOUR DE LA SEMAINE, SUR L'HORLOGE DE LA SCÈNE.
+    ///
+    /// Il lisait `.now`, et la campagne 221 a montré ce que ça coûte. Elle a franchi minuit : on
+    /// est passé au mardi, mardi est un jour de REPOS dans la semaine de démonstration, et
+    /// l'accueil de la fiche App Store a perdu sa carte de séance — plus de durée, plus d'allure,
+    /// PLUS DE BOUTON « DÉMARRER ». La journée est passée de 2/3 à 2/2 et tout l'écran a remonté
+    /// de 143 points.
+    ///
+    /// LA CARTE PORTAIT DEUX HORLOGES. Son titre vient de `todaySession`, que la graine écrit sur
+    /// l'instant figé ; son état de repos venait d'ici, sur l'instant réel. Elle annonçait donc
+    /// « Sortie longue » et se dessinait comme un jour de repos.
+    ///
+    /// C'est le septième lecteur oublié depuis que la scène est figée, et le 16 novembre j'avais
+    /// écrit la leçon sans en tirer la conséquence : « j'ai figé une horloge EN ÉNUMÉRANT SES
+    /// LECTEURS, et énumérer est exactement la façon d'en oublier un. » `check_horloge.py` tient
+    /// la liste maintenant, et il compte dans les deux sens.
     private var todayWeekdayIndex: Int {
-        (Calendar.current.component(.weekday, from: .now) + 5) % 7
+        (Calendar.current.component(.weekday, from: Demonstration.maintenant) + 5) % 7
     }
 
     /// True once today's planned session is done, or trivially true on a rest day (nothing was

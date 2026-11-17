@@ -734,6 +734,13 @@ jobs:
       # d'une séance et l'allègement du jour. Un déplacement posé mardi n'existait plus jeudi
       # matin, et l'allègement pouvait rendre la séance PLUS DURE que la demande qui l'avait
       # allégée. Aucun des deux n'avait de symptôme : la semaine restait pleine et juste.
+      # LA SCÈNE EST FIGÉE, ET SES LECTEURS NE SE COMPTENT PLUS À LA MAIN. Huit oublis en trois
+      # énumérations, dont un qui a retiré le bouton « DÉMARRER » de l'image de tête de la fiche.
+      - name: Vérifier que le jour courant se lit sur l'horloge de la scène
+        run: |
+          cd ci_scripts && python3 test_horloge.py
+          cd .. && python3 ci_scripts/check_horloge.py
+
       - name: Vérifier que la semaine du plan ne s'écrit qu'à la génération
         run: |
           cd ci_scripts && python3 test_entrees.py

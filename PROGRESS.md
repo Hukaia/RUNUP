@@ -7690,3 +7690,65 @@ semaine spécifique pleine.
 `#44506B` est le renforcement HYROX. Le profil de démonstration vise un 10 km : il n'en fait pas.
 Le photographier demanderait un second profil de démonstration, ce qui est un autre chantier —
 et pas un défaut.
+
+## 17 novembre 2026 — la campagne a franchi minuit, et l'image de tête a perdu son bouton
+
+La 221 devait vérifier une seule chose — le seuil `#F5A524` sur la capture du bloc spécifique.
+Il y est : **1 488 pixels**, la semaine 5, le pic du plan. Le raisonnement tiré du moteur était
+juste.
+
+**Mais le contrôle de non-régression a trouvé autre chose.** La barre du lundi est passée de 747
+à **603,7 points** — cent quarante-trois points plus haut, sans qu'aucun commit n'ait touché
+l'accueil.
+
+### Ce que l'image montrait
+
+- la carte de séance sans durée, sans allure, sans zone, et **sans bouton « DÉMARRER »** ;
+- sa pastille passée de « Séance du jour » à « Aujourd'hui », avec une lune ;
+- « Ta journée » à **2/2** au lieu de 2/3.
+
+### La cause
+
+```swift
+private var todayWeekdayIndex: Int {
+    (Calendar.current.component(.weekday, from: .now) + 5) % 7
+}
+```
+
+`.now`. La campagne a tourné de 23 h 57 à 00 h 56 : elle a franchi minuit, on est passé au
+**mardi**, et mardi est un jour de **repos** dans la semaine de démonstration.
+
+**La carte portait donc deux horloges.** Son titre vient de `todaySession`, que la graine écrit
+sur l'instant figé — « Sortie longue ». Son état de repos venait d'ici, sur l'instant réel. Elle
+annonçait une sortie longue et se dessinait comme un jour de repos.
+
+### Le septième lecteur oublié, et la leçon enfin tirée
+
+- **14 novembre** — la graine est figée, pas l'app. L'accueil montrait 0,0 / 24 km.
+- **16 novembre** — trois lecteurs ajoutés ; la remise à zéro, la date de l'en-tête et les
+  quantièmes manquaient. « Ta journée » est tombé à 0/3.
+- **17 novembre** — celui-ci.
+
+J'avais écrit la leçon le 16 **sans en tirer la conséquence** : « j'ai figé une horloge en
+énumérant ses lecteurs, et énumérer est exactement la façon d'en oublier un. » Une liste tenue à
+la main ne se répare pas en la relisant mieux.
+
+### `check_horloge.py`, et son huitième
+
+Il refuse toute expression qui demande un **jour de semaine** ou une **semaine calendaire** à
+l'horloge réelle. Deux motifs, pas plus :
+
+    component(.weekday, from: .now)          quel jour on est
+    dateInterval(of: .weekOfYear, for: .now) ce que la semaine courante contient
+
+**Il a trouvé un huitième lecteur à sa première exécution** : `StatsView.parSemaine`, l'ancre des
+huit semaines du graphique — sur un écran photographié.
+
+Ce qu'il ne regarde pas, et c'est délibéré : les **170 autres** lectures de l'horloge. Horodater
+une course, mesurer un temps écoulé, dater un message — tout cela doit prendre l'heure réelle,
+même en démonstration. Un garde qui les refuserait serait désactivé la semaine suivante. Un cas
+le dit en toutes lettres.
+
+Six lecteurs épinglés : `UserProfile.todayWeekdayIndex`, `WeeklyRecapView.todayWeekdayIndex`,
+trois ancres de semaine dans `AdaptivePlanEngine`, et `StatsView.parSemaine`. La liste
+d'exceptions est **vide**, et c'est le bon état.

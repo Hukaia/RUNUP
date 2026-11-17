@@ -36,7 +36,9 @@ struct WeeklyRecapView: View {
         return "\(start.formatted(.dateTime.day().locale(Locale.current)))-\(end.formatted(.dateTime.day().month(.wide).locale(Locale.current)))"
     }
 
-    private var todayWeekdayIndex: Int { WidgetWeekDay.rangDuJour(.now) }
+    /// Même lecteur, même raison que `UserProfile.todayWeekdayIndex` : c'est le jour de la
+    /// SCÈNE qui décide de ce que la semaine en cours contient, pas celui de la machine.
+    private var todayWeekdayIndex: Int { WidgetWeekDay.rangDuJour(Demonstration.maintenant) }
 
     /// Le libellé et la valeur du record, dans la langue courante. La décision de savoir s'il y
     /// EN A un appartient au bilan ; l'écrire appartient à la vue.

@@ -242,7 +242,9 @@ enum AdaptivePlanEngine {
 
         let cal = mondayCalendar
         let startOfStartWeek = cal.dateInterval(of: .weekOfYear, for: startDate)?.start ?? startDate
-        let startOfThisWeek = cal.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
+        // La semaine COURANTE, donc l'horloge de la scène : voir `UserProfile.todayWeekdayIndex`.
+        let maintenant = Demonstration.maintenant
+        let startOfThisWeek = cal.dateInterval(of: .weekOfYear, for: maintenant)?.start ?? maintenant
         let elapsedWeeks = max(0, cal.dateComponents([.weekOfYear], from: startOfStartWeek, to: startOfThisWeek).weekOfYear ?? 0)
 
         // Race goals periodize toward the real race date (a program for a race 6 weeks out is
@@ -299,7 +301,8 @@ enum AdaptivePlanEngine {
     private static func refreshFreeRunWeekStrip(_ profile: UserProfile) {
         let today = currentWeekdayIndex()
         let cal = mondayCalendar
-        let startOfThisWeek = cal.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
+        let maintenant = Demonstration.maintenant
+        let startOfThisWeek = cal.dateInterval(of: .weekOfYear, for: maintenant)?.start ?? maintenant
 
         // Le garde-fou porte sur la DATE de la case du jour, pas sur son état.
         //
@@ -357,7 +360,8 @@ enum AdaptivePlanEngine {
     private static func bandeDesJours(_ semaine: [PlannedDay], faits: Set<Int> = []) -> [DayStatus] {
         let today = currentWeekdayIndex()
         let cal = mondayCalendar
-        let debutDeSemaine = cal.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
+        let maintenant = Demonstration.maintenant
+        let debutDeSemaine = cal.dateInterval(of: .weekOfYear, for: maintenant)?.start ?? maintenant
         return (0..<7).map { i in
             let occupe = (semaine.first { $0.weekday == i }?.session?.durationMinutes ?? 0) > 0
             let state: DayStatus.State

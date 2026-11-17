@@ -179,7 +179,11 @@ struct StatsView: View {
     private func parSemaine(_ sorties: [RunRecord], semaines: Int = 8,
                             mesure: (RunRecord) -> Double) -> [Double] {
         let calendrier = Calendar.current
-        guard let cetteSemaine = calendrier.dateInterval(of: .weekOfYear, for: .now)?.start else {
+        // L'ANCRE DES HUIT SEMAINES, SUR L'HORLOGE DE LA SCÈNE. Ce graphique est photographié —
+        // c'est la courbe de `6-stats.png`. Trouvé par `check_horloge.py` à sa première
+        // exécution, après sept lecteurs oubliés en trois énumérations.
+        guard let cetteSemaine = calendrier
+            .dateInterval(of: .weekOfYear, for: Demonstration.maintenant)?.start else {
             return []
         }
         var seaux = [Double](repeating: 0, count: semaines)
