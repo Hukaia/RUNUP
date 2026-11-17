@@ -109,6 +109,44 @@ final class RefonteUITests: XCTestCase {
         seconde.terminate()
     }
 
+    /// QUELS BOUTONS DE LA REFONTE RÉPONDENT ? Quatre lancements, un geste chacun, un effet visible :
+    /// la recherche de l'accueil (mène au Club), le retour du plan (mène à l'accueil), la carte du
+    /// jour (ouvre la feuille de la séance), le jeudi de la rangée (change le jour). « Déplacer »
+    /// répondait et la rangée non ; ceci dit si c'est la rangée, le haut de la page, ou le plan.
+    func test04Touches() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        var rapport = ""
+
+        let accueil = lancer(arguments: ["--ecran=prog"])
+        accueil.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.095)).tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("touche-accueil-recherche", app: accueil)
+        accueil.terminate()
+
+        let retour = lancer(arguments: ["--ecran=plan"])
+        retour.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.095)).tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("touche-plan-retour", app: retour)
+        retour.terminate()
+
+        let carte = lancer(arguments: ["--ecran=plan"])
+        carte.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("touche-plan-carte", app: carte)
+        carte.terminate()
+
+        let jeudi = lancer(arguments: ["--ecran=plan"], attente: 5.0)
+        jeudi.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.255)).tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("touche-plan-jeudi", app: jeudi)
+        let diagnostic = jeudi.staticTexts["plan-diagnostic"]
+        rapport += "Jeudi, après 5 s d'attente : \(diagnostic.exists ? "\(diagnostic.value ?? "?")" : "absent")\n"
+        jeudi.terminate()
+
+        ecrire("touches.txt", rapport)
+    }
+
     private func ecrire(_ nom: String, _ texte: String) {
         guard let dossier = ProcessInfo.processInfo.environment["Haizo_CAPTURES_DIR"] else { return }
         let url = URL(fileURLWithPath: dossier).appendingPathComponent(nom)
