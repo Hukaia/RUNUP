@@ -69,7 +69,7 @@ struct PlanSemaineView: View {
             // La feuille REMONTE sur le haut de page d'un rayon de coin : le noir passe derrière ses
             // coins arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la
             // capture, où le coin était carré.
-            VStack(alignment: .leading, spacing: -HZRayon.feuille) {
+            VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {
                 hautDePage
                 feuille
             }
@@ -78,14 +78,16 @@ struct PlanSemaineView: View {
         // Deux moitiés de fond : le noir en haut, le blanc en bas — un défilement qui dépasse son
         // bord montre la couleur de ce qui s'y trouve.
         .background {
-            VStack(spacing: 0) {
-                HZCouleur.noir
-                HZCouleur.blanc
+            if !DiagnosticRefonte.sans("fond") {
+                VStack(spacing: 0) {
+                    HZCouleur.noir
+                    HZCouleur.blanc
+                }
+                .ignoresSafeArea()
             }
-            .ignoresSafeArea()
         }
-        .ignoresSafeArea(edges: .top)
-        .statusBarHidden()
+        .ignoresSafeArea(edges: DiagnosticRefonte.sans("zonesure") ? [] : .top)
+        .statusBarHidden(!DiagnosticRefonte.sans("statusbar"))
         .fullScreenCover(isPresented: $planCompletOuvert) {
             PlanView(retour: { planCompletOuvert = false })
                 .background(RUColor.bg.ignoresSafeArea())

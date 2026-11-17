@@ -59,7 +59,7 @@ struct AccueilView: View {
         ScrollView {
             // La feuille REMONTE sur le haut de page d'un rayon de coin : l'accent passe derrière
             // ses coins arrondis (ils étaient blancs sur du blanc).
-            VStack(alignment: .leading, spacing: -HZRayon.feuille) {
+            VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {
                 hautDePage
                 feuille
             }
@@ -68,14 +68,16 @@ struct AccueilView: View {
         // Deux moitiés de fond : l'accent en haut, le blanc en bas. Un défilement qui dépasse son
         // bord — vers le haut comme vers le bas — montre alors la couleur de ce qui s'y trouve.
         .background {
-            VStack(spacing: 0) {
-                HZCouleur.accent
-                HZCouleur.blanc
+            if !DiagnosticRefonte.sans("fond") {
+                VStack(spacing: 0) {
+                    HZCouleur.accent
+                    HZCouleur.blanc
+                }
+                .ignoresSafeArea()
             }
-            .ignoresSafeArea()
         }
-        .ignoresSafeArea(edges: .top)
-        .statusBarHidden()
+        .ignoresSafeArea(edges: DiagnosticRefonte.sans("zonesure") ? [] : .top)
+        .statusBarHidden(!DiagnosticRefonte.sans("statusbar"))
         .sheet(item: $sortieOuverte) { course in
             RecapView(historicalRun: course)
         }

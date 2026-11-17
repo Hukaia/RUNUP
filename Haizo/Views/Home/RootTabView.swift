@@ -75,7 +75,9 @@ struct RootTabView: View {
     /// Club, qui ont encore l'ancienne. Ce qui n'existe que dans l'ancienne — le bouton de course
     /// libre et son cadran de discipline — reste donc joignable depuis tout écran qui n'est pas
     /// l'accueil. Voir PROGRESS.md : le canvas n'a pas de bouton de course dans la barre.
-    private var barreRefaite: Bool { appState.screen == .home || appState.screen == .plan }
+    private var barreRefaite: Bool {
+        (appState.screen == .home || appState.screen == .plan) && !DiagnosticRefonte.sans("barre")
+    }
 
     private var ongletRefait: Binding<HZOnglet> {
         Binding(

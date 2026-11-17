@@ -211,6 +211,38 @@ final class RefonteUITests: XCTestCase {
         stats.terminate()
     }
 
+    /// QUELLE PARTICULARITÉ DES ÉCRANS REFAITS LES CASSE ? Deux défauts : sortir de l'accueil ne
+    /// remplace pas le contenu, et la rangée des jours du plan ne change pas de jour. Pour chaque
+    /// interrupteur de `DiagnosticRefonte` : l'accueil, un appui sur l'action « Coach » (si le
+    /// bouton « Démarrer » de l'accueil existe encore ensuite, le contenu n'a pas changé) ; le
+    /// plan, un appui sur le jeudi (est-il sélectionné ensuite ?). Une ligne par variante.
+    func test07Variantes() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        var rapport = "variante | accueil : contenu remplacé ? | plan : jeudi sélectionné ?\n"
+        for variante in ["aucune", "statusbar", "fond", "zonesure", "recouvrement", "barre", "tout"] {
+            let option = variante == "aucune" ? [] : ["--sans-\(variante)"]
+
+            let accueil = lancer(arguments: ["--ecran=prog"] + option)
+            accueil.coordinate(withNormalizedOffset: CGVector(dx: 0.615, dy: 0.545)).tap()
+            Thread.sleep(forTimeInterval: 2.5)
+            let remplace = !accueil.buttons["Démarrer"].exists
+            photographier("variante-\(variante)-accueil", app: accueil)
+            accueil.terminate()
+
+            let plan = lancer(arguments: ["--ecran=plan"] + option)
+            let jeudi = plan.buttons["rangee-des-jours-3"]
+            if jeudi.waitForExistence(timeout: 5) { jeudi.tap() }
+            Thread.sleep(forTimeInterval: 2.0)
+            let selectionne = jeudi.exists && jeudi.isSelected
+            photographier("variante-\(variante)-plan", app: plan)
+            plan.terminate()
+
+            rapport += "\(variante) | \(remplace) | \(selectionne)\n"
+        }
+        ecrire("variantes.txt", rapport)
+    }
+
     private func ecrire(_ nom: String, _ texte: String) {
         guard let dossier = ProcessInfo.processInfo.environment["Haizo_CAPTURES_DIR"] else { return }
         let url = URL(fileURLWithPath: dossier).appendingPathComponent(nom)
