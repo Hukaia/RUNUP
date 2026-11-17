@@ -284,13 +284,32 @@ private struct ContentRouterView: View {
     @AppStorage("paywall.introShown.v1") private var introShown = false
     @State private var showIntro = false
 
+    /// L'app — ou, dans la chaîne de capture seulement, une page de la planche de la refonte.
+    @ViewBuilder
+    private var racine: some View {
+        #if DEBUG
+        if let numero = CaptureSeed.plancheDemandee, let page = HZPlanche.Page(rawValue: numero) {
+            PlancheView(page: page)
+        } else {
+            app
+        }
+        #else
+        app
+        #endif
+    }
+
+    @ViewBuilder
+    private var app: some View {
+        if !appState.profile.onboarded {
+            OnboardingContainerView()
+        } else {
+            RootTabView()
+        }
+    }
+
     var body: some View {
         Group {
-            if !appState.profile.onboarded {
-                OnboardingContainerView()
-            } else {
-                RootTabView()
-            }
+            racine
         }
         .toastHost(appState.toastCenter)
         // Posée à la racine, au-dessus de TOUT — intégration et paywall compris. Un compte peut se

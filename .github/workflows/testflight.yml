@@ -582,6 +582,14 @@ jobs:
       - name: Vérifier que les écarts et les marges tiennent sur la grille
         run: python3 ci_scripts/check_grille.py
 
+      # « Aucune valeur en dur dans les vues » — la méthode de la refonte, point 5. Le garde
+      # ci-dessus compare trois écritures à la grille de l'ancien système ; celui-ci refuse tout
+      # nombre dans une vue de la refonte, quelle que soit son écriture, sans liste d'exceptions.
+      - name: Vérifier qu'aucune vue de la refonte ne contient une valeur en dur
+        run: |
+          cd ci_scripts && python3 test_valeurs.py
+          cd .. && python3 ci_scripts/check_valeurs.py
+
       # Un grand nombre et son unité : neuf endroits, neuf traitements, quatre tailles d'unité et
       # cinq graisses. Les deux lignes sont valides séparément, donc rien d'autre ne le remarque —
       # et c'est l'objet le plus regardé d'une app de course.

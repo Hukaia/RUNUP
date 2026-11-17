@@ -149,6 +149,11 @@ targets:
           - InstrumentSans-Italic.ttf
           - DMMono-Regular.ttf
           - DMMono-Medium.ttf
+          # LA FONTE DE LA REFONTE — une seule, variable, sur deux axes. Graisse 100 à 900 et
+          # largeur 62 à 125 % : le canvas du 17 novembre compose l'affichage en largeur 125,
+          # graisse 800, et l'interface en largeur 100, graisses 500 à 800. Un seul fichier
+          # porte tout, là où Instrument Sans en demande cinq. Voir `HZPolice`.
+          - Archivo-Variable.ttf
     dependencies:
       - target: HaizoWidgets
         embed: true
@@ -264,6 +269,9 @@ targets:
           - "InstrumentSans-Italic.ttf"
           - "DMMono-Regular.ttf"
           - "DMMono-Medium.ttf"
+          # La fonte de la refonte n'est pas déclarée par cette cible : 660 Ko de poids mort tant
+          # que cette surface n'est pas redessinée avec elle.
+          - "Archivo-Variable.ttf"
       - path: Haizo/Resources/Localizable.xcstrings
         buildPhase: resources
     info:
@@ -381,6 +389,9 @@ targets:
           - "InstrumentSans-Italic.ttf"
           - "DMMono-Regular.ttf"
           - "DMMono-Medium.ttf"
+          # La fonte de la refonte n'est pas déclarée par cette cible : 660 Ko de poids mort tant
+          # que cette surface n'est pas redessinée avec elle.
+          - "Archivo-Variable.ttf"
       # Le MÊME catalogue de chaînes que l'app iPhone. Le partager plutôt que d'en créer un second
       # évite d'avoir à traduire deux fois les libellés communs (KM, TEMPS, KCAL, EN PAUSE…).
       - path: Haizo/Resources/Localizable.xcstrings

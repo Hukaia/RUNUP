@@ -29,6 +29,18 @@ DESSINÉES — l'aperçu d'habillage qui miniaturise un téléphone, l'infobulle
 marques d'une frise de programme. Un rayon de 3 points sur une marque de 6 points de large ne
 répond pas à l'échelle des cartes de l'app, et l'y forcer serait de la comptabilité, pas du
 design.
+
+# LA REFONTE N'EST PAS JUGÉE ICI, ET CE N'EST PAS UNE DISPENSE
+
+Ce script compare des nombres à la grille de `RUSpacing`. La refonte du 17 novembre reproduit un
+canvas qui a sa propre géométrie — 22 sous une rangée, 26 sous une autre, dix rayons de 14 à 36 —
+déclarée dans `Haizo/DesignSystem/Refonte/`. La juger sur `RUSpacing.grille` serait lui faire
+dire que le canvas a tort, et ajouter 20, 22, 26, 30 à la grille la rouvrirait pour toute
+l'ancienne app.
+
+Ses deux dossiers passent donc à `check_valeurs.py`, dont la règle est PLUS DURE que celle-ci :
+dans une vue de la refonte, aucun nombre n'est permis, sur la grille ou non. La portée de ce
+script-ci se vide écran par écran, et il disparaît avec `RUSpacing` à la fin de la refonte.
 """
 import re, sys, pathlib
 
@@ -73,10 +85,19 @@ ESPACE = re.compile(r"\bspacing: (\d+(?:\.\d+)?)\b")
 RAYON = re.compile(r"(?:cornerRadius:? ?\(?|ruCard\(radius: )(\d+(?:\.\d+)?)")
 MARGE = re.compile(r"\.padding\((?:\.(?:top|bottom|leading|trailing|horizontal|vertical), )?(\d+(?:\.\d+)?)\)")
 
+#: Jugés par `check_valeurs.py`, plus strictement. Voir l'en-tête.
+REFONTE = ("Haizo/DesignSystem/Refonte/", "Haizo/Views/Refonte/")
+if not (RACINE / "ci_scripts/check_valeurs.py").exists():
+    print("check_valeurs.py a disparu : les dossiers de la refonte ne seraient plus jugés par "
+          "personne.")
+    sys.exit(1)
+
 fautes = []
 dessines = {}
 for chemin in sorted(RACINE.rglob("*.swift")):
     rel = str(chemin.relative_to(RACINE))
+    if rel.startswith(REFONTE):
+        continue
     for num, ligne in enumerate(chemin.read_text().split("\n"), 1):
         if ligne.lstrip().startswith("//"):
             continue

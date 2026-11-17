@@ -120,6 +120,18 @@ on:
       # Le commit du rapport de panne l'a touché le 8 novembre 2026 : les captures ne se sont pas
       # relancées, et rien n'aurait dit qu'une vue racine cassée était en ligne.
       - "Haizo/HaizoApp.swift"
+      # SAUF L'ATELIER DE LA REFONTE, qui a sa propre chaîne — `refonte.yml`, un écran en dix
+      # minutes sur un simulateur de la largeur du canvas. Les composants neufs et leur planche
+      # ne sont montrés par AUCUN des trente écrans que cette campagne photographie, tant qu'un
+      # écran de l'app ne s'en sert pas : la relancer pour eux, c'est soixante-dix minutes pour
+      # trente images identiques. Le jour où un écran bascule, c'est SON fichier qui change — il
+      # est dans `Views`, hors de ces dossiers — et la campagne repart.
+      #
+      # Les exclusions viennent APRÈS les inclusions : GitHub lit la liste dans l'ordre, et un
+      # « ! » placé avant le motif qu'il corrige ne corrige rien.
+      - "!Haizo/DesignSystem/Refonte/**"
+      - "!Haizo/Views/Refonte/**"
+      - "!HaizoUITests/RefonteUITests.swift"
       # LES `ViewModels` ONT UN VISAGE, contrairement aux `Models` et aux `Services` (voir
       # ci-dessous). Les six décident de ce qu'au moins cinq écrans photographiés AFFICHENT :
       # `BilanDeLaSemaine` les quatre chiffres du bilan, `CoachViewModel` la conversation,

@@ -1,0 +1,154 @@
+# L'atelier de la refonte : UN écran, photographié vite, à la taille du canvas.
+#
+# ─── POURQUOI IL EXISTE ────────────────────────────────────────────────────────────────────────
+#
+# La refonte du 17 novembre 2026 se fait écran par écran, et la méthode est écrite : capture dans
+# le simulateur, comparaison côte à côte avec la référence, liste des écarts, correction, nouvelle
+# capture — « tu ne passes au suivant que sans écart visible ».
+#
+# `captures.yml` ne peut pas porter cette boucle : trente écrans, trois langues, deux thèmes, la
+# fiche et le film, soixante-dix minutes. Dix écrans à trois tours chacun, c'est une semaine de
+# machine pour regarder des images dont vingt-neuf sur trente n'ont pas bougé.
+#
+# Celui-ci construit l'app une fois et ne lance qu'UNE classe de test, `RefonteUITests`.
+#
+# ─── LE SIMULATEUR FAIT 390 POINTS DE LARGE, ET C'EST LE POINT ─────────────────────────────────
+#
+# Les artboards du canvas mesurent 390 × 844. La grande campagne photographie un Pro Max de 440
+# points : bon pour la fiche App Store, inutilisable pour comparer, parce qu'il faudrait mettre
+# l'une des deux images à l'échelle et qu'un écart de deux points s'y noie.
+#
+# Un iPhone « e » a exactement cet écran. La capture et la référence se superposent alors pixel
+# sur pixel, et l'écart se MESURE au lieu de se juger.
+#
+# AUCUN SECRET. Rien n'est signé, rien ne part chez Apple.
+
+name: Refonte
+
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      - ".github/workflows/refonte.yml"
+      - "Haizo/DesignSystem/Refonte/**"
+      - "Haizo/Views/Refonte/**"
+      - "HaizoUITests/RefonteUITests.swift"
+      - "Haizo/Resources/Fonts/**"
+
+concurrency:
+  group: refonte
+  cancel-in-progress: true
+
+jobs:
+  refonte:
+    runs-on: macos-26
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Choisir Xcode
+        run: |
+          set -euo pipefail
+          latest=$(ls -d /Applications/Xcode*.app | sort -V | tail -1)
+          echo "→ Xcode retenu : $latest"
+          sudo xcode-select -s "$latest"
+          xcodebuild -version
+
+      - name: Installer XcodeGen
+        run: brew install xcodegen
+
+      - name: Préparer le projet
+        run: sh ci_scripts/prepare_project.sh
+
+      # Un iPhone « e » : 390 × 844 points, l'écran des artboards. S'il n'en existe pas de prêt,
+      # on en crée un sur le dernier iOS installé. Et s'il n'en existe même pas le MODÈLE, on
+      # retombe sur le plus petit iPhone numéroté en le disant haut et fort — une comparaison à
+      # une autre largeur vaut mieux que pas de capture, mais elle ne se lit pas pareil.
+      - name: Trouver un simulateur de 390 points
+        id: sim
+        run: |
+          set -euo pipefail
+          liste=$(xcrun simctl list devices available -j)
+          choisi=$(echo "$liste" | jq -c '
+            [.devices[][] | select(.name | test("^iPhone [0-9]+e$"))]
+            | sort_by(.name | capture("iPhone (?<n>[0-9]+)") | .n | tonumber)
+            | last // empty')
+          nom=$(echo "$choisi" | jq -r '.name // empty')
+          udid=$(echo "$choisi" | jq -r '.udid // empty')
+          if [ -z "$udid" ]; then
+            modele=$(xcrun simctl list devicetypes -j | jq -r '
+              [.devicetypes[] | select(.name | test("^iPhone [0-9]+e$"))] | last | .identifier // empty')
+            systeme=$(xcrun simctl list runtimes available -j | jq -r '
+              [.runtimes[] | select(.platform == "iOS")] | last | .identifier // empty')
+            if [ -n "$modele" ] && [ -n "$systeme" ]; then
+              udid=$(xcrun simctl create "Refonte 390" "$modele" "$systeme")
+              nom="Refonte 390 ($modele)"
+            fi
+          fi
+          if [ -z "$udid" ]; then
+            echo "::warning::Aucun iPhone « e » sur cette machine : la capture ne fera pas 390 points de large."
+            choisi=$(echo "$liste" | jq -c '
+              [.devices[][] | select(.name | test("^iPhone [0-9]+$"))]
+              | sort_by(.name | capture("iPhone (?<n>[0-9]+)") | .n | tonumber)
+              | last // empty')
+            nom=$(echo "$choisi" | jq -r '.name // empty')
+            udid=$(echo "$choisi" | jq -r '.udid // empty')
+          fi
+          if [ -z "$udid" ]; then
+            echo "✗ Aucun simulateur utilisable. Disponibles :"
+            echo "$liste" | jq -r '.devices[][].name' | sort -u
+            exit 1
+          fi
+          echo "→ $nom : $udid"
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      - name: Construire pour les tests
+        run: |
+          set -euo pipefail
+          xcodebuild build-for-testing \
+            -project Haizo.xcodeproj \
+            -scheme Captures \
+            -configuration Debug \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/refonte \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Démarrer le simulateur
+        run: |
+          set -euo pipefail
+          xcrun simctl boot "${{ steps.sim.outputs.udid }}" || true
+          xcrun simctl bootstatus "${{ steps.sim.outputs.udid }}" -b || true
+          # 9:41, pleine batterie : la barre d'état ne doit pas être ce qui diffère entre deux
+          # captures. Si la commande n'existe plus, la capture reste bonne à comparer.
+          xcrun simctl status_bar "${{ steps.sim.outputs.udid }}" override \
+            --time "9:41" --batteryState charged --batteryLevel 100 --cellularBars 4 || true
+
+      - name: Photographier
+        run: |
+          set -euo pipefail
+          for langue in fr-FR; do
+            echo "::group::$langue"
+            TEST_RUNNER_Haizo_REFONTE="1" \
+            TEST_RUNNER_Haizo_LANG="$langue" \
+            TEST_RUNNER_Haizo_CAPTURES_DIR="$PWD/refonte/$langue" \
+              xcodebuild test-without-building \
+                -project Haizo.xcodeproj \
+                -scheme Captures \
+                -destination "id=${{ steps.sim.outputs.udid }}" \
+                -derivedDataPath build/refonte \
+                -only-testing:HaizoUITests/RefonteUITests \
+                CODE_SIGNING_ALLOWED=NO
+            echo "::endgroup::"
+          done
+          ls -la refonte/*/
+
+      - name: Publier les captures de la refonte
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refonte
+          path: refonte/**
+          if-no-files-found: warn
+          retention-days: 14

@@ -8054,3 +8054,107 @@ autres motifs correspondent. Corrigé avant le gate.
 
 Le rouge entre 2 et 3 est le mécanisme qui parle, pas une panne : c'est l'empreinte qui refuse une
 image que le code a dépassée. Huit minutes, le temps du workflow.
+
+## 17 novembre 2026 — la refonte visuelle, étape 1 : les jetons, les composants, la planche
+
+Charlotte a arrêté un design complet sur un canvas de dix écrans et demandé une refonte de toute
+la couche visuelle et de la navigation. Sa méthode est écrite, en cinq points ; celui-ci est le
+premier : « Écris les tokens et les composants de base. Montre-moi une capture de la planche.
+J'approuve avant la suite. » **Rien d'autre n'est commencé, et rien ne le sera avant son accord.**
+
+### Ce que le canvas contient, mesuré
+
+Dix planches de 390 points de large. Une seule fonte, Archivo variable, chargée par le canvas en
+quatre faces seulement — ce qui a une conséquence : un texte sans graisse déclarée s'y affiche en
+500, et un 800 à largeur normale en 700. La référence est ce qui se voit, donc l'app n'a que
+trois graisses d'interface (500, 600, 700) et une d'affichage (800 à 125 %).
+
+Dix rayons, trente-deux styles d'affichage ayant chacun leur interlettrage, vingt-neuf icônes,
+une barre flottante de 60 de haut, des boutons d'action de 58, une semaine en sept points.
+L'encre d'un petit texte sur l'accent est `#2B0011` pour le rose et le blanc pour les trois
+autres couleurs.
+
+### Ce qui est écrit
+
+| | Où |
+| --- | --- |
+| La fonte Archivo, et sa licence | `Haizo/Resources/Fonts/` |
+| Couleurs, accents, intensités | `HZCouleur.swift` |
+| Rayons et espaces partagés | `HZForme.swift` |
+| La fonte et ses trente-deux styles | `HZPolice.swift` |
+| Les vingt-neuf icônes | `design/icones.json` → `ci_scripts/icones.py` → `HZDessins.swift` |
+| Bouton rond, action, bouton en pilule, avatar, amorce de recherche | `HZBoutons.swift` |
+| Pilule, filtre | `HZPilules.swift` |
+| Feuille, titre de section, bandeau du coach | `HZFeuille.swift` |
+| Carte-affiche, tuile, tuile chiffre | `HZCartes.swift` |
+| Ligne de liste, semaine en points | `HZListe.swift` |
+| Barre flottante | `HZBarreFlottante.swift` |
+| Les mesures propres à un écran | `HZEcrans.swift` |
+| La planche, six pages | `Haizo/Views/Refonte/PlancheView.swift` |
+
+### Quatre décisions de méthode
+
+**Un système parallèle.** Les jetons `HZ…` cohabitent avec `RUColor` et `RUFont`. Chaque
+construction poussée reste cohérente : un écran bascule d'un bloc, l'ancien système est retiré
+avec le dernier. Repeindre `RUColor` en place aurait donné, pendant dix écrans, une app à moitié
+dans chaque design.
+
+**Les icônes sont celles du canvas.** « Tu reproduis » : elles sont extraites en géométrie
+neutre et rendues en tracés SwiftUI par un générateur, dont le mode `--verifier` compare le
+Swift à sa source. Cela renverse « les SF Symbols restent » du 11 novembre.
+
+**Les fichiers du canvas n'entrent pas dans le dépôt.** Ils portent des données d'exemple
+personnelles, et le dépôt est public. Seule la géométrie des icônes y entre.
+
+**La planche remonte des morceaux du canvas.** Un composant montré seul sur un fond gris ne se
+compare à rien. Quatre des six pages recomposent donc, avec les seuls composants, le haut de
+l'accueil, sa feuille, le haut du plan et le haut des stats, aux contenus d'exemple du canvas.
+Chaque capture se pose à côté du rendu de la référence et l'écart se mesure.
+
+### L'outillage de comparaison
+
+La campagne de captures dure soixante-dix minutes : elle ne peut pas porter une boucle « capture,
+écarts, correction, nouvelle capture » par écran. `refonte.yml` construit l'app et photographie
+la planche sur un simulateur de 390 points de large en quelques minutes ; un rendu local de
+chaque planche du canvas sert de référence ; un script pose les deux côte à côte avec leur
+différence.
+
+### Ce que la passe locale a refusé, et ce que j'en ai fait
+
+Trois écarts, tous sur la planche :
+
+- trois marges de 20 et 22, hors de la grille de `RUSpacing` ;
+- « CG », les initiales de l'avatar, écrites en capitales.
+
+Les deux gardes appartiennent à l'ancien système et jugeaient un fichier du nouveau. La
+correction facile était une dispense dans chacun. Elle aurait été fausse deux fois.
+
+**Pour les marges**, le défaut n'était pas d'être hors grille, mais d'être écrites dans la vue :
+le point 5 de la méthode dit « aucune valeur en dur dans les vues », et la planche en portait
+trente-cinq. Elles ont toutes un nom maintenant, dans le système de design. Et comme
+`check_grille.py` ne lit que trois écritures — il n'a jamais vu un `.frame(width: 318)` —, un
+nouveau garde tient la règle sans liste : `check_valeurs.py` refuse tout nombre dans une vue de
+la refonte. Vingt-deux cas. `check_grille.py` lui passe les deux dossiers, avec la raison écrite,
+et échoue si son remplaçant disparaît.
+
+**Pour les initiales**, le littéral n'avait pas à exister : dans l'app, des initiales se
+calculent à partir d'un nom. `HZAvatar.initiales(prenom:nom:)` le fait, la planche l'appelle, et
+la capitale posée à l'exécution est inscrite dans `PERMIS_A_LA_VOLEE` avec la même raison que les
+deux entrées qui y étaient : des lettres, pas un mot.
+
+### Ce qui n'est pas prouvé à l'heure du commit
+
+Il n'y a pas de compilateur Swift sur la machine où ce code est écrit. Deux mille deux cents
+lignes n'ont donc jamais été compilées : TestFlight est le premier banc. Et l'axe de largeur
+d'Archivo ne s'atteint que par un attribut de variation CoreText ; s'il ne prenait pas, tous les
+grands chiffres seraient étroits. La première page de la planche imprime donc la famille résolue
+et l'état des deux axes, pour que la capture le dise elle-même.
+
+### Ce qui attend Charlotte avec la planche
+
+- Le canvas montre un interrupteur Clair / Sombre et ne dessine qu'un mode.
+- Trois intensités : la couleur d'une séance de qualité qui n'est pas celle du jour n'est pas
+  dessinée.
+- Le texte agrandi : l'interface suit le réglage jusqu'à 1,3 fois, l'affichage ne bouge pas. À
+  reprendre écran par écran.
+- Cinquante-trois écrans dans l'app, dix dans le canvas.

@@ -231,6 +231,20 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains("--verrouille")
     }
 
+    /// `--planche=3` : montrer une page de la planche de la refonte à la place de l'app.
+    ///
+    /// La refonte du 17 novembre commence par ses jetons et ses composants de base, et ils
+    /// doivent être APPROUVÉS sur une capture avant qu'un seul écran soit refait. La planche est
+    /// cette capture : six pages, dont quatre remontent un morceau du canvas avec les seuls
+    /// composants. Voir `PlancheView`.
+    ///
+    /// `nil` quand le drapeau est absent — c'est-à-dire toujours, hors de la chaîne de capture.
+    static var plancheDemandee: Int? {
+        ProcessInfo.processInfo.arguments
+            .first { $0.hasPrefix("--planche=") }
+            .flatMap { Int($0.dropFirst("--planche=".count)) }
+    }
+
     /// `--seance` : ouvrir la feuille de la séance du jour.
     ///
     /// C'est l'écran qu'on ouvre AVANT de courir — le détail de la séance, son découpage en

@@ -524,6 +524,7 @@ vivait que dans leur somme. `check_lancement.py` refait l'addition à chaque CI.
 | L'avatar et le récap de fin de course gardent leur dégradé, comme le logo | 15 novembre 2026 |
 | **L'app s'appelle Haizo.** L'identifiant de l'app, le groupe applicatif, le domaine, le schéma d'URL, l'en-tête HTTP et les variables Vercel ne changent PAS : invisibles, et leur renommage coûte une panne. Le dépôt GitHub non plus, parce que l'adresse de confidentialité de la fiche App Store contient son nom. Le journal raconte l'avant ; `check_marque.py` tient l'après. | 16 novembre 2026 |
 | **La graphie : en capitales au logo et à l'écran de lancement, en capitale initiale dans les phrases.** Dans une phrase, c'est un mot, pas un cri. | 16 novembre 2026 |
+| **La refonte visuelle : le canvas fait foi.** « Le design est arrêté. Tu ne réinterprètes pas, tu reproduis. » Voir § 10 pour ce qu'elle renverse dans ce tableau, écran par écran. | 17 novembre 2026 |
 
 ---
 
@@ -686,3 +687,70 @@ Ce qu'il garde, dans l'ordre des questions qu'on se pose en l'ouvrant : **qu'est
 aujourd'hui · qu'est-ce que je viens de faire · où j'en suis dans mon plan · suis-je à jour de ma
 journée.** Quatre blocs. Ce qui a été retiré ce jour-là — les trente derniers jours, les trois
 mesures du jour, le pied du programme — vit en entier à un tap de là.
+
+---
+
+## 10. La refonte du 17 novembre : le canvas fait foi
+
+Charlotte a arrêté un design complet, dessiné hors de l'app, sur un canvas de dix écrans :
+Accueil, Plan, Run, Resume, Coach, Stats, Club, Explorer, Profil, Reglages. Sa consigne tient en
+deux phrases : « Ces fichiers sont la référence exacte : tailles, couleurs, rayons, espacements
+et graisses y sont écrits en clair. Tu ne réinterprètes pas, tu reproduis. »
+
+**Tant que la refonte est en cours, deux systèmes cohabitent.** Les §§ 1 à 9 décrivent l'app
+livrée, écran par écran, jusqu'à ce que chacun bascule ; ce § décrit ce vers quoi elle va. Le
+nouveau système vit dans `Haizo/DesignSystem/Refonte/` sous le préfixe `HZ`, les écrans refaits
+dans `Haizo/Views/Refonte/`. Un écran bascule d'un bloc — refait à partir des composants, jamais
+repeint par-dessus l'existant — et l'ancien système est retiré avec le dernier.
+
+### Ce qui change
+
+| | L'app livrée | Le canvas |
+| --- | --- | --- |
+| La fonte | Oswald pour l'affichage, Inter pour le texte | **Archivo variable**, seule. Affichage : graisse 800, largeur 125 %. Interface : largeur 100 %, graisses 500, 600, 700. Chiffres tabulaires. |
+| L'accent | huit nuanciers, trois valeurs chacun | **quatre couleurs d'app**, une valeur chacune, un seul jeton d'accent |
+| Les intensités | six teintes | **trois** : vert, bleu, violet |
+| Les rayons | cinq, de 2 à 24 | **dix**, de 14 à 36 : cartes 36, feuilles 30, tuiles 24, groupes 22, boutons en pilule |
+| La grille | un pas de 2 jusqu'à 14, puis 18, 24 | les mesures du canvas, écran par écran, chacune nommée |
+| Les icônes | SF Symbols | les **vingt-neuf dessins du canvas**, trait pour trait |
+| La navigation | barre d'onglets du système | **barre flottante noire** : Aujourd'hui, Explorer, Club, Stats, Coach. Le profil par l'avatar, le plan par les points de la semaine. |
+| Les surfaces | cartes bordées, fond chaud | aplats : accent, noir, blanc, gris clair. **Aucun dégradé, aucune ombre, aucun trait décoratif.** |
+
+### La règle du rose
+
+**Jamais de petit texte blanc sur l'accent.** Sur le rose, un libellé s'écrit dans l'encre
+sombre de l'accent ; le blanc y est réservé aux grands chiffres et aux titres. Les trois autres
+couleurs d'app sont assez sombres pour porter du blanc à toutes les tailles : leur encre est le
+blanc. C'est `HZAccent.encre`, et c'est la seule différence de traitement entre les quatre.
+
+### Ce que la refonte renverse dans le § 7
+
+Aucune de ces lignes n'est renversée tant que l'écran qui la porte n'a pas basculé.
+
+| Décision du § 7 | Ce que le canvas en fait |
+| --- | --- |
+| **D1** — huit nuanciers | quatre couleurs. L'habillage « Teinté » disparaît. |
+| **D3** — cinq entrées dans la barre | toujours cinq, mais pas les mêmes : le profil en sort, Explorer et Club y entrent. |
+| Le Club reste sous l'onglet Profil | le Club est une entrée de la barre. |
+| Les SF Symbols restent | remplacés par les dessins du canvas, là où le canvas en dessine un. |
+| Les six teintes d'intensité | trois. |
+| L'avatar garde son dégradé | l'avatar est un disque uni portant deux initiales. |
+| La signature : la carte de nuit (§ 9) | la signature devient l'aplat d'accent et le très grand chiffre. |
+
+### Ce que la refonte ne touche pas
+
+Les données, la logique, le coach, le GPS, les calculs. Les contenus du canvas sont des
+exemples : chaque écran branche les vraies données de l'app à leur place. Les cartes de Run et
+de Resume sont dessinées à la main dans la maquette ; l'app garde sa vraie carte, avec le tracé
+dans la couleur d'accent sur liseré blanc.
+
+### Les gardes de la refonte
+
+- `check_valeurs.py` — une vue de la refonte ne contient pas un nombre. Toute mesure porte un
+  nom et se déclare dans le système de design.
+- `check_grille.py` et `check_majuscules.py` continuent de tenir l'ancienne app ; le premier
+  passe les deux dossiers de la refonte au garde ci-dessus, dont la règle est plus dure.
+- La comparaison côte à côte : chaque écran est photographié sur un simulateur de 390 points de
+  large — la largeur des planches du canvas — et posé à côté du rendu de sa référence. C'est
+  elle, et aucun script, qui dit si une valeur nommée est la bonne.
+

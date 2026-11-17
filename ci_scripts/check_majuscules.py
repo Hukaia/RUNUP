@@ -125,6 +125,9 @@ PERMIS_A_LA_VOLEE: dict = {
     "Haizo/Views/Components/AvatarView.swift": (
         3, "l'initiale d'un prénom dans une pastille d'avatar. Même raison : une lettre, pas un "
            "mot."),
+    "Haizo/DesignSystem/Refonte/HZBoutons.swift": (
+        1, "`HZAvatar.initiales` — l'avatar de la refonte, deux initiales au lieu d'une : celle "
+           "du prénom, celle du nom. Des lettres, pas un mot."),
 }
 
 PERMIS = {
