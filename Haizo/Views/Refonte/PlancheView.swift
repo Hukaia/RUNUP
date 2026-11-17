@@ -43,7 +43,7 @@ struct PlancheView: View {
 
     private func legende(_ texte: String) -> some View {
         Text(verbatim: texte)
-            .font(HZPolice.texte(.c12, .semi))
+            .hzTexte(.c12, .semi)
             .foregroundStyle(HZCouleur.secondaireSurClair)
             .padding(.top, HZPlanche.avantUneLegende)
             .padding(.bottom, HZPlanche.apresUneLegende)
@@ -75,7 +75,7 @@ struct PlancheView: View {
                 .hzAffichage(.section)
                 .foregroundStyle(HZCouleur.encre)
             Text(verbatim: constat)
-                .font(HZPolice.texte(.c12, .semi))
+                .hzTexte(.c12, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
                 .padding(.top, HZPlanche.fin)
 
@@ -83,7 +83,7 @@ struct PlancheView: View {
             HStack(spacing: HZPlanche.ecart) {
                 ForEach(HZAccent.allCases) { accent in
                     Text(verbatim: "Libellé")
-                        .font(HZPolice.texte(.c13, .gras))
+                        .hzTexte(.c13, .gras)
                         .foregroundStyle(accent.encre)
                         .frame(maxWidth: .infinity)
                         .frame(height: HZPlanche.echantillon)
@@ -176,23 +176,23 @@ struct PlancheView: View {
             }
             legende("Interface, largeur 100 et graisses 700, 600, 500 : 20, 16, 15, 14, 13, 12")
             Group {
-                Text(verbatim: "Fractionné léger").font(HZPolice.texte(.c20, .gras))
-                Text(verbatim: "Sortie longue").font(HZPolice.texte(.c16, .semi))
-                Text(verbatim: "Où cours-tu aujourd'hui ?").font(HZPolice.texte(.c15, .semi))
+                Text(verbatim: "Fractionné léger").hzTexte(.c20, .gras)
+                Text(verbatim: "Sortie longue").hzTexte(.c16, .semi)
+                Text(verbatim: "Où cours-tu aujourd'hui ?").hzTexte(.c15, .semi)
                 Text(verbatim: "Tu as peu dormi. J'ai gardé le fractionné.")
-                    .font(HZPolice.texte(.c14, .medium))
+                    .hzTexte(.c14, .medium)
                 Text(verbatim: "Dim. 15 nov. · 19h · récupération")
-                    .font(HZPolice.texte(.c13, .medium))
+                    .hzTexte(.c13, .medium)
                     .foregroundStyle(HZCouleur.secondaireSurClair)
                 Text(verbatim: "Route · Trail · HYROX · Clubs · Courses")
-                    .font(HZPolice.texte(.c12, .semi))
+                    .hzTexte(.c12, .semi)
             }
             .padding(.bottom, HZPlanche.fin)
             legende("Chiffres tabulaires, puis proportionnels : les deux lignes du haut s'alignent")
             Group {
-                Text(verbatim: "1111 · 11:11").font(HZPolice.texte(.c20, .gras, tabulaire: true))
-                Text(verbatim: "0000 · 00:00").font(HZPolice.texte(.c20, .gras, tabulaire: true))
-                Text(verbatim: "1111 · 11:11").font(HZPolice.texte(.c20, .gras))
+                Text(verbatim: "1111 · 11:11").hzTexte(.c20, .gras, tabulaire: true)
+                Text(verbatim: "0000 · 00:00").hzTexte(.c20, .gras, tabulaire: true)
+                Text(verbatim: "1111 · 11:11").hzTexte(.c20, .gras)
             }
         }
         .foregroundStyle(HZCouleur.encre)
@@ -225,7 +225,7 @@ struct PlancheView: View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(verbatim: "Mardi 17 novembre")
-                        .font(HZPolice.texte(.c15, .gras))
+                        .hzTexte(.c15, .gras)
                         .foregroundStyle(HZCouleur.encreSurAccent)
                     Spacer(minLength: 0)
                     HZPilule(texte: "Aujourd'hui")
@@ -237,7 +237,7 @@ struct PlancheView: View {
                     .hzAffichage(.seance)
                     .padding(.leading, -HZAccueil.debordDuNombre)
                 Text(verbatim: "Fractionné léger")
-                    .font(HZPolice.texte(.c20, .gras))
+                    .hzTexte(.c20, .gras)
                     .padding(.top, HZAccueil.sousLeNombre)
                 HZPilule(texte: "45 min · 4:22/km · Z3", style: .chiffres)
                     .padding(.top, HZAccueil.sousLeNom)
@@ -277,10 +277,10 @@ struct PlancheView: View {
             HZTuile(libelle: jour, valeur: duree, fond: fond)
             VStack(alignment: .leading, spacing: 0) {
                 Text(verbatim: titre)
-                    .font(HZPolice.texte(.c15, .gras))
+                    .hzTexte(.c15, .gras)
                     .foregroundStyle(HZCouleur.encre)
                 Text(verbatim: precision)
-                    .font(HZPolice.texte(.c13, .medium))
+                    .hzTexte(.c13, .medium)
                     .foregroundStyle(HZCouleur.secondaireSurClair)
             }
             .lineLimit(1)
@@ -357,7 +357,7 @@ struct PlancheView: View {
                         .hzAffichage(.titreDePage)
                         .foregroundStyle(HZCouleur.blanc)
                     Text(verbatim: "16 au 22 novembre · 4 séances")
-                        .font(HZPolice.texte(.c15, .semi))
+                        .hzTexte(.c15, .semi)
                         .foregroundStyle(HZCouleur.secondaireSurSombre)
                 }
                 .padding(.horizontal, HZEspace.margeDeTitre)
@@ -365,31 +365,39 @@ struct PlancheView: View {
 
                 // La rangée des jours du plan n'est pas un composant de base : sa place reste
                 // libre, pour que la carte tombe là où le canvas la pose.
-                HStack(spacing: HZEspace.entreTuiles) {
-                    HZCarteAffiche(jour: "Lundi 16 novembre", etiquette: "Fait", nombre: "40'",
-                                   titre: "Footing facile",
-                                   mesures: [HZMesure(valeur: "40", libelle: "minutes"),
-                                             HZMesure(valeur: "Z2", libelle: "zone")],
-                                   fond: HZIntensite.facile.couleur)
-                    HZCarteAffiche(jour: "Mardi 17 novembre", etiquette: "Aujourd'hui",
-                                   prefixe: "5 ×", nombre: "500", style: .carteDuJour,
-                                   titre: "Fractionné léger",
-                                   mesures: [HZMesure(valeur: "45", libelle: "minutes"),
-                                             HZMesure(valeur: "4:22", libelle: "par km"),
-                                             HZMesure(valeur: "Z3", libelle: "zone")],
-                                   fond: HZCouleur.accent,
-                                   encreSecondaire: HZCouleur.encreSurAccent)
-                    HZCarteAffiche(jour: "Mercredi 18 novembre", etiquette: "Repos", nombre: "Off",
-                                   titre: "Jour de repos",
-                                   mesures: [HZMesure(valeur: "10", libelle: "min mobilité")],
-                                   fond: HZCouleur.surfaceSombre)
-                }
-                .fixedSize()
-                .offset(x: HZPlan.departDeLaCarte - (HZCarteAffiche.largeur + HZEspace.entreTuiles))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .frame(height: HZCarteAffiche.hauteur)
-                .clipped()
-                .padding(.top, HZPlan.sousLEntete + HZPlan.rangeeDesJours + HZPlan.sousLesJours)
+                //
+                // Les trois cartes font plus de deux largeurs d'écran. Posées dans un cadre, elles
+                // l'ÉLARGISSENT, et la pile entière — en-tête, titre, boutons, feuille — est alors
+                // centrée sur cette largeur : tout le plan glisse de moitié vers la gauche. Le
+                // cadre est donc une surface vide de la bonne hauteur, et les cartes y débordent
+                // en superposition, alignées sur son bord de départ.
+                Color.clear
+                    .frame(height: HZCarteAffiche.hauteur)
+                    .overlay(alignment: .leading) {
+                        HStack(spacing: HZEspace.entreTuiles) {
+                            HZCarteAffiche(jour: "Lundi 16 novembre", etiquette: "Fait", nombre: "40'",
+                                           titre: "Footing facile",
+                                           mesures: [HZMesure(valeur: "40", libelle: "minutes"),
+                                                     HZMesure(valeur: "Z2", libelle: "zone")],
+                                           fond: HZIntensite.facile.couleur)
+                            HZCarteAffiche(jour: "Mardi 17 novembre", etiquette: "Aujourd'hui",
+                                           prefixe: "5 ×", nombre: "500", style: .carteDuJour,
+                                           titre: "Fractionné léger",
+                                           mesures: [HZMesure(valeur: "45", libelle: "minutes"),
+                                                     HZMesure(valeur: "4:22", libelle: "par km"),
+                                                     HZMesure(valeur: "Z3", libelle: "zone")],
+                                           fond: HZCouleur.accent,
+                                           encreSecondaire: HZCouleur.encreSurAccent)
+                            HZCarteAffiche(jour: "Mercredi 18 novembre", etiquette: "Repos", nombre: "Off",
+                                           titre: "Jour de repos",
+                                           mesures: [HZMesure(valeur: "10", libelle: "min mobilité")],
+                                           fond: HZCouleur.surfaceSombre)
+                        }
+                        .fixedSize()
+                        .offset(x: HZPlan.departDeLaCarte - (HZCarteAffiche.largeur + HZEspace.entreTuiles))
+                    }
+                    .clipped()
+                    .padding(.top, HZPlan.sousLEntete + HZPlan.rangeeDesJours + HZPlan.sousLesJours)
 
                 HStack(spacing: HZEspace.entreCommandes) {
                     HZBoutonPilule(libelle: "Démarrer", dessin: .lecture, fond: HZCouleur.blanc,
@@ -427,20 +435,21 @@ struct PlancheView: View {
                         .hzAffichage(.titreDEcran)
                         .foregroundStyle(HZCouleur.blanc)
                     Spacer(minLength: 0)
-                    HZBoutonPilule(libelle: "Historique", hauteur: .petite,
-                                   fond: HZCouleur.surfaceSombre) {}
+                    HZBoutonPilule(libelle: "Historique", suite: .chevron, hauteur: .petite,
+                                   graisse: .semi, fond: HZCouleur.surfaceSombre,
+                                   ecart: HZBoutonPilule.ecartDeSuite) {}
                 }
                 .padding(.horizontal, HZEspace.marge)
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(verbatim: "Depuis le 11 octobre")
-                        .font(HZPolice.texte(.c15, .semi))
+                        .hzTexte(.c15, .semi)
                         .foregroundStyle(HZCouleur.secondaireSurSombre)
                     Text(verbatim: "118")
                         .hzAffichage(.total)
                         .padding(.leading, -HZStats.debordDuTotal)
                     Text(verbatim: "kilomètres courus")
-                        .font(HZPolice.texte(.c20, .gras))
+                        .hzTexte(.c20, .gras)
                         .padding(.top, HZStats.sousLeTotal)
                 }
                 .foregroundStyle(HZCouleur.blanc)

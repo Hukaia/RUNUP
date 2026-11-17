@@ -53,7 +53,7 @@ struct HZTitreDeSection: View {
             if let lien {
                 Button(action: action) {
                     Text(lien)
-                        .font(HZPolice.texte(.c14, .gras))
+                        .hzTexte(.c14, .gras)
                         .foregroundStyle(HZCouleur.encre)
                 }
                 .buttonStyle(.plain)
@@ -75,8 +75,7 @@ struct HZBandeauDuCoach: View {
                 .frame(width: HZDiametre.pas.rawValue, height: HZDiametre.pas.rawValue)
                 .background(HZCouleur.encre, in: Circle())
             Text(texte)
-                .font(HZPolice.texte(.c14, .medium))
-                .lineSpacing(HZPolice.espaceEntreLignes(HZBandeauDuCoach.interligne, pour: .c14))
+                .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
                 .foregroundStyle(HZCouleur.encre)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }

@@ -72,12 +72,6 @@ enum HZPolice {
                      largeur: largeurDInterface, tabulaire: tabulaire) as CTFont)
     }
 
-    /// Ce qu'il faut ajouter entre deux lignes pour obtenir l'interligne que le canvas écrit en
-    /// multiple du corps (`line-height: 1.35`). SwiftUI compte en points AJOUTÉS à l'interligne
-    /// naturel, CSS en multiple du corps : c'est la différence des deux.
-    static func espaceEntreLignes(_ multiple: CGFloat, pour corps: HZCorps) -> CGFloat {
-        max(0, (multiple - interligneNaturel) * aLEchelle(corps.rawValue))
-    }
 
     // MARK: - La fabrication
 
@@ -101,6 +95,9 @@ enum HZPolice {
 
     /// Même mécanisme que `RUFont` : la catégorie vient de `TextSizeStore`, pour que le
     /// changement de réglage invalide les vues qui ont dessiné du texte.
+    /// La taille réelle d'un corps de texte, une fois le réglage de l'utilisateur appliqué.
+    static func taille(_ corps: HZCorps) -> CGFloat { aLEchelle(corps.rawValue) }
+
     private static func aLEchelle(_ taille: CGFloat) -> CGFloat {
         let traits = UITraitCollection(preferredContentSizeCategory: TextSizeStore.shared.category)
         let voulue = UIFontMetrics(forTextStyle: .body).scaledValue(for: taille, compatibleWith: traits)
@@ -130,6 +127,41 @@ enum HZPolice {
 }
 
 /// Les corps du texte d'interface. Huit, et le canvas n'en emploie pas d'autre.
+/// LA LIGNE, TELLE QUE LE CANVAS LA COMPTE.
+///
+/// Le canvas est du HTML, rendu par Chromium, et Chromium ne compte pas une ligne comme SwiftUI :
+///
+/// - il ARRONDIT à l'entier l'ascendante et la descendante de la fonte. À 12 points, Archivo fait
+///   10,5 + 2,5 : Chromium compte 11 + 3 = 14 de haut, SwiftUI 13,06, puis 13,33 une fois calé
+///   sur le pixel. À 13 points, 14 contre 14,33. Une ligne n'est jamais de la même hauteur d'un
+///   côté et de l'autre, et l'écart se cumule du haut de l'écran jusqu'en bas ;
+/// - quand l'interligne est PLUS PETIT que le texte (0,92 pour un grand chiffre), il coupe la
+///   différence en deux et ARRONDIT LA DEMI-MARGE VERS LE BAS. Un grand chiffre y descend d'un
+///   point de moins qu'au centrage naïf.
+///
+/// Mesuré le 17 novembre sur la planche de l'étape 1 : les points de la semaine à 0,7 pt trop
+/// haut, les tuiles de stats à 0,33 pt trop hautes chacune (86,33 contre 86,00), le « 500 » et
+/// le « 118 » à 1,0 pt trop bas. Une seule cause, quatre symptômes.
+///
+/// Les deux ratios sont ceux de la table `hhea` du fichier de fonte (878 et 210 sur 1000).
+enum HZLigne {
+    static let ascendante: CGFloat = 0.878
+    static let descendante: CGFloat = 0.210
+
+    static func haut(_ taille: CGFloat) -> CGFloat { (ascendante * taille).rounded() }
+    static func bas(_ taille: CGFloat) -> CGFloat { (descendante * taille).rounded() }
+
+    /// `line-height: normal` : la hauteur d'une ligne sans interligne imposé.
+    static func normale(_ taille: CGFloat) -> CGFloat { haut(taille) + bas(taille) }
+
+    /// La distance du haut d'une boîte de ligne à sa ligne de base, pour une boîte de `hauteur`.
+    static func base(taille: CGFloat, hauteur: CGFloat) -> CGFloat {
+        haut(taille) + ((hauteur - normale(taille)) / HZLigne.moitie).rounded(.down)
+    }
+
+    static let moitie: CGFloat = 2
+}
+
 enum HZCorps: CGFloat {
     case c12 = 12, c13 = 13, c14 = 14, c15 = 15, c16 = 16, c17 = 17, c20 = 20, c24 = 24
 }
@@ -253,10 +285,7 @@ private struct HZAffichageModifier: ViewModifier {
             .font(style.fonte)
             .tracking(style.interlettrage)
         if let interligne = style.interligne {
-            compose
-                .lineLimit(1)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(height: style.taille * interligne)
+            compose.hzLigne(taille: style.taille, hauteur: style.taille * interligne)
         } else {
             compose
         }
@@ -268,5 +297,62 @@ extension View {
     /// quand le style en fixe une. Voir `HZAffichage`.
     func hzAffichage(_ style: HZAffichage) -> some View {
         modifier(HZAffichageModifier(style: style))
+    }
+}
+
+/// UNE BOÎTE DE LIGNE : une hauteur imposée, et la ligne de base posée là où Chromium la pose.
+///
+/// La ligne de base est placée par un guide d'alignement, pas par un centrage : SwiftUI arrondit
+/// à sa façon la hauteur propre du texte, et un centrage hériterait de cet arrondi. Le guide
+/// dit seulement « la ligne de base est à tant du haut de la boîte », quelle que soit la
+/// hauteur que SwiftUI donne au texte.
+private struct HZBoiteDeLigne: ViewModifier {
+    let taille: CGFloat
+    let hauteur: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .lineLimit(1)
+            .fixedSize(horizontal: false, vertical: true)
+            .alignmentGuide(.top) { dimensions in
+                dimensions[.firstTextBaseline] - HZLigne.base(taille: taille, hauteur: hauteur)
+            }
+            .frame(height: hauteur, alignment: .top)
+    }
+}
+
+extension View {
+    /// Une ligne unique de `hauteur`, dont la base tombe là où elle tombe dans le canvas.
+    func hzLigne(taille: CGFloat, hauteur: CGFloat) -> some View {
+        modifier(HZBoiteDeLigne(taille: taille, hauteur: hauteur))
+    }
+
+    /// Un texte d'interface sur UNE ligne, de la hauteur que le canvas lui donne.
+    ///
+    /// Un paragraphe qui peut passer à la ligne n'emploie pas ceci : il reste en
+    /// `.font(HZPolice.texte(…))`, et son interligne est celui du canvas, écran par écran.
+    func hzTexte(_ corps: HZCorps, _ graisse: HZGraisse, tabulaire: Bool = false) -> some View {
+        let taille = HZPolice.taille(corps)
+        return font(HZPolice.texte(corps, graisse, tabulaire: tabulaire))
+            .hzLigne(taille: taille, hauteur: HZLigne.normale(taille))
+    }
+}
+
+extension View {
+    /// Un paragraphe, avec l'interligne du canvas.
+    ///
+    /// `line-height: 1.35` en CSS donne à CHAQUE ligne 1,35 fois la taille, la différence étant
+    /// coupée en deux, au-dessus et au-dessous du texte. `lineSpacing` de SwiftUI n'ajoute de
+    /// l'espace qu'ENTRE les lignes : un paragraphe de deux lignes y perd deux demi-marges, et
+    /// tout ce qui le suit remonte d'autant (2 points sur le bandeau du coach). La demi-marge du
+    /// haut et du bas est donc rendue par un remplissage.
+    func hzParagraphe(_ corps: HZCorps, _ graisse: HZGraisse, interligne: CGFloat) -> some View {
+        let taille = HZPolice.taille(corps)
+        let police = HZPolice.uiFonte(taille: taille, graisse: graisse.rawValue,
+                                      largeur: HZPolice.largeurDInterface, tabulaire: false)
+        let ecart = max(0, taille * interligne - police.lineHeight)
+        return font(HZPolice.texte(corps, graisse))
+            .lineSpacing(ecart)
+            .padding(.vertical, ecart / HZLigne.moitie)
     }
 }

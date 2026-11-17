@@ -39,11 +39,11 @@ struct HZLigneDeListe<Tete: View, Queue: View>: View {
             tete()
             VStack(alignment: .leading, spacing: 0) {
                 Text(titre)
-                    .font(HZPolice.texte(.c16, graisse))
+                    .hzTexte(.c16, graisse)
                     .foregroundStyle(HZCouleur.encre)
                 if let sousTitre {
                     Text(sousTitre)
-                        .font(HZPolice.texte(.c13, .medium))
+                        .hzTexte(.c13, .medium)
                         .foregroundStyle(HZCouleur.secondaireSurClair)
                 }
             }
@@ -79,10 +79,10 @@ struct HZValeurDeLigne: View {
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
             Text(valeur)
-                .font(HZPolice.texte(.c16, .gras, tabulaire: true))
+                .hzTexte(.c16, .gras, tabulaire: true)
                 .foregroundStyle(HZCouleur.encre)
             Text(precision)
-                .font(HZPolice.texte(.c13, .medium, tabulaire: true))
+                .hzTexte(.c13, .medium, tabulaire: true)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
         }
         .lineLimit(1)
@@ -119,7 +119,7 @@ struct HZSemaineEnPoints: View {
                 // grand, son centre reste à la même hauteur d'un jour à l'autre.
                 VStack(spacing: HZSemaineEnPoints.sousLInitiale) {
                     Text(jour.initiale)
-                        .font(HZPolice.texte(.c12, .gras))
+                        .hzTexte(.c12, .gras)
                         .foregroundStyle(HZCouleur.encreSurAccent)
                     point(jour.etat)
                         .frame(height: HZSemaineEnPoints.grandPoint)

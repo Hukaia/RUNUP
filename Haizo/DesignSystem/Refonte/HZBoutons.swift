@@ -77,7 +77,7 @@ struct HZAction: View {
                     .frame(width: HZDiametre.action.rawValue, height: HZDiametre.action.rawValue)
                     .background(pleine ? HZCouleur.blanc : HZCouleur.voile, in: Circle())
                 Text(libelle)
-                    .font(HZPolice.texte(.c13, .gras))
+                    .hzTexte(.c13, .gras)
                     .foregroundStyle(HZCouleur.encreSurAccent)
                     .lineLimit(1)
                     .minimumScaleFactor(HZAction.retraitDuLibelle)
@@ -121,7 +121,10 @@ enum HZHauteurDeBouton: CGFloat {
 struct HZBoutonPilule: View {
     let libelle: String
     var dessin: HZDessin? = nil
+    /// Un dessin APRÈS le libellé : le chevron de « Historique ».
+    var suite: HZDessin? = nil
     var hauteur: HZHauteurDeBouton = .grande
+    var graisse: HZGraisse = .gras
     var fond: Color = HZCouleur.encre
     var couleur: Color = HZCouleur.blanc
     /// Prend toute la largeur offerte. Sinon, celle de son contenu.
@@ -138,9 +141,13 @@ struct HZBoutonPilule: View {
                     HZIcone(dessin: dessin, cote: cote, trait: trait, couleur: couleur)
                 }
                 Text(libelle)
-                    .font(HZPolice.texte(hauteur.corps, .gras))
+                    .hzTexte(hauteur.corps, graisse)
                     .foregroundStyle(couleur)
                     .lineLimit(1)
+                if let suite {
+                    HZIcone(dessin: suite, cote: HZBoutonPilule.coteDeSuite,
+                            trait: HZBoutonPilule.traitDeSuite, couleur: couleur)
+                }
             }
             .padding(.horizontal, hauteur.marge)
             .frame(maxWidth: etendu ? .infinity : nil)
@@ -156,6 +163,10 @@ struct HZBoutonPilule: View {
     static let ecartDeLecture: CGFloat = 10
     /// Le triangle de lecture, dans une pilule : 14, là où une icône au trait en fait 18.
     static let coteDeLecture: CGFloat = 14
+    /// Le chevron qui suit un libellé : 14 de côté, tracé à 2,4, à six points du mot.
+    static let coteDeSuite: CGFloat = 14
+    static let traitDeSuite: CGFloat = 2.4
+    static let ecartDeSuite: CGFloat = 6
 }
 
 /// L'AVATAR : des initiales dans un disque. Il ouvre le profil — c'est par lui qu'on y entre
@@ -170,7 +181,7 @@ struct HZAvatar: View {
     var body: some View {
         Button(action: action) {
             Text(initiales)
-                .font(HZPolice.texte(.c14, .gras))
+                .hzTexte(.c14, .gras)
                 .foregroundStyle(HZCouleur.blanc)
                 .lineLimit(1)
                 .frame(width: HZDiametre.commande.rawValue, height: HZDiametre.commande.rawValue)
@@ -205,7 +216,7 @@ struct HZAmorceDeRecherche: View {
                 HZIcone(dessin: .recherche, cote: HZAmorceDeRecherche.loupe,
                         trait: HZAmorceDeRecherche.trait, couleur: HZCouleur.blanc)
                 Text(invite)
-                    .font(HZPolice.texte(.c15, .semi))
+                    .hzTexte(.c15, .semi)
                     .foregroundStyle(HZCouleur.blanc)
                     .lineLimit(1)
                 Spacer(minLength: 0)
@@ -238,7 +249,7 @@ struct HZCategorie: View {
                     .frame(width: HZDiametre.categorie.rawValue, height: HZDiametre.categorie.rawValue)
                     .background(HZCouleur.surfaceClaire, in: Circle())
                 Text(libelle)
-                    .font(HZPolice.texte(.c12, .semi))
+                    .hzTexte(.c12, .semi)
                     .foregroundStyle(HZCouleur.encre)
                     .lineLimit(1)
                     .minimumScaleFactor(HZAction.retraitDuLibelle)

@@ -30,7 +30,7 @@ struct HZCarteAffiche: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text(jour)
-                    .font(HZPolice.texte(.c15, .gras))
+                    .hzTexte(.c15, .gras)
                     .foregroundStyle(encreSecondaire)
                     .lineLimit(1)
                 Spacer(minLength: HZEspace.entrePilules)
@@ -45,16 +45,16 @@ struct HZCarteAffiche: View {
                 .hzAffichage(style)
                 .padding(.leading, HZCarteAffiche.rattrapageOptique)
             Text(titre)
-                .font(HZPolice.texte(.c20, .gras))
+                .hzTexte(.c20, .gras)
                 .lineLimit(1)
                 .padding(.top, HZCarteAffiche.sousLeNombre)
             HStack(alignment: .top, spacing: 0) {
                 ForEach(colonnes) { mesure in
                     VStack(alignment: .leading, spacing: HZCarteAffiche.entreValeurEtLibelle) {
                         Text(mesure.valeur)
-                            .font(HZPolice.texte(.c24, .gras, tabulaire: true))
+                            .hzTexte(.c24, .gras, tabulaire: true)
                         Text(mesure.libelle)
-                            .font(HZPolice.texte(.c13, .gras))
+                            .hzTexte(.c13, .gras)
                             .foregroundStyle(encreSecondaire)
                     }
                     .lineLimit(1)
@@ -141,13 +141,17 @@ struct HZTuile: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(libelle)
-                .font(HZPolice.texte(.c13, graisseDuLibelle))
+                .hzTexte(.c13, graisseDuLibelle)
                 .foregroundStyle(encreDuLibelle)
                 .lineLimit(1)
             Spacer(minLength: 0)
             Text(valeur)
                 .hzAffichage(format.style)
                 .foregroundStyle(HZCouleur.blanc)
+                // Une durée de plus de quatre signes (« 1h20 ») remplit les 132 points de la
+                // tuile : elle rétrécit plutôt que de se couper — une durée tronquée est une durée
+                // fausse. Le canvas, lui, laisse le texte déborder sous le bord de la tuile.
+                .minimumScaleFactor(HZTuile.retrait)
         }
         .padding(.top, HZEspace.tuile)
         .padding(.horizontal, HZEspace.tuile)
@@ -156,6 +160,8 @@ struct HZTuile: View {
         .background(fond, in: RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
         .accessibilityElement(children: .combine)
     }
+
+    static let retrait: CGFloat = 0.8
 }
 
 /// Où une tuile de chiffre est posée.
@@ -184,7 +190,7 @@ struct HZTuileChiffre: View {
     var body: some View {
         VStack(alignment: .leading, spacing: format.ecart) {
             Text(libelle)
-                .font(HZPolice.texte(.c13, .semi))
+                .hzTexte(.c13, .semi)
                 .foregroundStyle(sombre ? HZCouleur.secondaireSurSombre : HZCouleur.secondaireSurClair)
                 .lineLimit(1)
             Text(valeur)

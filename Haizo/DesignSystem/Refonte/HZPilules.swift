@@ -34,7 +34,7 @@ struct HZPilule: View {
 
     var body: some View {
         Text(texte)
-            .font(HZPolice.texte(style.corps, style.graisse, tabulaire: style.tabulaire))
+            .hzTexte(style.corps, style.graisse, tabulaire: style.tabulaire)
             .foregroundStyle(couleur)
             .lineLimit(1)
             .padding(.horizontal, style.margeHorizontale)
@@ -65,7 +65,7 @@ struct HZFiltre: View {
     var body: some View {
         Button(action: action) {
             Text(libelle)
-                .font(HZPolice.texte(.c14, graisse, tabulaire: true))
+                .hzTexte(.c14, graisse, tabulaire: true)
                 .foregroundStyle(encre)
                 .lineLimit(1)
                 .padding(.horizontal, HZFiltre.margeHorizontale)

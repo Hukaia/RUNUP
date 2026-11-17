@@ -8158,3 +8158,56 @@ et l'état des deux axes, pour que la capture le dise elle-même.
 - Le texte agrandi : l'interface suit le réglage jusqu'à 1,3 fois, l'affichage ne bouge pas. À
   reprendre écran par écran.
 - Cinquante-trois écrans dans l'app, dix dans le canvas.
+
+### La première capture de la planche, et ce qu'elle a montré (17 novembre, run 1 de `refonte.yml`)
+
+TestFlight 587 vert, tests et envoi compris : les deux mille deux cents lignes de Swift jamais
+compilées compilent, et le garde `check_valeurs.py` a tourné sur CI. Le workflow Refonte a
+photographié les six pages en treize minutes.
+
+**Ce qui était juste du premier coup.** La page 1 imprime son propre constat : « Archivo · axe de
+largeur actif · axe de graisse actif ». La crainte de l'étape — que l'axe de largeur, atteint par
+un attribut CoreText, ne prenne pas — est levée. Le simulateur fait 1170 × 2532 pixels : 390
+points, la largeur des planches du canvas. Le décalage HORIZONTAL est de 0,00 pt sur toutes les
+bandes mesurées de l'accueil et des stats.
+
+**Ce qui ne l'était pas, par ordre de gravité.**
+
+1. *Le plan glissait de 294 points vers la gauche.* Les trois cartes du jour font 978 points de
+   large. Posées dans un cadre `.frame(maxWidth: .infinity)`, elles l'élargissent, et la pile
+   entière est centrée sur cette largeur : l'en-tête, le titre et le bouton de retour sortaient de
+   l'écran, « Démarrer » s'étalait en bande blanche, la carte du centre était celle de « Repos ».
+   Une seule cause pour cinq symptômes. Le rang est maintenant une surface vide de la bonne
+   hauteur, avec les cartes en `overlay(alignment: .leading)`.
+2. *Une ligne ne fait pas la même hauteur dans Chromium et dans SwiftUI.* Le canvas est du HTML ;
+   Chromium arrondit l'ascendante et la descendante de la fonte à l'entier (12 pt : 11 + 3 = 14,
+   là où SwiftUI compte 13,06), et, quand l'interligne est plus petit que le texte, arrondit la
+   demi-marge vers le bas. Mesuré : les points de la semaine 0,7 pt trop hauts (la lettre qui les
+   précède est trop courte), les deux tuiles de stats à 86,33 pt au lieu de 86,00 (chaque rangée
+   0,33 pt plus bas que la précédente : +0,33, +0,67, +1,0), le « 500 » et le « 118 » à 1,0 pt trop
+   bas. Une cause, quatre symptômes, qui s'additionneraient sur chaque écran long.
+   `HZLigne` reproduit la règle de Chromium ; `hzTexte` (une ligne) et `hzLigne` (une boîte de
+   hauteur imposée) la posent par un guide d'alignement, et non par un centrage, qui hériterait de
+   l'arrondi de SwiftUI.
+3. *Le paragraphe du bandeau du coach faisait 2 pt de moins.* `line-height: 1.35` donne à chaque
+   ligne 1,35 fois la taille, la différence étant coupée en deux de part et d'autre. `lineSpacing`
+   n'ajoute de l'espace qu'ENTRE les lignes. `hzParagraphe` rend les demi-marges du haut et du
+   bas.
+4. *« 1h20 » s'affichait « 1h… ».* Le canvas laisse le texte déborder sous le bord de la tuile ;
+   l'app ne peut pas : une durée tronquée est une durée fausse. La valeur de la tuile rétrécit
+   jusqu'à 80 % avant de se couper.
+5. *« Historique » n'avait pas son chevron* (14 points, trait 2,4, à six points du mot, graisse
+   600 d'après la source du canvas).
+
+**Ce que j'ai failli faire.** Corriger chaque décalage d'un point par une marge de plus ou de
+moins dans la vue : `.padding(.top, 21)`. Chacun aurait disparu de la capture suivante, et
+l'écart serait revenu, d'un autre ordre, sur l'écran d'après. Les mesures ont d'abord été
+regroupées par cause. C'est aussi pourquoi `decalage.py` existe : il mesure par bande le décalage
+en dixièmes de point entre la capture et la référence, et je l'ai éprouvé sur une image que
+j'avais moi-même descendue de trois pixels avant de croire son signe — je l'avais écrit à
+l'envers dans son commentaire.
+
+**Ce qui reste volontairement différent de la référence**, et que la planche ne cherche pas à
+copier : la barre d'état (le canvas n'en dessine pas), les tracés des vignettes de sorties (le
+canvas les dessine à la main ; l'app y mettra le vrai tracé), le graphique d'allure des stats
+(pas un composant de base), la rangée des jours du plan (idem).
