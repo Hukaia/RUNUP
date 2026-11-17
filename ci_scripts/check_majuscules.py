@@ -51,9 +51,24 @@ eux aussi.
 
 # CE QU'IL NE VOIT PAS
 
-Une chaîne mise en capitales à l'exécution — `.uppercased()`, un `textCase` reçu en paramètre.
-Il lit des littéraux ; ce qui se voit à l'œil se voit sur une capture, et c'est l'autre moitié
-du travail.
+Un `textCase` reçu en paramètre. Il lit des littéraux et des `uppercased()` écrits sur place ;
+ce qui se voit à l'œil se voit sur une capture, et c'est l'autre moitié du travail.
+
+# LES DEUX RÈGLES N'ONT PAS LA MÊME PORTÉE, ET C'EST MESURÉ
+
+La règle des LITTÉRAUX s'arrête aux trois cibles de l'app. Les cibles de test écrivent des
+chaînes de DONNÉES, pas des libellés d'écran : un code de parrainage « ABC123 », un horodatage
+« 2026-08-26T10:00:00Z », le sigle « VDOT », une adresse de courriel écrite tout en capitales
+exprès, pour vérifier qu'on normalise la casse. Les y juger coûterait TREIZE entrées — mesuré le
+17 novembre — pour zéro libellé. Une liste d'exceptions qu'on gonfle de treize passe-droits est
+une liste qu'on finit par ne plus lire.
+
+La règle `uppercased()`, elle, VA JUSQU'AUX TESTS. Un test ne dessine pas d'écran, mais il
+DÉCRIT le comportement de l'app, et cette description survit au code qu'elle décrit. Le
+17 novembre, `DisciplineTests` exigeait encore `discipline.rythmeUnite.uppercased()` alors que
+le `uppercased()` avait quitté `TimeFormat` la veille : quatre builds rouges d'affilée, et rien
+en local pour le voir, puisque `tout.sh` ne compile pas le Swift. Cette ligne-là était la seule
+chose qu'une machine Linux pouvait lire. Elle le lit maintenant.
 """
 import pathlib
 import re
@@ -61,6 +76,10 @@ import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 CIBLES = ["Haizo", "HaizoWatch", "HaizoWidgets"]
+
+#: La règle `uppercased()` lit AUSSI les cibles de test — voir la docstring. Celle des littéraux
+#: non : un test écrit des données, pas des libellés.
+CIBLES_A_LA_VOLEE = CIBLES + ["HaizoTests", "HaizoUITests"]
 
 #: Ce qui n'est pas un libellé : un verbe HTTP, un fuseau, un encodage, un gabarit de date, un
 #: jeton à remplacer. Ces mots-là s'écrivent en capitales partout, et les mettre en minuscules
@@ -222,7 +241,9 @@ def litteraux(ligne: str):
 
 def ecarts() -> list:
     problemes, compte, volee = [], {}, {}
-    for dossier in CIBLES:
+    for dossier in CIBLES_A_LA_VOLEE:
+        # Une cible de test n'est lue QUE pour `uppercased()`.
+        juge_les_litteraux = dossier in CIBLES
         for chemin in sorted((RACINE / dossier).rglob("*.swift")):
             relatif = str(chemin.relative_to(RACINE))
             for numero, ligne in enumerate(chemin.read_text(encoding="utf-8").split("\n"), 1):
@@ -238,6 +259,8 @@ def ecarts() -> list:
                             f"ne la voit pas — mais l'écran, si.\n"
                             f"    Le retirer, ou une entrée dans PERMIS_A_LA_VOLEE avec sa "
                             f"raison.")
+                if not juge_les_litteraux:
+                    continue
                 for texte in litteraux(ligne):
                     if texte in TECHNIQUES:
                         continue

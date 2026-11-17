@@ -40,7 +40,19 @@ final class RestDayErasedByRunTests: XCTestCase {
         return profile
     }
 
-    /// La même convention que `UserProfile.todayWeekdayIndex`, recopiée parce qu'elle est privée.
+    /// Le DÉCALAGE de `UserProfile.todayWeekdayIndex`, recopié parce que la propriété est privée.
+    ///
+    /// CE N'EST PLUS LA MÊME HORLOGE DEPUIS LE 17 NOVEMBRE. L'app lit `Demonstration.maintenant`
+    /// pour que la scène d'une campagne de captures reste figée au dernier dimanche 18 h ; ici on
+    /// lit `.now`. Les deux coïncident tant qu'aucune démonstration ne tourne —
+    /// `Demonstration.maintenant` rend `.now` hors campagne — et un test unitaire n'en lance
+    /// jamais. Le cas reste donc juste, mais il ne dit plus « la même convention » : il recopie un
+    /// décalage, pas une source.
+    ///
+    /// `check_horloge.py` NE LIT PAS LES CIBLES DE TEST, et c'est voulu : sa raison est la
+    /// campagne, et un test n'est pas dans une campagne. Mesuré le 17 novembre — l'y étendre
+    /// lèverait quatre lignes dont trois construisent légitimement une semaine sur l'horloge
+    /// réelle.
     private var aujourdhui: Int { (Calendar.current.component(.weekday, from: .now) + 5) % 7 }
 
     private func courseDuJour() -> RunRecord {

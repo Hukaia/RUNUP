@@ -7752,3 +7752,123 @@ le dit en toutes lettres.
 Six lecteurs épinglés : `UserProfile.todayWeekdayIndex`, `WeeklyRecapView.todayWeekdayIndex`,
 trois ancres de semaine dans `AdaptivePlanEngine`, et `StatsView.parSemaine`. La liste
 d'exceptions est **vide**, et c'est le bon état.
+
+## 17 novembre 2026 — la campagne 222 dit oui, et TestFlight était rouge depuis quatre commits
+
+### Ce que la 222 a prouvé
+
+Elle tournait un **mardi**, un jour de repos dans la semaine réelle, sur une scène figée au
+dimanche 15. C'était tout l'enjeu.
+
+| Ce qu'on attendait | Mesuré sur `raw/fr-FR/clair/1-accueil.png` |
+| --- | --- |
+| la pastille dit « Séance du jour », pas « Aujourd'hui » | « Séance du jour », icône de famille |
+| la carte porte ses trois chiffres et son bouton | « 39 minutes · 6:18 Allure · Z2 Zone » + **DÉMARRER** |
+| l'accent revient dans la bande y 0,60 → 0,70 | **1 343 px** de `#F0225F` (0 sur la 221) |
+| « Ta journée » affiche 2/3 | 2/3 |
+| la barre du lundi remonte vers 747 → 782 pt | **748,0 → 780,7 pt** (603,7 quand la carte s'était vidée) |
+
+Et rien n'est cassé par ailleurs : tracé **0 px** dans les rangées 0 → 185, nuit **0,0 → 285,0 pt**
+exactement, bande d'état **0 px** hors `#14131E`, seuil `#F5A524` à **1 536 px** dans les trois
+langues, icône du coach en aplat, 28 captures claires et 28 sombres par langue.
+
+### Mais le vrai défaut était ailleurs, et il avait quatre commits
+
+**TestFlight a échoué sur 579, 580, 581 et 582.** Je lisais la campagne de captures après chaque
+poussée et pas l'autre atelier. Quatre fois.
+
+La cause est d'un seul tenant. Le 16 novembre, le `uppercased()` a quitté `TimeFormat` — le point
+1 du brief avait tué sa raison. Quatre lignes de `DisciplineTests` décrivaient encore l'ancien
+comportement :
+
+```swift
+XCTAssertEqual(course.unite, "/KM")          // ligne 85
+XCTAssertEqual(velo.unite, "KM/H")           // ligne 88
+XCTAssertEqual(lu.unite, "/100 M")           // ligne 276
+discipline.rythmeUnite.uppercased()          // ligne 127
+```
+
+Et le commentaire au-dessus de la quatrième affirmait la règle morte : « `TimeFormat` ne recopie
+plus l'unité : il met celle de la discipline en capitales. »
+
+Le test est plus fort maintenant : il compare une **identité**, pas une transformation. Une unité
+qui change de casse en traversant `TimeFormat` est exactement ce qu'on ne veut plus.
+
+### Pourquoi rien ne l'a vu en local, et ce qui le verra
+
+`tout.sh` ne compile pas le Swift — c'est une limite connue, et aucune machine Linux ne la lèvera.
+Le seul banc Swift est TestFlight, qui tourne **après** la poussée.
+
+Mais une ligne de ce défaut était lisible depuis Linux : `discipline.rythmeUnite.uppercased()`.
+`check_majuscules.py` refuse ce motif depuis hier — **et ne lisait pas les cibles de test.**
+
+La leçon est la neuvième de la même famille, prise par un bout nouveau : un garde ne voit pas que
+les orthographes qu'on lui a données, il ne voit que **les dossiers** qu'on lui a donnés.
+
+### Une règle, deux portées — et la seconde est mesurée
+
+Mesuré avant de décider : faire lire les deux cibles de test au garde entier lève **14 écarts**,
+dont **un seul** est un défaut. Les treize autres sont des données de test — un code `ABC123`, un
+horodatage `2026-08-26T10:00:00Z`, sept fois le sigle `VDOT`, une adresse `TEST@HAIZO.APP` posée
+exprès pour vérifier qu'on normalise la casse. Treize entrées d'exception pour zéro libellé : une
+liste qu'on gonfle de treize passe-droits est une liste qu'on finit par ne plus lire.
+
+Les deux règles n'ont donc pas la même portée, et chacune porte la sienne écrite :
+
+- **les littéraux** s'arrêtent aux trois cibles de l'app — un test écrit des données, pas des
+  libellés d'écran ;
+- **`uppercased()`** va jusqu'aux tests — un test ne dessine pas d'écran, mais il *décrit* le
+  comportement de l'app, et cette description survit au code qu'elle décrit.
+
+Un seul écart levé dans tout le dépôt, celui du jour. **Zéro nouvelle exception.**
+
+Et le banc a été corrigé avant les cas : `avec()` aplatissait tous les dossiers dans `CIBLES`, ce
+qui rendait la distinction intestable — la faute exacte de `check_teintes.py` la veille. Il
+**dérive** maintenant la partition des tables du module, pour qu'une cible ajoutée là-bas soit
+suivie ici sans qu'on y touche. Trois cas : le `uppercased()` d'une cible de test sonne, le
+littéral d'une cible de test ne sonne pas, et le **même** littéral dans une cible d'app sonne
+toujours — sans ce troisième, « ça ne sonne pas » ne prouverait pas que c'est la portée qui
+change. 24 cas au total.
+
+### Ce que la 222 a montré en passant
+
+`accueil-libre.png` — l'accueil sans programme — est sain, mais sa phrase du bas est tranchée en
+plein milieu par la barre d'onglets : « Pas de plan fixe — le coach te propose de quoi garder la
+forme, » et rien après. C'est la limite de la carte « 2/3 » (#52), en plus visible : un nombre
+coupé se devine, une phrase tronquée se lit comme une panne. La question part avec l'autre.
+
+Et `--libre` pose `programPhase = .freerun`, pas `planUnlocked == false` : l'accueil du
+**non-abonné** (#32) reste le dernier écran que personne n'a jamais vu. Le chemin est écrit —
+`--libre` est le modèle exact à copier.
+
+### Et j'ai cherché s'il y en avait d'autres, au lieu d'attendre le prochain rouge
+
+Treize fichiers de l'app ont changé depuis le dernier TestFlight vert, et **aucun fichier de
+test**. C'est le signal qu'il fallait suivre. Neuf symboles touchés, croisés avec les deux cibles
+de test : deux correspondances, une seule qui pose question.
+
+`RestDayErasedByRunTests:44` recopie la convention de `UserProfile.todayWeekdayIndex` — et son
+commentaire le disait : « la même convention, recopiée parce qu'elle est privée ». **Ce n'est plus
+la même depuis le 17 au matin** : l'app lit `Demonstration.maintenant`, le test lit `.now`.
+
+Le cas reste juste, et je ne le maquille pas en défaut : `Demonstration.maintenant` rend `.now`
+hors campagne, et un test unitaire n'en lance jamais. Ce n'est pas lui qui a fait rougir
+TestFlight — les sept échecs étaient tous dans `DisciplineTests`. Mais le commentaire, lui, était
+devenu faux, et un commentaire faux trompe la prochaine lecture. Il dit maintenant qu'il recopie
+un **décalage**, pas une source.
+
+### `check_horloge.py` ne lira PAS les tests, et c'est mesuré aussi
+
+La tentation était forte de lui appliquer la même extension qu'à `check_majuscules.py` dans
+l'heure. Sa raison l'interdit : il refuse l'horloge réelle **parce qu'une campagne de captures
+fige la scène**, et un test unitaire ne tourne jamais dans une campagne.
+
+Mesuré avant de trancher : l'étendre lève quatre lignes, dont trois — `BilanDeLaSemaineTests`,
+`ContinuiteDuPlanTests`, `CycleTrackingTests` — construisent une semaine pour y poser des données.
+Les forcer sur `Demonstration.maintenant` serait un contresens, et le message du garde leur dirait
+quelque chose de faux. **Quatre écarts, zéro défaut** : la portée reste où elle est, et la décision
+est écrite dans le garde pour qu'on ne la reprenne pas par symétrie.
+
+Une portée se justifie par la raison de sa règle, jamais par celle du garde d'à côté. C'est le
+pendant de la leçon du jour, et il compte autant : étendre partout est aussi mauvais que n'étendre
+nulle part.

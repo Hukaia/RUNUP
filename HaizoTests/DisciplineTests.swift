@@ -82,10 +82,10 @@ final class DisciplineTests: XCTestCase {
     func testLaCourseSeLitEnAllureEtLeVeloEnVitesse() {
         let course = TimeFormat.rythme(.run, secondesParKm: 360)
         XCTAssertEqual(course.valeur, "6:00")
-        XCTAssertEqual(course.unite, "/KM")
+        XCTAssertEqual(course.unite, "/km")
 
         let velo = TimeFormat.rythme(.bike, secondesParKm: 150)   // 150 s/km = 24 km/h
-        XCTAssertEqual(velo.unite, "KM/H")
+        XCTAssertEqual(velo.unite, "km/h")
         XCTAssertEqual(Double(velo.valeur.replacingOccurrences(of: ",", with: ".")) ?? 0, 24, accuracy: 0.05)
     }
 
@@ -119,13 +119,21 @@ final class DisciplineTests: XCTestCase {
         }
     }
 
-    /// Et `TimeFormat` ne recopie plus l'unité : il met celle de la discipline en capitales. Deux
+    /// Et `TimeFormat` ne recopie plus l'unité : il rend EXACTEMENT celle de la discipline. Deux
     /// écritures d'un même symbole finissent toujours par diverger.
+    ///
+    /// CE TEST A EXIGÉ DES CAPITALES JUSQU'AU 17 NOVEMBRE, et c'est lui qui a fait rougir quatre
+    /// builds d'affilée. `TimeFormat` posait un `uppercased()` « pour l'écran de course » ; le
+    /// point 1 du brief du 15 novembre a tué cette raison, le `uppercased()` est parti de l'app
+    /// le 16, et ces quatre lignes sont restées à décrire un comportement qui n'existait plus.
+    ///
+    /// Il est plus fort depuis : il compare une IDENTITÉ, pas une transformation. Une unité qui
+    /// change de casse en traversant `TimeFormat` est exactement ce qu'on ne veut plus.
     func testLUniteDeTimeFormatEstCelleDeLaDiscipline() {
         for discipline in Discipline.allCases {
             XCTAssertEqual(TimeFormat.rythme(discipline, secondesParKm: 300).unite,
-                           discipline.rythmeUnite.uppercased(),
-                           "\(discipline) : l'unité doit venir de la discipline")
+                           discipline.rythmeUnite,
+                           "\(discipline) : l'unité doit venir de la discipline, à la casse près")
         }
     }
 
@@ -273,7 +281,7 @@ final class DisciplineTests: XCTestCase {
         // 1 150 s/km, soit 115 s aux cent mètres : l'allure d'une nageuse ordinaire.
         let lu = TimeFormat.rythme(.swim, secondesParKm: 1150)
         XCTAssertEqual(lu.valeur, "1:55")
-        XCTAssertEqual(lu.unite, "/100 M")
+        XCTAssertEqual(lu.unite, "/100 m")
         // La même allure au kilomètre s'écrirait « 19:10 » — juste, et illisible pour un nageur.
         XCTAssertEqual(TimeFormat.rythme(.run, secondesParKm: 1150).valeur, "19:10")
 

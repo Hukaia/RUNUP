@@ -39,18 +39,29 @@ def faux_depot(fichiers):
 
 
 def avec(fichiers, permis, volee=None):
-    """Fait tourner le garde sur un faux dépôt, avec les deux listes d'exceptions données."""
+    """Fait tourner le garde sur un faux dépôt, avec les deux listes d'exceptions données.
+
+    LES DEUX PORTÉES SONT REPRODUITES, pas aplaties. Le garde lit les cibles de test pour
+    `uppercased()` et pas pour les littéraux ; un banc qui mettrait tous les dossiers dans
+    `CIBLES` ne pourrait éprouver ni l'une ni l'autre. La partition est DÉRIVÉE des tables du
+    module — si quelqu'un ajoute une cible de test là-bas, les cas la suivent sans qu'on les
+    touche, au lieu de la recopier ici et de diverger.
+    """
     racine, cibles, anciens = ck.RACINE, ck.CIBLES, ck.PERMIS
-    anciennes_volee = ck.PERMIS_A_LA_VOLEE
+    anciennes_volee, anciennes_cibles_volee = ck.PERMIS_A_LA_VOLEE, ck.CIBLES_A_LA_VOLEE
+    cibles_de_test = set(ck.CIBLES_A_LA_VOLEE) - set(ck.CIBLES)
     try:
         ck.RACINE = faux_depot(fichiers)
-        ck.CIBLES = sorted({c.split("/")[0] for c in fichiers})
+        dossiers = sorted({c.split("/")[0] for c in fichiers})
+        ck.CIBLES = [d for d in dossiers if d not in cibles_de_test]
+        ck.CIBLES_A_LA_VOLEE = dossiers
         ck.PERMIS = permis
         ck.PERMIS_A_LA_VOLEE = {} if volee is None else volee
         return ck.ecarts()
     finally:
         ck.RACINE, ck.CIBLES, ck.PERMIS = racine, cibles, anciens
         ck.PERMIS_A_LA_VOLEE = anciennes_volee
+        ck.CIBLES_A_LA_VOLEE = anciennes_cibles_volee
 
 
 @cas_de("un libellé en capitales est refusé")
@@ -179,6 +190,37 @@ def _():
     d = {"Haizo/A.swift": 'Text(a.uppercased())'}
     p = avec(d, {}, {"Haizo/A.swift": (2, "des initiales, pas des mots")})
     assert len(p) == 1 and "1 `uppercased()`" in p[0], p
+
+
+@cas_de("UN `uppercased()` DANS UNE CIBLE DE TEST EST REFUSÉ — le cas qui manquait le 17 novembre")
+def _():
+    # `DisciplineTests` exigeait `discipline.rythmeUnite.uppercased()` alors que le
+    # `uppercased()` avait quitté `TimeFormat` la veille. Quatre builds rouges, et rien en
+    # local pour le voir : `tout.sh` ne compile pas le Swift. Cette ligne-là, si.
+    p = avec({"HaizoTests/DisciplineTests.swift":
+              "XCTAssertEqual(lu.unite, discipline.rythmeUnite.uppercased())"}, {})
+    assert len(p) == 1 and "uppercased()" in p[0] and "DisciplineTests" in p[0], p
+
+
+@cas_de("mais un LITTÉRAL en capitales dans une cible de test ne sonne pas — les portées diffèrent")
+def _():
+    # Un test écrit des DONNÉES : un code de parrainage, un horodatage, un sigle, une adresse
+    # posée en capitales exprès pour vérifier qu'on normalise la casse. Les juger coûterait
+    # treize passe-droits pour zéro libellé — mesuré le 17 novembre.
+    #
+    # L'ADRESSE DU FIXTUR N'EST PAS CELLE DU DÉPÔT. Le vrai cas porte le nom de la marque en
+    # capitales ; le recopier ici réveillerait `check_marque.py`, et un fixtur qui réveille un
+    # AUTRE garde n'éprouve pas le sien. Même faute que `test_teintes.py` la veille.
+    p = avec({"HaizoTests/ContactMatcherTests.swift": 'let a = "TEST@EXEMPLE.COM"'}, {})
+    assert p == [], p
+
+
+@cas_de("et le MÊME littéral dans une cible d'app sonne toujours — c'est bien la portée qui change")
+def _():
+    # Le pendant du cas précédent : si celui-ci cessait de sonner, ce ne serait plus une
+    # question de portée mais un garde cassé.
+    p = avec({"Haizo/V.swift": 'let a = "TEST@EXEMPLE.COM"'}, {})
+    assert len(p) == 1 and "TEST@EXEMPLE.COM" in p[0], p
 
 
 @cas_de("le dépôt tel qu'il est passe")

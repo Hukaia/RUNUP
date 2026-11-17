@@ -47,6 +47,21 @@ import sys
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 CIBLES = ["Haizo", "HaizoWidgets"]
 
+# ET PAS LES CIBLES DE TEST — décidé le 17 novembre, sur mesure et pas par symétrie.
+#
+# `check_majuscules.py` a étendu une de ses deux règles aux tests le même jour, parce qu'un test
+# DÉCRIT le comportement de l'app et que cette description lui survit. La tentation était de
+# faire pareil ici. La raison de CE garde ne le permet pas : il refuse l'horloge réelle parce
+# qu'une CAMPAGNE DE CAPTURES fige la scène au dernier dimanche 18 h. Un test unitaire ne tourne
+# jamais dans une campagne.
+#
+# Mesuré avant de trancher : l'étendre lève quatre lignes, dont trois — `BilanDeLaSemaineTests`,
+# `ContinuiteDuPlanTests`, `CycleTrackingTests` — construisent une semaine pour y poser des
+# données. Les forcer sur `Demonstration.maintenant` serait un contresens, et le message du garde
+# leur dirait quelque chose de faux. Zéro défaut pour quatre écarts : la portée reste ici.
+#
+# Une portée se justifie par la raison de la règle, jamais par celle du garde d'à côté.
+
 #: Les deux façons de demander « quel jour sommes-nous » à l'horloge réelle.
 HORLOGE = re.compile(
     r"(?:component\(\s*\.weekday\s*,\s*from:\s*|dateInterval\(\s*of:\s*\.weekOfYear\s*,\s*for:\s*)"
