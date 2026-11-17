@@ -280,6 +280,8 @@ final class RefonteUITests: XCTestCase {
     func test09Bissection() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
                           "réservé à refonte.yml")
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_SONDES_LONGUES"] != nil,
+                          "sonde longue : déjà lue, à rallumer au besoin")
         var rapport = "interrupteur | accueil : contenu remplacé ? | plan : sélection suivie ?\n"
         for variante in ["nu", "ligne", "defilement"] {
             let option = ["--sans-\(variante)"]
@@ -325,6 +327,8 @@ final class RefonteUITests: XCTestCase {
     func test10Decoupe() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
                           "réservé à refonte.yml")
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_SONDES_LONGUES"] != nil,
+                          "sonde longue : déjà lue, à rallumer au besoin")
         let blocs = ["feuille", "carrousel", "rangee", "boutons", "entete", "couverture"]
         var passes: [(String, [String])] = [("sonde seule", [])]
         for bloc in blocs { passes.append(("sans \(bloc)", ["--sans-\(bloc)"])) }
@@ -350,6 +354,8 @@ final class RefonteUITests: XCTestCase {
     func test11Echelle() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
                           "réservé à refonte.yml")
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_SONDES_LONGUES"] != nil,
+                          "sonde longue : déjà lue, à rallumer au besoin")
         var rapport = "echelon | la sonde suit ?\n"
         for echelon in ["etat", "profil", "abonnement", "modele", "polices", "defilement", "page"] {
             let plan = lancer(arguments: ["--ecran=plan", "--echelle=\(echelon)"])
@@ -362,6 +368,30 @@ final class RefonteUITests: XCTestCase {
             rapport += "\(echelon) | \(suit)\n"
         }
         ecrire("echelle.txt", rapport)
+    }
+
+    /// DERNIÈRE DÉCOUPE : à partir du vrai écran sans aucun bloc (que l'échelle, elle, suit), on
+    /// retire un à un ce qui reste — les marqueurs du titre, le sous-titre, le journal, le haut de page.
+    func test12Reste() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let blocs = ["feuille", "carrousel", "rangee", "boutons", "entete", "couverture",
+                     "fond", "zonesure", "statusbar", "recouvrement", "defilement"]
+        let restes = ["titrediag", "soustitre", "journal", "hautdepage"]
+        var rapport = "reste retiré | la sonde suit ?\n"
+        for fin in 0...restes.count {
+            let retires = Array(restes.prefix(fin))
+            let options = (blocs + retires).map { "--sans-\($0)" }
+            let plan = lancer(arguments: ["--ecran=plan", "--sans-sonde"] + options)
+            let sonde = plan.buttons.matching(NSPredicate(format: "label BEGINSWITH 'sonde-'")).firstMatch
+            if sonde.waitForExistence(timeout: 5) { sonde.tap() }
+            Thread.sleep(forTimeInterval: 2.0)
+            let suit = plan.buttons["sonde-1"].exists
+            photographier("reste-\(fin)", app: plan)
+            plan.terminate()
+            rapport += "\(retires.joined(separator: "+")) | \(suit)\n"
+        }
+        ecrire("reste.txt", rapport)
     }
 
     private func ecrire(_ nom: String, _ texte: String) {

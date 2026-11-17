@@ -65,13 +65,13 @@ struct PlanSemaineView: View {
     // MARK: - La page
 
     var body: some View {
-        let _ = DiagnosticRefonte.noter("PlanSemaineView.body choix=\(String(describing: choix)) demandes=\(demandes)")
+        let _ = DiagnosticRefonte.sans("journal") ? () : DiagnosticRefonte.noter("PlanSemaineView.body choix=\(String(describing: choix)) demandes=\(demandes)")
         DiagnosticDefilement {
             // La feuille REMONTE sur le haut de page d'un rayon de coin : le noir passe derrière ses
             // coins arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la
             // capture, où le coin était carré.
             VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {
-                hautDePage
+                if !DiagnosticRefonte.sans("hautdepage") { hautDePage }
                 if !DiagnosticRefonte.sans("feuille") { feuille }
             }
         }
@@ -161,9 +161,9 @@ struct PlanSemaineView: View {
                 // L'ÉTAT DE LA SÉLECTION, lisible par le test de capture : trois gestes de suite ne
                 // changeaient aucun pixel, et l'image seule ne dit pas si l'action s'est déclenchée.
                 .accessibilityIdentifier("plan-diagnostic")
-                .accessibilityValue("choix=\(String(describing: choix)) choisi=\(choisi) debloque=\(planDebloque) visibles=\(visibles.count) demandes=\(demandes)")
+                .accessibilityValue(DiagnosticRefonte.sans("titrediag") ? "" : "choix=\(String(describing: choix)) choisi=\(choisi) debloque=\(planDebloque) visibles=\(visibles.count) demandes=\(demandes)")
                 #endif
-            Text(sousLeTitre)
+            Text(DiagnosticRefonte.sans("soustitre") ? "" : sousLeTitre)
                 .hzTexte(.c15, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurSombre)
         }
