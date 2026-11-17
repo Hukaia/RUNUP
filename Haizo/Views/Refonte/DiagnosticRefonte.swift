@@ -26,7 +26,7 @@ enum DiagnosticRefonte {
     /// est-elle partie, une vue a-t-elle été réévaluée — quand l'image ne change pas.
     static func noter(_ texte: @autoclosure () -> String) {
         #if DEBUG
-        let ligne = "\(String(format: "%.3f", Date().timeIntervalSince1970)) \(texte())\n"
+        let ligne = "\(Int(Date().timeIntervalSince1970 * 1000)) \(texte())\n"
         guard let donnees = ligne.data(using: .utf8) else { return }
         let adresse = URL(fileURLWithPath: "/tmp/haizo-diag.log")
         if let fichier = try? FileHandle(forWritingTo: adresse) {
