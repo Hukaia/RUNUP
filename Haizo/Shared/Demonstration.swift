@@ -29,6 +29,28 @@ enum Demonstration {
     /// moindre autre fil n'existe. Les lectures qui suivent ne voient jamais qu'une constante.
     nonisolated(unsafe) private(set) static var enCours = false
 
+    /// ON PHOTOGRAPHIE L'APP TELLE QUE LA VOIT QUI N'A PAS SOUSCRIT.
+    ///
+    /// `SubscriptionService.unlocks` ouvre TOUT en démonstration, et pour une bonne raison, qui
+    /// est écrite là-bas : « une capture de l'App Store doit montrer le produit, pas son verrou. »
+    /// Elle reste vraie pour les six images livrées à Apple.
+    ///
+    /// Mais elle rendait un écran IMPHOTOGRAPHIABLE. L'accueil de qui n'a pas souscrit — la carte
+    /// `PlusLockCard` en dernière position, pas de carte de programme, pas la ligne du coach —
+    /// n'existait sur aucune image, et `HomeView` porte pourtant quatre branches qui ne se
+    /// dessinent que dans cet état. Quatre branches jugées de mémoire depuis qu'elles existent.
+    ///
+    /// Ce drapeau RENVERSE la réponse, et seulement en démonstration. Il ne touche ni le droit
+    /// d'accès réel, qui vit dans `Entitlement` et se teste là-bas, ni les captures de la fiche,
+    /// qui ne le posent pas.
+    ///
+    /// POURQUOI UN COURT-CIRCUIT ET PAS `Entitlement` AVEC LES VALEURS D'UN NON-ABONNÉ. Parce
+    /// qu'un simulateur n'a pas StoreKit : `products` y est vide, donc `canSell` est faux, et
+    /// `Entitlement.unlocks` ouvre tout quand on n'a rien à vendre. Passer par lui rendrait
+    /// exactement l'inverse de ce qu'on demande. On affirme donc ici l'état « non-abonnée à qui
+    /// on peut vendre », que le simulateur est incapable de produire.
+    nonisolated(unsafe) private(set) static var verrouille = false
+
     /// On FILME plutôt que de photographier. Voir `animationsFigees`.
     nonisolated(unsafe) private(set) static var filme = false
 
@@ -99,6 +121,7 @@ enum Demonstration {
     #if DEBUG
     static func commencer() { enCours = true }
     static func filmer() { filme = true }
+    static func verrouiller() { verrouille = true }
 
     /// REFERMER L'INTERRUPTEUR, ET POURQUOI IL LE FAUT.
     ///
@@ -112,6 +135,10 @@ enum Demonstration {
     /// compile pas de Swift, ni les cas, qui ne pouvaient pas entrer dans la scène.
     ///
     /// `#if DEBUG` : l'app livrée n'a pas de quoi rallumer ni éteindre quoi que ce soit.
-    static func arreter() { enCours = false; filme = false }
+    ///
+    /// `verrouille` EST REMIS AUSSI, et ce n'est pas de la symétrie décorative : un verrou qui
+    /// resterait allumé verrouillerait toutes les prises suivantes de la même campagne, et
+    /// l'image de la fiche App Store partirait avec un `PlusLockCard` dessus. Un cas le vérifie.
+    static func arreter() { enCours = false; filme = false; verrouille = false }
     #endif
 }

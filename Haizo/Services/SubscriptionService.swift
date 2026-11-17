@@ -180,7 +180,11 @@ final class SubscriptionService {
         // Ici et pas dans `Entitlement` : là-bas vivent les règles du droit d'accès, qui
         // décident pour de vraies personnes et se testent comme telles. Le mode démonstration
         // n'est pas une règle de droit, c'est l'absence de StoreKit dans un simulateur.
-        if Demonstration.enCours { return true }
+        //
+        // SAUF SI ON PHOTOGRAPHIE LE VERROU LUI-MÊME — `--verrouille`, une capture de
+        // diagnostic. Voir `Demonstration.verrouille`, et notamment pourquoi c'est ici un
+        // court-circuit plutôt qu'un passage par `Entitlement` avec les valeurs d'un non-abonné.
+        if Demonstration.enCours { return !Demonstration.verrouille }
         return Entitlement.unlocks(feature, isSubscribed: isSubscribed, canSell: canSell,
                                    estAdmin: estAdmin)
     }

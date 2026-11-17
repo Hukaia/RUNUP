@@ -7872,3 +7872,79 @@ est écrite dans le garde pour qu'on ne la reprenne pas par symétrie.
 Une portée se justifie par la raison de sa règle, jamais par celle du garde d'à côté. C'est le
 pendant de la leçon du jour, et il compte autant : étendre partout est aussi mauvais que n'étendre
 nulle part.
+
+## 17 novembre 2026 — l'accueil du non-abonné n'était pas oublié, il était imphotographiable
+
+TestFlight 583 est vert, le premier depuis le 578. La campagne 223 ne pouvait rien montrer de
+neuf — le commit précédent ne touche aucun fichier de l'app — alors plutôt que d'attendre
+soixante-dix minutes, chantier #32 : le dernier écran que personne n'avait jamais vu.
+
+### La cause, et elle n'est pas un oubli
+
+```swift
+func unlocks(_ feature: PlusFeature) -> Bool {
+    if Demonstration.enCours { return true }
+    ...
+```
+
+**En démonstration, tout est ouvert.** Toutes les captures de l'accueil, depuis le premier jour,
+montrent une abonnée. Et la raison écrite au-dessus de cette ligne est bonne — « une capture de
+l'App Store doit montrer le produit, pas son verrou » : « Un plan qui s'adapte » a vraiment
+surmonté un graphique flouté.
+
+Mais `HomeView` porte **quatre branches** qui ne se dessinent que dans l'autre état :
+
+| branche | ce qu'elle change |
+| --- | --- |
+| `switch planUnlocked ? programPhase : .active` | la carte du haut |
+| `if planUnlocked` | un bloc entier disparaît |
+| `if !planUnlocked` | `PlusLockCard` arrive en **dernière** position |
+| `if isFreeRun && planUnlocked` | la ligne du coach disparaît |
+
+Celle du milieu porte un commentaire qui mérite d'être vérifié : « à la troisième place sur trois,
+cette carte était un mur ; sous quatre blocs de contenu réel, c'est une proposition. » C'est une
+affirmation sur ce que ça fait à l'œil, et personne n'a jamais regardé.
+
+### `--verrouille`, sur le modèle exact de `--film`
+
+Lecture de l'argument dans `CaptureSeed.verrouDemande`, drapeau dans `Demonstration.verrouille`,
+posé au lancement à côté de `filmer()`, sous `#if DEBUG`. La construction envoyée à l'App Store ne
+contient toujours **aucune ligne** capable de l'allumer. `unlocks` devient :
+
+```swift
+if Demonstration.enCours { return !Demonstration.verrouille }
+```
+
+### Le détour que j'ai failli prendre, et pourquoi il rendait l'inverse
+
+Passer par `Entitlement.unlocks` avec les valeurs d'un non-abonné aurait été plus propre : la
+décision du droit d'accès vit là-bas, sous test, et le commentaire de `SubscriptionService` le dit
+lui-même.
+
+Ça ne marche pas, et le détail compte. **Un simulateur n'a pas StoreKit** : `products` y est vide,
+donc `canSell` est faux, et `Entitlement` ouvre tout quand on n'a rien à vendre — « le petit
+risque d'abus que la règle laisse est très en dessous du coût de la panne qu'elle évite ». Le
+chemin le plus propre rendait donc exactement le contraire de ce qu'on demande. Le court-circuit
+affirme l'état « non-abonnée à qui on peut vendre », que le simulateur est incapable de produire,
+et la raison est écrite sur place.
+
+### Le danger n'est pas qu'il s'allume, c'est qu'il reste allumé
+
+Une campagne prend trente-neuf écrans. Un verrou qui survivrait à la prise de diagnostic
+verrouillerait toutes les suivantes, et les six images de la fiche partiraient chez Apple avec un
+`PlusLockCard` dessus.
+
+`arreter()` le remet, comme il remet `enCours` et `filme`, et c'est exactement le genre de ligne
+qu'on supprime « parce qu'elle est symétrique » en refactorant. Quatre cas dans
+`DemonstrationVerrouTests` : éteint par défaut, `verrouiller()` l'allume sans toucher à la
+démonstration, `arreter()` l'éteint, et — celui qui protège les trente-sept autres captures —
+**entrer en démonstration ne l'allume pas**.
+
+C'est la leçon de l'horloge prise par l'autre bout : le 17 au matin, un état ne se propageait pas
+assez ; ici, il se propagerait trop.
+
+### Ce que la campagne 224 devra montrer
+
+`accueil-verrouille.png` et `accueil-verrouille-bas.png`, en diagnostic, dans les trois langues.
+La carte du programme absente, `PlusLockCard` en bas, pas de ligne de coach. Et surtout : les six
+images de la fiche **inchangées** — si l'une d'elles porte un verrou, le drapeau fuit.

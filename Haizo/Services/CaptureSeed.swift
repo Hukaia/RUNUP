@@ -219,6 +219,18 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains("--libre")
     }
 
+    /// `--verrouille` : montrer l'app telle que la voit qui n'a pas souscrit.
+    ///
+    /// C'est le dernier écran que personne n'avait jamais vu, et il ne pouvait PAS être
+    /// photographié : `SubscriptionService.unlocks` ouvre tout en démonstration. Voir
+    /// `Demonstration.verrouille`, où la raison est écrite au long.
+    ///
+    /// CAPTURE DE DIAGNOSTIC UNIQUEMENT. Les six images de la fiche ne posent pas ce drapeau —
+    /// elles doivent montrer le produit, pas son verrou.
+    static var verrouDemande: Bool {
+        ProcessInfo.processInfo.arguments.contains("--verrouille")
+    }
+
     /// `--seance` : ouvrir la feuille de la séance du jour.
     ///
     /// C'est l'écran qu'on ouvre AVANT de courir — le détail de la séance, son découpage en

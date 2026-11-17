@@ -364,6 +364,33 @@ final class CapturesUITests: XCTestCase {
                 semainesEnAvant: 4)
     }
 
+    /// L'ACCUEIL DE QUI N'A PAS SOUSCRIT — le dernier écran que personne n'avait jamais vu.
+    ///
+    /// Il n'était pas « oublié » : il était IMPHOTOGRAPHIABLE. `SubscriptionService.unlocks`
+    /// ouvre tout en démonstration, donc toutes les captures de l'accueil depuis le premier jour
+    /// montrent une abonnée. `HomeView` porte pourtant quatre branches qui ne se dessinent que
+    /// dans l'autre état :
+    ///
+    ///   — `switch planUnlocked ? profile.programPhase : .active`, qui change la carte du haut ;
+    ///   — `if planUnlocked`, qui retire un bloc entier ;
+    ///   — `if !planUnlocked`, qui pose `PlusLockCard` en DERNIÈRE position — « à la troisième
+    ///     place sur trois, cette carte était un mur ; sous quatre blocs de contenu réel, c'est
+    ///     une proposition », dit son commentaire, et personne n'a jamais vu si c'est vrai ;
+    ///   — `if isFreeRun && planUnlocked`, qui retire la ligne du coach.
+    ///
+    /// Quatre branches jugées de mémoire depuis qu'elles existent. Deux captures, le haut et
+    /// après un défilement, comme pour l'accueil libre : c'est la carte du bas qu'il faut voir,
+    /// et elle est sous la ligne de flottaison par construction.
+    func test38AccueilVerrouille() {
+        prendre(rang: 38, ecran: "prog", nom: "accueil-verrouille", diagnostic: true,
+                verrouille: true)
+    }
+
+    func test39AccueilVerrouilleBas() {
+        prendre(rang: 39, ecran: "prog", nom: "accueil-verrouille-bas", diagnostic: true,
+                defilements: 1, verrouille: true)
+    }
+
     func test23StatsGrandTexte() throws {
         try passeSombreSeulement()
         prendre(rang: 23, ecran: "stats", nom: "grand-texte/stats", diagnostic: true,
@@ -442,6 +469,7 @@ final class CapturesUITests: XCTestCase {
                          cycle: Bool = false,
                          courseEnCours: Bool = false, seance: Bool = false,
                          libre: Bool = false,
+                         verrouille: Bool = false,
                          attente: TimeInterval = 2.0,
                          tailleDuTexte: String? = nil) {
         let clair = ProcessInfo.processInfo.environment["Haizo_CAPTURES_CLAIR"] != nil
@@ -468,6 +496,9 @@ final class CapturesUITests: XCTestCase {
         // Le mode course libre : pas de programme, donc pas la carte qui porte la moitié de la
         // hauteur de l'accueil. Voir `CaptureSeed.libreDemandee`.
         if libre { app.launchArguments += ["--libre"] }
+        // L'app telle que la voit qui n'a pas souscrit. Diagnostic UNIQUEMENT : les six images
+        // de la fiche ne posent pas ce drapeau. Voir `Demonstration.verrouille`.
+        if verrouille { app.launchArguments += ["--verrouille"] }
         // LA TAILLE DU TEXTE, PAR LE MÊME CHEMIN QUE LA LANGUE.
         //
         // `TextSizeStore` lit `UIApplication.shared.preferredContentSizeCategory`, et

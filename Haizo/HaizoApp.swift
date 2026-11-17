@@ -122,6 +122,8 @@ private struct RootView: View {
                     Demonstration.commencer()
                     // On filme ? Alors les animations jouent. Voir `Demonstration.animationsFigees`.
                     if CaptureSeed.filmDemande { Demonstration.filmer() }
+                    // On photographie le verrou ? Voir `Demonstration.verrouille`.
+                    if CaptureSeed.verrouDemande { Demonstration.verrouiller() }
                     // Santé est coupée AVANT que quoi que ce soit ne la touche : la construction
                     // des captures n'est pas signée, donc elle n'a pas le droit HealthKit, et le
                     // premier appel tuait le processus. Voir `HealthKitService.desactiver()`.
