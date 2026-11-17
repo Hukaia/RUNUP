@@ -60,20 +60,24 @@ final class RefonteUITests: XCTestCase {
         let app = lancer(arguments: ["--ecran=plan"])
         photographier("plan", app: app)
 
-        // TROIS CHEMINS POUR CHANGER DE JOUR, un par image : un seul ne dirait pas LEQUEL manque.
+        // L'ÉTAT DES TOUCHES, ÉCRIT : pour chaque jour de la rangée, existe-t-il, est-il touchable,
+        // où est-il. Trois captures sans changement ne disent pas POURQUOI ; ce fichier le dit.
+        var rapport = "Rangée des jours, avant tout geste\n"
+        for jour in 0..<7 {
+            let bouton = app.buttons["rangee-des-jours-\(jour)"]
+            rapport += "  jour \(jour) : existe=\(bouton.exists) touchable=\(bouton.exists && bouton.isHittable) cadre=\(bouton.exists ? "\(bouton.frame)" : "-")\n"
+        }
+        rapport += "Fenêtre de l'app : \(app.frame)\n"
+
         // (1) La rangée des jours, touchée par coordonnées : le deuxième des sept jours,
         //     (20 + 50 × 1,5) / 390 de la largeur, au milieu de la rangée.
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.244, dy: 0.26)).tap()
         Thread.sleep(forTimeInterval: 1.0)
         photographier("plan-tap-coordonnees", app: app)
 
-        // (2) Le même jour, par son identifiant d'accessibilité : si celui-ci marche et pas le
-        //     précédent, c'est la position qui est fausse ; si aucun ne marche, c'est que quelque
-        //     chose recouvre la rangée et prend les touches.
-        let jour = app.buttons["rangee-des-jours-3"]
-        let existe = jour.waitForExistence(timeout: 5)
-        XCTContext.runActivity(named: "rangee-des-jours-3 existe : \(existe)") { _ in }
-        if existe { jour.tap() }
+        // (2) Le même geste par l'identifiant d'accessibilité.
+        let jeudi = app.buttons["rangee-des-jours-3"]
+        if jeudi.exists { jeudi.tap() }
         Thread.sleep(forTimeInterval: 1.0)
         photographier("plan-tap-identifiant", app: app)
 
@@ -86,7 +90,29 @@ final class RefonteUITests: XCTestCase {
 
         defiler(app)
         photographier("plan-bas", app: app)
+        ecrire("arbre-plan.txt", rapport + "\n" + app.debugDescription)
         app.terminate()
+
+        // (4) UN AUTRE BOUTON DE LA MÊME PAGE : « Déplacer » ouvre une feuille, visible sur l'image.
+        // S'il répond et pas la rangée des jours, le défaut est propre à la rangée ; s'il ne répond
+        // pas non plus, c'est la page entière qui ne reçoit aucune touche.
+        let seconde = lancer(arguments: ["--ecran=plan"])
+        seconde.coordinate(withNormalizedOffset: CGVector(dx: 0.80, dy: 0.865)).tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("plan-deplacer", app: seconde)
+        seconde.terminate()
+    }
+
+    private func ecrire(_ nom: String, _ texte: String) {
+        guard let dossier = ProcessInfo.processInfo.environment["Haizo_CAPTURES_DIR"] else { return }
+        let url = URL(fileURLWithPath: dossier).appendingPathComponent(nom)
+        do {
+            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(),
+                                                    withIntermediateDirectories: true)
+            try texte.write(to: url, atomically: true, encoding: .utf8)
+        } catch {
+            XCTFail("fichier non écrit sur l'hôte : \(error)")
+        }
     }
 
     private func prendre(_ nom: String, arguments: [String], attente: TimeInterval = 2.0) {
