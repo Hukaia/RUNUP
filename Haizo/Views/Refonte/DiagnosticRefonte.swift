@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// DES INTERRUPTEURS POUR TROUVER CE QUI CASSE, et rien d'autre.
 ///
@@ -15,7 +16,7 @@ enum DiagnosticRefonte {
     static func sans(_ nom: String) -> Bool {
         #if DEBUG
         let arguments = ProcessInfo.processInfo.arguments
-        return arguments.contains("--sans-\(nom)") || arguments.contains("--sans-tout")
+        return arguments.contains("--sans-\(nom)") || (nom != "nu" && arguments.contains("--sans-tout"))
         #else
         return false
         #endif
@@ -37,5 +38,55 @@ enum DiagnosticRefonte {
             try? donnees.write(to: adresse)
         }
         #endif
+    }
+}
+
+/// L'ACCUEIL, REMPLACÉ PAR LE MINIMUM : un texte et un bouton qui appelle `go(.coach)`. Si le contenu
+/// se remplace avec lui, la cause est dans le sous-arbre de l'accueil refait ; sinon, dans la racine.
+struct DiagnosticNuAccueil: View {
+    @Environment(AppState.self) private var appState
+
+    var body: some View {
+        VStack(spacing: HZEspace.groupe) {
+            Text(verbatim: "nu-accueil")
+            Button {
+                appState.go(.coach)
+            } label: {
+                Text(verbatim: "aller-coach")
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.white)
+    }
+}
+
+/// LE PLAN, REMPLACÉ PAR LE MINIMUM : un compteur `@State` et un bouton qui l'incrémente.
+struct DiagnosticNuPlan: View {
+    @State private var n = 0
+
+    var body: some View {
+        VStack(spacing: HZEspace.groupe) {
+            Text(verbatim: "n=\(n)")
+            Button {
+                n += 1
+            } label: {
+                Text(verbatim: "incrementer")
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.white)
+    }
+}
+
+/// UN `ScrollView`, ou un simple empilement quand `--sans-defilement` est demandé.
+struct DiagnosticDefilement<Contenu: View>: View {
+    @ViewBuilder var contenu: () -> Contenu
+
+    var body: some View {
+        if DiagnosticRefonte.sans("defilement") {
+            VStack(spacing: 0) { contenu() }
+        } else {
+            ScrollView { contenu() }
+        }
     }
 }

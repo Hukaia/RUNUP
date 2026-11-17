@@ -273,6 +273,53 @@ final class RefonteUITests: XCTestCase {
         plan.terminate()
     }
 
+    /// LA BISSECTION. Pour chaque interrupteur, le même scénario sur les deux défauts : sortir de
+    /// l'accueil (le contenu est-il remplacé ?) et changer le jour du plan (la sélection suit-elle ?).
+    /// `nu` remplace les deux écrans par un texte et un bouton : si le contenu se remplace alors, la
+    /// cause est dans le sous-arbre de l'écran refait ; sinon, dans la racine ou le simulateur.
+    func test09Bissection() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        var rapport = "interrupteur | accueil : contenu remplacé ? | plan : sélection suivie ?\n"
+        for variante in ["nu", "ligne", "defilement"] {
+            let option = ["--sans-\(variante)"]
+
+            let accueil = lancer(arguments: ["--ecran=prog"] + option)
+            let remplace: Bool
+            if variante == "nu" {
+                let bouton = accueil.buttons["aller-coach"]
+                if bouton.waitForExistence(timeout: 5) { bouton.tap() }
+                Thread.sleep(forTimeInterval: 2.5)
+                remplace = !accueil.staticTexts["nu-accueil"].exists
+            } else {
+                accueil.coordinate(withNormalizedOffset: CGVector(dx: 0.615, dy: 0.545)).tap()
+                Thread.sleep(forTimeInterval: 2.5)
+                remplace = !accueil.buttons["Démarrer"].exists
+            }
+            photographier("bissection-\(variante)-accueil", app: accueil)
+            accueil.terminate()
+
+            let plan = lancer(arguments: ["--ecran=plan"] + option)
+            let suivie: Bool
+            if variante == "nu" {
+                let bouton = plan.buttons["incrementer"]
+                if bouton.waitForExistence(timeout: 5) { bouton.tap() }
+                Thread.sleep(forTimeInterval: 2.0)
+                suivie = plan.staticTexts["n=1"].exists
+            } else {
+                let jeudi = plan.buttons["rangee-des-jours-3"]
+                if jeudi.waitForExistence(timeout: 5) { jeudi.tap() }
+                Thread.sleep(forTimeInterval: 2.0)
+                suivie = jeudi.exists && jeudi.isSelected
+            }
+            photographier("bissection-\(variante)-plan", app: plan)
+            plan.terminate()
+
+            rapport += "\(variante) | \(remplace) | \(suivie)\n"
+        }
+        ecrire("bissection.txt", rapport)
+    }
+
     private func ecrire(_ nom: String, _ texte: String) {
         guard let dossier = ProcessInfo.processInfo.environment["Haizo_CAPTURES_DIR"] else { return }
         let url = URL(fileURLWithPath: dossier).appendingPathComponent(nom)

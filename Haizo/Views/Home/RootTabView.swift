@@ -299,8 +299,10 @@ struct RootTabView: View {
     @ViewBuilder
     private var currentScreen: some View {
         switch appState.screen {
-        case .home: AccueilView()
-        case .plan: PlanSemaineView()
+        case .home:
+            if DiagnosticRefonte.sans("nu") { DiagnosticNuAccueil() } else { AccueilView() }
+        case .plan:
+            if DiagnosticRefonte.sans("nu") { DiagnosticNuPlan() } else { PlanSemaineView() }
         case .rings: RingsView()
         case .live: LiveRunView()
         case .recap: RecapView()

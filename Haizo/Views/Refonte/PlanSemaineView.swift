@@ -66,7 +66,7 @@ struct PlanSemaineView: View {
 
     var body: some View {
         let _ = DiagnosticRefonte.noter("PlanSemaineView.body choix=\(String(describing: choix)) demandes=\(demandes)")
-        ScrollView {
+        DiagnosticDefilement {
             // La feuille REMONTE sur le haut de page d'un rayon de coin : le noir passe derrière ses
             // coins arrondis. Sans ce recouvrement, ils sont blancs sur du blanc — mesuré sur la
             // capture, où le coin était carré.

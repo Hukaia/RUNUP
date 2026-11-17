@@ -57,7 +57,7 @@ struct AccueilView: View {
     // MARK: - La page
 
     private var page: some View {
-        ScrollView {
+        DiagnosticDefilement {
             // La feuille REMONTE sur le haut de page d'un rayon de coin : l'accent passe derrière
             // ses coins arrondis (ils étaient blancs sur du blanc).
             VStack(alignment: .leading, spacing: DiagnosticRefonte.sans("recouvrement") ? 0 : -HZRayon.feuille) {

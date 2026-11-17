@@ -8480,3 +8480,27 @@ pas d'explication de SwiftUI pour cela. Le composant ne dessine plus que la colo
 
 (`test01Planche` a échoué sur cette exécution de `refonte.yml` : la planche de l'étape 1, non
 touchée. À surveiller ; elle n'avait jamais échoué avant.)
+
+### Plan et Accueil : ce que le journal de l'app et le journal système ont établi (relevés 8 à 13)
+
+**Établi.** (a) Sortir de l'accueil : l'action part (`AccueilView: action Coach`), `go(prog → coach)`
+est appelée, `RootTabView.body screen=coach` est réévalué 6 ms après — la barre change — et le contenu
+reste l'accueil. (b) Plan : `selectionner jour=3` s'exécute (compteur incrémenté, retour haptique dans
+le journal système), mais `PlanSemaineView.body` n'est PAS réévalué ensuite. (c) Aucun des interrupteurs
+(barre d'état, fond, zone sûre, recouvrement, barre flottante, transition, animation, tout à la fois)
+ne répare. (d) Le journal système de l'app ne contient ni cycle d'attributs, ni « Modifying state »,
+ni message SwiftUI : **l'hypothèse du cycle, que j'avais avancée, est infirmée.**
+
+**Pas établi : la cause.** Ce que je sais seulement : une partie du contenu cesse de se mettre à jour,
+pas la barre ni les feuilles ; l'état d'un écran refait n'invalide pas sa vue.
+
+**Fautes de ma part dans ce chantier**, à garder écrites : j'ai lu l'image « touche-accueil-recherche »
+sans voir que l'ancienne barre y figurait avec « Profil » en surbrillance (Charlotte me l'a montré sur son
+téléphone) ; j'ai poussé des fichiers de diagnostic sans relancer toutes les gardes (`check_decimales` a
+refusé `%.3f` sans locale ; `check_valeurs` un `20` en dur) ; j'ai avancé « cycle d'attributs » avant
+d'avoir un seul message qui le dise.
+
+**Méthode actuelle : la bissection.** `--sans-nu` remplace l'accueil et le plan par un texte et un bouton ;
+`--sans-ligne` retire l'enveloppe de ligne du texte de la refonte ; `--sans-defilement` retire le
+`ScrollView`. `test09Bissection` rejoue les deux défauts avec chacun. Si l'écran trivial se remplace, la
+cause est dans le sous-arbre de l'écran refait. À retirer ensuite : `DiagnosticRefonte.swift` et ses appels.
