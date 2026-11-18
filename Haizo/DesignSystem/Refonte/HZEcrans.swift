@@ -196,8 +196,8 @@ enum HZFil {
     static let sousLIdentite: CGFloat = 12
     static let sousLaCarteDeSortie: CGFloat = 12
     static let traitDeLaTrace: CGFloat = 6
-    static let zoneDeLaTraceX: CGFloat = 0.52
-    static let zoneDeLaTraceLargeur: CGFloat = 0.42
+    static let zoneDeLaTraceX: CGFloat = 0.62
+    static let zoneDeLaTraceLargeur: CGFloat = 0.32
     static let zoneDeLaTraceY: CGFloat = 0.1
     static let zoneDeLaTraceHauteur: CGFloat = 0.82
     static let rayonDeLaNote: CGFloat = 20
