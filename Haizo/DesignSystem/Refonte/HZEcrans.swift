@@ -400,6 +400,8 @@ enum HZLive {
 /// LES MESURES DU RÉSUMÉ, relevées sur le canvas « Résumé ».
 enum HZResume {
     static let carte: CGFloat = 380
+    /// Sans photo ni tracé : de quoi porter le retour sur le noir, la feuille remonte dessus.
+    static let hauteurSansCarte: CGFloat = 150
     static let sousLaDate: CGFloat = 2
     static let sousLaDistance: CGFloat = 4
     static let sousLeTitre: CGFloat = 16

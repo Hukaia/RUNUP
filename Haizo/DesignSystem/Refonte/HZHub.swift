@@ -484,3 +484,25 @@ extension HZHub {
     /// Une fraction ramenée entre zéro et un : une jauge ne déborde pas de son rail.
     static func borner(_ fraction: Double) -> Double { min(max(fraction, 0), 1) }
 }
+
+extension HZHub {
+    static let lignesDUnTitre = 3
+}
+
+/// LES ALLURES D'UNE SORTIE, ramenées à une forme : 0 pour le kilomètre le plus rapide, 1 pour le plus
+/// lent. C'est ce que dessine `HZCourbeDAllure`, et ce qui fixe la longueur des barres de `HZSplits`.
+enum HZAllures {
+    static let neutre: Double = 0.5
+
+    static func normalisees(_ splits: [String]) -> [Double] {
+        let secondes = splits.map { PaceModel.parseSecPerKm($0) }
+        let connues = secondes.compactMap { $0 }
+        guard let plusRapide = connues.min(), let plusLent = connues.max(), plusLent > plusRapide else {
+            return splits.map { _ in neutre }
+        }
+        return secondes.map { valeur in
+            guard let valeur else { return neutre }
+            return (valeur - plusRapide) / (plusLent - plusRapide)
+        }
+    }
+}
