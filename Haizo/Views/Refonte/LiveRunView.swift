@@ -486,6 +486,9 @@ struct LiveRunView: View {
                     .foregroundStyle(derive ? HZCouleur.accent : HZCouleur.secondaireSurSombre)
                 Text(verbatim: valeur)
                     .hzAffichage(.direct)
+                    // Pas encore de lecture (« --:-- ») : les traits à cette taille sont de gros blocs, qui
+                    // attirent l'œil vers ce qui n'est pas une mesure. Ils s'éteignent jusqu'au premier chiffre.
+                    .foregroundStyle(valeur.contains(where: \.isNumber) ? HZCouleur.blanc : HZCouleur.pointEteint)
                     .lineLimit(1)
                     .minimumScaleFactor(HZLive.reductionDeLAllure)
                     .padding(.leading, -HZLive.debordDeLAllure)

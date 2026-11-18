@@ -8699,3 +8699,10 @@ disparaît quand on regarde une ancienne sortie ; l'aperçu de la carte à parta
 texte blanc disparaîtrait sur du blanc) ; l'icône « agrandir le tracé » reste le symbole du système (le canvas dessine trois points).
 Le fondu en bas du défilement a disparu avec le reste. Graine de captures : `--resume` pose la sortie la plus récente comme dernière sortie.
 Six clés au catalogue, en trois langues. **Non vérifié à cet instant** : compilation et capture.
+
+**Vérifié le 18 novembre** (Refonte #42, vert ; TestFlight #631, vert) : captures `course-decompte`, `course`, `course-pause`, `resume`, `resume-bas`.
+Écran de course : la mise en page, la bulle du coach, le bandeau GPS, la pause (le bouton devient lecture, l'image change) conformes au
+canvas ; sans lecture, l'allure « --:-- » s'éteint (de gros blocs blancs attiraient l'œil). Les barres de blocs n'ont pas pu être vues : la
+séance de la graine est continue, donc il n'y en a pas ; à voir sur une séance à répétitions. Résumé : conforme ; le bloc des splits n'apparaît
+pas, la sortie de la graine n'en a pas. La première version du Résumé ne compilait pas (`capitalizationContext` est une propriété du format,
+pas une méthode) : corrigé.
