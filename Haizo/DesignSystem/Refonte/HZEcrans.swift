@@ -452,10 +452,11 @@ enum HZExplorer {
     static let sousLaDistance: CGFloat = 14
     static let reductionDeLaDistance: CGFloat = 0.6
     static let traitDuTrace: CGFloat = 5
-    static let traceX: CGFloat = 0.52
-    static let traceY: CGFloat = 0.12
-    static let traceLargeur: CGFloat = 0.42
-    static let traceHauteur: CGFloat = 0.76
+    // Le tracé reste dans la moitié haute, à droite : la distance, en bas à gauche, ne doit pas le croiser.
+    static let traceX: CGFloat = 0.46
+    static let traceY: CGFloat = 0.10
+    static let traceLargeur: CGFloat = 0.46
+    static let traceHauteur: CGFloat = 0.56
     static let moitie: CGFloat = 2
 
     static let sousLaCarte: CGFloat = 12

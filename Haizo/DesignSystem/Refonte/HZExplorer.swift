@@ -115,11 +115,18 @@ struct HZTuileDeCourse: View {
                 Color.clear
                     .frame(height: HZExplorer.hauteurDeLaTuile)
                     .background(couleur, in: RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
-                    .overlay(alignment: .topLeading) {
-                        Text(mois)
-                            .hzTexte(.c13, .semi)
-                            .foregroundStyle(HZCouleur.blanc)
-                            .padding(HZExplorer.margeDeLaTuile)
+                    // En pile et non en superposition alignée : la boîte de ligne de `hzTexte` déplace
+                    // son repère haut, et superposée au coin elle remontait à 1,5 point du bord au
+                    // lieu des 14 du canvas. Dans une pile, la place vient des tailles, pas du repère.
+                    .overlay {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(mois)
+                                .hzTexte(.c13, .semi)
+                                .foregroundStyle(HZCouleur.blanc)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(HZExplorer.margeDeLaTuile)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .overlay(alignment: .bottomLeading) {
                         Text(verbatim: distance)
