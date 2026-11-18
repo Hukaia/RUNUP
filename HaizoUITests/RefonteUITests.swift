@@ -114,6 +114,24 @@ final class RefonteUITests: XCTestCase {
         historique.terminate()
     }
 
+    /// LE CLUB ET SON FIL : le haut, le bas, puis un filtre (« Amis ») — l'image doit changer.
+    func test07Club() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=fil"])
+        photographier("club", app: app)
+        let avant = app.screenshot().pngRepresentation
+        let filtre = app.buttons["Amis"]
+        XCTAssertTrue(filtre.waitForExistence(timeout: 5), "les filtres du fil doivent exister")
+        filtre.tap()
+        Thread.sleep(forTimeInterval: 1.0)
+        photographier("club-amis", app: app)
+        XCTAssertNotEqual(avant, app.screenshot().pngRepresentation, "« Amis » doit changer le filtre choisi")
+        defiler(app)
+        photographier("club-bas", app: app)
+        app.terminate()
+    }
+
     /// LES BOUTONS RÉPONDENT-ILS ? Un lancement par geste, et pour chacun : l'image change-t-elle ?
     ///
     /// C'est le test de non-régression d'un défaut qui a coûté une journée : sur l'Accueil et le

@@ -76,7 +76,7 @@ struct RootTabView: View {
     /// libre et son cadran de discipline — reste donc joignable depuis tout écran qui n'est pas
     /// l'accueil. Voir PROGRESS.md : le canvas n'a pas de bouton de course dans la barre.
     private var barreRefaite: Bool {
-        [AppScreen.home, .plan, .coach, .stats].contains(appState.screen)
+        [AppScreen.home, .plan, .coach, .stats, .fil].contains(appState.screen)
     }
 
     private var ongletRefait: Binding<HZOnglet> {
@@ -85,7 +85,7 @@ struct RootTabView: View {
                 switch appState.screen {
                 case .coach: return .coach
                 case .stats: return .stats
-                case .club: return .club
+                case .club, .fil: return .club
                 default: return .aujourdhui
                 }
             },
@@ -95,7 +95,8 @@ struct RootTabView: View {
                 case .aujourdhui: appState.go(.home)
                 // PROVISOIRE : Explorer n'est pas encore un écran. Les parcours, les courses et les
                 // clubs vivent aujourd'hui dans le hub du Club, qui s'ouvre pour les deux entrées.
-                case .explorer, .club: appState.go(.club)
+                case .explorer: appState.go(.club)
+                case .club: appState.go(.fil)
                 case .stats: appState.go(.stats)
                 case .coach: appState.go(.coach)
                 }

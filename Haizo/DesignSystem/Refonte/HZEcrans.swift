@@ -178,3 +178,45 @@ enum HZCoach {
     static let formeCorrecte = 65
     static let formeMoyenne = 50
 }
+
+/// LE CLUB ET SON FIL : les mesures de `Club.dc.html`.
+enum HZFil {
+    static let sousLEntete: CGFloat = 18
+    static let hauteurDeLaCarteDeClub: CGFloat = 214
+    static let margeDeLaCarteDeClub: CGFloat = 20
+    static let sousLaCarteDeClub: CGFloat = 16
+    static let sousLesFiltres: CGFloat = 22
+    static let ecartEntreSorties: CGFloat = 22
+    static let ecartDeLIdentite: CGFloat = 12
+    static let hauteurDeLaCarte: CGFloat = 200
+    static let margeGaucheDuNombre: CGFloat = 18
+    static let margeBasDuNombre: CGFloat = 14
+    static let margeDuLibelle: CGFloat = 20
+    static let margeHautDuLibelle: CGFloat = 16
+    static let sousLIdentite: CGFloat = 12
+    static let sousLaCarteDeSortie: CGFloat = 12
+    static let traitDeLaTrace: CGFloat = 6
+    static let zoneDeLaTraceX: CGFloat = 0.52
+    static let zoneDeLaTraceLargeur: CGFloat = 0.42
+    static let zoneDeLaTraceY: CGFloat = 0.1
+    static let zoneDeLaTraceHauteur: CGFloat = 0.82
+    static let rayonDeLaNote: CGFloat = 20
+    static let disqueDeLaNote: CGFloat = 36
+    static let coteDeLaCocheDeNote: CGFloat = 18
+    static let traitDeLaCocheDeNote: CGFloat = 2.4
+    static let coteDuBravo: CGFloat = 18
+    static let basDePage: CGFloat = 112
+    static let hauteurMiniDeLaFeuille: CGFloat = 400
+    static let voileDePhoto: Double = 0.26
+    static let tailleDeLAvatar: CGFloat = 44
+    static let kilometreMinimum: Double = 0.05
+    static let coteDuDrapeau: CGFloat = 16
+    static let disqueDuDrapeau: CGFloat = 34
+    static let enAttente: CGFloat = 50
+    static let sousIdentiteDuTitre: CGFloat = 8
+    static let lignesDUneAnnonce = 4
+    static let entreesAvantLaFin = 3
+    static let moitie: Double = 2
+    static let demiTour: Double = 180
+    static let moitieDeLEcart: CGFloat = 4
+}

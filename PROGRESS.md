@@ -8593,3 +8593,27 @@ a une sortie à vélo), la charge d'entraînement (Haizo Plus), l'état vide, la
 bilan de la semaine. Vingt-quatre clés au catalogue, en trois langues ; la barre flottante est sur cet écran.
 
 **Non vérifié à cet instant** : compilation et captures.
+
+### Club — le fil (`Haizo/Views/Refonte/WallView.swift`, ex-`Haizo/Views/Club/`)
+
+**Le « Club » du canvas est le FIL, pas le hub du club.** La maquette dessine la carte du club, les filtres
+« Tout / Club / Amis / Courses » et les sorties — c'est `WallView` (qui avait déjà ces quatre filtres), pas
+`ClubView` (Aperçu / Classement / Activité). L'entrée « Club » de la barre ouvre donc le fil (`AppScreen.fil`) ;
+le hub reste joignable par la carte du club, par « Inviter », et par les tuiles du Profil. L'entrée
+« Explorer » mène encore au hub (provisoire, comme avant).
+
+Composants nouveaux dans `DesignSystem/Refonte/HZFil.swift` : `HZCarteDeClub`, `HZSortieDuFil` (avec
+`normaliser`, qui ramène un tracé GPS dans un carré), `HZNoteDuFil`. **La logique du fil ne bouge pas** :
+chargement, pagination, filtres, applaudir, commenter, signaler, bloquer, modifier, supprimer, annonces de course.
+
+**Décisions de ma part, à confirmer sur la maquette** : le bloc d'une sortie est à l'accent quand c'est un
+record, noir sinon (le canvas montre les deux, sans dire pourquoi) ; « Inviter » mène au club, où se trouve le
+lien à partager, au lieu d'ouvrir le partage depuis le fil ; « J'y vais » répond à la prochaine sortie du club
+(`toggleEventRsvp`) ; sans club, la carte dit « Rejoins un club » et mène au hub ; un badge ou une séance sans
+distance devient une note (une phrase, une coche), pas un bloc. **Gardé hors canvas** : le menu de chaque sortie
+(modifier, supprimer, signaler, bloquer), la photo de la sortie (elle prend la place du fond), l'avatar photo,
+le titre que l'autrice a donné à sa sortie. **Perdu** : le double-tape pour applaudir, l'apparition en cascade
+des cartes, l'aperçu du dernier commentaire et des noms de ceux qui ont applaudi dans la carte.
+Dix clés au catalogue, en trois langues.
+
+**Non vérifié à cet instant** : compilation et capture.

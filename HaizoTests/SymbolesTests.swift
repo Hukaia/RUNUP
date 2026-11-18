@@ -118,7 +118,6 @@ final class SymbolesTests: XCTestCase {
         "speedometer",
         "square.and.arrow.up",
         "square.grid.3x1.below.line.grid.1x2",
-        "square.stack.3d.up",
         "square.stack.3d.up.fill",
         "stop.fill",
         "target",

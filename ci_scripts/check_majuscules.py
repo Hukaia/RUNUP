@@ -141,7 +141,6 @@ PERMIS = {
     "Haizo/Views/Club/PublicProfileView.swift": (4, BOUTON),
     "Haizo/Views/Club/PublishRouteSheet.swift": (4, BOUTON),
     "Haizo/Views/Club/RouteDetailSheet.swift": (3, BOUTON),
-    "Haizo/Views/Club/WallView.swift": (1, BOUTON),
     "Haizo/Views/Home/HomeView.swift": (1, BOUTON),
     "Haizo/Views/Home/Sheets/ProgramSettingsSheet.swift": (1, BOUTON),
     "Haizo/Views/Home/Sheets/SessionDetailSheet.swift": (1, BOUTON),

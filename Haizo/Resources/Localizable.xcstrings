@@ -5879,6 +5879,23 @@
         }
       }
     },
+    "Bravo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kudos"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bravo"
+          }
+        }
+      }
+    },
     "Bravo %@": {
       "localizations": {
         "en": {
@@ -13359,6 +13376,23 @@
         }
       }
     },
+    "Inviter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invite"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invitar"
+          }
+        }
+      }
+    },
     "Inviter un ami": {
       "extractionState": "manual",
       "localizations": {
@@ -13485,6 +13519,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Allí estaré ✓"
+          }
+        }
+      }
+    },
+    "J'y vais": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'm in"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voy"
           }
         }
       }
@@ -14243,6 +14294,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "kilómetro corrido"
+          }
+        }
+      }
+    },
+    "kilomètres": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilometers"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilómetros"
           }
         }
       }
@@ -18780,6 +18848,23 @@
         }
       }
     },
+    "Pas encore de club": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No club yet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún sin club"
+          }
+        }
+      }
+    },
     "Passer à un objectif": {
       "extractionState": "manual",
       "localizations": {
@@ -18793,6 +18878,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pasar a un objetivo"
+          }
+        }
+      }
+    },
+    "Plus d'actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More actions"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más acciones"
           }
         }
       }
@@ -18843,6 +18945,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "MÁS TARDE"
+          }
+        }
+      }
+    },
+    "Prochaine sortie %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next run %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próxima salida %@"
           }
         }
       }
@@ -23462,6 +23581,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "INICIAR SESIÓN"
+          }
+        }
+      }
+    },
+    "Se connecter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar sesión"
           }
         }
       }
@@ -28895,6 +29031,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "¿Qué buscas, exactamente?"
+          }
+        }
+      }
+    },
+    "Tu y vas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're in"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vas"
           }
         }
       }
