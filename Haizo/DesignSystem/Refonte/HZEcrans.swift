@@ -235,3 +235,54 @@ enum HZFil {
     static let demiTour: Double = 180
     static let moitieDeLEcart: CGFloat = 4
 }
+
+
+/// LES MESURES DU PROFIL, relevées sur le canvas « Profil ».
+enum HZProfil {
+    /// Les commandes (retour, réglages) à l'identité.
+    static let sousLesCommandes: CGFloat = 16
+    static let avatar: CGFloat = 84
+    static let entreAvatarEtNom: CGFloat = 16
+    /// Le pseudo à la bio.
+    static let sousLePseudo: CGFloat = 4
+    static let reductionDuNom: CGFloat = 0.6
+    static let opaciteEnCours: Double = 0.5
+    static let opaciteNormale: Double = 1
+    /// La feuille de détail d'un badge.
+    static let hauteurDuDetailDeBadge: CGFloat = 300
+    /// De l'identité à la capsule d'objectif.
+    static let sousLIdentite: CGFloat = 14
+    /// De la capsule aux trois totaux.
+    static let sousLaPastille: CGFloat = 22
+    static let sousUnTotal: CGFloat = 4
+    /// Du dernier total au bord de la feuille.
+    static let sousLesTotaux: CGFloat = 26
+    static let phasesDUnProgramme = 3
+
+    static let sousLeTitreDeCommunaute: CGFloat = 6
+    static let disqueDeDestination: CGFloat = 44
+    static let coteDeLIconeDeDestination: CGFloat = 20
+    static let attente: CGFloat = 28
+    static let dansLInvitation: CGFloat = 10
+    static let interligne: CGFloat = 1.35
+
+    static let entreSections: CGFloat = 24
+    static let sousLeTitreDeBadges: CGFloat = 14
+    static let colonnesDeBadges = 4
+    static let entreBadges: CGFloat = 8
+    static let entreRangeesDeBadges: CGFloat = 16
+    static let disqueDeBadge: CGFloat = 68
+    static let sousUnBadge: CGFloat = 8
+    static let interligneDeBadge: CGFloat = 1.25
+
+    static let sousLesBadges: CGFloat = 20
+    static let dansLeProchain: CGFloat = 10
+    static let hauteurDeLaJauge: CGFloat = 10
+    static let jaugePleine: Double = 1
+    static let lignesDeNomDeBadge = 2
+    /// La photo envoyée au club : une vignette, pas la photo de l'appareil.
+    static let coteMaxDeLaPhoto: CGFloat = 240
+    static let qualiteDeLaPhoto: CGFloat = 0.6
+    /// Sous le dernier bloc : la barre flottante passe devant.
+    static let basDePage: CGFloat = 112
+}

@@ -27,8 +27,6 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 # fichier → { ligne : raison }. La ligne est indicative ; c'est le COMPTE par fichier qui est
 # tenu, pour qu'un ajout de code au-dessus ne fasse pas échouer le build pour rien.
 AUTORISE = {
-    "Haizo/Views/Profile/ProfileView.swift":
-        (1, "« Session expirée » en ambre : la couleur nomme un avertissement"),
     "Haizo/Views/Race/RacePageView.swift":
         (1, "« Je prépare cette course » en vert : la couleur nomme un état confirmé"),
     "Haizo/Views/Profile/ShoesView.swift":
@@ -163,7 +161,6 @@ DIRECTES_AUTORISEES = {
                                                         "course qu'on n'a pas renseigné."),
     "Haizo/Views/Onboarding/RunningDaysStepView.swift": (1, AVERTISSEMENT + " Moins de jours "
                                                          "cochés que le minimum de l'objectif."),
-    "Haizo/Views/Profile/ProfileView.swift": (1, AVERTISSEMENT + " « Session expirée »."),
     "Haizo/Views/Profile/ShoesView.swift": (2, AVERTISSEMENT + " Une paire au-delà de 80 % de sa "
                                             "durée de vie, et la ligne qui le dit."),
     "Haizo/Views/Race/RacePageView.swift": (3, AVERTISSEMENT + " Un bandeau d'alerte de course, "

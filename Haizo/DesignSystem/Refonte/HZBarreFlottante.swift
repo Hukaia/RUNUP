@@ -51,11 +51,14 @@ enum HZOnglet: String, CaseIterable, Identifiable {
 /// passe dessous. Pas de libellé — chaque entrée a son nom pour VoiceOver.
 struct HZBarreFlottante: View {
     @Binding var selection: HZOnglet
+    /// Le profil n'est pas une entrée de la barre : on y entre par l'avatar, et le canvas l'y dessine
+    /// sans entrée allumée.
+    var aucuneActive: Bool = false
 
     var body: some View {
         HStack(spacing: HZBarreFlottante.ecart) {
             ForEach(HZOnglet.allCases) { onglet in
-                let active = onglet == selection
+                let active = !aucuneActive && onglet == selection
                 Button {
                     selection = onglet
                 } label: {

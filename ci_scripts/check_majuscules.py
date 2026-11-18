@@ -152,7 +152,6 @@ PERMIS = {
     "Haizo/Views/Onboarding/PlanRecapView.swift": (1, BOUTON),
     "Haizo/Views/Onboarding/StatistiquesStepView.swift": (2, BOUTON),
     "Haizo/Views/Onboarding/WelcomeView.swift": (1, BOUTON),
-    "Haizo/Views/Profile/ProfileView.swift": (2, BOUTON),
     "Haizo/Views/ProgramEnd/NewGoalWizardView.swift": (5, BOUTON),
     "Haizo/Views/ProgramEnd/RecoveryView.swift": (2, BOUTON),
     "Haizo/Views/Race/CreateRaceSheet.swift": (1, BOUTON),

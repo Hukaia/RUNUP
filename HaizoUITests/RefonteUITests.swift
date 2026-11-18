@@ -132,6 +132,28 @@ final class RefonteUITests: XCTestCase {
         app.terminate()
     }
 
+    /// LE PROFIL : le haut, le bas, puis le bouton des réglages — l'image doit changer (la feuille
+    /// s'ouvre).
+    func test08Profil() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=profile"])
+        photographier("profil", app: app)
+        defiler(app)
+        photographier("profil-bas", app: app)
+        app.terminate()
+
+        let reglages = lancer(arguments: ["--ecran=profile"])
+        let avant = reglages.screenshot().pngRepresentation
+        let bouton = reglages.buttons["Réglages"]
+        XCTAssertTrue(bouton.waitForExistence(timeout: 5), "le bouton des réglages doit exister")
+        bouton.tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("profil-reglages", app: reglages)
+        XCTAssertNotEqual(avant, reglages.screenshot().pngRepresentation, "« Réglages » doit ouvrir la feuille")
+        reglages.terminate()
+    }
+
     /// LES BOUTONS RÉPONDENT-ILS ? Un lancement par geste, et pour chacun : l'image change-t-elle ?
     ///
     /// C'est le test de non-régression d'un défaut qui a coûté une journée : sur l'Accueil et le

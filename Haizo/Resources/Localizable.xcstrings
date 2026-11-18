@@ -1022,6 +1022,23 @@
         }
       }
     },
+    "%lld sur %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld de %2$lld"
+          }
+        }
+      }
+    },
     "%lld XP": {
       "localizations": {
         "en": {
@@ -6160,6 +6177,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "¿Cuándo fue?"
+          }
+        }
+      }
+    },
+    "Club, abonnements et courses": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Club, follows and races"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Club, seguidos y carreras"
           }
         }
       }
@@ -14281,6 +14315,23 @@
         }
       }
     },
+    "kilomètre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilometre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilómetro"
+          }
+        }
+      }
+    },
     "kilomètre couru": {
       "extractionState": "manual",
       "localizations": {
@@ -16281,6 +16332,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "VOLVER A ENTRAR"
+          }
+        }
+      }
+    },
+    "Me reconnecter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign back in"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volver a conectarme"
           }
         }
       }
@@ -18945,6 +19013,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "MÁS TARDE"
+          }
+        }
+      }
+    },
+    "Prochain badge · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next badge · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próxima insignia · %@"
           }
         }
       }

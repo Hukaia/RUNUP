@@ -8626,3 +8626,24 @@ le premier enfant d'une pile conditionnelle (`ZStack { if photo … else { (coul
 posé en arrière-plan d'une surface de la bonne taille, et le fond d'une photo ou d'une couleur est une vue à part. Je
 n'ai pas établi pourquoi l'ancienne écriture ne se dessinait pas ; je n'ai établi que sa capture. À revérifier sur la
 capture suivante.
+
+**Vérifié le 18 novembre** : le bloc de chaque sortie se dessine (captures `club`, `club-amis`, `club-bas`, run #36), et le
+tracé a été décalé vers la droite pour ne plus passer sous le grand nombre (`zoneDeLaTraceX` 0,62).
+
+## Profil (18 novembre) : refait d'après le canvas « Profil »
+
+Le haut est noir (retour, réglages, l'avatar de 84 en initiales sur l'accent, le prénom, le pseudo, la capsule
+d'objectif, trois totaux) ; la feuille blanche porte la communauté (cinq destinations en lignes, plus quatre tuiles),
+les badges en grille de quatre et le prochain badge avec sa jauge. **La logique ne bouge pas** : la photo, l'objectif et son
+chemin, le chargement social, les demandes d'amis en attente, l'état déconnecté et la session expirée, le détail d'un badge.
+
+**La barre n'allume aucune entrée sur le Profil** : le canvas la dessine éteinte, et le profil n'est plus un onglet. Elle prend
+un paramètre `aucuneActive`. L'avatar de l'accueil reste la porte d'entrée.
+
+**Décisions de ma part, à confirmer sur la maquette** : la marque d'un badge est son symbole (le canvas écrit un court texte, « 300 »,
+« 10 »), parce que seuls les symboles existent pour les seize badges ; la flamme de la série est retirée (le canvas n'en a pas) ;
+la capsule de modification de la photo (le crayon) est retirée, un toucher sur l'avatar ouvre la photothèque et un appui long
+propose de la retirer ; avant la première sortie, les trois totaux deviennent ceux du programme (semaines, phases, jours avant la
+course) au lieu de trois zéros ; « Running Club » garde la graphie du catalogue existant (le canvas écrit « Running club » ;
+la capitale du mot « Club » est celle de la marque) ; l'ambre de « Session expirée » disparaît, la carte est neutre.
+Cinq clés au catalogue, en trois langues. **Non vérifié à cet instant** : compilation et capture.
