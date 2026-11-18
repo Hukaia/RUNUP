@@ -8612,8 +8612,10 @@ lien à partager, au lieu d'ouvrir le partage depuis le fil ; « J'y vais » ré
 (`toggleEventRsvp`) ; sans club, la carte dit « Rejoins un club » et mène au hub ; un badge ou une séance sans
 distance devient une note (une phrase, une coche), pas un bloc. **Gardé hors canvas** : le menu de chaque sortie
 (modifier, supprimer, signaler, bloquer), la photo de la sortie (elle prend la place du fond), l'avatar photo,
-le titre que l'autrice a donné à sa sortie. **Perdu** : le double-tape pour applaudir, l'apparition en cascade
-des cartes, l'aperçu du dernier commentaire et des noms de ceux qui ont applaudi dans la carte.
+le titre que l'autrice a donné à sa sortie. **Perdu** : l'apparition en cascade des cartes. **Rendus le 18 novembre, à la demande de Charlotte** : le double-tape
+pour applaudir (sur le bloc de la sortie ; un tap simple l'ouvre, avec le délai habituel du double-tape ; le cœur
+qui s'ouvre au centre remplace la main), la ligne « Aimé par … » et l'aperçu du dernier commentaire sous Bravo
+et Commenter.
 Dix clés au catalogue, en trois langues.
 
 **Non vérifié à cet instant** : compilation et capture.

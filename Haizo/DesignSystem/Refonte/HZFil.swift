@@ -71,12 +71,20 @@ struct HZSortieDuFil<Avatar: View, Options: View>: View {
     var bravo: String
     var bravoFait: Bool = false
     var commentaires: String
+    /// « Aimé par Camille et 3 autres » : ce qui transforme « 7 » en gens.
+    var aimePar: String? = nil
+    /// Le dernier commentaire en aperçu : qui, et quoi.
+    var dernierCommentaire: (auteur: String, texte: String)? = nil
     let ouvrirLaPersonne: () -> Void
     let ouvrirLaSortie: () -> Void
     let applaudir: () -> Void
     let commenter: () -> Void
     @ViewBuilder var avatar: () -> Avatar
     @ViewBuilder var menu: () -> Options
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Le cœur qui s'ouvre au centre du bloc quand on le touche deux fois.
+    @State private var eclat = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -110,11 +118,17 @@ struct HZSortieDuFil<Avatar: View, Options: View>: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, HZFil.sousIdentiteDuTitre)
             }
-            Button(action: ouvrirLaSortie) {
-                bloc
-            }
-            .buttonStyle(.plain)
-            .padding(.top, HZFil.sousLIdentite)
+            // DEUX GESTES SUR LE MÊME BLOC : un tap ouvre la sortie, deux taps applaudissent. Le
+            // double-tap est déclaré en premier : c'est ce qui laisse au tap simple le temps de
+            // savoir qu'il n'en sera pas un.
+            bloc
+                .overlay { eclatDApplaudissement }
+                .contentShape(Rectangle())
+                .onTapGesture(count: HZFil.tapsDuDoubleTape) { applaudirParDoubleTape() }
+                .onTapGesture(perform: ouvrirLaSortie)
+                .accessibilityAddTraits(.isButton)
+                .accessibilityAction(named: Text(bravo)) { applaudir() }
+                .padding(.top, HZFil.sousLIdentite)
             if !mesures.isEmpty {
                 HStack(alignment: .top, spacing: 0) {
                     ForEach(mesures) { mesure in
@@ -137,6 +151,60 @@ struct HZSortieDuFil<Avatar: View, Options: View>: View {
                 geste(dessin: .bulle, libelle: commentaires, actif: false, action: commenter)
             }
             .padding(.top, HZFil.sousLaCarteDeSortie)
+            if let aimePar {
+                Text(aimePar)
+                    .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
+                    .foregroundStyle(HZCouleur.secondaireSurClair)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, HZFil.sousLesGestes)
+            }
+            if let dernierCommentaire {
+                (Text(dernierCommentaire.auteur).fontWeight(.bold) + Text(verbatim: "  ")
+                    + Text(dernierCommentaire.texte))
+                    .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
+                    .foregroundStyle(HZCouleur.encre)
+                    .lineLimit(HZFil.lignesDuCommentaire)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, HZFil.moitieDeLEcart)
+            }
+        }
+    }
+
+    // MARK: - Le double-tape
+
+    /// Le cœur au centre du bloc, une demi-seconde. Sans lui, un double-tape réussi ne se distingue
+    /// pas d'un double-tape manqué : le compteur bouge de un, sous le pli, là où le doigt vient de
+    /// passer.
+    private var eclatDApplaudissement: some View {
+        HZIcone(dessin: .coeur, cote: HZFil.coteDeLEclat, trait: HZFil.traitDeLEclat,
+                couleur: HZCouleur.blanc)
+            .shadow(color: HZCouleur.noirFranc.opacity(HZFil.opaciteDeLOmbreDeLEclat),
+                    radius: HZFil.rayonDeLOmbreDeLEclat)
+            .scaleEffect(eclat ? HZFil.echelleDeLEclat : HZFil.echelleDeDepartDeLEclat)
+            .opacity(eclat ? HZPlan.pleine : 0)
+            .allowsHitTesting(false)
+    }
+
+    private func applaudirParDoubleTape() {
+        // Déjà applaudi : rien ne part au serveur, mais le cœur repasse quand même. Un geste qui ne
+        // répond pas se lit comme un geste qui n'a pas été vu.
+        if !bravoFait {
+            applaudir()
+            Haptics.impact(.light)
+        }
+        jouerLEclat()
+    }
+
+    private func jouerLEclat() {
+        // Sous « Réduire les animations », l'éclat apparaît et disparaît sans ressort : le geste
+        // garde son accusé de réception, c'est le rebond qui part.
+        let entree: Animation = reduceMotion
+            ? .easeOut(duration: HZFil.entreeSansRessort)
+            : .spring(response: HZFil.ressortDeLEclat, dampingFraction: HZFil.amortissementDeLEclat)
+        withAnimation(entree) { eclat = true }
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(HZFil.dureeDeLEclatEnMillisecondes))
+            withAnimation(.easeOut(duration: HZFil.sortieDeLEclat)) { eclat = false }
         }
     }
 

@@ -403,6 +403,8 @@ struct WallView: View {
                 bravo: item.kudos > 0 ? "\(item.kudos)" : String(localized: "Bravo"),
                 bravoFait: item.kudoedByMe,
                 commentaires: item.commentsCount > 0 ? "\(item.commentsCount)" : String(localized: "Commenter"),
+                aimePar: aimePar(item),
+                dernierCommentaire: item.lastComment.map { (auteur: $0.nomComplet, texte: $0.text) },
                 ouvrirLaPersonne: { if item.source != "moi" { appState.ouvrirLeProfil(item.userId) } },
                 ouvrirLaSortie: { appState.ouvrirLaSortie(item.id) },
                 applaudir: { Task { await applaudir(item) } },
@@ -429,6 +431,21 @@ struct WallView: View {
                 HZNoteDuFil(texte: item.localizedText)
             }
         }
+    }
+
+    /// « Aimé par Camille et 3 autres » : DEUX noms et pas trois — trois prénoms tenaient sur une
+    /// ligne, trois noms complets non, et la ligne n'a jamais prétendu dire QUI a applaudi : ces
+    /// noms sont un échantillon, pas les trois derniers.
+    private func aimePar(_ item: FeedItem) -> String? {
+        let noms = Array(item.kudosNames.prefix(HZFil.nomsDApplaudisseurs))
+        guard !noms.isEmpty else { return nil }
+        var elements = noms
+        switch max(0, item.kudos - noms.count) {
+        case 0: break
+        case 1: elements.append(String(localized: "une autre personne"))
+        case let autres: elements.append(String(localized: "\(autres) autres"))
+        }
+        return String(localized: "Aimé par \(ListFormatter.localizedString(byJoining: elements))")
     }
 
     /// Allure (ou vitesse), temps, dénivelé — seulement ce qui a été mesuré : pas de « 0 m » ni de
