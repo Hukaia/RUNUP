@@ -237,8 +237,8 @@ struct ExplorerView: View {
 
     private func mois(de course: RaceEvent) -> String {
         guard let jour = course.jour else { return course.raceDate }
-        return jour.formatted(Date.FormatStyle(capitalizationContext: .beginningOfSentence,
-                                               timeZone: TimeZone(identifier: "UTC") ?? .gmt)
+        return jour.formatted(Date.FormatStyle(timeZone: TimeZone(identifier: "UTC") ?? .gmt,
+                                               capitalizationContext: .beginningOfSentence)
             .month(.wide))
     }
 
