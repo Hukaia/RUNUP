@@ -114,10 +114,11 @@ struct ShoesView: View {
         return HStack(spacing: HZEspace.groupe) {
             VStack(spacing: 0) {
                 Text(verbatim: String(format: "%.0f", km))
-                    .hzAffichage(.chiffreDeTuile)
+                    .hzAffichage(.mesure)
                     .foregroundStyle(HZCouleur.blanc)
                     .lineLimit(1)
-                    .minimumScaleFactor(HZTuile.retrait)
+                    .minimumScaleFactor(HZHub.reductionDesKilometres)
+                    .padding(.horizontal, HZEspace.entrePilules)
                 Text(verbatim: "km")
                     .hzTexte(.c13, .semi)
                     .foregroundStyle(HZCouleur.secondaireSurSombre)
@@ -128,10 +129,10 @@ struct ShoesView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(shoe.name).hzTexte(.c16, .gras).foregroundStyle(HZCouleur.encre)
                     Text(LocalizedStringKey(isRetired ? "Retirée" : (isDefault ? "Paire par défaut" : "Appuie pour la définir par défaut")))
-                        .hzTexte(.c13, .medium)
+                        .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
                         .foregroundStyle(HZCouleur.secondaireSurClair)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .lineLimit(1)
                 HZJauge(fraction: fraction, couleur: usee ? HZCouleur.accent : HZCouleur.encre,
                         rail: HZCouleur.blanc, epaisseur: HZHub.hauteurDeLaProgression)
                 HStack {

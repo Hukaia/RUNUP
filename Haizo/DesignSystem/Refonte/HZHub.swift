@@ -545,7 +545,8 @@ extension HZHub {
     static let uneLigne: ClosedRange<Int> = 1...1
     static let opaciteDesPaires: Double = 0.55
     static let seuilDUsure: Double = 0.8
-    static let cotePuceDeKm: CGFloat = 76
+    static let cotePuceDeKm: CGFloat = 84
+    static let reductionDesKilometres: CGFloat = 0.6
 }
 
 /// LES QUATRE PÉRIODES des Stats et de la carte de chaleur : 7 jours, 4 semaines, 3 mois, 1 an.

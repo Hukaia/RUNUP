@@ -407,7 +407,7 @@ enum CaptureSeed {
         }
         // DEUX PAIRES, pour que l'écran des chaussures montre une ligne qui avance et une qui touche à
         // sa fin : une base sans paire ne photographie que son état vide.
-        let usee = Shoe(name: "Pegasus 41", startDistanceKm: 520, alertThresholdKm: 700)
+        let usee = Shoe(name: "Pegasus 41", startDistanceKm: 600, alertThresholdKm: 700)
         let neuve = Shoe(name: "Novablast 4", startDistanceKm: 60, alertThresholdKm: 700)
         contexte.insert(usee)
         contexte.insert(neuve)
