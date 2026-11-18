@@ -201,6 +201,23 @@
         }
       }
     },
+    "%@ km/h": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km/h"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km/h"
+          }
+        }
+      }
+    },
     "%@ ne verra plus rien de toi.": {
       "extractionState": "manual",
       "localizations": {
@@ -916,6 +933,91 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld al %2$lld de %3$@"
+          }
+        }
+      }
+    },
+    "%lld j": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld d"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld d"
+          }
+        }
+      }
+    },
+    "%lld parcours enregistré": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld route saved"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld recorrido guardado"
+          }
+        }
+      }
+    },
+    "%lld parcours enregistrés": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld routes saved"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld recorridos guardados"
+          }
+        }
+      }
+    },
+    "%lld s plus lent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld s slower"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld s más lento"
+          }
+        }
+      }
+    },
+    "%lld s plus vite": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld s faster"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld s más rápido"
           }
         }
       }
@@ -2621,6 +2723,23 @@
         }
       }
     },
+    "1 an": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 yr"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 año"
+          }
+        }
+      }
+    },
     "1 semaine faite": {
       "extractionState": "manual",
       "localizations": {
@@ -2717,6 +2836,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "10 carreras"
+          }
+        }
+      }
+    },
+    "10 km": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 km"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 km"
           }
         }
       }
@@ -2968,6 +3104,23 @@
         }
       }
     },
+    "3 mois": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 mo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 meses"
+          }
+        }
+      }
+    },
     "3 à 4 fois par semaine": {
       "extractionState": "manual",
       "localizations": {
@@ -3101,6 +3254,23 @@
         }
       }
     },
+    "4 sem.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4 wk"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4 sem."
+          }
+        }
+      }
+    },
     "400 à 800 m": {
       "extractionState": "manual",
       "localizations": {
@@ -3164,6 +3334,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "5 veces o más"
+          }
+        }
+      }
+    },
+    "5 km": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 km"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 km"
           }
         }
       }
@@ -3330,6 +3517,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "últimos 7 días"
+          }
+        }
+      }
+    },
+    "7 j": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 d"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 d"
           }
         }
       }
@@ -8924,6 +9128,23 @@
         }
       }
     },
+    "Depuis le %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Since %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desde el %@"
+          }
+        }
+      }
+    },
     "Dernière, km": {
       "extractionState": "manual",
       "localizations": {
@@ -14009,6 +14230,40 @@
         }
       }
     },
+    "kilomètre couru": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilometer run"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilómetro corrido"
+          }
+        }
+      }
+    },
+    "kilomètres courus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilometers run"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilómetros corridos"
+          }
+        }
+      }
+    },
     "KM": {
       "localizations": {
         "en": {
@@ -15958,6 +16213,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "VOLVER A ENTRAR"
+          }
+        }
+      }
+    },
+    "Meilleure semaine, km": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best week, km"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mejor semana, km"
           }
         }
       }
@@ -18521,6 +18793,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pasar a un objetivo"
+          }
+        }
+      }
+    },
+    "Plus lente %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slowest %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más lenta %@"
+          }
+        }
+      }
+    },
+    "Plus longue, km": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Longest, km"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más larga, km"
           }
         }
       }
@@ -21427,6 +21733,40 @@
         }
       }
     },
+    "Record %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Récord %@"
+          }
+        }
+      }
+    },
+    "Records": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Records"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Récords"
+          }
+        }
+      }
+    },
     "Renforcement": {
       "localizations": {
         "en": {
@@ -23187,6 +23527,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "MEDIA"
+          }
+        }
+      }
+    },
+    "Semi-marathon": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Half marathon"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Media maratón"
           }
         }
       }
@@ -25011,6 +25368,23 @@
         }
       }
     },
+    "Sur 8 semaines · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Over 8 weeks · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En 8 semanas · %@"
+          }
+        }
+      }
+    },
     "Sur les jambes de la veille": {
       "localizations": {
         "en": {
@@ -25601,6 +25975,23 @@
         }
       }
     },
+    "Série en cours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current streak"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Racha actual"
+          }
+        }
+      }
+    },
     "Série en cours : ": {
       "localizations": {
         "en": {
@@ -25762,6 +26153,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tus salidas aparecerán aquí."
+          }
+        }
+      }
+    },
+    "Tes temps possibles": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your possible times"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus tiempos posibles"
           }
         }
       }

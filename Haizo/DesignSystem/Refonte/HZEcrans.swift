@@ -94,17 +94,52 @@ enum HZPlan {
 }
 
 enum HZStats {
-    /// Sous la rangée du titre : « Depuis le… ».
     static let sousLeTitre: CGFloat = 22
-    /// Le total sort de 6 points à gauche, pour la même raison que le nombre de l'accueil ; il
-    /// est plus grand, son approche aussi.
     static let debordDuTotal: CGFloat = 6
-    /// Sous le total : « kilomètres courus ».
     static let sousLeTotal: CGFloat = 8
-    /// Sous le libellé du total : les quatre périodes.
     static let sousLeLibelle: CGFloat = 18
-    /// Sous les périodes : la feuille.
     static let sousLesPeriodes: CGFloat = 26
+    static let basDePage: CGFloat = 112
+    static let hauteurMiniDeLaFeuille: CGFloat = 400
+    static let hauteurDeLaCourbe: CGFloat = 120
+    static let traitDeLaCourbe: CGFloat = 4
+    static let bordDeLaCourbe: CGFloat = 4
+    static let rayonDuRecord: CGFloat = 7
+    static let diametreDuRecord: CGFloat = 14
+    static let traitDuRecord: CGFloat = 3.5
+    static let sousLeHaut: CGFloat = 0.15
+    static let etendueDeLaCourbe: CGFloat = 0.7
+    static let margeHautDeCarte: CGFloat = 18
+    static let margeBasDeCarte: CGFloat = 14
+    static let sousLaCourbe: CGFloat = 4
+    static let sousLEnteteDeCarte: CGFloat = 12
+    static let sousLaSection: CGFloat = 6
+    static let apresLesTemps: CGFloat = 16
+    static let margeDuChip: CGFloat = 12
+    static let margeVerticaleDuChip: CGFloat = 7
+    static let uniteDAllure = "/km"
+    static let hauteurDesBarres: CGFloat = 70
+    static let hauteurMiniDUneBarre: CGFloat = 4
+    static let ecartDesBarres: CGFloat = 6
+    static let semainesDeCharge = 8
+    static let rayonDUneBarre: CGFloat = 4
+    static let tailleDuCercleDeLien: CGFloat = 44
+    static let coteDeLIconeDeLien: CGFloat = 20
+    static let jourParAn = 365
+    static let reductionDuTotal: CGFloat = 0.5
+    static let pointsMinimumDeCourbe = 2
+    static let ecartDeRecord = 0.01
+    static let sortiesRetenuesPourUnePrediction = 10
+    static let distanceMinimaleDUnePrediction: Double = 2
+    static let cinqKm: Double = 5
+    static let dixKm: Double = 10
+    static let joursDeLaSemaine = 7
+    static let joursDuMois = 28
+    static let joursDuTrimestre = 90
+    static let kilometresParSemi: Double = 21.0975
+    static let kilometresParMarathon: Double = 42.195
+    static let seuilDuMarathon: Double = 28
+    static let paliersDeSerie = [3, 7, 30]
 }
 
 /// LE COACH : les mesures de `Coach.dc.html` qui ne sont ni un rayon ni une marge du système.

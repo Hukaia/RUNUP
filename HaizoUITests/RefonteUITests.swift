@@ -83,6 +83,37 @@ final class RefonteUITests: XCTestCase {
         app.terminate()
     }
 
+    /// LES STATS : le haut, le bas, puis deux gestes — une autre période (« 3 mois »), et
+    /// « Historique ». L'image doit changer après chacun.
+    func test06Stats() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=stats"])
+        photographier("stats", app: app)
+        let avant = app.screenshot().pngRepresentation
+        let periode = app.buttons["3 mois"]
+        XCTAssertTrue(periode.waitForExistence(timeout: 5), "les périodes doivent exister")
+        periode.tap()
+        Thread.sleep(forTimeInterval: 1.0)
+        photographier("stats-3-mois", app: app)
+        XCTAssertNotEqual(avant, app.screenshot().pngRepresentation,
+                          "« 3 mois » doit changer le total et la courbe")
+        defiler(app)
+        photographier("stats-bas", app: app)
+        app.terminate()
+
+        let historique = lancer(arguments: ["--ecran=stats"])
+        let bouton = historique.buttons["Historique"]
+        XCTAssertTrue(bouton.waitForExistence(timeout: 5), "« Historique » doit exister")
+        let avantHistorique = historique.screenshot().pngRepresentation
+        bouton.tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("stats-historique", app: historique)
+        XCTAssertNotEqual(avantHistorique, historique.screenshot().pngRepresentation,
+                          "« Historique » doit ouvrir l'historique")
+        historique.terminate()
+    }
+
     /// LES BOUTONS RÉPONDENT-ILS ? Un lancement par geste, et pour chacun : l'image change-t-elle ?
     ///
     /// C'est le test de non-régression d'un défaut qui a coûté une journée : sur l'Accueil et le

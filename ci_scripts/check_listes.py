@@ -73,6 +73,13 @@ DISPENSES = {
         "Les suggestions du coach : un tableau de quatre phrases écrit dans la vue, en bande "
         "horizontale de pastilles. Chacune est envoyée telle quelle au coach ; rien n'y croît "
         "avec l'usage.",
+    ("StatsView.swift", "distancesPrevues"):
+        "Les distances de « Tes temps possibles » : trois au plus, choisies dans le corps de la vue "
+        "(5 km, 10 km, semi, ou 10 km, semi, marathon). Des lignes de hauteur fixe ; rien n'y "
+        "croît avec l'usage.",
+    ("StatsView.swift", "barres"):
+        "Les barres de la charge d'entraînement : `HZStats.semainesDeCharge`, soit huit semaines, "
+        "jamais plus. Des barres de largeur partagée ; rien n'y croît avec l'usage.",
     ("AccueilView.swift", "prochaines"):
         "« La suite » de l'accueil : les séances de la semaine EN COURS, après aujourd'hui. "
         "`weekSessions` a exactement sept jours, donc six tuiles au plus, de largeur fixe, en "

@@ -8571,3 +8571,25 @@ d'autant. La tuile « Dernière sortie » devient « Dernière, km » (valeur sa
 Quatre clés au catalogue, en trois langues. Le bouton d'envoi s'éteint (40 %) tant que le champ est vide.
 
 **Non vérifié à cet instant** : la compilation et la capture. Rien de ceci n'a été compilé avant le commit.
+
+### Stats (`Haizo/Views/Refonte/StatsView.swift`, ex-`Haizo/Views/Stats/`)
+
+Composants nouveaux dans `DesignSystem/Refonte/HZStatistiques.swift` : `HZCourbeDAllure` (le trait accent de
+4 pt, un anneau pour le record), `HZCarteDAllure`, `HZLigneDeTemps`, `HZCarteDeLien`. Le haut de l'écran
+(titre, grand total, périodes, quatre chiffres, records) reprend ce que la planche de l'étape 1 avait déjà
+dessiné. Les calculs ne bougent pas : `PaceModel`, `SemaineComparable`, `TrainingLoad`, la projection des temps.
+
+**Ce qui change de comportement, et que le canvas impose** : la période choisie commande maintenant le grand
+total, le nombre de sorties, le temps cumulé ET la courbe (« Depuis le 11 octobre » sous « 4 sem. »). Avant, les
+totaux portaient sur toute l'histoire et seule la courbe suivait le sélecteur. « Cette semaine » et « Série en
+cours » restent des états au présent. La fenêtre se compte sur l'horloge de la scène (`Demonstration.maintenant`),
+plus sur `.now`.
+
+**Retiré** : le dépliage « Voir l'analyse approfondie » (records et temps possibles sont dans la page, comme dans
+le canvas) ; l'aplat sous la courbe et le point sur le dernier relevé (le canvas n'en a pas) ; la précision du D+
+sous la vitesse du vélo ; les icônes SF Symbols des anciennes cartes. **Conservé hors canvas** : le bloc Vélo (s'il y
+a une sortie à vélo), la charge d'entraînement (Haizo Plus), l'état vide, la précision sous les temps possibles.
+« Tes temps possibles » reste derrière Haizo Plus (aperçu estompé et verrou). « Cette semaine » est un bouton vers le
+bilan de la semaine. Vingt-quatre clés au catalogue, en trois langues ; la barre flottante est sur cet écran.
+
+**Non vérifié à cet instant** : compilation et captures.

@@ -76,7 +76,7 @@ struct RootTabView: View {
     /// libre et son cadran de discipline — reste donc joignable depuis tout écran qui n'est pas
     /// l'accueil. Voir PROGRESS.md : le canvas n'a pas de bouton de course dans la barre.
     private var barreRefaite: Bool {
-        [AppScreen.home, .plan, .coach].contains(appState.screen)
+        [AppScreen.home, .plan, .coach, .stats].contains(appState.screen)
     }
 
     private var ongletRefait: Binding<HZOnglet> {

@@ -33,12 +33,6 @@ AUTORISE = {
         (1, "« Je prépare cette course » en vert : la couleur nomme un état confirmé"),
     "Haizo/Views/Profile/ShoesView.swift":
         (1, "« Retirées » en gris : volontairement éteint, ce sont des archives"),
-    "Haizo/Views/Stats/StatsView.swift":
-        (6, "le bloc Vélo, marqué en turquoise d'un bout à l'autre — un repère de discipline, "
-            "et non une décoration, parce qu'il est tenu sur toute la section ; plus la flamme "
-            "de la série, verte quand elle court et grise quand elle est cassée — la seule "
-            "teinte conditionnelle de l'app, et c'est ce qui la justifie : elle ne décore pas "
-            "la flamme, elle dit si la flamme est allumée"),
 }
 
 # UN APPEL, PAS UNE LIGNE — et c'est une correction de ce script lui-même.
@@ -176,11 +170,6 @@ DIRECTES_AUTORISEES = {
                                             "plus la teinte d'« état confirmé » déjà déclarée "
                                             "en haut de ce fichier."),
     "Haizo/Views/Stats/HistoryView.swift": (1, AVERTISSEMENT),
-    "Haizo/Views/Stats/StatsView.swift": (6, "cinq pour le bloc Vélo, marqué en turquoise d'un "
-                                          "bout à l'autre — un repère de discipline tenu sur "
-                                          "toute la section, et non une décoration — plus une "
-                                          "charge d'entraînement élevée, qui est un "
-                                          "avertissement."),
 
     # ── 2. DEUX PALETTES QUI ATTENDENT UNE DÉCISION ───────────────────────────────────────────
     #
