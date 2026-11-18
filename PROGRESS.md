@@ -8646,7 +8646,7 @@ le crayon de modification de la photo est CONSERVÉ (Charlotte, 18 novembre : la
 toucher sur l'avatar ouvre la photothèque et un appui long propose de la retirer ; avant la première sortie, les trois totaux deviennent ceux du programme (semaines, phases, jours avant la
 course) au lieu de trois zéros ; « Running Club » garde la graphie du catalogue existant (le canvas écrit « Running club » ;
 la capitale du mot « Club » est celle de la marque) ; l'ambre de « Session expirée » disparaît, la carte est neutre.
-Cinq clés au catalogue, en trois langues. **Non vérifié à cet instant** : compilation et capture.
+Cinq clés au catalogue, en trois langues. **Vérifié le 18 novembre** (Refonte #39, vert) : captures `profil`, `profil-bas`; la grille de badges s'alignait mal (une rangée prend la hauteur de son nom le plus long), le prochain badge était coupé, la bio aussi : corrigés.
 
 ## Réglages (18 novembre) : refaits d'après le canvas « Réglages »
 
@@ -8664,5 +8664,4 @@ l'identifiant de l'ancien thème de même nom (le choix d'un ancien thème sans 
 (« Blanc » devient « Clair ») ; « Gérer mon abonnement » reste dans Compte et équipement alors que le canvas ne l'a pas (la validation App Store
 l'exige dans l'app) ; la mention « Météo Apple Weather », exigée par WeatherKit, reste sous la ligne de pluie ; les compteurs affichent le nombre
 seul (le titre de la ligne porte l'unité) ; sur une feuille, le haut est à 28 et non 60 (le canvas dessine un écran plein).
-Quatorze clés au catalogue, en trois langues. La ligne de Strava, qui n'était plus affichée, a quitté ce fichier pour `Profil/StravaConnectionRow.swift`.
-**Non vérifié à cet instant** : compilation et capture.
+Quatorze clés au catalogue, en trois langues. **Vérifié le 18 novembre** (Refonte #39) : captures `profil-reglages` et `profil-reglages-bas`. La ligne de Strava, qui n'était plus affichée, a quitté ce fichier pour `Profil/StravaConnectionRow.swift`.
