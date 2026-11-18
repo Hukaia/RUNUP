@@ -8728,3 +8728,8 @@ Haizo » devient « Gardé par 34 coureurs Haizo » (c'est ce que mesure `savesC
 l'une après l'autre (rien ne rattache une couleur à une discipline) ; le canvas montre aussi une troisième tuile vide, que je n'ai pas reprise ;
 « Tout voir » mène à l'onglet des courses du hub, et le champ à celui des itinéraires. Graine de captures : deux itinéraires, quatre courses, trois clubs.
 Quatorze clés au catalogue, en trois langues. **Non vérifié à cet instant** : compilation et capture.
+
+**Vérifié le 18 novembre** (TestFlight #634 vert ; Refonte #45, hors deux tests de l'accueil et du plan qui ont expiré au lancement du simulateur) :
+captures `explorer-trail`, `explorer-clubs`, `course`. L'allure grisée de l'écran de course est conforme. Explorer : la fenêtre de localisation
+du système recouvrait la première capture ; elle n'est plus demandée en démonstration. Les erreurs de compilation de cette série (format de date du
+Résumé, ordre des arguments d'Explorer) venaient de moi, qui ne peux pas compiler ici : la CI est le seul juge.
