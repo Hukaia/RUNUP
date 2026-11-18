@@ -210,35 +210,46 @@ struct HZSortieDuFil<Avatar: View, Options: View>: View {
 
     private var surAccent: Bool { record }
 
+    /// Le bloc : un fond, le tracé dessus, « kilomètres » en haut à gauche, la distance en bas à
+    /// gauche. Le fond est posé EN ARRIÈRE-PLAN d'une surface de la bonne taille — et pas comme
+    /// premier enfant d'une pile : posé ainsi, il ne s'affichait pas, et les textes blancs se
+    /// lisaient blanc sur blanc.
     private var bloc: some View {
-        ZStack(alignment: .topLeading) {
-            if let photo {
-                AsyncImage(url: photo) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    HZCouleur.noir
-                }
-                HZCouleur.noirFranc.opacity(HZFil.voileDePhoto)
-            } else {
-                (surAccent ? HZCouleur.accent : HZCouleur.noir)
-                traceDessinee
+        Color.clear
+            .frame(maxWidth: .infinity)
+            .frame(height: HZFil.hauteurDeLaCarte)
+            .background { fondDuBloc }
+            .overlay(alignment: .topLeading) {
+                Text(unite)
+                    .hzTexte(.c20, .gras)
+                    .foregroundStyle(HZCouleur.blanc)
+                    .padding(.leading, HZFil.margeDuLibelle)
+                    .padding(.top, HZFil.margeHautDuLibelle)
             }
-            Text(unite)
-                .hzTexte(.c20, .gras)
-                .foregroundStyle(HZCouleur.blanc)
-                .padding(.leading, HZFil.margeDuLibelle)
-                .padding(.top, HZFil.margeHautDuLibelle)
-            Text(distance)
-                .hzAffichage(.fil)
-                .foregroundStyle(HZCouleur.blanc)
-                .padding(.leading, HZFil.margeGaucheDuNombre)
-                .padding(.bottom, HZFil.margeBasDuNombre)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+            .overlay(alignment: .bottomLeading) {
+                Text(distance)
+                    .hzAffichage(.fil)
+                    .foregroundStyle(HZCouleur.blanc)
+                    .padding(.leading, HZFil.margeGaucheDuNombre)
+                    .padding(.bottom, HZFil.margeBasDuNombre)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: HZRayon.carteDuFil, style: .circular))
+            .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder private var fondDuBloc: some View {
+        if let photo {
+            AsyncImage(url: photo) { image in
+                image.resizable().scaledToFill()
+            } placeholder: {
+                Rectangle().fill(HZCouleur.noir)
+            }
+            .overlay { Rectangle().fill(HZCouleur.noirFranc.opacity(HZFil.voileDePhoto)) }
+        } else {
+            Rectangle()
+                .fill(surAccent ? HZCouleur.accent : HZCouleur.noir)
+                .overlay { traceDessinee }
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: HZFil.hauteurDeLaCarte)
-        .clipShape(RoundedRectangle(cornerRadius: HZRayon.carteDuFil, style: .circular))
-        .accessibilityElement(children: .combine)
     }
 
     private var traceDessinee: some View {

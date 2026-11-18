@@ -8619,3 +8619,10 @@ et Commenter.
 Dix clés au catalogue, en trois langues.
 
 **Non vérifié à cet instant** : compilation et capture.
+
+**Défaut trouvé sur la première capture du fil (18 novembre).** Le bloc de chaque sortie s'affichait EN BLANC : son
+fond, la distance et le tracé n'étaient pas visibles, et les textes blancs se lisaient blanc sur blanc. Le fond était
+le premier enfant d'une pile conditionnelle (`ZStack { if photo … else { (couleur) ; trace } … }`) ; il est désormais
+posé en arrière-plan d'une surface de la bonne taille, et le fond d'une photo ou d'une couleur est une vue à part. Je
+n'ai pas établi pourquoi l'ancienne écriture ne se dessinait pas ; je n'ai établi que sa capture. À revérifier sur la
+capture suivante.
