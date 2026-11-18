@@ -168,6 +168,16 @@ struct ProfileView: View {
             .frame(width: HZProfil.avatar, height: HZProfil.avatar)
             .clipShape(Circle())
             .opacity(isSavingAvatar ? HZProfil.opaciteEnCours : HZProfil.opaciteNormale)
+            // Ce qui dit que la photo se change : sans lui l'avatar se lit comme un décor. Cette photo
+            // est celle que voit tout le club, dans le fil, le classement et les commentaires.
+            .overlay(alignment: .bottomTrailing) {
+                Image(systemName: isSavingAvatar ? "arrow.triangle.2.circlepath" : "pencil")
+                    .font(HZPolice.texte(.c13, .gras))
+                    .foregroundStyle(HZCouleur.encre)
+                    .frame(width: HZProfil.pastilleDeModification, height: HZProfil.pastilleDeModification)
+                    .background(HZCouleur.blanc, in: Circle())
+                    .overlay(Circle().strokeBorder(HZCouleur.noir, lineWidth: HZProfil.liseDeModification))
+            }
         }
         .buttonStyle(.plain)
         .disabled(isSavingAvatar)

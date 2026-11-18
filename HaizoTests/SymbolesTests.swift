@@ -93,6 +93,7 @@ final class SymbolesTests: XCTestCase {
         "mountain.2.fill",
         "pause.circle",
         "pause.fill",
+        "pencil",
         "person.2.fill",
         "person.2.slash",
         "person.3.fill",

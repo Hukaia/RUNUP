@@ -242,6 +242,9 @@ enum HZProfil {
     /// Les commandes (retour, réglages) à l'identité.
     static let sousLesCommandes: CGFloat = 16
     static let avatar: CGFloat = 84
+    /// Le crayon posé sur l'avatar : la photo se change ici. Son liséré est de la couleur du fond.
+    static let pastilleDeModification: CGFloat = 28
+    static let liseDeModification: CGFloat = 3
     static let entreAvatarEtNom: CGFloat = 16
     /// Le pseudo à la bio.
     static let sousLePseudo: CGFloat = 4

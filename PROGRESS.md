@@ -8642,8 +8642,8 @@ un paramètre `aucuneActive`. L'avatar de l'accueil reste la porte d'entrée.
 
 **Décisions de ma part, à confirmer sur la maquette** : la marque d'un badge est son symbole (le canvas écrit un court texte, « 300 »,
 « 10 »), parce que seuls les symboles existent pour les seize badges ; la flamme de la série est retirée (le canvas n'en a pas) ;
-la capsule de modification de la photo (le crayon) est retirée, un toucher sur l'avatar ouvre la photothèque et un appui long
-propose de la retirer ; avant la première sortie, les trois totaux deviennent ceux du programme (semaines, phases, jours avant la
+le crayon de modification de la photo est CONSERVÉ (Charlotte, 18 novembre : la photo doit rester modifiable, c'est ce que voit tout le club) : un
+toucher sur l'avatar ouvre la photothèque et un appui long propose de la retirer ; avant la première sortie, les trois totaux deviennent ceux du programme (semaines, phases, jours avant la
 course) au lieu de trois zéros ; « Running Club » garde la graphie du catalogue existant (le canvas écrit « Running club » ;
 la capitale du mot « Club » est celle de la marque) ; l'ambre de « Session expirée » disparaît, la carte est neutre.
 Cinq clés au catalogue, en trois langues. **Non vérifié à cet instant** : compilation et capture.
