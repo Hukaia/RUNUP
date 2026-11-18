@@ -138,8 +138,10 @@ struct ProfileView: View {
                 }
                 if let maBio {
                     Text(maBio)
-                        .hzTexte(.c13, .medium)
+                        .hzParagraphe(.c13, .medium, interligne: HZProfil.interligne)
                         .foregroundStyle(HZCouleur.secondaireSurSombre)
+                        .lineLimit(HZProfil.lignesDeBio)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, HZProfil.sousLePseudo)
                 }
             }
@@ -416,7 +418,9 @@ struct ProfileView: View {
                                 .multilineTextAlignment(.center)
                                 .lineLimit(HZProfil.lignesDeNomDeBadge)
                         }
-                        .frame(maxWidth: .infinity)
+                        // Une rangée prend la hauteur de son nom le plus long ; sans ceci, un nom sur une
+                        // ligne centre sa pastille plus bas que sa voisine dont le nom en prend deux.
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -434,12 +438,21 @@ struct ProfileView: View {
     private func prochainBadge(_ badge: ClubBadge, avancee: String) -> some View {
         Button(action: { selectedBadge = badge }) {
             VStack(alignment: .leading, spacing: HZProfil.dansLeProchain) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text("Prochain badge · \(badge.name)")
-                        .hzTexte(.c15, .gras)
-                    Spacer(minLength: 0)
-                    Text(verbatim: avancee)
-                        .hzTexte(.c15, .gras, tabulaire: true)
+                // Sur une ligne quand elle tient ; sinon l'avancée passe sous le nom plutôt que de le tronquer.
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text("Prochain badge · \(badge.name)")
+                            .hzTexte(.c15, .gras)
+                        Spacer(minLength: 0)
+                        Text(verbatim: avancee)
+                            .hzTexte(.c15, .gras, tabulaire: true)
+                    }
+                    VStack(alignment: .leading, spacing: HZProfil.entreTitreEtAvancee) {
+                        Text("Prochain badge · \(badge.name)")
+                            .hzParagraphe(.c15, .gras, interligne: HZProfil.interligne)
+                        Text(verbatim: avancee)
+                            .hzTexte(.c15, .gras, tabulaire: true)
+                    }
                 }
                 // La jauge : la fraction vraie du badge, le reste en gris.
                 Capsule()

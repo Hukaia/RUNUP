@@ -280,6 +280,9 @@ enum HZProfil {
 
     static let sousLesBadges: CGFloat = 20
     static let dansLeProchain: CGFloat = 10
+    static let entreTitreEtAvancee: CGFloat = 2
+    /// La bio : deux lignes au plus ; au-delà elle se coupe.
+    static let lignesDeBio = 2
     static let hauteurDeLaJauge: CGFloat = 10
     static let jaugePleine: Double = 1
     static let lignesDeNomDeBadge = 2
