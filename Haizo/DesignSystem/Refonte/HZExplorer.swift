@@ -107,6 +107,8 @@ struct HZTuileDeCourse: View {
     let nom: String
     let note: String?
     let couleur: Color
+    /// La largeur de l'affiche dans un défilement horizontal ; `nil` dans une grille, qui la décide.
+    var largeur: CGFloat? = HZExplorer.largeurDeLaTuile
     let action: () -> Void
 
     var body: some View {
@@ -144,7 +146,8 @@ struct HZTuileDeCourse: View {
                     }
                 }
             }
-            .frame(width: HZExplorer.largeurDeLaTuile, alignment: .leading)
+            .frame(width: largeur, alignment: .leading)
+            .frame(maxWidth: largeur == nil ? .infinity : nil, alignment: .leading)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

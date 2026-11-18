@@ -23,24 +23,19 @@ struct SocialView: View {
     private enum Mode { case club, friends, routes, races }
 
     var body: some View {
-        VStack(spacing: 0) {
-            backToProfile
-                .padding(.horizontal, RUSpacing.pagePadding)
-                .padding(.top, 8)
-
-            Group {
-                switch mode {
-                // `appState` PASSE PAR LA PORTE, et c'est ce qui permet à `ClubView` de
-                // construire son magasin dès son `init` : `@State` ne s'initialise pas depuis
-                // l'environnement, mais il s'initialise depuis un paramètre. Voir `ClubStore`.
-                case .club: ClubView(appState: appState)
-                case .friends: FriendsView()
-                case .routes: RouteDiscoveryView()
-                case .races: RaceDiscoveryView()
-                }
+        // Chaque écran porte son propre haut noir et son propre retour vers le Profil : le conteneur
+        // n'a plus rien à poser au-dessus, et ne peint aucun fond.
+        Group {
+            switch mode {
+            // `appState` PASSE PAR LA PORTE, et c'est ce qui permet à `ClubView` de construire son
+            // magasin dès son `init` : `@State` ne s'initialise pas depuis l'environnement, mais il
+            // s'initialise depuis un paramètre. Voir `ClubStore`.
+            case .club: ClubView(appState: appState)
+            case .friends: FriendsView()
+            case .routes: RouteDiscoveryView()
+            case .races: RaceDiscoveryView()
             }
         }
-        .background(RUColor.pageBackground)
         .onAppear {
             if appState.openFriendsTabOnNextVisit {
                 mode = .friends
@@ -53,24 +48,5 @@ struct SocialView: View {
                 appState.openRacesTabOnNextVisit = false
             }
         }
-    }
-
-    /// Le compteur de demandes d'abonnement en attente vivait sur le segment « Mes amis » de ce
-    /// sélecteur. Il n'est pas perdu : il est reporté sur la carte Amis du Profil (voir
-    /// `ProfileView.amisCard`), donc sur l'écran qu'ouvre directement l'onglet — visible plus tôt
-    /// qu'avant, et non plus sur une barre qu'il fallait déjà avoir atteinte.
-    private var backToProfile: some View {
-        Button(action: { appState.go(.profile) }) {
-            HStack(spacing: 6) {
-                Image(systemName: "chevron.left").font(RUFont.icone(.body, weight: .bold))
-                Text("Profil").font(RUFont.sans(.label, weight: .semibold))
-            }
-            .foregroundColor(RUColor.text2)
-            .frame(minHeight: 44)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(PressableStyle())
-        .accessibilityLabel("Retour au profil")
     }
 }

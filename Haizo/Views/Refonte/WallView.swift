@@ -330,140 +330,20 @@ struct WallView: View {
 
     // MARK: - Une sortie
 
-    private func provenance(_ source: String?) -> String? {
-        switch source {
-        case "club": return String(localized: "ton club")
-        case "amis": return String(localized: "tu la suis")
-        case "moi": return String(localized: "toi")
-        default: return nil
-        }
-    }
-
-    private func sousTitre(_ item: FeedItem) -> String {
-        [item.createdAt.relativeDescription, provenance(item.source)]
-            .compactMap { $0 }.joined(separator: " · ")
-    }
-
-    /// Le titre que l'autrice a donné à sa sortie, et rien d'autre : le canvas n'a pas de titre,
-    /// mais ce sont ses mots, ils passent avant les nôtres.
-    private func titre(_ item: FeedItem) -> String? {
-        guard let propre = item.title?.trimmingCharacters(in: .whitespacesAndNewlines), !propre.isEmpty
-        else { return nil }
-        return propre
-    }
-
-    private func initiale(_ item: FeedItem) -> String {
-        AccueilModele.initiales(prenom: item.name, nom: item.lastName ?? "")
-    }
-
-    @ViewBuilder private func avatar(_ item: FeedItem) -> some View {
-        if item.avatarUrl != nil || item.avatarBase64 != nil {
-            AvatarView(urlString: item.avatarUrl, base64DataURI: item.avatarBase64,
-                       initial: initiale(item), size: HZFil.tailleDeLAvatar)
-        } else {
-            Text(initiale(item))
-                .hzTexte(.c14, .gras)
-                .foregroundStyle(HZCouleur.blanc)
-                .frame(width: HZFil.tailleDeLAvatar, height: HZFil.tailleDeLAvatar)
-                .background(HZCouleur.encre, in: Circle())
-        }
-    }
-
-    private func menuDeLaSortie(_ item: FeedItem) -> some View {
-        Menu {
-            if item.source == "moi" {
-                Button("Modifier ma sortie") { editing = item }
-                Button("Supprimer cette activité", role: .destructive) { Task { await supprimer(item) } }
-            } else {
-                Button("Signaler cette activité") {
-                    reportTarget = ReportTarget(targetType: "activity", targetId: item.id,
-                                                displayName: item.nomComplet)
-                }
-                Button("Bloquer \(item.name)", role: .destructive) { pendingBlock = (item.userId, item.name) }
-            }
-        } label: {
-            HZIcone(dessin: .options, cote: HZFil.coteDuBravo, couleur: HZCouleur.secondaireSurClair)
-                .frame(width: HZBoutonRond.zoneTactile, height: HZBoutonRond.zoneTactile)
-                .contentShape(Rectangle())
-        }
-        .accessibilityLabel(String(localized: "Plus d'actions"))
-    }
-
-    @ViewBuilder private func sortie(_ item: FeedItem) -> some View {
-        if let km = item.distanceKm, km > HZFil.kilometreMinimum {
-            HZSortieDuFil(
-                nom: item.nomComplet, sousTitre: sousTitre(item), titre: titre(item),
-                record: item.isPersonalRecord, recordLibelle: String(localized: "Record"),
-                distance: String(format: "%.1f", locale: Locale.current, km),
-                unite: String(localized: "kilomètres"),
-                trace: HZSortieDuFil<EmptyView, EmptyView>.normaliser(
-                    (item.routePreview ?? []).map { (lat: $0.lat, lng: $0.lng) }),
-                photo: item.photoUrl.flatMap { $0.isEmpty ? nil : URL(string: $0) },
-                mesures: mesures(item),
-                bravo: item.kudos > 0 ? "\(item.kudos)" : String(localized: "Bravo"),
-                bravoFait: item.kudoedByMe,
-                commentaires: item.commentsCount > 0 ? "\(item.commentsCount)" : String(localized: "Commenter"),
-                aimePar: aimePar(item),
-                dernierCommentaire: item.lastComment.map { (auteur: $0.nomComplet, texte: $0.text) },
-                ouvrirLaPersonne: { if item.source != "moi" { appState.ouvrirLeProfil(item.userId) } },
-                ouvrirLaSortie: { appState.ouvrirLaSortie(item.id) },
-                applaudir: { Task { await applaudir(item) } },
-                commenter: { commentsFor = item },
-                avatar: { avatar(item) },
-                menu: { menuDeLaSortie(item) })
-        } else {
-            // Une note — un badge, une séance sans distance : une phrase, pas un bloc.
-            VStack(alignment: .leading, spacing: HZFil.sousLIdentite) {
-                HStack(spacing: HZFil.ecartDeLIdentite) {
-                    avatar(item)
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text(item.nomComplet)
-                            .hzTexte(.c16, .gras)
-                            .foregroundStyle(HZCouleur.encre)
-                        Text(sousTitre(item))
-                            .hzTexte(.c13, .medium)
-                            .foregroundStyle(HZCouleur.secondaireSurClair)
-                    }
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    menuDeLaSortie(item)
-                }
-                HZNoteDuFil(texte: item.localizedText)
-            }
-        }
-    }
-
-    /// « Aimé par Camille et 3 autres » : DEUX noms et pas trois — trois prénoms tenaient sur une
-    /// ligne, trois noms complets non, et la ligne n'a jamais prétendu dire QUI a applaudi : ces
-    /// noms sont un échantillon, pas les trois derniers.
-    private func aimePar(_ item: FeedItem) -> String? {
-        let noms = Array(item.kudosNames.prefix(HZFil.nomsDApplaudisseurs))
-        guard !noms.isEmpty else { return nil }
-        var elements = noms
-        switch max(0, item.kudos - noms.count) {
-        case 0: break
-        case 1: elements.append(String(localized: "une autre personne"))
-        case let autres: elements.append(String(localized: "\(autres) autres"))
-        }
-        return String(localized: "Aimé par \(ListFormatter.localizedString(byJoining: elements))")
-    }
-
-    /// Allure (ou vitesse), temps, dénivelé — seulement ce qui a été mesuré : pas de « 0 m » ni de
-    /// « --:-- » qui feraient passer une absence de mesure pour une mesure.
-    private func mesures(_ item: FeedItem) -> [HZMesure] {
-        var colonnes: [HZMesure] = []
-        if item.disciplineAffichee.seLitEnAllure, let allure = item.avgPace, !allure.isEmpty {
-            colonnes.append(HZMesure(valeur: allure, libelle: String(localized: "Allure")))
-        }
-        if let secondes = item.durationSeconds, secondes > 0 {
-            colonnes.append(HZMesure(valeur: PaceModel.formatTotalDuration(secondes),
-                                     libelle: String(localized: "Temps")))
-        }
-        if let denivele = item.elevationGainM, denivele > 0 {
-            colonnes.append(HZMesure(valeur: String(localized: "\(denivele) m"),
-                                     libelle: String(localized: "Dénivelé")))
-        }
-        return colonnes
+    /// Une sortie du fil : le rendu est partagé (`FeedSortieView`), les actions restent à l'écran qui
+    /// les porte.
+    private func sortie(_ item: FeedItem) -> some View {
+        FeedSortieView(item: item,
+                       estLaMienne: item.source == "moi",
+                       applaudir: { Task { await applaudir(item) } },
+                       commenter: { commentsFor = item },
+                       modifier: { editing = item },
+                       supprimer: { Task { await supprimer(item) } },
+                       signaler: {
+                           reportTarget = ReportTarget(targetType: "activity", targetId: item.id,
+                                                       displayName: item.nomComplet)
+                       },
+                       bloquer: { pendingBlock = (item.userId, item.name) })
     }
 
     // MARK: - Une annonce de course dans le fil

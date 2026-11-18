@@ -92,7 +92,7 @@ def problemes(sources=None):
     # Les vues qui portent leur style elles-mêmes.
     autonomes = set()
     for source in propres.values():
-        if "haizoSheetStyle" in source or "presentationDetents" in source:
+        if "haizoSheetStyle" in source or "hzFeuille" in source or "presentationDetents" in source:
             autonomes |= set(re.findall(r"\bstruct\s+([A-Z]\w*)\s*:\s*View\b", source))
 
     griefs = []
@@ -100,7 +100,7 @@ def problemes(sources=None):
     for nom, source in propres.items():
         for ligne, bloc in fermetures_de_contenu(source):
             total += 1
-            if "haizoSheetStyle" in bloc or "presentationDetents" in bloc:
+            if "haizoSheetStyle" in bloc or "hzFeuille" in bloc or "presentationDetents" in bloc:
                 continue
             vues = set(re.findall(r"\b([A-Z]\w*)\s*\(", bloc))
             if vues & autonomes:

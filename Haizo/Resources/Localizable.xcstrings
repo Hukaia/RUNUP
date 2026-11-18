@@ -184,6 +184,23 @@
         }
       }
     },
+    "%@ km cette semaine": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km this week"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km esta semana"
+          }
+        }
+      }
+    },
     "%@ km qui ne comptaient pas encore dans ton programme. Valide ton ressenti pour les y faire entrer.": {
       "extractionState": "manual",
       "localizations": {
@@ -920,6 +937,40 @@
         }
       }
     },
+    "%lld abonné": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld follower"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld seguidor"
+          }
+        }
+      }
+    },
+    "%lld abonnés": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld followers"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld seguidores"
+          }
+        }
+      }
+    },
     "%lld au %lld %@": {
       "extractionState": "manual",
       "localizations": {
@@ -967,6 +1018,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld corredores la preparan"
+          }
+        }
+      }
+    },
+    "%lld itinéraire par ici": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld route nearby"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ruta cerca"
+          }
+        }
+      }
+    },
+    "%lld itinéraires par ici": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld routes nearby"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld rutas cerca"
           }
         }
       }
@@ -12614,6 +12699,23 @@
         }
       }
     },
+    "Gérer le club": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage the club"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestionar el club"
+          }
+        }
+      }
+    },
     "Gérer mon abonnement": {
       "extractionState": "manual",
       "localizations": {
@@ -14685,6 +14787,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "KCAL"
+          }
+        }
+      }
+    },
+    "Membres": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Members"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miembros"
+          }
+        }
+      }
+    },
+    "Suivi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Following"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siguiendo"
+          }
+        }
+      }
+    },
+    "Voir le fil": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See the feed"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver el feed"
           }
         }
       }
