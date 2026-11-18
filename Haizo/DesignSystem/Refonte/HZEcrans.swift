@@ -436,3 +436,44 @@ enum HZResume {
     static let controleDeuxX: CGFloat = 0.55
     static let controleDeuxY: CGFloat = 0.5
 }
+
+/// LES MESURES D'EXPLORER, relevées sur le canvas « Explorer ».
+enum HZExplorer {
+    static let hauteurDuChamp: CGFloat = 58
+    static let margeDuDisque: CGFloat = 8
+    static let coteDeLaLoupe: CGFloat = 20
+    static let coteDesReglages: CGFloat = 18
+    static let sousLeChamp: CGFloat = 14
+    static let sousLesFiltres: CGFloat = 18
+
+    static let hauteurDeLaCarte: CGFloat = 214
+    static let margeDeLaPastille: CGFloat = 16
+    static let margeDeLaDistance: CGFloat = 18
+    static let sousLaDistance: CGFloat = 14
+    static let reductionDeLaDistance: CGFloat = 0.6
+    static let traitDuTrace: CGFloat = 5
+    static let traceX: CGFloat = 0.52
+    static let traceY: CGFloat = 0.12
+    static let traceLargeur: CGFloat = 0.42
+    static let traceHauteur: CGFloat = 0.76
+    static let moitie: CGFloat = 2
+
+    static let sousLaCarte: CGFloat = 12
+    static let sousLeNomDeLaCarte: CGFloat = 2
+    static let sousLesCourses: CGFloat = 14
+
+    static let largeurDeLaTuile: CGFloat = 160
+    static let hauteurDeLaTuile: CGFloat = 150
+    static let margeDeLaTuile: CGFloat = 14
+    static let sousLaDistanceDeTuile: CGFloat = 12
+    static let entreLesTuiles: CGFloat = 12
+
+    static let basDePage: CGFloat = 112
+    static let attente: CGFloat = 40
+    /// Le carré de latitude et de longitude autour de la position : 0,1 degré, une dizaine de
+    /// kilomètres, la zone qu'une personne parcourt à pied ou en courant sans y penser.
+    static let demiCote: Double = 0.1
+    static let itinerairesRetenus = 12
+    static let disqueDeClub: CGFloat = 44
+    static let metresDansUnKilometre: Double = 1000
+}

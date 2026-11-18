@@ -648,6 +648,51 @@ enum CaptureSeed {
             etat.cachedClubFeed = try decodeur.decode([FeedItem].self, from: Data(fil.utf8))
             etat.cachedFriendsList = try decodeur.decode(FriendsList.self, from: Data(amis.utf8))
             etat.cachedNextRace = try decodeur.decode(RaceEvent.self, from: Data(course.utf8))
+            // EXPLORER : deux itinéraires, quatre courses de quatre disciplines, trois clubs. Les courses
+            // tombent à des dates qui font des mois différents, et une est de trail, une de HYROX : ce sont
+            // les cinq filtres de l'écran qu'il faut pouvoir photographier.
+            let jourDeCourse: (Int) -> String = { jours in
+                String(formateur.string(from: maintenant.addingTimeInterval(86_400 * Double(jours))).prefix(10))
+            }
+            let itineraires = """
+            [
+              {
+                "id": "r1", "name": "Boucle de la Coulée verte", "distanceKm": 8.1, "elevationGainM": 0,
+                "preview": [[48.8213,2.2961],[48.8230,2.3002],[48.8262,2.3018],[48.8291,2.2990],[48.8296,2.2941],[48.8274,2.2905],[48.8243,2.2898],[48.8219,2.2921]],
+                "startLat": 48.8213, "startLng": 2.2961, "locality": "Malakoff",
+                "savesCount": 34, "saved": false, "createdAt": "\(ilYAJours(40))",
+                "authorName": "Inès", "authorUsername": "ines"
+              },
+              {
+                "id": "r2", "name": "Le tour du parc Frédéric Pic", "distanceKm": 5.2, "elevationGainM": 38,
+                "preview": [[48.8120,2.3050],[48.8141,2.3092],[48.8168,2.3081],[48.8175,2.3033],[48.8150,2.3011]],
+                "startLat": 48.8120, "startLng": 2.3050, "locality": "Vanves",
+                "savesCount": 12, "saved": false, "createdAt": "\(ilYAJours(70))"
+              }
+            ]
+            """
+            let courses = """
+            [
+              { "id": "e1", "name": "Semi de Paris", "city": "Paris", "raceDate": "\(jourDeCourse(112))",
+                "distanceKm": 21.0975, "discipline": "run", "followerCount": 3 },
+              { "id": "e2", "name": "Marathon de Paris", "city": "Paris", "raceDate": "\(jourDeCourse(162))",
+                "distanceKm": 42.195, "discipline": "run", "followerCount": 143 },
+              { "id": "e3", "name": "Trail des Crêtes", "city": "Annecy", "raceDate": "\(jourDeCourse(215))",
+                "distanceKm": 28.0, "elevationGainM": 1450, "discipline": "trail", "followerCount": 27 },
+              { "id": "e4", "name": "HYROX Paris", "city": "Paris", "raceDate": "\(jourDeCourse(96))",
+                "discipline": "hyrox", "followerCount": 58 }
+            ]
+            """
+            let clubsSuggeres = """
+            [
+              { "id": "k1", "name": "Les Foulées du Canal", "city": "Malakoff", "memberCount": 18, "seancePrevue": true },
+              { "id": "k2", "name": "Vanves Running", "city": "Vanves", "memberCount": 64, "actifRecemment": true },
+              { "id": "k3", "name": "Paris Sud Trail", "city": "Paris", "memberCount": 41 }
+            ]
+            """
+            etat.cachedExplorerRoutes = try decodeur.decode([SharedRoute].self, from: Data(itineraires.utf8))
+            etat.cachedUpcomingRaces = try decodeur.decode([RaceEvent].self, from: Data(courses.utf8))
+            etat.cachedSuggestedClubs = try decodeur.decode([ClubSearchResult].self, from: Data(clubsSuggeres.utf8))
             // Le mur, construit à partir du fil déjà semé : les mêmes sorties, chacune avec sa
             // provenance, plus une annonce de course. Les reconstruire à part en ferait deux jeux
             // de démonstration qui finiraient par ne plus raconter la même chose.

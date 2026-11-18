@@ -10,6 +10,8 @@ enum AppScreen: String, Hashable {
     case coach
     case stats
     case club
+    /// Explorer : où courir et quoi courir, sans rien avoir à taper. Une entrée de la barre.
+    case explorer
     /// Le fil — un écran à part entière, pas un mode du hub social.
     ///
     /// Il n'a pas d'onglet : la quatrième place de la barre est aux Stats (voir `TabBarView`).
@@ -40,7 +42,7 @@ enum AppScreen: String, Hashable {
     /// pas une descente.
     var estRacineDOnglet: Bool {
         switch self {
-        case .home, .coach, .stats, .fil, .profile, .club: return true
+        case .home, .coach, .stats, .fil, .profile, .club, .explorer: return true
         case .plan, .rings, .live, .recap, .race, .history, .weeklyRecap, .shoes, .heatmap:
             return false
         }

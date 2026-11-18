@@ -937,6 +937,40 @@
         }
       }
     },
+    "%lld coureur la prépare": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld runner is training for it"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld corredor la prepara"
+          }
+        }
+      }
+    },
+    "%lld coureurs la préparent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld runners are training for it"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld corredores la preparan"
+          }
+        }
+      }
+    },
     "%lld j": {
       "extractionState": "manual",
       "localizations": {
@@ -3803,6 +3837,57 @@
         }
       }
     },
+    "Aucun club à te proposer pour l'instant. Cherche le tien par son nom depuis le Club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No club to suggest right now. Look yours up by name from Club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ningún club que proponerte por ahora. Busca el tuyo por su nombre desde Club."
+          }
+        }
+      }
+    },
+    "Aucune course de trail à venir pour l'instant.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No upcoming trail races right now."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninguna carrera de trail próxima por ahora."
+          }
+        }
+      }
+    },
+    "Aucune course HYROX à venir pour l'instant.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No upcoming HYROX races right now."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninguna carrera HYROX próxima por ahora."
+          }
+        }
+      }
+    },
     "AUJOURD'HUI": {
       "localizations": {
         "en": {
@@ -3815,6 +3900,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "HOY"
+          }
+        }
+      }
+    },
+    "Autour de toi · toutes distances": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Around you · any distance"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerca de ti · todas las distancias"
           }
         }
       }
@@ -6444,6 +6546,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Correr y equilibrio"
+          }
+        }
+      }
+    },
+    "Courses à venir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upcoming races"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próximas carreras"
           }
         }
       }
@@ -12325,6 +12444,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Guardada"
+          }
+        }
+      }
+    },
+    "Gardé par %lld coureur Haizo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved by %lld Haizo runner"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardado por %lld corredor de Haizo"
+          }
+        }
+      }
+    },
+    "Gardé par %lld coureurs Haizo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved by %lld Haizo runners"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardado por %lld corredores de Haizo"
           }
         }
       }
@@ -18775,6 +18928,23 @@
         }
       }
     },
+    "On cherche où tu es pour te proposer des itinéraires autour de toi.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finding where you are to suggest routes around you."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscando dónde estás para proponerte rutas cerca de ti."
+          }
+        }
+      }
+    },
     "On commencera par apprendre à durer dans l'eau": {
       "extractionState": "manual",
       "localizations": {
@@ -19256,6 +19426,23 @@
         }
       }
     },
+    "Plat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flat"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Llano"
+          }
+        }
+      }
+    },
     "Plus d'actions": {
       "extractionState": "manual",
       "localizations": {
@@ -19353,6 +19540,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "MÁS TARDE"
+          }
+        }
+      }
+    },
+    "Pour toi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For you"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para ti"
           }
         }
       }
@@ -35895,6 +36099,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "~%lld km · se ajustará a tu forma"
+          }
+        }
+      }
+    },
+    "À %@ de toi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ from you"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A %@ de ti"
+          }
+        }
+      }
+    },
+    "À %lld m de toi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld m from you"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A %lld m de ti"
           }
         }
       }

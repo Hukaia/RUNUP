@@ -8706,3 +8706,25 @@ canvas ; sans lecture, l'allure « --:-- » s'éteint (de gros blocs blancs atti
 séance de la graine est continue, donc il n'y en a pas ; à voir sur une séance à répétitions. Résumé : conforme ; le bloc des splits n'apparaît
 pas, la sortie de la graine n'en a pas. La première version du Résumé ne compilait pas (`capitalizationContext` est une propriété du format,
 pas une méthode) : corrigé.
+
+## Explorer (18 novembre) : écran nouveau, d'après le canvas « Explorer »
+
+Explorer n'existait pas comme écran : la barre l'envoyait provisoirement vers le hub du Club. Il existe maintenant (`AppScreen.explorer`, entrée
+de la barre) : un champ (« Où cours-tu aujourd'hui ? ») qui ouvre la carte de recherche des itinéraires, cinq filtres (Pour toi, Route, Trail,
+HYROX, Clubs), l'itinéraire le plus gardé autour de soi en vedette (bloc noir, tracé en accent, « À 400 m de toi », distance en grand), et les
+courses à venir en tuiles de couleur (mois, distance, nom, « n coureurs la préparent »).
+
+**Rien de nouveau côté données** : `fetchRoutesNearby`, `upcomingRaces`, `suggestedClubs`, les mêmes appels que les écrans du hub. Un itinéraire
+ouvre sa feuille de détail, une course sa page (plein écran, comme depuis la liste des courses), un club le hub. **Une chose ajoutée** : un relevé
+de position unique (`LocationPermission.requestPosition`), pour chercher dans un carré d'environ 11 km autour d'elle ; la même autorisation que
+la carte de recherche, et le même type de requête (une zone, pas une position précise).
+
+**Honnête quand il n'y a rien** : sans autorisation, un lien vers les Réglages ; en attendant la position, une phrase qui le dit ; sans itinéraire
+publié autour, l'invitation à publier le sien ; sans réseau, le motif réel de la panne ; un filtre vide dit ce qu'il n'a pas.
+
+**Décisions de ma part, à confirmer sur la maquette** : la pastille dit « À 400 m de toi » et non « de chez toi » (l'app ne connaît pas le domicile) ;
+le sous-titre du champ dit « Autour de toi » et non « Autour de Malakoff » (pas de nom de lieu connu) ; la ligne du canvas « Enregistrée par 34 coureurs
+Haizo » devient « Gardé par 34 coureurs Haizo » (c'est ce que mesure `savesCount`) ; les couleurs des tuiles sont celles de la palette d'intensité,
+l'une après l'autre (rien ne rattache une couleur à une discipline) ; le canvas montre aussi une troisième tuile vide, que je n'ai pas reprise ;
+« Tout voir » mène à l'onglet des courses du hub, et le champ à celui des itinéraires. Graine de captures : deux itinéraires, quatre courses, trois clubs.
+Quatorze clés au catalogue, en trois langues. **Non vérifié à cet instant** : compilation et capture.

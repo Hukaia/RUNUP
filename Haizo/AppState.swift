@@ -186,6 +186,11 @@ final class AppState {
     /// section Communauté. Voir `CaptureSeed.poserLeClub`.
     var cachedFriendsList: FriendsList?
     var cachedNextRace: RaceEvent?
+    /// Explorer, en démonstration : sans serveur en face d'un simulateur, ses trois appels prendraient un 401.
+    /// Voir `CaptureSeed.poserLeClub`.
+    var cachedExplorerRoutes: [SharedRoute]?
+    var cachedUpcomingRaces: [RaceEvent]?
+    var cachedSuggestedClubs: [ClubSearchResult]?
     /// Et la page de quelqu'un, pour la même raison : sans serveur en face, elle n'afficherait
     /// qu'une erreur dans la capture.
     var cachedPublicProfile: PublicProfilePage?

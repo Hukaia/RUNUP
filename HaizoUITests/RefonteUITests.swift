@@ -187,6 +187,27 @@ final class RefonteUITests: XCTestCase {
         app.terminate()
     }
 
+    /// EXPLORER (la graine pose deux itinéraires, quatre courses, trois clubs) : « Pour toi », puis le
+    /// filtre « Trail » et le filtre « Clubs », dont l'image doit changer.
+    func test11Explorer() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=explorer"])
+        photographier("explorer", app: app)
+        let avant = app.screenshot().pngRepresentation
+        let trail = app.buttons["Trail"]
+        XCTAssertTrue(trail.waitForExistence(timeout: 5), "les filtres d'Explorer doivent exister")
+        trail.tap()
+        Thread.sleep(forTimeInterval: 1.0)
+        photographier("explorer-trail", app: app)
+        XCTAssertNotEqual(avant, app.screenshot().pngRepresentation, "« Trail » doit changer le contenu")
+        let clubs = app.buttons["Clubs"]
+        clubs.tap()
+        Thread.sleep(forTimeInterval: 1.0)
+        photographier("explorer-clubs", app: app)
+        app.terminate()
+    }
+
     /// LES BOUTONS RÉPONDENT-ILS ? Un lancement par geste, et pour chacun : l'image change-t-elle ?
     ///
     /// C'est le test de non-régression d'un défaut qui a coûté une journée : sur l'Accueil et le

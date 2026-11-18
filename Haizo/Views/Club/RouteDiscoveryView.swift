@@ -345,6 +345,9 @@ private struct RouteRow: View {
 final class LocationPermission: NSObject {
     private let manager = CLLocationManager()
     private(set) var status: CLAuthorizationStatus = .notDetermined
+    /// Où elle est, une fois demandé (`requestPosition`) : un seul relevé, pas de suivi. Sert Explorer à
+    /// chercher des itinéraires autour d'elle.
+    private(set) var coordinate: CLLocationCoordinate2D?
 
     /// `nonisolated`, et le réglage repoussé sur l'acteur principal — voir le raisonnement écrit
     /// en long dans `LocationService.init`. C'est ici que le compilateur a refusé net
@@ -372,11 +375,33 @@ final class LocationPermission: NSObject {
     fileprivate func majDuStatut() {
         status = manager.authorizationStatus
     }
+
+    /// Un relevé de position, si l'autorisation le permet. Un seul : le résultat arrive dans
+    /// `coordinate`.
+    func requestPosition() {
+        guard isGranted else { return }
+        manager.requestLocation()
+    }
+
+    fileprivate func majDeLaPosition(latitude: Double, longitude: Double) {
+        coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
 }
 
 extension LocationPermission: CLLocationManagerDelegate {
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         surLActeurPrincipal { [self] in majDuStatut() }
     }
+
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let derniere = locations.last else { return }
+        let latitude = derniere.coordinate.latitude
+        let longitude = derniere.coordinate.longitude
+        surLActeurPrincipal { [self] in majDeLaPosition(latitude: latitude, longitude: longitude) }
+    }
+
+    /// Obligatoire dès qu'on appelle `requestLocation`. Un échec laisse `coordinate` vide : Explorer le
+    /// dit honnêtement au lieu de deviner où elle est.
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {}
 }
 
