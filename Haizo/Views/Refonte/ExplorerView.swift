@@ -66,6 +66,9 @@ struct ExplorerView: View {
         .statusBarHidden()
         .task { await charger() }
         .task {
+            // Pas en démonstration : la question du système recouvrirait l'écran photographié, et il n'y
+            // a pas de position à trouver dans un simulateur de captures.
+            guard !Demonstration.enCours else { return }
             position.requestIfNeeded()
             position.requestPosition()
         }
