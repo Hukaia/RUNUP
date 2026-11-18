@@ -307,6 +307,7 @@ struct ActivityDetailView: View {
                                 .hzAffichage(.chiffreDeLigne)
                                 .foregroundStyle(HZCouleur.encre)
                         }
+                        .fixedSize()
                     }
                 }
             }

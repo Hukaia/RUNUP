@@ -76,7 +76,8 @@ struct RootTabView: View {
     /// libre et son cadran de discipline — reste donc joignable depuis tout écran qui n'est pas
     /// l'accueil. Voir PROGRESS.md : le canvas n'a pas de bouton de course dans la barre.
     private var barreRefaite: Bool {
-        [AppScreen.home, .plan, .coach, .stats, .fil, .profile, .explorer, .club].contains(appState.screen)
+        [AppScreen.home, .plan, .coach, .stats, .fil, .profile, .explorer, .club,
+         .history, .weeklyRecap, .shoes, .heatmap].contains(appState.screen)
     }
 
     private var ongletRefait: Binding<HZOnglet> {
@@ -84,7 +85,7 @@ struct RootTabView: View {
             get: {
                 switch appState.screen {
                 case .coach: return .coach
-                case .stats: return .stats
+                case .stats, .history, .weeklyRecap, .heatmap: return .stats
                 case .club, .fil: return .club
                 case .explorer: return .explorer
                 default: return .aujourdhui
@@ -174,7 +175,7 @@ struct RootTabView: View {
                     // la barre, elle, reste touchable.
                     .allowsHitTesting(false)
                     .overlay(alignment: .bottom) {
-                        HZBarreFlottante(selection: ongletRefait, aucuneActive: appState.screen == .profile || appState.screen == .club)
+                        HZBarreFlottante(selection: ongletRefait, aucuneActive: [AppScreen.profile, .club, .shoes].contains(appState.screen))
                             .padding(.bottom, HZEspace.sousLaBarre)
                     }
                     .ignoresSafeArea(edges: .bottom)

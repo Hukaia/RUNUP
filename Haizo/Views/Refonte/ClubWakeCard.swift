@@ -9,7 +9,7 @@ struct ClubWakeCard: View {
     var body: some View {
         HZPlaque {
             Text("Rien n'est lancé pour l'instant")
-                .hzAffichage(.titreDeTuile)
+                .hzAffichage(.section)
                 .foregroundStyle(HZCouleur.encre)
             Text("Un défi à se partager, ou une sortie à proposer : c'est ce qui donne au club une raison de se retrouver cette semaine.")
                 .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)

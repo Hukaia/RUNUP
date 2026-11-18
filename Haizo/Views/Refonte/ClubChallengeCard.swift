@@ -17,7 +17,7 @@ struct ClubChallengeCard: View {
                              style: .etiquetteGrasse, fond: HZCouleur.accent, couleur: HZCouleur.encreSurAccent)
                 }
                 Text(defi.title)
-                    .hzAffichage(.titreDeTuile)
+                    .hzAffichage(.section)
                     .foregroundStyle(HZCouleur.encre)
                     .fixedSize(horizontal: false, vertical: true)
                 HZJauge(fraction: defi.targetKm > 0 ? defi.progressKm / defi.targetKm : 0,

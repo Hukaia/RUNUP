@@ -480,3 +480,50 @@ enum HZExplorer {
     static let disqueDeClub: CGFloat = 44
     static let metresDansUnKilometre: Double = 1000
 }
+
+/// LE BILAN DE LA SEMAINE : ce que le haut noir ajoute à celui des Stats.
+enum HZRecap {
+    /// Du premier au dernier jour d'une semaine.
+    static let joursAvantLaFin = 6
+    static let dureeDesBarres: Double = 0.5
+    static let decalageDesBarres: Double = 0.05
+}
+
+/// L'ENTRÉE DANS L'APP : trois questions, une par écran.
+enum HZEntree {
+    static let ecrans = 3
+    static let hauteurDUnSegment: CGFloat = 6
+    static let ecartDesSegments: CGFloat = 6
+    static let sousLaProgression: CGFloat = 28
+    static let sousLaQuestion: CGFloat = 8
+    static let sousLeTitre: CGFloat = 24
+    static let ecartDesReponses: CGFloat = 10
+    static let hauteurDUneReponse: CGFloat = 68
+    static let basDeLEcran: CGFloat = 12
+    static let sousLesReponses: CGFloat = 16
+    static let dureeDeLaTransition: Double = 0.25
+    /// Du jeu de jours choisi : les rangs de la semaine, lundi à zéro.
+    static let joursDeDeux = [2, 6]
+    static let joursDeTrois = [1, 3, 6]
+    static let joursDeQuatre = [1, 2, 4, 6]
+    static let joursDeCinq = [0, 1, 3, 4, 6]
+    static let choixDeJours = [2, 3, 4, 5]
+    static let jourDeLaSortieLongue = 6
+    /// Quatre jours, le choix du milieu : celui que prend le bouton si l'on n'a rien touché.
+    static let parDefaut = 4
+    /// Les noms des trois questions, pour la mesure.
+    static let noms = ["goal", "running_days", "level"]
+
+    /// Les jours de la semaine que dit le nombre choisi.
+    static func joursDeCourse(_ nombre: Int) -> Set<Int> {
+        switch nombre {
+        case choixDeJours[0]: return Set(joursDeDeux)
+        case choixDeJours[1]: return Set(joursDeTrois)
+        case choixDeJours[3]: return Set(joursDeCinq)
+        default: return Set(joursDeQuatre)
+        }
+    }
+    /// Ce que le niveau dit du point de départ, faute de le demander.
+    static let minutesEnSemaine = 45
+    static let minutesLeWeekEnd = 90
+}

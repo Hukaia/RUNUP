@@ -48,28 +48,7 @@ struct StatsView: View {
     private var profile: UserProfile { appState.profile }
 
     /// Les fenêtres du haut de page et de la courbe d'allure.
-    private enum StatsRange: CaseIterable, Identifiable {
-        case week, month, quarter, year
-        var id: Self { self }
-
-        var libelle: String {
-            switch self {
-            case .week: return String(localized: "7 j")
-            case .month: return String(localized: "4 sem.")
-            case .quarter: return String(localized: "3 mois")
-            case .year: return String(localized: "1 an")
-            }
-        }
-
-        var days: Int {
-            switch self {
-            case .week: return HZStats.joursDeLaSemaine
-            case .month: return HZStats.joursDuMois
-            case .quarter: return HZStats.joursDuTrimestre
-            case .year: return HZStats.jourParAn
-            }
-        }
-    }
+    private typealias StatsRange = HZPeriode
 
     // MARK: - La page
 

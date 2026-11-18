@@ -208,6 +208,7 @@ struct RouteDiscoveryView: View {
             }
             .padding(.horizontal, HZEspace.marge)
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     @ViewBuilder private var contenu: some View {
@@ -228,6 +229,7 @@ struct RouteDiscoveryView: View {
                 }
                 .padding(.horizontal, HZEspace.marge)
             }
+            .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -261,6 +263,7 @@ struct RouteDiscoveryView: View {
         // En démonstration, ce que la graine a posé : il n'y a pas de serveur à interroger.
         if Demonstration.enCours {
             routes = appState.cachedExplorerRoutes ?? []
+            if let cadre = HZHub.cadre(de: routes.map(\.startCoordinate)) { camera = .region(cadre) }
             searchedRegion = visibleRegion
             isLoading = false
             return

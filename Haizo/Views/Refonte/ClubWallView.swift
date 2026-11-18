@@ -85,7 +85,7 @@ struct ClubWallView: View {
                           axis: .vertical) { EmptyView() }
                     .accessibilityLabel(String(localized: "Dis quelque chose au club…"))
                     .lineLimit(HZHub.lignesDuChamp)
-                    .hzTexte(.c15, .semi)
+                    .font(HZPolice.texte(.c15, .semi))
                     .foregroundStyle(HZCouleur.encre)
                     .padding(.horizontal, HZEspace.groupe)
                     .padding(.vertical, HZEspace.tuile)

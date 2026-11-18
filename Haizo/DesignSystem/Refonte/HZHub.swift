@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import MapKit
 
 /// LES PIÈCES COMMUNES DES ÉCRANS QUI SUIVENT LE CANVAS : le hub du Club, l'autour de la course,
 /// l'entrée dans l'app. Aucune n'est nouvelle dans son dessin : c'est le haut noir, la feuille
@@ -207,7 +208,7 @@ struct HZChampDeRecherche: View {
                 EmptyView()
             }
             .accessibilityLabel(invite)
-            .hzTexte(.c15, .semi)
+            .font(HZPolice.texte(.c15, .semi))
             .foregroundStyle(encre)
             .tint(encre)
             .textInputAutocapitalization(.never)
@@ -504,5 +505,157 @@ enum HZAllures {
             guard let valeur else { return neutre }
             return (valeur - plusRapide) / (plusLent - plusRapide)
         }
+    }
+}
+
+/// UN CHAMP DE TEXTE de formulaire : son titre en gris au-dessus, la saisie dans une pastille claire.
+struct HZChampDeTexte: View {
+    let titre: String
+    let invite: String
+    @Binding var texte: String
+    var clavier: UIKeyboardType = .default
+    var majuscules: TextInputAutocapitalization = .sentences
+    var lignes: ClosedRange<Int> = HZHub.uneLigne
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
+            Text(titre)
+                .hzTexte(.c13, .semi)
+                .foregroundStyle(HZCouleur.secondaireSurClair)
+            TextField(text: $texte,
+                      prompt: Text(invite).foregroundStyle(HZCouleur.secondaireSurClair),
+                      axis: .vertical) { EmptyView() }
+                .accessibilityLabel(titre)
+                .keyboardType(clavier)
+                .textInputAutocapitalization(majuscules)
+                .lineLimit(lignes)
+                .font(HZPolice.texte(.c16, .semi))
+                .foregroundStyle(HZCouleur.encre)
+                .tint(HZCouleur.encre)
+                .padding(.horizontal, HZEspace.groupe)
+                .padding(.vertical, HZEspace.tuile)
+                .frame(minHeight: HZHub.hauteurDuChamp, alignment: .leading)
+                .background(HZCouleur.surfaceClaire,
+                            in: RoundedRectangle(cornerRadius: HZRayon.bandeau, style: .circular))
+        }
+    }
+}
+
+extension HZHub {
+    static let uneLigne: ClosedRange<Int> = 1...1
+    static let opaciteDesPaires: Double = 0.55
+    static let seuilDUsure: Double = 0.8
+    static let cotePuceDeKm: CGFloat = 76
+}
+
+/// LES QUATRE PÉRIODES des Stats et de la carte de chaleur : 7 jours, 4 semaines, 3 mois, 1 an.
+enum HZPeriode: CaseIterable, Identifiable {
+    case week, month, quarter, year
+    var id: Self { self }
+
+    var libelle: String {
+        switch self {
+        case .week: return String(localized: "7 j")
+        case .month: return String(localized: "4 sem.")
+        case .quarter: return String(localized: "3 mois")
+        case .year: return String(localized: "1 an")
+        }
+    }
+
+    var days: Int {
+        switch self {
+        case .week: return HZStats.joursDeLaSemaine
+        case .month: return HZStats.joursDuMois
+        case .quarter: return HZStats.joursDuTrimestre
+        case .year: return HZStats.jourParAn
+        }
+    }
+}
+
+extension HZHub {
+    static let margeDuCadrage: Double = 1.3
+    static let cadrageMinimal: Double = 0.01
+    static let opaciteDUnTrace: Double = 0.3
+}
+
+extension HZHub {
+    static let moitieDeLEtendue: Double = 2
+}
+
+/// UNE RÉPONSE TAPABLE : une grande ligne sur la surface claire, la choisie en noir.
+struct HZReponse: View {
+    let titre: String
+    var precision: String? = nil
+    var choisie: Bool = false
+    var disponible: Bool = true
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: HZEspace.groupe) {
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(titre)
+                        .hzTexte(.c17, .gras)
+                        .foregroundStyle(choisie ? HZCouleur.blanc : HZCouleur.encre)
+                    if let precision {
+                        Text(precision)
+                            .hzTexte(.c13, .medium)
+                            .foregroundStyle(choisie ? HZCouleur.secondaireSurSombre : HZCouleur.secondaireSurClair)
+                    }
+                }
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                if choisie {
+                    HZIcone(dessin: .coche, cote: HZHub.coteDeLIcone, trait: HZHub.traitDeLIcone,
+                            couleur: HZCouleur.blanc)
+                }
+            }
+            .padding(.horizontal, HZEspace.marge)
+            .frame(maxWidth: .infinity)
+            .frame(height: HZEntree.hauteurDUneReponse)
+            .background(choisie ? HZCouleur.encre : HZCouleur.surfaceClaire,
+                        in: RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
+            .contentShape(RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
+            .opacity(disponible ? HZHub.opaciteNormale : HZHub.opaciteEteinte)
+        }
+        .buttonStyle(.plain)
+        .disabled(!disponible)
+        .accessibilityAddTraits(choisie ? .isSelected : [])
+    }
+}
+
+/// LA PROGRESSION : un segment par question, plein jusqu'à celle où l'on est.
+struct HZSegments: View {
+    let total: Int
+    let courant: Int
+
+    var body: some View {
+        HStack(spacing: HZEntree.ecartDesSegments) {
+            ForEach(0..<total, id: \.self) { rang in
+                Capsule()
+                    .fill(rang <= courant ? HZCouleur.encre : HZCouleur.filetGroupe)
+                    .frame(height: HZEntree.hauteurDUnSegment)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(String(localized: "Question \(courant + 1) sur \(total)"))
+    }
+}
+
+extension HZHub {
+    /// La région qui contient ces points, avec de l'air autour ; `nil` s'il n'y en a pas.
+    static func cadre(de points: [CLLocationCoordinate2D]) -> MKCoordinateRegion? {
+        guard let premier = points.first else { return nil }
+        var minLat = premier.latitude, maxLat = premier.latitude
+        var minLng = premier.longitude, maxLng = premier.longitude
+        for point in points {
+            minLat = min(minLat, point.latitude); maxLat = max(maxLat, point.latitude)
+            minLng = min(minLng, point.longitude); maxLng = max(maxLng, point.longitude)
+        }
+        return MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: (minLat + maxLat) / moitieDeLEtendue,
+                                           longitude: (minLng + maxLng) / moitieDeLEtendue),
+            span: MKCoordinateSpan(latitudeDelta: max((maxLat - minLat) * margeDuCadrage, cadrageMinimal),
+                                   longitudeDelta: max((maxLng - minLng) * margeDuCadrage, cadrageMinimal)))
     }
 }

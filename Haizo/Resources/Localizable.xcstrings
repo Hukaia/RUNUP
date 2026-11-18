@@ -201,6 +201,40 @@
         }
       }
     },
+    "%@ km de moins que la semaine dernière : une semaine plus légère.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km less than last week: a lighter week."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km menos que la semana pasada: una semana más ligera."
+          }
+        }
+      }
+    },
+    "%@ km de plus que la semaine dernière.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km more than last week."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km más que la semana pasada."
+          }
+        }
+      }
+    },
     "%@ km qui ne comptaient pas encore dans ton programme. Valide ton ressenti pour les y faire entrer.": {
       "extractionState": "manual",
       "localizations": {
@@ -1069,6 +1103,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld d"
+          }
+        }
+      }
+    },
+    "%lld jour": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld day"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld día"
           }
         }
       }
@@ -6402,6 +6453,23 @@
         }
       }
     },
+    "C'est ta meilleure semaine : %@ km.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is your best week: %@ km."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es tu mejor semana: %@ km."
+          }
+        }
+      }
+    },
     "C'était quand ?": {
       "extractionState": "manual",
       "localizations": {
@@ -6515,6 +6583,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "EMPEZAR"
+          }
+        }
+      }
+    },
+    "Combien de jours par semaine ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How many days a week?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cuántos días por semana?"
           }
         }
       }
@@ -9266,6 +9351,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Crear"
+          }
+        }
+      }
+    },
+    "Créer mon programme": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create my program"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crear mi programa"
           }
         }
       }
@@ -14825,6 +14927,23 @@
         }
       }
     },
+    "Ma semaine sur Haizo : %@ km.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My week on Haizo: %@ km."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mi semana en Haizo: %@ km."
+          }
+        }
+      }
+    },
     "Membres": {
       "extractionState": "manual",
       "localizations": {
@@ -14842,6 +14961,57 @@
         }
       }
     },
+    "Où en es-tu ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where are you at?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿En qué punto estás?"
+          }
+        }
+      }
+    },
+    "Quel est ton objectif ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What's your goal?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cuál es tu objetivo?"
+          }
+        }
+      }
+    },
+    "Question %lld sur %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Question %lld of %lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pregunta %lld de %lld"
+          }
+        }
+      }
+    },
     "Suivi": {
       "extractionState": "manual",
       "localizations": {
@@ -14855,6 +15025,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Siguiendo"
+          }
+        }
+      }
+    },
+    "Tu choisiras ta course juste après : le plan se calera sur sa date.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You'll pick your race right after: the plan will be built around its date."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elegirás tu carrera justo después: el plan se ajustará a su fecha."
+          }
+        }
+      }
+    },
+    "Tu pourras déplacer chaque séance.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can move any session."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podrás mover cada sesión."
+          }
+        }
+      }
+    },
+    "Une première semaine à garder : %@ km.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A first week to keep: %@ km."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una primera semana para guardar: %@ km."
           }
         }
       }
@@ -14940,6 +15161,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kilómetros"
+          }
+        }
+      }
+    },
+    "kilomètres cette semaine": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilometers this week"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kilómetros esta semana"
           }
         }
       }
@@ -31186,6 +31424,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zona"
+          }
+        }
+      }
+    },
+    "parcours tracké": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tracked route"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ruta registrada"
+          }
+        }
+      }
+    },
+    "parcours trackés": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tracked routes"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rutas registradas"
           }
         }
       }

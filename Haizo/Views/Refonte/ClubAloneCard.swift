@@ -9,7 +9,7 @@ struct ClubAloneCard: View {
             HZPlaque {
                 Text(verbatim: Accord.selon(f: String(localized: "Tu es seule dans \(club.name)"),
                                             m: String(localized: "Tu es seul dans \(club.name)")))
-                    .hzAffichage(.titreDeTuile)
+                    .hzAffichage(.section)
                     .foregroundStyle(HZCouleur.encre)
                     .fixedSize(horizontal: false, vertical: true)
                 Text("Un club prend vie à plusieurs — classement, défis, sorties de groupe. Envoie son lien aux gens avec qui tu cours.")
