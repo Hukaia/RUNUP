@@ -3686,6 +3686,40 @@
         }
       }
     },
+    "Abonnement actif": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscription active"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suscripción activa"
+          }
+        }
+      }
+    },
+    "Abonnement inactif": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscription inactive"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suscripción inactiva"
+          }
+        }
+      }
+    },
     "AJOUTER UNE COURSE": {
       "extractionState": "manual",
       "localizations": {
@@ -5490,6 +5524,23 @@
         }
       }
     },
+    "Bleu": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blue"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Azul"
+          }
+        }
+      }
+    },
     "BPM MOY": {
       "localizations": {
         "en": {
@@ -6181,6 +6232,23 @@
         }
       }
     },
+    "Clair": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claro"
+          }
+        }
+      }
+    },
     "Club, abonnements et courses": {
       "extractionState": "manual",
       "localizations": {
@@ -6230,6 +6298,23 @@
         }
       }
     },
+    "Compte et équipement": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account and gear"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuenta y equipamiento"
+          }
+        }
+      }
+    },
     "CONSTRUIRE MON PROGRAMME": {
       "localizations": {
         "en": {
@@ -6258,6 +6343,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "CONTINUAR"
+          }
+        }
+      }
+    },
+    "Couleur": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colour"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color"
           }
         }
       }
@@ -16370,6 +16472,23 @@
         }
       }
     },
+    "Mode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode"
+          }
+        }
+      }
+    },
     "MODIFIER": {
       "extractionState": "manual",
       "localizations": {
@@ -17268,6 +17387,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Menos de 5 min/km"
+          }
+        }
+      }
+    },
+    "Moins de calories": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fewer calories"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menos calorías"
+          }
+        }
+      }
+    },
+    "Moins de pas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fewer steps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menos pasos"
           }
         }
       }
@@ -18963,6 +19116,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Más acciones"
+          }
+        }
+      }
+    },
+    "Plus de calories": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More calories"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más calorías"
+          }
+        }
+      }
+    },
+    "Plus de pas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More steps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más pasos"
           }
         }
       }
@@ -22016,6 +22203,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "QUITAR DE MIS RUTAS"
+          }
+        }
+      }
+    },
+    "Rose": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pink"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rosa"
           }
         }
       }
@@ -29855,6 +30059,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "CONFIRMAR Y ACTUALIZAR"
+          }
+        }
+      }
+    },
+    "Vert": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Green"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verde"
+          }
+        }
+      }
+    },
+    "Violet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purple"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Violeta"
           }
         }
       }

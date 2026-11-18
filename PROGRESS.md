@@ -8647,3 +8647,22 @@ propose de la retirer ; avant la première sortie, les trois totaux deviennent c
 course) au lieu de trois zéros ; « Running Club » garde la graphie du catalogue existant (le canvas écrit « Running club » ;
 la capitale du mot « Club » est celle de la marque) ; l'ambre de « Session expirée » disparaît, la carte est neutre.
 Cinq clés au catalogue, en trois langues. **Non vérifié à cet instant** : compilation et capture.
+
+## Réglages (18 novembre) : refaits d'après le canvas « Réglages »
+
+Page blanche en feuille : titre et bouton de fermeture, la carte d'offre noire « Haizo Plus » (état, bouton blanc « Voir l'offre »),
+puis cinq groupes sur la surface claire : Apparence (Mode, Couleur), Sources de données (Apple Santé), Préférences (notifications du coach,
+alerte de pluie), Objectifs quotidiens (Pas, Calories actives, avec moins/plus), Compte et équipement. **Les réglages et leurs effets
+ne bougent pas** : mêmes valeurs, mêmes endroits d'écriture, mêmes autorisations demandées, mêmes refus renvoyés au toast.
+
+Pièces nouvelles dans `DesignSystem/Refonte/HZReglages.swift` : `HZGroupeDeReglages`, `HZLigneDeReglage`, `HZStyleDInterrupteur` (un
+`ToggleStyle` : VoiceOver l'annonce toujours comme un interrupteur), `HZCompteur`, `HZChoixADeux`, `HZPastilleDeCouleur`, `HZCarteDOffre`.
+
+**Décisions de ma part, à confirmer sur la maquette** : l'habillage (Neutre/Teinté) disparaît de l'écran, comme le brief du 17 le demande
+(« supprimer l'habillage Teinté ») ; la valeur enregistrée n'est pas touchée ; les huit couleurs deviennent quatre, et choisir l'une écrit
+l'identifiant de l'ancien thème de même nom (le choix d'un ancien thème sans équivalent s'affiche comme rose) ; « Mode » se lit Clair/Sombre
+(« Blanc » devient « Clair ») ; « Gérer mon abonnement » reste dans Compte et équipement alors que le canvas ne l'a pas (la validation App Store
+l'exige dans l'app) ; la mention « Météo Apple Weather », exigée par WeatherKit, reste sous la ligne de pluie ; les compteurs affichent le nombre
+seul (le titre de la ligne porte l'unité) ; sur une feuille, le haut est à 28 et non 60 (le canvas dessine un écran plein).
+Quatorze clés au catalogue, en trois langues. La ligne de Strava, qui n'était plus affichée, a quitté ce fichier pour `Profil/StravaConnectionRow.swift`.
+**Non vérifié à cet instant** : compilation et capture.

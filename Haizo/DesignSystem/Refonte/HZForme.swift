@@ -14,6 +14,8 @@ enum HZRayon {
     static let feuille: CGFloat = 30
     /// La carte d'une sortie dans le fil, et celle de l'offre dans les réglages.
     static let carteDuFil: CGFloat = 28
+    /// La carte d'offre des réglages.
+    static let offre: CGFloat = 28
     /// Une tuile : séance à venir, record, course, objectif.
     static let tuile: CGFloat = 24
     /// Un groupe de lignes, une tuile de chiffre, une bulle du coach.

@@ -286,3 +286,47 @@ enum HZProfil {
     /// Sous le dernier bloc : la barre flottante passe devant.
     static let basDePage: CGFloat = 112
 }
+
+/// LES MESURES DES RÉGLAGES, relevées sur le canvas « Réglages ».
+enum HZReglages {
+    static let sousLeTitre: CGFloat = 26
+    static let sousUnTitre: CGFloat = 10
+    static let hauteurDeLigne: CGFloat = 64
+    static let hauteurDeDestination: CGFloat = 58
+    static let margeDUneLigneALaPrecision: CGFloat = 14
+    static let entreTitreEtPrecision: CGFloat = 2
+    static let interligne: CGFloat = 1.35
+    /// Sous le titre de l'écran, avant la carte d'offre.
+    static let sousLeTitreDePage: CGFloat = 20
+    /// En haut de la feuille : le canvas dessine un écran plein, ici c'est une feuille, dont le bord
+    /// arrondi tient la place des soixante points de la barre d'état.
+    static let hautDeFeuille: CGFloat = 28
+    static let basDePage: CGFloat = 40
+
+    static let largeurDInterrupteur: CGFloat = 52
+    static let hauteurDInterrupteur: CGFloat = 32
+    static let boutonDInterrupteur: CGFloat = 26
+    static let margeDuBouton: CGFloat = 3
+    static let dureeDeBascule: Double = 0.15
+
+    static let largeurDeLaValeur: CGFloat = 62
+
+    static let margeDeLaPiste: CGFloat = 4
+    static let margeVerticaleDuSegment: CGFloat = 7
+
+    static let diametreDePastille: CGFloat = 32
+    static let traitDeAnneau: CGFloat = 2
+    static let debordDeAnneau: CGFloat = 10
+    static let ecartDePastilles: CGFloat = 10
+
+    static let hauteurDeLOffre: CGFloat = 120
+    static let margeDeLOffre: CGFloat = 18
+    static let hauteurDuBoutonDOffre: CGFloat = 40
+
+    static let pasMin: Double = 2000
+    static let pasMax: Double = 20000
+    static let pasDuCompteurDePas: Double = 500
+    static let caloriesMin: Double = 100
+    static let caloriesMax: Double = 1000
+    static let pasDuCompteurDeCalories: Double = 50
+}

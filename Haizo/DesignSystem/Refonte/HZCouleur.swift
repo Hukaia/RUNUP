@@ -143,6 +143,16 @@ enum HZAccent: String, CaseIterable, Identifiable {
         self == .rose ? Color(hex: 0x2B0011) : HZCouleur.blanc
     }
 
+    /// Le nom lu par VoiceOver sur la pastille.
+    var nom: String {
+        switch self {
+        case .rose: return String(localized: "Rose")
+        case .violet: return String(localized: "Violet")
+        case .bleu: return String(localized: "Bleu")
+        case .vert: return String(localized: "Vert")
+        }
+    }
+
     /// Le choix en cours. Il est lu dans `ThemeStore`, le réglage que l'app porte déjà et que le
     /// profil synchronise : la refonte ne crée pas une seconde mémoire pour la même préférence.
     static var courant: HZAccent { depuis(ancienTheme: ThemeStore.shared.themeID) }
