@@ -29,8 +29,6 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 AUTORISE = {
     "Haizo/Views/Race/RacePageView.swift":
         (1, "« Je prépare cette course » en vert : la couleur nomme un état confirmé"),
-    "Haizo/Views/Profile/ShoesView.swift":
-        (1, "« Retirées » en gris : volontairement éteint, ce sont des archives"),
 }
 
 # UN APPEL, PAS UNE LIGNE — et c'est une correction de ce script lui-même.
@@ -160,12 +158,9 @@ DIRECTES_AUTORISEES = {
                                                         "course qu'on n'a pas renseigné."),
     "Haizo/Views/Onboarding/RunningDaysStepView.swift": (1, AVERTISSEMENT + " Moins de jours "
                                                          "cochés que le minimum de l'objectif."),
-    "Haizo/Views/Profile/ShoesView.swift": (2, AVERTISSEMENT + " Une paire au-delà de 80 % de sa "
-                                            "durée de vie, et la ligne qui le dit."),
     "Haizo/Views/Race/RacePageView.swift": (3, AVERTISSEMENT + " Un bandeau d'alerte de course, "
                                             "plus la teinte d'« état confirmé » déjà déclarée "
                                             "en haut de ce fichier."),
-    "Haizo/Views/Stats/HistoryView.swift": (1, AVERTISSEMENT),
 
     # ── 2. DEUX PALETTES QUI ATTENDENT UNE DÉCISION ───────────────────────────────────────────
     #
