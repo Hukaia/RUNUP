@@ -8733,3 +8733,10 @@ Quatorze clés au catalogue, en trois langues. **Non vérifié à cet instant** 
 captures `explorer-trail`, `explorer-clubs`, `course`. L'allure grisée de l'écran de course est conforme. Explorer : la fenêtre de localisation
 du système recouvrait la première capture ; elle n'est plus demandée en démonstration. Les erreurs de compilation de cette série (format de date du
 Résumé, ordre des arguments d'Explorer) venaient de moi, qui ne peux pas compiler ici : la CI est le seul juge.
+
+**Explorer, vérifié le 18 novembre** (Refonte #47, entièrement vert, accueil et plan compris) : capture `explorer` propre (plus de fenêtre de localisation),
+le mois des tuiles à 14 pt du bord (la boîte de ligne de `hzTexte` fait remonter un texte superposé au coin d'une tuile : en pile, la place vient des
+tailles), le tracé du bloc noir qui ne croise plus la distance. **Tous les écrans du canvas sont maintenant refaits** : Accueil, Plan, Coach, Stats, fil du
+Club, Profil, Réglages, Run, Résumé, Explorer. **Reste, hors canvas** : le hub du Club (`SocialView`, `ClubView`, `FriendsView`, `RouteDiscoveryView`,
+`RaceDiscoveryView`), les pages de course, l'historique, le récap hebdo, les chaussures, la carte de chaleur, l'inscription, le paywall, les feuilles ; puis le
+retrait de l'ancien système de design.
