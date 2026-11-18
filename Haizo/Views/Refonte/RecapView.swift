@@ -272,8 +272,8 @@ struct RecapView: View {
 
     private func dateDeLaSortie(_ run: RunRecord) -> String {
         // Capitale de début de phrase, posée par le format de la date : elle suit la langue.
-        run.date.formatted(Date.FormatStyle().weekday(.wide).day().month(.wide)
-            .capitalizationContext(.beginningOfSentence))
+        run.date.formatted(Date.FormatStyle(capitalizationContext: .beginningOfSentence)
+            .weekday(.wide).day().month(.wide))
     }
 
     /// Les deux grandes mesures de la sortie : allure et durée.
