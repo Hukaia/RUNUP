@@ -87,7 +87,6 @@ final class SymbolesTests: XCTestCase {
         "magnifyingglass",
         "map",
         "mappin",
-        "mic.fill",
         "minus",
         "moon.zzz.fill",
         "mountain.2.fill",

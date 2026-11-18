@@ -41,13 +41,6 @@ AUTORISE = {
         (1, "carte d'export d'un badge : même raison"),
     "Haizo/Views/Components/AvatarView.swift":
         (3, "initiales à 0,4 × le diamètre de l'avatar : une suite continue, pas un cran"),
-    "Haizo/Views/Live/LiveRunView.swift":
-        (3, "l'écran qu'on lit en courant : 96 pt au décompte, 40/64 au chronomètre selon qu'une "
-            "consigne l'accompagne, et 72 à l'allure cible — « agrandit le chiffre central à 72 », "
-            "point 5 du brief du 15 novembre. 72 ne peut pas entrer dans l'échelle : elle s'arrête "
-            "à 40, le cran d'un titre d'écran, et ce chiffre-ci se lit à bout de bras, essoufflée. "
-            "Mesuré sur InstrumentSans-Bold : « 6:18/km » fait 263 pt à 72 contre 284 utiles sur "
-            "l'iPhone le plus étroit, donc il tient."),
 }
 
 # fichier → (nombre de sorties attendu, la raison) — pour le MONOSPACE

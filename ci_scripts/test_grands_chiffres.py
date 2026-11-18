@@ -121,25 +121,15 @@ def _():
     assert ck.ecarts() == [], ck.ecarts()
 
 
-@cas_test("l'écran de séance porte bien ses réductions")
+@cas_test("l'écran de course n'a plus aucune sortie d'échelle")
 def _():
-    chemin = ck.RACINE / "Haizo/Views/Live/LiveRunView.swift"
+    # Il en avait trois (96 au décompte, 72 à l'allure, 40 ou 64 au chronomètre), chacune écrite à la
+    # main dans la vue. Refait d'après le canvas, il prend ses corps dans `HZAffichage` : aucun
+    # `horsEchelle` ne doit y revenir, ce serait une taille que le système ne déclare pas.
+    chemin = ck.RACINE / "Haizo/Views/Refonte/LiveRunView.swift"
     source = chemin.read_text(encoding="utf-8")
     grands = list(ck.grands_corps(source))
-    # TROIS, ET LE COMPTE A CHANGÉ DEUX FOIS LE 16 NOVEMBRE — dans les deux sens.
-    #
-    # Il en trouvait trois : le compte à rebours n'en faisait PAS partie (le motif ignorait
-    # `display(horsEchelle:)`), et l'allure cible en fournissait deux à elle seule, une par
-    # branche de `targetPaceLine`. Le brief du 15 novembre a fusionné les deux branches, et le
-    # motif a appris à lire la troisième orthographe. Même nombre, pas les mêmes corps : 96 au
-    # décompte, 72 à l'allure, 40 ou 64 au chronomètre.
-    #
-    # Le compte est là pour que ce cas ne puisse pas passer en ne regardant RIEN. C'est sa seule
-    # raison d'être, et c'est pour ça qu'il est exact plutôt que minoré.
-    assert len(grands) == 3, [g[:2] for g in grands]
-    for numero, taille, bloc in grands:
-        if "lineLimit(1)" in bloc:
-            assert "minimumScaleFactor" in bloc, (numero, taille)
+    assert grands == [], [g[:2] for g in grands]
 
 
 def main() -> int:

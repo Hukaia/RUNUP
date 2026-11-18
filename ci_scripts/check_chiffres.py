@@ -34,10 +34,6 @@ FENETRE = 12
 # Les exceptions, avec leur raison. Le compte est fixé : en ajouter une demande de modifier ce
 # fichier, c'est-à-dire d'écrire pourquoi cet écran ne peut pas prendre le composant partagé.
 AUTORISE = {
-    "Haizo/Views/Live/LiveRunView.swift":
-        (1, "l'écran de course en cours : son chiffre porte un `contentTransition(.numericText())` "
-            "et son animation de chiffre, que le composant partagé ne transporte pas, et son "
-            "unité vit sur l'encrier `Ink` de cet écran et non sur le thème"),
 }
 
 fautes = []

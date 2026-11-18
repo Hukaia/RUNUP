@@ -6232,6 +6232,40 @@
         }
       }
     },
+    "Cardio · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart rate · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pulso · %@"
+          }
+        }
+      }
+    },
+    "Cible": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objetivo"
+          }
+        }
+      }
+    },
     "Clair": {
       "extractionState": "manual",
       "localizations": {
@@ -10650,6 +10684,23 @@
         }
       }
     },
+    "Encore %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ to go"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faltan %@"
+          }
+        }
+      }
+    },
     "ENREGISTRER": {
       "localizations": {
         "en": {
@@ -14464,6 +14515,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "kilómetros"
+          }
+        }
+      }
+    },
+    "Kilomètres": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilometres"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilómetros"
           }
         }
       }
@@ -22120,6 +22188,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "¿Salir del club?"
+          }
+        }
+      }
+    },
+    "Recentrer la carte": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recentre the map"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recentrar el mapa"
           }
         }
       }

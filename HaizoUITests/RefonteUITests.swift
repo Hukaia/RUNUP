@@ -156,6 +156,26 @@ final class RefonteUITests: XCTestCase {
         reglages.terminate()
     }
 
+    /// L'ÉCRAN DE COURSE : le décompte d'abord, puis la course (sans GPS en simulateur : la distance
+    /// reste à zéro et le bandeau de recherche du signal est à l'écran), puis la pause, dont l'image doit
+    /// changer.
+    func test09Course() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=live", "--encours"], attente: 1.0)
+        photographier("course-decompte", app: app)
+        Thread.sleep(forTimeInterval: 5.0)
+        photographier("course", app: app)
+        let pause = app.buttons["Mettre en pause"]
+        XCTAssertTrue(pause.waitForExistence(timeout: 5), "la pause doit exister une fois le décompte passé")
+        let avant = app.screenshot().pngRepresentation
+        pause.tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("course-pause", app: app)
+        XCTAssertNotEqual(avant, app.screenshot().pngRepresentation, "la pause doit changer l'écran")
+        app.terminate()
+    }
+
     /// LES BOUTONS RÉPONDENT-ILS ? Un lancement par geste, et pour chacun : l'image change-t-elle ?
     ///
     /// C'est le test de non-régression d'un défaut qui a coûté une journée : sur l'Accueil et le

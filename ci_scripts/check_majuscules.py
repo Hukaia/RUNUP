@@ -145,7 +145,6 @@ PERMIS = {
     "Haizo/Views/Home/Sheets/ProgramSettingsSheet.swift": (1, BOUTON),
     "Haizo/Views/Home/Sheets/SessionDetailSheet.swift": (1, BOUTON),
     "Haizo/Views/Live/DebriefSheet.swift": (1, BOUTON),
-    "Haizo/Views/Live/LiveRunView.swift": (1, BOUTON),
     "Haizo/Views/Live/RecapView.swift": (6, BOUTON),
     "Haizo/Views/Onboarding/HealthConnectStepView.swift": (1, BOUTON),
     "Haizo/Views/Onboarding/OnboardingComponents.swift": (1, BOUTON),

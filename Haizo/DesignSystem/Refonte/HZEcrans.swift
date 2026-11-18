@@ -336,3 +336,63 @@ enum HZReglages {
     static let caloriesMax: Double = 1000
     static let pasDuCompteurDeCalories: Double = 50
 }
+
+/// LES MESURES DE L'ÉCRAN DE COURSE, relevées sur le canvas « Run ».
+enum HZLive {
+    /// La carte : 400 sur le canvas, et elle cède la place au panneau sur un écran plus court.
+    static let carte: CGFloat = 400
+    static let carteMinimale: CGFloat = 180
+    static let traitDuTrace: CGFloat = 6
+    static let positionsEntreDeuxMisesAJour = 5
+
+    static let entrePointEtEtat: CGFloat = 8
+    static let pointEnDirect: CGFloat = 8
+    static let grossissementDuPoint: CGFloat = 1.55
+    static let opaciteDuPoint: Double = 0.45
+    static let dureeDuBattement: Double = 1.1
+    static let echelleAuRepos: CGFloat = 1
+    static let opaciteAuRepos: Double = 1
+
+    static let reponseDuRessort: Double = 0.4
+    static let amortissement: Double = 0.85
+    static let reponseDuDecompte: Double = 0.3
+    static let amortissementDuDecompte: Double = 0.7
+    static let echelleDuDecompte: CGFloat = 1.35
+    static let sousLeDecompte: CGFloat = 10
+
+    /// Le message de l'écran verrouillé reste le temps d'un démarrage, d'un regard au chrono et d'un
+    /// geste vers les Réglages. Au-delà, elle court.
+    static let secondesDuMessageEcranVerrouille: Double = 45
+    static let interligne: CGFloat = 1.35
+    static let disqueDuCoach: CGFloat = 34
+
+    static let hautDuPanneau: CGFloat = 22
+    static let basDuPanneau: CGFloat = 8
+    static let entreMesuresEtCommandes: CGFloat = 14
+
+    static let hauteurDesBarres: CGFloat = 6
+    static let entreLesBarres: CGFloat = 6
+    static let sousLesBarres: CGFloat = 10
+    static let sousLesBlocs: CGFloat = 14
+    static let progressionPleine: Double = 1
+
+    static let reductionDeLAllure: CGFloat = 0.5
+    static let debordDeLAllure: CGFloat = 4
+    static let entreCibleEtValeur: CGFloat = 2
+    static let sousLaCible: CGFloat = 10
+
+    static let sousLAllure: CGFloat = 14
+    static let sousLeFiletDesMesures: CGFloat = 16
+
+    static let entreCommandes: CGFloat = 22
+    static let coteDuCarre: CGFloat = 18
+    static let rayonDuCarre: CGFloat = 4
+    static let coteDeLaLecture: CGFloat = 28
+    static let barresDePause = 2
+    static let largeurDeBarreDePause: CGFloat = 8
+    static let hauteurDeBarreDePause: CGFloat = 28
+    static let rayonDesBarresDePause: CGFloat = 3
+    static let ecartDesBarresDePause: CGFloat = 8
+    static let coteDuMicro: CGFloat = 22
+    static let margeDuCadenas: CGFloat = 4
+}

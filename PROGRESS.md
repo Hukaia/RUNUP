@@ -8665,3 +8665,21 @@ l'identifiant de l'ancien thème de même nom (le choix d'un ancien thème sans 
 l'exige dans l'app) ; la mention « Météo Apple Weather », exigée par WeatherKit, reste sous la ligne de pluie ; les compteurs affichent le nombre
 seul (le titre de la ligne porte l'unité) ; sur une feuille, le haut est à 28 et non 60 (le canvas dessine un écran plein).
 Quatorze clés au catalogue, en trois langues. **Vérifié le 18 novembre** (Refonte #39) : captures `profil-reglages` et `profil-reglages-bas`. La ligne de Strava, qui n'était plus affichée, a quitté ce fichier pour `Profil/StravaConnectionRow.swift`.
+
+## Run, l'écran de course (18 novembre) : refait d'après le canvas « Run »
+
+La carte en haut (réduire, état « En direct » avec son point qui respire, recentrer), puis un panneau noir : une barre par
+répétition de la séance (faites en blanc, la courante remplie de l'accent selon sa progression réelle) et son restant, l'allure
+en grand (100) avec la cible à droite, trois mesures (Temps, Kilomètres, Cardio) et les trois commandes du pouce (terminer, pause,
+coach). **Rien de la logique ne bouge** : la vraie carte et son tracé (mise à jour toutes les cinq positions), le GPS et ses trois
+bandeaux et leur vibration, l'écran verrouillé, le coach vocal et son verrou, le décompte de départ, la confirmation avant de
+terminer. Une seule lecture ajoutée au modèle de vue : `repetitionsPrevues`.
+
+**Décisions de ma part, à confirmer sur la maquette** : les calories ne s'affichent plus pendant la course (le canvas montre le
+cardio à leur place ; elles restent enregistrées et au résumé) ; l'allure cible, qui dominait, devient « Cible » à droite de
+l'allure ; sur une séance continue ou à vélo il n'y a pas de bloc, donc pas de barres (on n'en invente pas) ; l'ambre des
+bandeaux disparaît, ils sont noirs avec le texte blanc ; le bas du panneau respecte la zone sûre du système (la pause ne doit pas
+chevaucher le geste d'accueil) au lieu des 32 du canvas ; la carte rétrécit sur un écran plus court pour laisser le panneau entier.
+**Non vérifiable en simulateur** : le tracé (pas de GPS) et la carte réelle de la coureuse.
+Huit clés au catalogue (cinq nouvelles), en trois langues. Cinq gardes qui lisaient l'ancien fichier suivent (échelle, chiffres,
+majuscules, grands chiffres, chaînes). **Non vérifié à cet instant** : compilation et capture.

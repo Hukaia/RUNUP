@@ -183,6 +183,10 @@ final class LiveRunViewModel {
     /// drapeau-ci ; tout ce qui décrit la séance reste sur `suitLePlan`.
     var viseUneAllure: Bool { discipline.followsPaceTargets }
 
+    /// Le nombre de répétitions de la séance, quand elle en a : de quoi dessiner une barre par bloc.
+    /// Rien sur une séance continue ni à vélo, comme `segmentLabel`.
+    var repetitionsPrevues: Int? { suitLePlan ? session.intervalStructure?.reps : nil }
+
     var segmentLabel: String? {
         guard suitLePlan else { return nil }
         guard let currentSegment, let reps = session.intervalStructure?.reps else { return nil }
