@@ -150,6 +150,8 @@ final class RefonteUITests: XCTestCase {
         bouton.tap()
         Thread.sleep(forTimeInterval: 1.5)
         photographier("profil-reglages", app: reglages)
+        defiler(reglages)
+        photographier("profil-reglages-bas", app: reglages)
         XCTAssertNotEqual(avant, reglages.screenshot().pngRepresentation, "« Réglages » doit ouvrir la feuille")
         reglages.terminate()
     }
