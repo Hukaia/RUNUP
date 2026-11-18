@@ -126,6 +126,16 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains("--courses")
     }
 
+    /// `--amis` : ouvrir le hub du Club sur ses amis.
+    static var amisDemandes: Bool {
+        ProcessInfo.processInfo.arguments.contains("--amis")
+    }
+
+    /// `--itineraires` : ouvrir le hub du Club sur la carte des itinéraires.
+    static var itinerairesDemandes: Bool {
+        ProcessInfo.processInfo.arguments.contains("--itineraires")
+    }
+
     /// `--course` : ouvrir la page d'une course par-dessus l'écran.
     static var courseDemandee: Bool {
         ProcessInfo.processInfo.arguments.contains("--course")

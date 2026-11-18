@@ -208,6 +208,67 @@ final class RefonteUITests: XCTestCase {
         app.terminate()
     }
 
+    /// LE HUB DU CLUB : le club, les amis, les itinéraires, les courses. Chaque capture porte le même
+    /// nom avant et après la refonte, pour que le relevé « avant / après » se lise image à image.
+    func test12HubDuClub() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        for (nom, drapeaux) in [("hub-club", [String]()), ("hub-amis", ["--amis"]),
+                                ("hub-itineraires", ["--itineraires"]), ("hub-courses", ["--courses"])] {
+            let app = lancer(arguments: ["--ecran=club"] + drapeaux)
+            photographier(nom, app: app)
+            defiler(app)
+            photographier("\(nom)-bas", app: app)
+            app.terminate()
+        }
+    }
+
+    /// AUTOUR DE LA COURSE : la page d'une course, la page d'une sortie, l'historique, le récap
+    /// hebdomadaire, les chaussures, la carte de chaleur.
+    func test13AutourDeLaCourse() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let cas: [(String, [String])] = [
+            ("page-course", ["--ecran=club", "--course", "--courses"]),
+            ("page-sortie", ["--ecran=club", "--sortie"]),
+            ("historique", ["--ecran=history"]),
+            ("recap-hebdo", ["--ecran=weeklyRecap"]),
+            ("chaussures", ["--ecran=shoes"]),
+            ("carte-de-chaleur", ["--ecran=heatmap"]),
+        ]
+        for (nom, arguments) in cas {
+            let app = lancer(arguments: arguments)
+            photographier(nom, app: app)
+            defiler(app)
+            photographier("\(nom)-bas", app: app)
+            app.terminate()
+        }
+    }
+
+    /// L'ENTRÉE DANS L'APP : l'inscription (aucune graine) et le mur d'abonnement.
+    func test14Entree() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let inscription = lancer(arguments: ["--ecran=prog", "--inscription"])
+        photographier("inscription-1", app: inscription)
+        inscription.terminate()
+        let abonnement = lancer(arguments: ["--ecran=prog", "--paywall"])
+        photographier("paywall", app: abonnement)
+        abonnement.terminate()
+    }
+
+    /// LES FEUILLES : celles qu'un lancement sait ouvrir (la séance du jour, les réglages).
+    func test15Feuilles() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let seance = lancer(arguments: ["--ecran=prog", "--seance"])
+        photographier("feuille-seance", app: seance)
+        seance.terminate()
+        let reglages = lancer(arguments: ["--ecran=profile", "--reglages"])
+        photographier("feuille-reglages", app: reglages)
+        reglages.terminate()
+    }
+
     /// LES BOUTONS RÉPONDENT-ILS ? Un lancement par geste, et pour chacun : l'image change-t-elle ?
     ///
     /// C'est le test de non-régression d'un défaut qui a coûté une journée : sur l'Accueil et le
