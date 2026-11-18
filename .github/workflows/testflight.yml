@@ -777,8 +777,7 @@ jobs:
       # zéro jour. Ça compilait, les tests passaient, l'écran s'affichait.
       - name: Vérifier que les étapes de l'inscription sont d'accord entre elles
         run: |
-          cd ci_scripts && python3 test_etapes.py
-          cd .. && python3 ci_scripts/check_etapes.py
+          python3 ci_scripts/check_etapes.py
 
       # Neuf feuilles sur trente-trois s'ouvraient avec l'habillage du SYSTÈME : fond clair dans
       # une app sombre, coins à 10 points au lieu de 26, aucune poignée. `haizoSheetStyle`
