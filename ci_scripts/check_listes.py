@@ -69,6 +69,10 @@ DISPENSES = {
         "Les objectifs que l'app propose à la place de celui qu'on suit : `GoalType` n'en a que neuf, "
         "`estProposable` en retire, et la vue n'en montre que quatre (`HZPlan.objectifsAffiches`). "
         "Une bande horizontale de tuiles de largeur fixe ; rien n'y croît avec l'usage.",
+    ("CoachView.swift", "chips"):
+        "Les suggestions du coach : un tableau de quatre phrases écrit dans la vue, en bande "
+        "horizontale de pastilles. Chacune est envoyée telle quelle au coach ; rien n'y croît "
+        "avec l'usage.",
     ("AccueilView.swift", "prochaines"):
         "« La suite » de l'accueil : les séances de la semaine EN COURS, après aujourd'hui. "
         "`weekSessions` a exactement sept jours, donc six tuiles au plus, de largeur fixe, en "

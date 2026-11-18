@@ -96,21 +96,29 @@ struct HZAction: View {
     static let retraitDuLibelle: CGFloat = 0.8
 }
 
-/// Les trois hauteurs d'un bouton en pilule.
+/// Les quatre hauteurs d'un bouton en pilule.
 enum HZHauteurDeBouton: CGFloat {
     /// Inviter, J'y vais, Voir l'offre.
     case petite = 40
     /// Bravo, Commenter.
     case moyenne = 44
+    /// La pilule noire d'une réponse du coach : « Appliquer à ma semaine », « Découvrir Haizo Plus ».
+    case reponse = 46
     /// Démarrer, Partager.
     case grande = 56
 
-    var corps: HZCorps { self == .grande ? .c16 : .c14 }
+    var corps: HZCorps {
+        switch self {
+        case .grande: return .c16
+        case .reponse: return .c15
+        default: return .c14
+        }
+    }
 
     var marge: CGFloat {
         switch self {
         case .petite: return 16
-        case .moyenne: return 18
+        case .moyenne, .reponse: return 18
         case .grande: return 22
         }
     }

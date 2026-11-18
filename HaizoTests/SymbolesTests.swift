@@ -51,7 +51,6 @@ final class SymbolesTests: XCTestCase {
         "chart.line.uptrend.xyaxis",
         "checkmark",
         "checkmark.circle",
-        "checkmark.circle.fill",
         "chevron.down",
         "chevron.left",
         "chevron.right",

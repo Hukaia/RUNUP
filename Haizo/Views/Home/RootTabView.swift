@@ -76,12 +76,19 @@ struct RootTabView: View {
     /// libre et son cadran de discipline — reste donc joignable depuis tout écran qui n'est pas
     /// l'accueil. Voir PROGRESS.md : le canvas n'a pas de bouton de course dans la barre.
     private var barreRefaite: Bool {
-        appState.screen == .home || appState.screen == .plan
+        [AppScreen.home, .plan, .coach].contains(appState.screen)
     }
 
     private var ongletRefait: Binding<HZOnglet> {
         Binding(
-            get: { .aujourdhui },
+            get: {
+                switch appState.screen {
+                case .coach: return .coach
+                case .stats: return .stats
+                case .club: return .club
+                default: return .aujourdhui
+                }
+            },
             set: { onglet in
                 Haptics.selection()
                 switch onglet {

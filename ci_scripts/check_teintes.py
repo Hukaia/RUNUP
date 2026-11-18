@@ -163,8 +163,6 @@ DIRECTES_AUTORISEES = {
     # ── 1. DES AVERTISSEMENTS ─────────────────────────────────────────────────────────────────
     "Haizo/Views/Auth/AccountSwitchSheet.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Club/EditActivitySheet.swift": (1, AVERTISSEMENT),
-    "Haizo/Views/Coach/CoachView.swift": (3, AVERTISSEMENT + " La bulle d'erreur du coach : "
-                                          "l'icône, son texte et son bord."),
     "Haizo/Views/Home/Sheets/MoveSessionSheet.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Live/RecapView.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Onboarding/RaceDetailsStepView.swift": (2, AVERTISSEMENT + " Un dénivelé de "

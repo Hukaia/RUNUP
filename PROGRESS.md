@@ -8545,3 +8545,29 @@ avec l'ancien système de design. À ne pas copier dans un écran refait.
 ne garde que la planche, l'Accueil, le Plan, et un test de non-régression qui échoue si une touche ne change pas
 l'image (recherche de l'accueil, retour du plan, carte du jour, jeudi de la rangée), avec un témoin de stabilité.
 Le Plan et l'Accueil ne sont validés qu'une fois ce test vert ET les captures comparées à la référence.
+
+## 18 novembre 2026 — « l'ancienne app partout » : le Coach passe sous la nouvelle DA, et j'arrête d'avancer un écran à la fois
+
+Charlotte a envoyé deux captures de son téléphone : le Club et le Coach, avec l'ancien design et l'ancienne
+barre d'onglets. **Elle avait raison, et c'était l'état exact du dépôt** : seuls l'Accueil et le Plan étaient
+refaits. La méthode « un écran, une validation, puis le suivant » m'a fait perdre la journée du 17 sur le défaut
+des boutons ; sa consigne (« tu mets tout sous la nouvelle DA ») demande la couverture. **Je refais maintenant
+les écrans restants par lots**, chacun vérifié par captures, et je les montre à mesure.
+
+### Coach (`Haizo/Views/Refonte/CoachView.swift`, ex-`Haizo/Views/Coach/`)
+
+Composants nouveaux dans `DesignSystem/Refonte/HZConversation.swift` : `HZTuileDuCoach`, `HZBulle`,
+`HZTexteDeBulle`, `HZSaisie` ; une hauteur de bouton (`HZHauteurDeBouton.reponse`, 46 pt) ; les mesures dans
+`HZCoach` (`HZEcrans.swift`). **La logique ne bouge pas** : fil persistant, échange verrouillé, annulation,
+réessai, message d'accueil. La barre flottante remplace l'ancienne sur cet écran, l'entrée « Coach » y est
+allumée (`ongletRefait` lit maintenant l'écran courant).
+
+**Ajouté, parce que le canvas ne le dessine pas** : le séparateur de jour, l'effacement du fil (bouton rond),
+le compte rendu d'un changement avec « Annuler », l'indicateur de frappe, la bulle d'erreur avec « Réessayer ».
+**Retiré** : le ruban des sept jours de « Ce qu'il regarde » (le canvas ne l'a pas ; la semaine est sur
+l'accueil et le plan). **Changé de texte** : les suggestions prennent les mots du canvas (« Nutrition »,
+« Analyse ma sortie ») et le champ perd ses points de suspension ; ce que la puce envoie au coach change donc
+d'autant. La tuile « Dernière sortie » devient « Dernière, km » (valeur sans l'unité), comme le canvas.
+Quatre clés au catalogue, en trois langues. Le bouton d'envoi s'éteint (40 %) tant que le champ est vide.
+
+**Non vérifié à cet instant** : la compilation et la capture. Rien de ceci n'a été compilé avant le commit.

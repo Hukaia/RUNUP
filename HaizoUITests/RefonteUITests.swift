@@ -71,6 +71,18 @@ final class RefonteUITests: XCTestCase {
         app.terminate()
     }
 
+    /// LE COACH : l'écran ouvert, puis la barre — l'entrée « Aujourd'hui » ramène à l'accueil.
+    func test05Coach() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=coach"])
+        photographier("coach", app: app)
+        // La première entrée de la barre flottante : 79 pt de 390, à 786 pt de 844.
+        toucherEtComparer(app, "coach-barre", dx: 0.203, dy: 0.931,
+                          attendu: "l'entrée « Aujourd'hui » de la barre doit ramener à l'accueil")
+        app.terminate()
+    }
+
     /// LES BOUTONS RÉPONDENT-ILS ? Un lancement par geste, et pour chacun : l'image change-t-elle ?
     ///
     /// C'est le test de non-régression d'un défaut qui a coûté une journée : sur l'Accueil et le

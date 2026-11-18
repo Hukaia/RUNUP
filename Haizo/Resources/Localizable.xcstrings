@@ -3514,6 +3514,23 @@
         }
       }
     },
+    "Analyse ma sortie": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze my run"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analiza mi salida"
+          }
+        }
+      }
+    },
     "ANNULER LA DEMANDE": {
       "extractionState": "manual",
       "localizations": {
@@ -8903,6 +8920,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "SOLICITAR SEGUIR"
+          }
+        }
+      }
+    },
+    "Dernière, km": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last run, km"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Última salida, km"
           }
         }
       }
@@ -17777,6 +17811,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nueva semana"
+          }
+        }
+      }
+    },
+    "Nutrition": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutrition"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutrición"
           }
         }
       }
@@ -35085,6 +35136,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Escribe un comentario…"
+          }
+        }
+      }
+    },
+    "Écris à ton coach": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Write to your coach"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escribe a tu coach"
           }
         }
       }

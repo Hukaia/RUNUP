@@ -106,3 +106,40 @@ enum HZStats {
     /// Sous les périodes : la feuille.
     static let sousLesPeriodes: CGFloat = 26
 }
+
+/// LE COACH : les mesures de `Coach.dc.html` qui ne sont ni un rayon ni une marge du système.
+enum HZCoach {
+    static let sousLEntete: CGFloat = 18
+    static let sousLesTuiles: CGFloat = 22
+    static let ecartDesTuiles: CGFloat = 10
+    static let hauteurDeTuile: CGFloat = 104
+    static let margeVerticaleDeTuile: CGFloat = 12
+    static let retraitDUneValeur: CGFloat = 0.5
+    static let largeurMaxDeBulle: CGFloat = 290
+    static let ecartDeFil: CGFloat = 12
+    static let margeHorizontaleDeBulle: CGFloat = 16
+    static let margeVerticaleDeBulleDuCoach: CGFloat = 14
+    static let margeVerticaleDeBulleDeLaCoureuse: CGFloat = 12
+    static let ecartDeLEntete: CGFloat = 12
+    static let coteDeLaMarque: CGFloat = 20
+    static let coteDeLaCoche: CGFloat = 16
+    static let ecartDesPointsDeFrappe: CGFloat = 4
+    static let rebondDuPoint: CGFloat = 3
+    static let dureeDuRebond: Double = 0.5
+    static let decalageDuRebond: Double = 0.15
+    static let avantLesPuces: CGFloat = 16
+    static let avantLaSaisie: CGFloat = 12
+    static let hauteurDeSaisie: CGFloat = 54
+    static let margeGaucheDeSaisie: CGFloat = 18
+    static let margeDroiteDeSaisie: CGFloat = 6
+    static let envoiEteint: Double = 0.4
+    static let coteDeLEnvoi: CGFloat = 18
+    static let traitDeLEnvoi: CGFloat = 2.4
+    static let ecartDansUneBulle: CGFloat = 12
+    static let pointDeFrappe: CGFloat = 6
+    static let interligne: CGFloat = 1.4
+    /// Les trois seuils de la forme (sur 100) dont le message d'accueil du coach tire sa phrase.
+    static let formeAuTop = 85
+    static let formeCorrecte = 65
+    static let formeMoyenne = 50
+}
