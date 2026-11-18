@@ -10092,6 +10092,23 @@
         }
       }
     },
+    "Donner mon ressenti": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tell how it felt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contar cómo me sentí"
+          }
+        }
+      }
+    },
     "Dos": {
       "localizations": {
         "en": {
@@ -10646,6 +10663,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mover a mañana"
+          }
+        }
+      }
+    },
+    "Détail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalle"
           }
         }
       }
@@ -11670,6 +11704,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "CREAR MI VÍDEO"
+          }
+        }
+      }
+    },
+    "Faire ma vidéo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make my video"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hacer mi vídeo"
           }
         }
       }
@@ -13755,6 +13806,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "ESTOY CREANDO TU VÍDEO…"
+          }
+        }
+      }
+    },
+    "Je fabrique ta vidéo…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Making your video…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparando tu vídeo…"
           }
         }
       }
@@ -19121,6 +19189,23 @@
         }
       }
     },
+    "Partager la vidéo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share the video"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartir el vídeo"
+          }
+        }
+      }
+    },
     "PARTAGER MA COURSE": {
       "localizations": {
         "en": {
@@ -24070,6 +24155,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Umbral"
+          }
+        }
+      }
+    },
+    "Sortie terminée": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run finished"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salida terminada"
           }
         }
       }

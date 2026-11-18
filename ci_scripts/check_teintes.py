@@ -156,7 +156,6 @@ DIRECTES_AUTORISEES = {
     "Haizo/Views/Auth/AccountSwitchSheet.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Club/EditActivitySheet.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Home/Sheets/MoveSessionSheet.swift": (1, AVERTISSEMENT),
-    "Haizo/Views/Live/RecapView.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Onboarding/RaceDetailsStepView.swift": (2, AVERTISSEMENT + " Un dénivelé de "
                                                         "course qu'on n'a pas renseigné."),
     "Haizo/Views/Onboarding/RunningDaysStepView.swift": (1, AVERTISSEMENT + " Moins de jours "

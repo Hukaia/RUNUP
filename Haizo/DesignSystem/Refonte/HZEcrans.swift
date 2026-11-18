@@ -396,3 +396,43 @@ enum HZLive {
     static let coteDuMicro: CGFloat = 22
     static let margeDuCadenas: CGFloat = 4
 }
+
+/// LES MESURES DU RÉSUMÉ, relevées sur le canvas « Résumé ».
+enum HZResume {
+    static let carte: CGFloat = 380
+    static let sousLaDate: CGFloat = 2
+    static let sousLaDistance: CGFloat = 4
+    static let sousLeTitre: CGFloat = 16
+    static let reductionDeLaDistance: CGFloat = 0.5
+    static let debordDeLaDistance: CGFloat = 4
+    static let disqueDuTrophee: CGFloat = 36
+    static let coteDuTrophee: CGFloat = 18
+    static let cotePartage: CGFloat = 18
+    static let dureeDEntree: Double = 0.3
+    static let opaciteEteinte: Double = 0.5
+    static let hauteurDeLApercu: CGFloat = 300
+    static let hauteurDeLElevation: CGFloat = 80
+    static let hauteurDeLaJauge: CGFloat = 6
+    static let attenteAvantLeRendu = 450
+    static let opacitePleine: Double = 1
+    /// La carte de partage est rendue en 3x : une image nette, à la taille logique de 360 par 640.
+    static let echelleDeRendu: CGFloat = 3
+    /// « Même itinéraire » : une distance à 15 % près de celle de la sortie.
+    static let rapportMinimal: Double = 0.85
+    /// Un record d'allure ne se prend que sur 2 km au moins : un court footing ne bat pas une vraie sortie.
+    static let distanceMinimaleDUnRecord: Double = 2
+    /// Même départ : à moins de 150 m l'un de l'autre.
+    static let rayonDuMemeDepart: Double = 150
+    static let rapportMaximal: Double = 1.15
+    static let basDePage: CGFloat = 32
+
+    // La courbe dessinée quand il n'y a pas de GPS : de bas à gauche à haut à droite.
+    static let departX: CGFloat = 0.1
+    static let departY: CGFloat = 0.82
+    static let arriveeX: CGFloat = 0.9
+    static let arriveeY: CGFloat = 0.12
+    static let controleUnX: CGFloat = 0.25
+    static let controleUnY: CGFloat = 0.35
+    static let controleDeuxX: CGFloat = 0.55
+    static let controleDeuxY: CGFloat = 0.5
+}

@@ -176,6 +176,17 @@ final class RefonteUITests: XCTestCase {
         app.terminate()
     }
 
+    /// LE RÉSUMÉ de la dernière sortie (la graine en pose une) : le haut, puis le bas.
+    func test10Resume() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=recap", "--resume"])
+        photographier("resume", app: app)
+        defiler(app)
+        photographier("resume-bas", app: app)
+        app.terminate()
+    }
+
     /// LES BOUTONS RÉPONDENT-ILS ? Un lancement par geste, et pour chacun : l'image change-t-elle ?
     ///
     /// C'est le test de non-régression d'un défaut qui a coûté une journée : sur l'Accueil et le

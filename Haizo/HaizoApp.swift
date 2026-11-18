@@ -165,6 +165,12 @@ private struct RootView: View {
                 // AVANT `go` : `SocialView` lit ce drapeau dans son `onAppear`, donc il doit
                 // être posé avant que l'écran n'apparaisse.
                 if CaptureSeed.coursesDemandees { appState?.openRacesTabOnNextVisit = true }
+                // AVANT `go` : le résumé lit `lastRun` à son apparition, et revient à l'accueil s'il est nil.
+                if CaptureSeed.resumeDemande {
+                    var recherche = FetchDescriptor<RunRecord>(sortBy: [SortDescriptor(\.date, order: .reverse)])
+                    recherche.fetchLimit = 1
+                    appState?.lastRun = (try? modelContext.fetch(recherche))?.first
+                }
                 if let ecran = CaptureSeed.ecranDemande {
                     appState?.go(ecran)
                 }

@@ -8683,3 +8683,19 @@ chevaucher le geste d'accueil) au lieu des 32 du canvas ; la carte rétrécit su
 **Non vérifiable en simulateur** : le tracé (pas de GPS) et la carte réelle de la coureuse.
 Huit clés au catalogue (cinq nouvelles), en trois langues. Cinq gardes qui lisaient l'ancien fichier suivent (échelle, chiffres,
 majuscules, grands chiffres, chaînes). **Non vérifié à cet instant** : compilation et capture.
+
+## Résumé de la sortie (18 novembre) : refait d'après le canvas « Résumé »
+
+La carte du tracé en haut (fermer, « Sortie terminée », agrandir), la feuille blanche dessous : la date, la distance en très grand
+(104), le titre, deux tuiles (allure moyenne, durée), la phrase du record quand il y en a un, puis « Partager » et « Détail ». **Rien ne
+disparaît** : les splits (nouveau composant `HZSplits`), le profil d'élévation, la carte à partager et ses trois couleurs, la vidéo, l'export
+GPX, la publication de l'itinéraire, le ressenti. Les records, le rendu de la carte et celui de la vidéo n'ont pas bougé d'une ligne.
+
+**Décisions de ma part, à confirmer sur la maquette** : « Donner mon ressenti » (que le canvas n'a pas : c'est l'entrée du plan adaptatif)
+est un bouton accent pleine largeur au-dessus de « Partager » ; trois tuiles de plus (FC moy., kcal, D+) sous les deux du canvas, parce
+que l'écran les donnait déjà ; la distance garde ses deux décimales (le canvas en écrit une : « 8,9 ») pour qu'un record de quelques dizaines
+de mètres se voie ; la date n'a pas le lieu (« Malakoff ») : l'app n'enregistre pas de nom de lieu ; « Détail » mène à l'historique, et
+disparaît quand on regarde une ancienne sortie ; l'aperçu de la carte à partager est sur un fond noir (la carte est transparente et son
+texte blanc disparaîtrait sur du blanc) ; l'icône « agrandir le tracé » reste le symbole du système (le canvas dessine trois points).
+Le fondu en bas du défilement a disparu avec le reste. Graine de captures : `--resume` pose la sortie la plus récente comme dernière sortie.
+Six clés au catalogue, en trois langues. **Non vérifié à cet instant** : compilation et capture.

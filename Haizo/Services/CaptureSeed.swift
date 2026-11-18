@@ -271,6 +271,13 @@ enum CaptureSeed {
     /// vraie course, et c'est tout ce qu'on vient vérifier ici — la disposition, le panneau de
     /// mesures, les commandes, la place de la bulle du coach, et le bandeau lui-même. Attendre
     /// d'avoir un GPS simulé pour photographier cet écran reviendrait à ne jamais le photographier.
+    /// `--resume` : poser, comme dernière sortie, la plus récente de la graine, pour photographier le
+    /// résumé. Sans lui, l'écran n'a rien à montrer et revient aussitôt à l'accueil : la dernière sortie
+    /// n'existe qu'à la fin d'une vraie course.
+    static var resumeDemande: Bool {
+        ProcessInfo.processInfo.arguments.contains("--resume")
+    }
+
     static var courseEnCoursDemandee: Bool {
         ProcessInfo.processInfo.arguments.contains("--encours")
     }

@@ -79,9 +79,6 @@ PERMIS = {
            "forme claire ou sombre selon la donnée, et deviennent illisibles une fois sur deux. "
            "Il était dans HomeView tant qu'un seul écran portait une carte de nuit ; il vit ici "
            "depuis que cinq écrans en portent une, et l'exception a suivi le code."),
-    "Haizo/Views/Live/RecapView.swift": (
-        1, "Le fondu en bas du défilement : le contenu s'efface sous le bord au lieu d'y être "
-           "coupé net."),
 
     # ── 4. LA QUATRIÈME CATÉGORIE A ÉTÉ FERMÉE ────────────────────────────────────────────────
     #
