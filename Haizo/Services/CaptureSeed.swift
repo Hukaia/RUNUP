@@ -332,6 +332,7 @@ enum CaptureSeed {
         vider(UserProfile.self, dans: contexte)
         vider(RunRecord.self, dans: contexte)
         vider(ChatMessage.self, dans: contexte)
+        vider(Shoe.self, dans: contexte)
         try? contexte.save()
     }
 
@@ -404,6 +405,13 @@ enum CaptureSeed {
         for message in conversation(maintenant: maintenant) {
             contexte.insert(message)
         }
+        // DEUX PAIRES, pour que l'écran des chaussures montre une ligne qui avance et une qui touche à
+        // sa fin : une base sans paire ne photographie que son état vide.
+        let usee = Shoe(name: "Pegasus 41", startDistanceKm: 520, alertThresholdKm: 700)
+        let neuve = Shoe(name: "Novablast 4", startDistanceKm: 60, alertThresholdKm: 700)
+        contexte.insert(usee)
+        contexte.insert(neuve)
+        profil.defaultShoeID = usee.id
         try? contexte.save()
         return profil
     }

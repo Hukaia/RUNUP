@@ -599,11 +599,11 @@ struct HZReponse: View {
                         .foregroundStyle(choisie ? HZCouleur.blanc : HZCouleur.encre)
                     if let precision {
                         Text(precision)
-                            .hzTexte(.c13, .medium)
+                            .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
                             .foregroundStyle(choisie ? HZCouleur.secondaireSurSombre : HZCouleur.secondaireSurClair)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 if choisie {
                     HZIcone(dessin: .coche, cote: HZHub.coteDeLIcone, trait: HZHub.traitDeLIcone,
@@ -611,8 +611,9 @@ struct HZReponse: View {
                 }
             }
             .padding(.horizontal, HZEspace.marge)
+            .padding(.vertical, HZEspace.tuile)
             .frame(maxWidth: .infinity)
-            .frame(height: HZEntree.hauteurDUneReponse)
+            .frame(minHeight: HZEntree.hauteurDUneReponse)
             .background(choisie ? HZCouleur.encre : HZCouleur.surfaceClaire,
                         in: RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
             .contentShape(RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))

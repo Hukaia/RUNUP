@@ -81,10 +81,24 @@ struct OnboardingContainerView: View {
             .transition(.opacity)
             .onAppear { Analytics.shared.track(.onboardingStepViewed, proprietes) }
 
+            // Une sauvegarde Haizo se restaure d'ici : sans elle, l'inscription obligerait à refaire un
+            // programme qu'on a déjà, et les Réglages sont inatteignables avant la fin de l'inscription.
+            if etape == 0 {
+                BoutonDeRestauration {
+                    Text("J'ai déjà une sauvegarde Haizo")
+                        .hzTexte(.c14, .semi)
+                        .foregroundStyle(HZCouleur.secondaireSurClair)
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: HZBoutonRond.zoneTactile)
+                        .contentShape(Rectangle())
+                }
+                .padding(.top, HZEntree.sousLesReponses)
+            }
             HZBoutonPilule(libelle: etape == HZEntree.ecrans - 1 ? String(localized: "Créer mon programme")
                                                                     : String(localized: "Continuer"),
+                           fond: peutContinuer ? HZCouleur.encre : HZCouleur.filetGroupe,
+                           couleur: peutContinuer ? HZCouleur.blanc : HZCouleur.secondaireSurClair,
                            etendu: true) { avancer() }
-                .opacity(peutContinuer ? HZHub.opaciteNormale : HZHub.opaciteEteinte)
                 .disabled(!peutContinuer)
                 .padding(.top, HZEntree.sousLesReponses)
                 .padding(.bottom, HZEntree.basDeLEcran)
