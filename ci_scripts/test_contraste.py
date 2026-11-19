@@ -51,8 +51,6 @@ def _():
                        'Text("·").font(RUFont.sans(.body)).foregroundColor(RUColor.text4)')
     assert not signale("Haizo/Views/Paywall/PaywallView.swift",
                        'Text(verbatim: "·").foregroundColor(RUColor.text4)')
-    assert not signale("Haizo/Views/Home/PlanView.swift",
-                       '.foregroundColor(enabled ? RUColor.textPrimary : RUColor.text4)')
 
 
 @cas_test("une tolérance ne vaut que pour SON fichier")

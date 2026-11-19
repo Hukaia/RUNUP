@@ -33,8 +33,6 @@ MOTIF = re.compile(r"\.font\(\s*\.system\(size:")
 
 # fichier → (nombre d'appels attendu, la raison)
 AUTORISE = {
-    "Haizo/Views/Home/Sheets/NotificationsSheet.swift":
-        (1, "le repli qui affiche l'emoji d'une notification déjà enregistrée en base"),
 }
 
 

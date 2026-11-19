@@ -40,7 +40,7 @@ on:
       - "Haizo/Models/AccueilModele.swift"
       - "Haizo/Models/PourquoiCetteSeance.swift"
       - "Haizo/Models/PlanSemaineModele.swift"
-      - "Haizo/Views/Home/PlanView.swift"
+      - "Haizo/Views/Refonte/PlanView.swift"
       - "HaizoUITests/RefonteUITests.swift"
       - "Haizo/Resources/Fonts/**"
 

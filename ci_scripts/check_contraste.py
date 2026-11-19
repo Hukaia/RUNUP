@@ -42,10 +42,6 @@ TOLERES = [
     # Les deux points médians entre les liens du pied du paywall. Même raison, et ils sont en
     # `Text(verbatim:)` précisément parce qu'il n'y a pas de mot dedans.
     ("Haizo/Views/Paywall/PaywallView.swift", 'Text(verbatim: "·")'),
-    # Le chevron d'un bouton de navigation DÉSACTIVÉ. Les commandes inactives sont hors du
-    # critère de contraste (WCAG 1.4.3), et une flèche pâle est la façon dont iOS dit « pas
-    # maintenant » — l'alternative serait de la retirer, ce qui n'apprend rien.
-    ("Haizo/Views/Home/PlanView.swift", "enabled ? RUColor.textPrimary : RUColor.text4"),
 ]
 
 

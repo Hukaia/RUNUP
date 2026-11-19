@@ -37,8 +37,6 @@ AUTORISE = {
         (1, "carte d'export : géométrie de pixels fixe pour une image partagée"),
     "Haizo/Views/Live/RunVideoFrameView.swift":
         (2, "image de la vidéo d'export : même raison"),
-    "Haizo/Views/Club/BadgeShareCardView.swift":
-        (1, "carte d'export d'un badge : même raison"),
     "Haizo/Views/Components/AvatarView.swift":
         (3, "initiales à 0,4 × le diamètre de l'avatar : une suite continue, pas un cran"),
 }
@@ -47,8 +45,6 @@ AUTORISE = {
 AUTORISE_MONO = {
     "Haizo/Views/Live/RunShareCardView.swift":
         (2, "carte d'export : géométrie de pixels fixe pour une image partagée"),
-    "Haizo/Views/Club/BadgeShareCardView.swift":
-        (1, "carte d'export d'un badge : même raison"),
 }
 
 MOTIF_NOMBRE = re.compile(r"(?:\.displayStyle|RUFont\.display)\(\s*\d")

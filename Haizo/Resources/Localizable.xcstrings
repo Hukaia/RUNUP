@@ -9607,6 +9607,40 @@
         }
       }
     },
+    "Cycle plus court": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shorter cycle"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciclo más corto"
+          }
+        }
+      }
+    },
+    "Cycle plus long": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Longer cycle"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciclo más largo"
+          }
+        }
+      }
+    },
     "Cycle réancré sur aujourd'hui": {
       "extractionState": "manual",
       "localizations": {

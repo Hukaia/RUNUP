@@ -61,9 +61,6 @@ PERMIS = {
            "splash et le logo. `AppMarkView` est son unique appelant."),
 
     # ── 2. UNE IMAGE PRODUITE, PAS UN ÉCRAN ───────────────────────────────────────────────────
-    "Haizo/Views/Club/BadgeShareCardView.swift": (
-        1, "La carte qu'on partage quand on décroche un badge. C'est une image qu'on poste "
-           "ailleurs, pas un écran de l'app : elle porte la marque comme le logo la porte."),
     "Haizo/Views/Live/RunShareCardView.swift": (
         1, "La carte qu'on partage après une course, style « Haizo ». Même raison."),
     "Haizo/Views/Live/RunVideoFrameView.swift": (
