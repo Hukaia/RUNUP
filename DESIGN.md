@@ -1,16 +1,20 @@
 # La direction artistique de Haizo
 
-Tenu par la direction artistique. Ce fichier existe pour que la DA ne dépende plus d'une
-conversation : les trois questions, la palette, la typographie, les deux thèmes et les règles de
-l'écran de séance sont ici, pas dans un fil de discussion.
+Tenu par la direction artistique. Ce fichier existe pour que la DA ne dépende plus d'une conversation : les trois questions, les
+couleurs, la typographie, la forme, les composants, les feuilles et le mouvement sont ici, pas dans un fil de discussion. À jour au
+19 novembre 2026.
 
-`RELEASE.md` garde les questions de **livraison** — est-ce que les captures montrent l'app
-d'aujourd'hui, est-ce que la production est debout, est-ce que ça se lit dans les trois langues,
-est-ce que la politique publiée dit vrai. Ce fichier porte les questions de **design**.
+Il décrit **un seul système de design : le système HZ**, dessiné par Charlotte sur un canvas de dix écrans (Accueil, Plan, Run,
+Résumé, Coach, Stats, Club, Explorer, Profil, Réglages) et repris dans le code à la valeur près. Le système vit dans
+`Haizo/DesignSystem/Refonte/` (préfixe `HZ`), les écrans dans `Haizo/Views/Refonte/`. Le système précédent n'est plus la référence
+de rien : ce que le canvas a renversé de ses décisions est daté au § 10.
 
-**Ce fichier ne recopie pas le code, il le cite.** Chaque valeur ci-dessous est donnée avec sa
-déclaration, et `ci_scripts/check_design.py` vérifie à chaque CI que les deux s'accordent. Un
-document de DA qui dérive de l'app est pire qu'aucun document : on le lit en croyant savoir.
+`RELEASE.md` garde les questions de **livraison** : les captures montrent-elles l'app d'aujourd'hui, la production est-elle debout,
+est-ce que ça se lit dans les trois langues, la politique publiée dit-elle vrai. Ce fichier porte les questions de **design**.
+
+**Ce fichier ne recopie pas le code, il le cite.** Chaque tableau dit de quel fichier viennent ses valeurs. Si le code et ce
+document divergent, le code a raison et le document est à corriger : un document de DA qui dérive de l'app est pire qu'aucun
+document, on le lit en croyant savoir.
 
 ---
 
@@ -28,740 +32,570 @@ document de DA qui dérive de l'app est pire qu'aucun document : on le lit en cr
 
 Sorti de son cadre de téléphone et sans logo, l'écran doit être reconnaissable comme Haizo.
 
+Ce qui le rend reconnaissable, dans le système HZ : un aplat plein (l'accent ou le noir) portant un très grand chiffre en Archivo
+large, une feuille blanche aux coins de 30 qui remonte par-dessus, des pilules noires ou blanches, une barre flottante noire. Ni
+dégradé, ni ombre décorative, ni trait décoratif.
+
 ### Ce que les trois questions veulent dire quand on tient un écran dans les mains
 
-Elles ne se répondent pas de mémoire. Elles se répondent sur une image, dans les trois langues, et
-dans les deux thèmes — la campagne `captures.yml` existe pour ça.
+Elles ne se répondent pas de mémoire. Elles se répondent sur une image, dans les trois langues — la campagne `captures.yml` existe
+pour ça.
 
-**Question 1, en pratique.** Est-ce que le premier chiffre que l'œil rencontre est une performance
-ou un repère ? Est-ce qu'un écran vide dit quoi faire, ou constate un manque ? Est-ce qu'une
-séance ratée est écrite comme un échec ou comme une information ? Un écran qui n'a de sens qu'avec
-trois mois d'historique échoue à cette question même s'il est beau.
+**Question 1, en pratique.** Est-ce que le premier chiffre que l'œil rencontre est une performance ou un repère ? Est-ce qu'un
+écran vide dit quoi faire, ou constate un manque ? Est-ce qu'une séance ratée est écrite comme un échec ou comme une information ?
+Un écran qui n'a de sens qu'avec trois mois d'historique échoue à cette question même s'il est beau.
 
-**Question 2, en pratique.** Est-ce que les nombres sont justes, datés, et sourcés quand ils
-viennent d'un règlement ? Est-ce que les unités sont là ? Est-ce qu'une allure est donnée au
-format qu'un coureur lit — `4:45/km` et pas `4,75 min/km` ? Un écran qui arrondit pour faire
-joli échoue ici.
+**Question 2, en pratique.** Est-ce que les nombres sont justes, datés, et sourcés quand ils viennent d'un règlement ? Est-ce que
+les unités sont là ? Est-ce qu'une allure est donnée au format qu'un coureur lit — `4:45/km` et pas `4,75 min/km` ? Un écran qui
+arrondit pour faire joli échoue ici.
 
-**Question 3, en pratique.** C'est la seule des trois qui a des gardes automatiques, et ils ne
-couvrent qu'une partie :
+**Question 3, en pratique.** C'est la seule des trois qui a des gardes automatiques, et ils ne couvrent qu'une partie :
 
 | Ce qu'on cherche | Ce qui le tient |
 | --- | --- |
-| Dégradé décoratif | `check_degrade.py` — autorisé dans le logo seul |
+| Dégradé décoratif | `check_degrade.py` |
 | Verre dépoli | `check_verre.py` |
-| Taille d'icône écrite à la main | `check_icones.py` |
-| Cran de titrage hors échelle | `check_echelle.py` |
-| Écart, marge ou rayon hors de la géométrie déclarée | `check_grille.py` |
-| Chiffre et unité composés à la main | `check_chiffres.py` |
-| Grand chiffre qui peut se tronquer en silence | `check_grands_chiffres.py` |
-| Ouverture qui déborde sur son propre fondu | `check_lancement.py` |
-| Jeton de texte hors famille ou en opacité | `check_jetons_de_texte.py` |
 | Emoji dans l'interface ou au catalogue | `check_emoji.py` |
+| Libellé en capitales | `check_majuscules.py` |
+| Mesure écrite à la main dans une vue | `check_valeurs.py` |
 
-**L'emoji a enfin son garde**, et cette ligne du tableau a été fausse pendant un jour : en écrivant
-ce fichier le 13 novembre, j'avais cité un contrôle des emojis qui n'existait pas, et
-`check_design.py` l'a refusé — un nom de garde entre accents graves est une promesse.
-`check_strings.py` ne pouvait pas s'en charger : il ignore au contraire toute chaîne sans lettre,
-puisque son sujet est la traduction.
-
-`check_emoji.py` lit la règle d'Unicode plutôt que de deviner : un caractère est un emoji s'il a la
-présentation emoji **par défaut**, ou si on la lui demande avec U+FE0F derrière. `✓`, `▲`, `▼`, `·`,
-`—`, `″` sont des marques typographiques et passent — une première version les refusait, et un
-garde qui refuse du code juste est pire qu'aucun garde. Il scanne le code ET les trois langues du
-catalogue, parce qu'une traduction est exactement l'endroit par où un 🔥 revient « pour faire
-vivant ».
-
-À sa première exécution, il a trouvé **« Course reçue de ta montre ⌚ »** : un toast, dans les trois
-langues, qui doublait une notification portant déjà le symbole `applewatch`.
-
-Ce qu'aucun garde ne voit non plus : **le texte générique et le composant sans intention.** Une
-carte qui dit « Continuez comme ça ! » passe tous les contrôles. C'est à l'œil, sur l'image, et
-c'est la raison pour laquelle cette question est posée à chaque écran et pas une fois par
+Ce qu'aucun garde ne voit : **le texte générique et le composant sans intention.** Une carte qui dit « Continuez comme ça ! » passe
+tous les contrôles. C'est à l'œil, sur l'image, et c'est pourquoi cette question est posée à chaque écran et pas une fois par
 version.
 
 ---
 
-## 2. La palette
+## 2. Les couleurs
 
-Déclarée dans `Haizo/DesignSystem/Colors.swift` (`RUColor`) et
-`Haizo/DesignSystem/AccentTheme.swift`. Les valeurs ci-dessous sont celles du code, vérifiées par
-`check_design.py`.
+Déclarées dans `HZCouleur.swift` (`HZCouleur`, `HZAccent`, `HZIntensite`). Les jetons sont nommés par **rôle**, pas par teinte, et
+n'ont **qu'une valeur** : le canvas ne dessine qu'un rendu de chaque écran. Des aplats — l'accent, le noir, le blanc, le gris clair
+— et rien d'autre. Aucun dégradé, aucun verre.
 
-### 2.1 L'accent est au choix de la coureuse — huit nuanciers
+### 2.1 L'accent : quatre choix, un seul jeton
 
-**Décision D1 de Charlotte, 9 novembre 2026.** Le brief demandait une couleur d'accent unique.
-L'app en propose huit. Conséquence directe sur la DA : **aucun jeton dérivé de l'accent ne peut
-être écrit en dur**, et tout écran doit être juste pour les huit.
+`HZCouleur.accent` est le seul jeton d'accent. La coureuse choisit parmi quatre couleurs dans les réglages
+(`HZPastilleDeCouleur`) ; rose est le défaut.
 
-Valeurs de thème sombre, `AccentTheme.all` — `primary`, `light`, `tail` :
-
-| Nuancier | `primary` | `light` | `tail` |
-| --- | --- | --- | --- |
-| Rose | `#FF0A78` | `#FF4D9E` | `#7C5CFF` |
-| Violet | `#7C5CFF` | `#A78BFF` | `#FF0A78` |
-| Bleu | `#3D8BFF` | `#8AB8FF` | `#7C5CFF` |
-| Cyan | `#2FD9C4` | `#7CF0E4` | `#3D8BFF` |
-| Lime | `#9FE83D` | `#DFFF8C` | `#2FD9C4` |
-| Ambre | `#FFB03D` | `#FFD08A` | `#FF4D9E` |
-| Corail | `#FF5A3D` | `#FF9478` | `#FFB03D` |
-| Magenta | `#D633B8` | `#F07ADB` | `#7C5CFF` |
-
-**Sur fond clair, ces valeurs ne sont pas utilisées telles quelles.** `AccentTheme` les descend
-par recherche dichotomique jusqu'à 3,5:1 sur blanc (`meetingContrastOnWhite`), une fois par
-nuancier. Sans ça, Lime et Cyan donnaient un mode clair inutilisable. Les jetons à lire sont donc
-`RUColor.rose`, `rose2` et `violet`, jamais les valeurs du tableau.
-
-### 2.2 Les couleurs qui veulent dire quelque chose ne suivent pas l'accent
-
-Elles sont FIXES, parce qu'une information ne change pas de sens quand on change de goût. Deux
-valeurs par jeton : clair, puis sombre. Les valeurs claires sont plus profondes — les valeurs
-sombres sont réglées pour ressortir sur du presque-noir et deviendraient illisibles sur blanc.
-
-| Jeton | Clair | Sombre | Ce que ça dit |
-| --- | --- | --- | --- |
-| `lime` | `#6B9E00` | `#C8FF3D` | forme, disponibilité |
-| `cyan` | `#0E9C8C` | `#38E0D0` | récupération |
-| `amber` | `#B86A00` | `#FFB03D` | attention, tempo |
-| `amberText` | `#8A5A00` | `#FFD79A` | de l'ambre sur une carte ambrée, à lire en longueur |
-| `ember` | `#C2352A` | `#FF6B5A` | fractionné |
-| `azure` | `#0F62C8` | `#5AA9FF` | fonctionnel |
-| `grape` | `#5B3FD6` | `#9B7CFF` | sortie longue |
-| `cycle` | `#80462E` | `#F2B8A0` | la phase du cycle, les quatre confondues |
-| `cycleSurface` | `#F6EAE5` | `#130702` | le fond d'un bloc qui appartient au cycle |
-
-**Une seule teinte pour les quatre phases, et c'est une mesure.** Elles empruntaient leurs
-couleurs : `.menstrual` prenait `rose`, c'est-à-dire **l'accent choisi par la coureuse** — donc la
-phase menstruelle était rose pour l'une et vert lime pour celle qui a pris le nuancier Lime. Les
-trois autres prenaient `lime`, `cyan` et `amber`, les teintes des familles de séance : un point
-lime disait « endurance » sur un écran et « phase folliculaire » sur l'autre.
-
-L'app n'affiche jamais deux phases à la fois, et celle du moment est nommée en toutes lettres à
-côté du point. Quatre couleurs distinguaient donc des choses qu'on ne voit jamais ensemble.
-
-`#F2B8A0` est la valeur de la DA, ici telle quelle en sombre. En clair elle donne 1,73:1 sur une
-carte blanche — la branche claire descend à la même teinte, jusqu'à 5,93:1 au pire des cinq fonds.
-La surface, elle, a repris la teinte de `#FDF1EC` mais pas sa luminosité : sur notre page chaude,
-la valeur de la DA donnait **1,006:1**, c'est-à-dire rien.
-
-### 2.3 Une teinte par famille de séance, la même partout
-
-`SessionFamily.tint`, dans `Colors.swift` et non dans le modèle : `SessionFamily` reste une
-classification d'entraînement, lisible et testable sans SwiftUI.
-
-| Famille | Teinte | Clair | Symbole |
-| --- | --- | --- | --- |
-| Repos | `text3` | `#5B5651` | `moon.zzz.fill` |
-| Récupération | `recuperation` | `#5AA9E6` | `leaf.fill` |
-| Endurance | `facile` | `#2FB37A` | `figure.run` |
-| Sortie longue | `sortieLongue` | `#7B3FE4` | `arrow.right.to.line` |
-| Tempo | `seuil` | `#F5A524` | `speedometer` |
-| Fractionné | `intervalles` | `#F0225F` | `bolt.fill` |
-| Fonctionnel | `fonctionnel` | `#44506B` | — |
-
-**Chaque famille porte aussi une forme, et ce n'est pas une décoration.** Environ un homme sur
-douze distingue mal le rouge du vert, et ce sont précisément les deux extrémités de cette palette
-— le footing facile et le fractionné.
-
-#### Ce tableau a changé d'avis, et les deux décisions sont de Charlotte
-
-**11 novembre 2026 — les sept teintes d'interface restent.** La raison était mesurée : les cinq
-valeurs du brief sont construites pour un fond sombre, `#F5A524` donne 1,9:1 sur blanc, et le
-clair venait de passer en thème par défaut.
-
-**15 novembre 2026 — le brief de direction artistique les redemande, nommément, en tête de ses
-cinq corrections obligatoires.** C'est la décision la plus récente, et elle est prise en
-connaissance du thème clair, puisque le même brief redessine le clair autour d'elles. Le tableau
-ci-dessus est donc celui du 15 novembre.
-
-CE QUE ÇA COÛTE, MESURÉ SUR BLANC ET NON ESTIMÉ :
-
-| Teinte | Avant | Après |
+| Choix | Couleur | Encre d'un petit texte posé dessus |
 | --- | --- | --- |
-| Récupération | `#0E9C8C` 3,41:1 | `#5AA9E6` **2,54:1** |
-| Endurance | `#6B9E00` 3,22:1 | `#2FB37A` **2,68:1** |
-| Tempo | `#B86A00` 4,12:1 | `#F5A524` **2,04:1** |
-| Fractionné | `#C2352A` 5,47:1 | `#F0225F` 4,12:1 |
-| Sortie longue | `#5B3FD6` 6,72:1 | `#7B3FE4` 5,72:1 |
-| Fonctionnel | `#0F62C8` 5,83:1 | `#44506B` 8,06:1 |
+| Rose | `#FF2E6E` | `#2B0011` |
+| Violet | `#7B3FE4` | `#FFFFFF` |
+| Bleu | `#2F6BFF` | `#FFFFFF` |
+| Vert | `#12A56B` | `#FFFFFF` |
 
-Trois passent sous 3:1, le seuil demandé à un objet graphique PORTEUR DE SENS. Elles n'en sont
-pas : la famille est portée par la FORME, colonne de droite du tableau, et la couleur ne fait que
-l'appuyer. C'est la même raison qui justifiait déjà les symboles. Le chiffre est écrit ici parce
-qu'il est bas, pas parce qu'il est faux — et parce qu'une décision qui s'inverse doit laisser la
-mesure derrière elle, sinon elle s'inversera encore.
+**La règle du rose.** Jamais de petit texte blanc à même le rose : un libellé posé sur l'accent s'écrit dans
+`HZCouleur.encreSurAccent`, qui vaut l'encre sombre pour le rose et le blanc pour les trois autres. Le blanc pur est réservé aux
+grands chiffres et aux titres. Ce n'est pas un oubli à corriger sur le violet, le bleu et le vert : le rose est le seul des quatre
+assez clair pour qu'un petit texte blanc y devienne illisible.
 
-**La sixième teinte est l'ardoise `#44506B`, tranchée le 15 novembre.** Les cinq autres sont des
-couleurs de course ; le renforcement n'en est pas une. Une teinte froide et sourde le range à part
-sans l'éteindre.
+**Le voile.** Un petit texte blanc qui doit vivre sur l'accent ou sur une teinte d'intensité (pastille, bouton rond, champ de
+recherche) vit sur `HZCouleur.voile`, un noir à 26 %.
 
-**Ces six jetons ne sont PAS `lime` / `cyan` / `amber` / `ember` / `grape` / `azure`.** Ces
-six-là sont des couleurs sémantiques d'interface — `lime` veut dire MIEUX, `amber` veut dire MOINS
-BIEN — et `check_teintes.py` tient la liste fermée de leurs emplois. Les faire servir aussi de
-palette d'entraînement, c'était deux grammaires sur un même jeton.
+**Le réglage enregistré.** Le choix est lu dans `ThemeStore`, le réglage que l'app et le widget portent déjà. Qui avait l'un des
+anciens huit thèmes se retrouve ainsi : violet, bleu et rose gardent leur nom ; cyan, lime et vert deviennent le vert ; les autres
+reviennent au rose. La valeur enregistrée n'est réécrite que lorsque la personne choisit.
 
-### 2.4 Le texte
+### 2.2 Les trois teintes d'intensité
 
-Quatre jetons, **opaques et dans la famille du fond**. Voir § 3 pour la règle, et
-`check_jetons_de_texte.py` pour la barrière.
+`HZIntensite`. Une séance facile, de récupération ou longue a sa teinte, la même partout. La carte porte la couleur pleine ; le
+point, qui vit sur le noir à huit points de diamètre, est plus clair.
 
-| Jeton | Clair | Sombre | Emplois |
+| Famille | Jeton | Carte | Point |
 | --- | --- | --- | --- |
-| `textPrimary` | `#181511` | blanc pur | 265 |
-| `text2` | `#443F3A` | `#BBB6C3` | 244 |
-| `text3` | `#5B5651` | `#9893A0` | 318 |
-| `text4` | `#B7B2AD` | `#514C59` | 8 |
+| Endurance, footing facile | `facile` | `#177A50` | `#2FB37A` |
+| Récupération | `recuperation` | `#2B6CB8` | `#5AA9E6` |
+| Sortie longue | `longue` | `#6B35D6` | `#9B6BF2` |
 
-`text4` **ne colore pas du texte à lire** : points médians, filets, pastilles inertes. Ses 1,7:1
-sont voulus, et `check_contraste.py` tient la liste fermée de ses emplois avec une raison par
-entrée.
+Le canvas n'en dessine pas d'autre. Une séance de seuil, de fractionné ou de renforcement n'a pas de teinte : elle prend l'accent,
+et se lit par ce qui est écrit dessus. Un repos prend le noir doux (`surfaceSombre`) et son point éteint. C'est une hypothèse de
+l'équipe, à confirmer (§ 11).
 
-Le primaire sombre est le blanc pur, délibérément hors famille : c'est le seul jeton dont on veut
-le maximum de lisibilité.
+### 2.3 Les surfaces et les textes
 
-Le primaire CLAIR, lui, a bougé le 12 novembre avec le fond, et c'est le garde qui l'a vu. Il était
-resté `#15151C` au premier chantier, à juste titre — il portait le bleu 7 points au-dessus du
-rouge, donc il était déjà dans la famille des fonds lavande. Quand les fonds sont passés au chaud,
-cette raison est devenue fausse sans que rien ne l'écrive, et `check_jetons_de_texte.py` l'a refusé
-à la première exécution. `#181511` garde sa luminance — 18,19:1 sur une carte contre 18,17.
-
-### 2.5 Les surfaces
-
-| Jeton | Clair | Sombre | Rôle |
-| --- | --- | --- | --- |
-| `card` | `#FFFFFF` | `#16161F` | la carte |
-| `card2` | `#EEECE7` | `#201F2A` | une sous-surface DANS une carte |
-| `bg2` | `#E8E6DF` | `#121118` | le second fond |
-| `traceBackground` | `#14131E` | les deux | le fond d'un tracé de sortie |
-
-Le fond de page, `RUColor.bg`, n'est pas une constante : c'est un neutre — `#F5F4F1` en clair,
-`#08070D` en sombre — sur lequel l'habillage « teinté » mélange **3,5 % de l'accent en clair, 10 %
-en sombre**. Une trace, pas un aplat : au-delà, le fond cesse d'être un fond et concurrence les
-cartes posées dessus. La valeur claire a été à 7 % — sept pour cent du rose sur le neutre donne une
-page franchement rose, et les cartes blanches censées flotter dessus se lisaient comme des trous.
-
-**Le neutre clair est chaud depuis le 12 novembre, et il a été froid.** Il penchait vers le violet
-de l'accent, avec cette raison : « un gris pur à côté d'un rose vif prend l'air sale, un gris qui
-partage sa famille non ». L'argument est bon et il ne tient pas, parce qu'il suppose UN accent :
-l'app en propose huit (D1), dont le cyan, le lime et le bleu. Un fond lavande ne partageait la
-famille que de deux nuanciers sur huit.
-
-Le fond prend donc la position du **papier** — un blanc cassé chaud sur lequel n'importe quelle
-encre se pose — plutôt que celle d'un écho de l'accent.
-
-**La teinte du brief, pas sa luminosité**, comme pour les jetons de texte. `#FBF9F7` est presque
-blanc : sous une carte blanche il ne recule que de 1,050:1, contre 1,104 pour l'ancien froid. C'est
-la moitié de la séparation, et ce recul est précisément ce qui empêche une carte à image pleine de
-se lire comme un trou. `#F5F4F1` garde la luminance de l'ancien et retourne sa famille : 1,100:1.
-
-**Les trois surfaces claires ont bougé ensemble**, et c'était obligatoire : une page chaude sous
-des sous-surfaces lavande, c'est un écran qui se contredit. `card` reste le blanc pur — c'est la
-surface la plus claire, et elle n'a pas de famille à porter.
-
-### 2.6 Les deux surfaces de l'écran de séance
-
-| Jeton | Valeur | Thèmes |
+| Jeton | Valeur | Rôle |
 | --- | --- | --- |
-| `seanceSurface` | `#0E0E14` | les deux |
-| `seanceFond` | `#0A0A0E` | les deux |
+| `noir` | `#0B0B0C` | le fond des écrans sombres : plan, stats, coach, club, profil |
+| `encre` | `#111111` | la barre flottante, les boutons pleins, le texte sur une feuille blanche |
+| `surfaceSombre` | `#1C1C1E` | une surface posée sur le noir : bouton rond, pilule, tuile, carte de repos |
+| `filetSombre` | `#2C2C2E` | un filet ou un segment éteint sur le noir |
+| `pointEteint` | `#3A3A3C` | le point d'un jour de repos, dans la rangée de la semaine |
+| `noirFranc` | `#000000` | le panneau de la séance en direct : plus profond, parce qu'il se lit au soleil et en courant |
+| `blanc` | `#FFFFFF` | la feuille, et le texte sur sombre |
+| `surfaceClaire` | `#F4F4F6` | une surface posée sur la feuille : tuile, groupe, bandeau, champ |
+| `filetFeuille` | `#F0F0F2` | le filet entre deux lignes, directement sur la feuille |
+| `filetGroupe` | `#E4E4E8` | le filet à l'intérieur d'un groupe gris, et la gorge d'un sélecteur |
+| `contour` | `#DCDCE0` | le contour d'une pilule vide, et la gorge d'une barre de progression |
+| `secondaireSurClair` | `#6E6E73` | légende, précision, sous-titre sur la feuille |
+| `secondaireSurSombre` | `#A1A1A6` | la même chose sur le noir |
+| `chevron` | `#8E8E93` | le chevron au bout d'une ligne de liste |
+| `ongletEteint` | `#C7C7CC` | l'icône d'une entrée éteinte de la barre flottante |
+| `voile` | noir à 26 % | porte les petits textes blancs sur l'accent ou une teinte |
+| `pointSurCouleur` | noir à 28 % | le point d'un jour sans séance, sur l'accent |
+| `filetSurCouleur` | blanc à 40 % | le filet d'une carte-affiche, au-dessus de sa rangée de chiffres |
 
-**Fixes dans les deux thèmes, et ce n'est pas un oubli.** L'écran de course reste sombre même en
-apparence claire : on le regarde dehors, en mouvement, à bout de bras, et un fond blanc y perdrait
-le contraste que les chiffres demandent.
+Le texte principal est `encre` sur clair et `blanc` sur sombre. Un texte secondaire est un jeton opaque, jamais une opacité.
 
-**Elles gardent la famille FROIDE quand le reste du clair est passé au chaud**, et c'est cohérent :
-une famille suit la clarté de la surface, pas le thème choisi. Ces deux-là sont sombres, donc elles
-appartiennent à la famille sombre. Même chose pour `traceBackground`, qui est le fond d'une image.
+### 2.4 Ce qui ne change jamais
 
-Les couleurs sémantiques — `azure`, `cyan`, `grape` — ne suivent aucune famille non plus : leur
-teinte EST leur sens. Un bleu qui se réchaufferait cesserait de dire « fonctionnel ».
+- **Le sens d'une teinte d'intensité** : le vert, le bleu et le violet du § 2.2 disent la même chose dans tous les écrans.
+- **La règle du rose** : l'encre d'un petit texte sur l'accent ne dépend que de l'accent.
+- **L'encre de la marque** : le mot de la marque, à l'écran de lancement, s'écrit en `#1A1023` (`HZLancement.encreDeMarque`), un noir
+  froid. Un logo garde son encre ; ce n'est pas celle de l'interface.
+- **La couleur ne porte jamais seule** : elle appuie ce qui est écrit, ou dessiné par sa forme, elle ne le remplace pas.
+
+### 2.5 Le mode clair et sombre
+
+Le canvas montre un interrupteur Clair / Sombre dans les réglages et ne dessine qu'un seul rendu : les jetons ci-dessus n'ont donc
+qu'une valeur. Le réglage « Mode » reste dans l'app et règle l'apparence du système ; la seconde ambiance des jetons n'est pas
+dessinée. Elle se posera dans `HZCouleur` le jour où elle le sera, sans toucher une vue : c'est pourquoi les jetons sont nommés par
+rôle. Question ouverte, § 11.
 
 ---
 
-## 3. Les deux thèmes
+## 3. La typographie
 
-**Décision D2 de Charlotte, 9 novembre 2026 : le fond clair est le défaut.** Le sombre l'était.
-Le `#FBF9F7` chaud du brief **n'est pas imposé** — le fond froid actuel peut rester.
+Une seule famille : **Archivo**, variable, fichier `Haizo/Resources/Fonts/Archivo-Variable.ttf` (licence OFL à côté), livré avec
+l'app. Elle se règle sur deux axes, graisse et largeur, que `Font.custom` ne sait pas atteindre : `HZPolice` passe par un
+descripteur UIKit et un attribut de variation CoreText. La planche de captures imprime la famille résolue et l'état des deux axes,
+pour qu'une fonte mal déclarée ne retombe pas en silence sur la fonte du système.
 
-Trois règles, dans cet ordre.
+| Registre | Largeur | Graisses | Sert à | API |
+| --- | --- | --- | --- | --- |
+| Affichage | 125 % | 800 | les grands chiffres et les titres | `hzAffichage(style)` |
+| Interface | 100 % | 500, 600, 700 | tout le reste | `hzTexte(corps, graisse)`, `hzParagraphe(corps, graisse, interligne:)` |
 
-**Une couleur de thème se déclare en deux branches, jamais une.** `isLight ? clair : sombre`, dans
-`RUColor`. Une couleur écrite dans un fichier de vue est un défaut, même juste : personne ne la
-trouve en ouvrant le système.
+Le canvas ne charge que quatre faces (500, 600 et 700 en largeur 100, 800 en largeur 125) : la référence est ce qu'on voit, donc
+il n'y a ni 400 ni 800 d'interface.
 
-**Le texte est opaque, et dans la famille du fond — QUELLE QU'ELLE SOIT.** La règle ne nomme aucune
-couleur. `check_jetons_de_texte.py` lit les fonds du thème, prend le signe de leur penchant, et
-exige du texte le même signe. Une opacité est refusée : elle se mélange à ce qui passe dessous,
-donc sa couleur serait décidée par la surface et non par le système.
+### 3.1 Les corps et les graisses de l'interface
 
-Cette règle a été éprouvée le jour même où elle a été posée. Elle a été écrite quand les fonds
-clairs étaient lavande, et elle exigeait alors du texte violet ; le fond clair est passé au chaud
-quelques heures plus tard, et elle a exigé du texte chaud **sans qu'une ligne du garde change**.
-Elle a même attrapé le jeton que j'avais oublié de faire suivre. Les jetons sombres, eux, restent
-froids : leurs fonds le sont.
+Huit corps (`HZCorps`) : 12, 13, 14, 15, 16, 17, 20, 24. Trois graisses (`HZGraisse`) : `medium` 500, `semi` 600, `gras` 700.
 
-**Aucun fond ne perd de contraste.** Un gris violet se détache MOINS d'un fond lavande qu'un gris
-neutre. Une valeur se règle donc sur le pire des fonds et pas sur le plus fréquent — calée sur la
-carte blanche, `text3` tombait à 4,94:1 sur `bg2`. Les cinq fonds mesurés sont `bg`, `bg2`, `card`,
-`card2`, et une borne du fond teinté.
+- `hzTexte` pose **une ligne**, de la hauteur que le canvas lui donne : libellés, valeurs, boutons.
+- `hzParagraphe` pose un texte qui peut passer à la ligne, avec l'interligne du canvas (1,35 pour le bandeau du coach, les précisions
+  de réglage et les états vides ; 1,4 pour une bulle). Un paragraphe ne se coupe jamais en hauteur : sur un écran plus court que son
+  contenu, c'est l'écran qui coupe la feuille.
+- Les chiffres alignés ou qui changent (durées, allures, compteurs, valeurs de liste) se composent avec `tabulaire: true`.
+- La hauteur d'une ligne est celle que compte le canvas, qui est du HTML : `HZLigne` arrondit l'ascendante (0,878 du corps) et la
+  descendante (0,210) à l'entier, comme le navigateur, et `hzLigne` pose la ligne de base par un guide d'alignement. Sans cela
+  chaque ligne s'écarte d'un tiers de point de la référence, et l'écart se cumule jusqu'en bas de l'écran.
 
-Les rapports de contraste **ne sont écrits nulle part**, ni ici ni en commentaire :
-`check_jetons_de_texte.py` les calcule et les imprime à chaque CI. Ils ont vécu dans un commentaire,
-et c'est exactement comme ça que la branche sombre de `text3` avait pu rester sous le seuil pendant
-qu'un commentaire d'à côté affirmait l'avoir corrigée.
+### 3.2 Les styles d'affichage
+
+`HZAffichage` : un corps, un interlettrage, une hauteur de ligne en multiple du corps (« naturel » : 1,088, celle de la fonte).
+**Ce n'est pas une échelle, c'est une table** : le canvas compose trente-trois titres et chiffres, et l'interlettrage ne suit pas le
+corps par une règle — 40 points se serrent de 2 dans une tuile et de 1,5 devant un nombre. Chaque style est relevé tel quel et
+nommé par ce qu'il sert. « Tab. » dit si les chiffres sont tabulaires : le canvas ne le pose pas partout, et un « 1 »
+proportionnel est plus étroit (« 1h20 » rend 2 % plus large en tabulaire).
+
+| Style | Corps | Interlettrage | Ligne | Tab. | Où |
+| --- | --- | --- | --- | --- | --- |
+| `total` | 156 | -9 | 0,92 | oui | Stats : le total de kilomètres |
+| `seance` | 128 | -7 | 0,92 | oui | Accueil : le nombre de la séance du jour |
+| `carte` | 112 | -5 | 0,92 | oui | Plan : le nombre d'une carte-affiche |
+| `carteDuJour` | 112 | -6 | 0,92 | oui | Plan : le même, pour le jour en cours |
+| `resume` | 104 | -6 | 0,95 | oui | Résumé : la distance de la sortie |
+| `direct` | 100 | -6 | 0,95 | oui | En direct : l'allure |
+| `carteLongue` | 84 | -4 | 0,92 | oui | Plan : une durée de quatre signes, « 1h20 » |
+| `fil` | 76 | -4 | 1 | oui | Fil du club : la distance d'une sortie |
+| `heros` | 64 | -3,5 | 1 | oui | Explorer : la distance du parcours mis en avant |
+| `record` | 52 | -2,5 | 1 | oui | Stats : un record |
+| `tuile` | 46 | -2 | 1 | non | Accueil : la durée d'une séance à venir |
+| `tuileDeCourse` | 44 | -2 | 1 | non | Explorer : la distance d'une course |
+| `prefixeDeSeance` | 44 | -1,5 | 1 | non | Accueil : « 5 × », devant un grand chiffre |
+| `prefixeDeCarte` | 40 | -1,5 | 1 | non | Plan : le même, sur une carte |
+| `chiffre` | 40 | -2 | 1 | oui | Coach, et l'allure moyenne des stats |
+| `chiffreDeTuile` | 36 | -1,6 | 1 | oui | Stats : les quatre tuiles |
+| `chiffreDeProfil` | 34 | -1,5 | 1 | oui | Profil : les trois totaux |
+| `mesure` | 30 | -1,4 | naturel | oui | Résumé : allure et durée |
+| `chiffreDuDirect` | 28 | -1,2 | naturel | oui | En direct : temps, kilomètres, cardio |
+| `chiffreDeLigne` | 22 | -0,8 | naturel | oui | valeur en bout de ligne : cible, temps possibles |
+| `seanceDuCoach` | 21 | -1 | 1 | oui | Coach : la séance du jour, « 5×500 » |
+| `duree` | 20 | -1 | naturel | non | Coach : la durée d'une proposition |
+| `badge` | 17 | -0,6 | naturel | oui | Profil : la marque d'un badge |
+| `prenom` | 36 | -1,6 | 1,05 | non | Profil : le prénom |
+| `titreDePage` | 34 | -1,4 | 1,1 | non | Plan : « Ta semaine » |
+| `titreDeCarte` | 34 | -1,6 | 1 | non | Club : le nom du club, sur sa carte |
+| `titreDeReglages` | 32 | -1,2 | naturel | non | Réglages : le titre de l'écran |
+| `offre` | 30 | -1,2 | 1 | non | Réglages : « Haizo Plus » |
+| `initiales` | 30 | -1 | naturel | non | Profil : les initiales dans l'avatar |
+| `titreDEcran` | 26 | -0,8 | naturel | non | le titre d'un écran d'onglet : Stats, Club |
+| `titreDuCoach` | 26 | -0,8 | 1,1 | non | Coach : le même, au-dessus d'un sous-titre |
+| `titreDeTuile` | 24 | -1 | 1,05 | non | Plan : le nom d'un objectif, sur sa tuile |
+| `section` | 22 | -0,6 | naturel | non | le titre d'une section, et d'une feuille |
+
+### 3.3 La casse : pas de capitales
+
+Le canvas n'écrit **aucun libellé en capitales**. Les étiquettes (« Ta journée », « Allure cible ») sont en 12 à 13 points, casse
+de phrase, graisse 600 ou 700, **sans interlettrage positif** : il existe pour rendre des capitales lisibles, et en casse normale
+il ne fait qu'écarter les lettres d'un mot qui se lit très bien sans. Les boutons aussi sont en casse de phrase (« Démarrer »,
+« Partager »).
+
+Les seules capitales sont des lettres, pas des mots : les initiales de l'avatar (calculées à l'exécution, `HZAvatar.initiales`), la
+capitale initiale d'une date (« Mardi 17 novembre »), et la graphie de la marque. `check_majuscules.py` refuse un libellé tout en
+capitales, au catalogue des trois langues comme dans le code, et tient la liste fermée de ce qui a le droit d'y rester, avec une
+raison par entrée.
+
+### 3.4 Un grand chiffre ne se tronque pas
+
+`lineLimit(1)` sans réduction tronque, et sur un nombre la troncature ment : « 1:23:45 » devient « 1:23… » sans que rien dise que
+ce n'est pas l'heure complète. Tout nombre tenu sur une ligne peut donc rétrécir avant de se couper (`minimumScaleFactor`), et le
+facteur est un jeton : 0,5 pour le très grand chiffre de l'accueil, 0,6 pour un nom d'objectif ou un prénom, 0,7 pour une tuile de
+chiffre, 0,8 pour un libellé d'action ou une durée de tuile. Une durée tronquée est une durée fausse, un nom tronqué est un nom faux.
+
+### 3.5 Les icônes
+
+Les **vingt-neuf dessins du canvas**, trait pour trait, dans `HZDessins.swift` : `aujourdhui`, `barres`, `bulle`, `calendrier`,
+`chevron`, `cloche`, `coche`, `coeur`, `curseurs`, `deplacer`, `drapeau`, `envoyer`, `fermer`, `fil`, `groupe`, `haltere`,
+`itineraire`, `lecture`, `marque`, `micro`, `options`, `partager`, `recentrer`, `recherche`, `reduire`, `relief`, `retour`,
+`route`, `trophee`.
+
+Le fichier est **engendré** : on corrige `design/icones.json` et on relance `ci_scripts/icones.py` ; `icones.py --verifier` échoue
+si le Swift n'est plus à jour avec sa source. Un dessin est une boîte de 24 (14 pour le triangle de lecture), au trait ou plein.
+`HZIcone` le rend à la taille et au trait demandés, le trait étant donné **dans la boîte de 24**, comme le canvas l'écrit. Elle
+est toujours muette pour VoiceOver : c'est la commande qui la porte qui a un nom.
 
 ---
 
-## 4. La typographie
+## 4. La forme
 
-Une seule famille de texte : **Inter**, déclinée par taille et par graisse. Livrée dans les trois
-cibles, vérifiée par `check_fonts.py`. Le titrage est Inter Medium, la même famille que le texte
-courant, une graisse plus haut — pas une seconde famille.
+### 4.1 Les rayons
 
-**Les chiffres sont à chasse fixe partout.** `RUFont.display` applique `tnum` lui-même : trois
-fichiers appelaient `.monospacedDigit()` à la main et tous les autres l'oubliaient, donc les
-colonnes de l'app dansaient partout sauf à trois endroits.
+`HZRayon`, dans `HZForme.swift` : douze noms, onze valeurs. Les angles sont des **quarts de cercle** (`.circular`), pas la courbe
+continue qu'iOS dessine par défaut : le canvas est écrit en CSS, où `border-radius` trace un cercle. Un bouton est une capsule, un
+bouton rond un cercle.
 
-### 4.1 Une seule échelle : 12 / 14 / 16 / 20 / 28 / 40
-
-**Six nombres, et ce sont des POINTS RENDUS.** Jusqu'au 15 novembre, les valeurs écrites dans le
-code passaient par deux facteurs de compensation — 1,25 pour le texte, 1,09 pour les chiffres —
-hérités de tailles dessinées contre une police abandonnée. Aucun nombre du fichier n'était donc
-la taille réelle : « corps = 12 » rendait 15 points. Les deux facteurs valent 1,0, et un nombre
-est maintenant ce qu'on voit.
-
-Le texte courant, `RUTextSize` — ces valeurs sont des tailles de base, que le réglage
-d'accessibilité du système multiplie :
-
-| Cran | Valeur | À quoi ça sert |
+| Jeton | Valeur | Où |
 | --- | --- | --- |
-| `micro` | 12 | méta : unités, micro-libellés, dates |
-| `small` | 14 | légendes, valeurs secondaires, notes |
-| `body` | 16 | le texte courant, et les libellés de carte sous l'alias `label` |
-| `emphasis` | 20 | libellés qui priment, titres de carte et de section sous l'alias `title` |
+| `carte` | 36 | la carte-affiche d'un jour, dans le plan |
+| `carteDeClub` | 32 | la carte du club |
+| `feuille` | 30 | le haut d'une feuille, et le héros d'Explorer |
+| `carteDuFil` | 28 | la carte d'une sortie dans le fil |
+| `offre` | 28 | la carte d'offre des réglages |
+| `tuile` | 24 | une tuile : séance, record, course, objectif ; une réponse |
+| `groupe` | 22 | un groupe de lignes, une tuile de chiffre, une plaque, une bulle du coach |
+| `mesure` | 20 | une tuile de mesure du résumé, une ligne d'activité du fil |
+| `bandeau` | 18 | le bandeau du coach, un champ de formulaire |
+| `proposition` | 16 | la proposition du coach, dans une bulle |
+| `vignette` | 14 | la vignette carrée d'une sortie |
+| `coinDeBulle` | 6 | le coin d'une bulle, du côté de celui qui parle |
 
-Le titrage et les chiffres, `RUDisplaySize` — **l'échelle est fermée**, et `check_echelle.py` la
-tient :
+### 4.2 Les espaces nommés
 
-| Cran | Valeur | À quoi ça sert |
+`HZEspace`, les blancs qui reviennent d'un écran à l'autre : `marge` 20 (rangées de commandes, intérieur d'une feuille),
+`margeDeTitre` 24 (textes posés à même un fond de couleur), `tuile` 14 (intérieur d'une tuile), `groupe` 16 (intérieur d'un groupe
+ou d'un bandeau), `entreTuiles` 12, `entreCommandes` 10, `entrePilules` 8, `sousUnTitre` 14, `entreSections` 28, `sousLaBarre` 28
+(dont la barre flottante se tient au-dessus du bord bas) et `haut` 60 (où commence le contenu d'un écran, depuis le bord haut).
+
+**Les blancs qu'un seul écran emploie ne sont pas des jetons de rythme.** Le canvas les règle écran par écran (22 sous une rangée,
+26 sous une autre) ; les ranger de force sur une grille serait le réinterpréter. Ils portent un nom dans `HZEcrans.swift`, un espace
+de noms par écran : `HZAccueil`, `HZPlan`, `HZStats`, `HZCoach`, `HZFil`, `HZProfil`, `HZReglages`, `HZLive`, `HZResume`,
+`HZExplorer`, `HZRecap`, `HZEntree`, `HZPaywall`. Les mesures d'un composant vivent dans l'enum du composant (`HZDiametre`,
+`HZHauteurDeBouton`, `HZMesuresDeLigne`, `HZReglages`…).
+
+### 4.3 La page : un haut noir, une feuille blanche qui remonte
+
+La structure de presque tous les écrans du canvas : en haut une couleur pleine ou le noir, avec un seul grand chiffre ; en bas le
+détail, sur le blanc. Elle s'écrit une fois, dans `HZPage` :
+
+- le haut commence à `HZEspace.haut` (60) et finit 22 points avant le bord de la feuille, avant le rayon que celle-ci remonte ;
+- la feuille (`HZFeuille`) **remonte sur le haut de `HZRayon.feuille`** (30), par une marge négative, pour que le haut passe dessous
+  au lieu de s'arrêter net ;
+- le contenu de la feuille descend sous son bord arrondi de 24, 22 ou 20 selon l'écran (`HZRetraitDeFeuille` : `ample`, `courant`,
+  `serre`) et garde 20 de marge de chaque côté ;
+- le fond est en deux moitiés, noir en haut et blanc en bas, pour qu'un tirage ne montre jamais le fond du système ; la zone sûre du
+  haut est ignorée et la barre d'état masquée : l'écran peint jusqu'au bord ; le bas laisse 112 points libres pour la barre.
+
+Deux règles de construction, nées de mesures :
+
+- **`HZEspace.haut` est une constante.** On ne lit pas la zone sûre de la fenêtre dans le corps d'une vue : cela suffisait à figer le
+  contenu qui défile. Si un encart plus profond devient nécessaire, il se lit hors du corps d'une vue.
+- **La racine d'un écran est une surface de la taille de l'écran, le contenu en `overlay(alignment: .top)`.** Jamais un
+  `.frame(maxHeight: .infinity)` autour d'un contenu qui peut dépasser : il grandit avec lui, puis son parent le recentre, et tout
+  l'écran monte.
+
+### 4.4 La barre flottante
+
+Une pilule noire (`encre`), cinq entrées, l'active dans une pastille blanche (`HZBarreFlottante`). Elle ne touche aucun bord : elle
+flotte à 28 du bas, centrée, 60 de haut, et le contenu passe dessous. Pas de libellé visible : chaque entrée porte son nom pour
+VoiceOver. Les cinq entrées (`HZOnglet`), dans l'ordre du canvas : **Aujourd'hui, Explorer, Club, Statistiques, Coach**, de 52 sur
+44 chacune. L'active passe en encre sur blanc et le trait de son icône s'épaissit d'un cran ; les éteintes sont en `ongletEteint`.
+Il n'y a pas de bouton de course : démarrer est la première des quatre actions de l'accueil. Le profil n'est pas dans la barre : on
+y entre par l'avatar, et sur son écran la barre n'allume aucune entrée (`aucuneActive`).
+
+### 4.5 « Aucune valeur en dur »
+
+Une vue de la refonte **ne contient pas un nombre.** Toute mesure — marge, taille, rayon, opacité, compte de colonnes, teinte en
+hexadécimal — porte un nom et se déclare dans le système de design : un blanc d'écran dans `HZEcrans.swift`, une mesure de
+composant dans l'enum du composant, un rayon ou un espace partagé dans `HZForme.swift`.
+
+`check_valeurs.py` le tient, **sans liste d'exceptions** : il lit tout nombre, pas une liste d'écritures, parce qu'un garde qui
+connaît une liste d'écritures ignore la suivante. Restent permis `0` partout, `1` hors d'une ligne de mise en page (l'unité d'un
+compte), `.lineLimit(1)`, les chaînes et les commentaires. Dans `Haizo/DesignSystem/Refonte/`, où les valeurs se déclarent, il ne
+refuse qu'un nombre sur une **ligne de mise en page** (`.padding(.top, 9)`, `VStack(spacing: 9)`). `HZDessins.swift` n'est pas lu :
+il est engendré, ce sont des coordonnées de tracé.
+
+Ce que le garde ne dit pas : qu'une valeur nommée est la bonne. `HZAccueil.sousLaSemaine = 26` peut être faux ; c'est la
+**comparaison côte à côte** qui le dit. Chaque écran est photographié sur un simulateur de 390 points de large, la largeur des
+planches du canvas, et posé à côté du rendu de sa référence (workflow `refonte.yml`, planche `PlancheView`).
+
+---
+
+## 5. Les composants
+
+À quoi il sert, quand l'employer, son nom Swift. Un écran est **refait à partir de ces composants, jamais repeint par-dessus** : si
+le canvas dessine quelque chose que la liste ne contient pas, on ajoute un composant, on ne récrit pas le dessin dans la vue.
+
+**Boutons — `HZBoutons.swift`**
+- `HZBoutonRond` : un disque et une icône (retour, fermer, outil de carte, envoi). Huit diamètres (`HZDiametre`) : `pas` 36,
+  `commande` 40, `filtre` 42, `outil` 44, `categorie` 56, `action` 58, `controle` 62, `principal` 88. Le nom lu par VoiceOver est
+  obligatoire ; sous 44, la zone tactile s'étend sans bouger le dessin.
+- `HZAction` : l'une des quatre actions de l'accueil, un disque de 58 et son libellé dessous. La première (démarrer) est pleine,
+  disque blanc et icône noire ; les trois autres sont voilées.
+- `HZBoutonPilule` : l'action d'un écran. **Noir ou blanc, jamais dans la couleur d'accent**, qui reste aux surfaces et aux chiffres.
+  Quatre hauteurs (`HZHauteurDeBouton`) : `petite` 40, `moyenne` 44, `reponse` 46 (la pilule noire d'une réponse du coach), `grande`
+  56. `HZBoutonSuivre` en est la forme « suivre » : noire, puis grise une fois suivi.
+- `HZAvatar` : un disque de 40, deux initiales, il ouvre le profil. Uni, jamais dégradé. La photo, quand il y en a une, est
+  `HZPhotoDePersonne` (`HZPileDAvatars` les empile).
+- `HZAmorceDeRecherche` : la pilule voilée de l'accueil qui mène à Explorer — on la touche, on n'y écrit pas. `HZCategorie` : un
+  disque clair de 56, une icône au trait fin, son nom. `HZVignette` : un carré noir de 48, rayon 14, le tracé en blanc.
+
+**Pilules — `HZPilules.swift`**
+- `HZPilule` : un mot ou une mesure dans une capsule ; ce n'est pas un bouton. Quatre styles (`HZStyleDePilule`) : `etiquette`
+  (« Aujourd'hui »), `etiquetteGrasse` (« Record »), `chiffres` (« 45 min · 4:22/km · Z3 », tabulaire), `etat` (« Mode course
+  libre »). Voilée sur l'accent ou une teinte, pleine sur le blanc ou le noir.
+- `HZFiltre` : une pilule qu'on choisit, dans une rangée. Trois fonds (`HZFondDeFiltre`) : `sombre` (l'active est blanche), `clair`
+  (l'active est noire), `contour` (une suggestion, jamais d'état actif). L'état actif est annoncé à VoiceOver.
+
+**Cartes et tuiles — `HZCartes.swift`**
+- `HZCarteAffiche` : un jour écrit comme une affiche — une couleur pleine, la date, la séance en très grand, trois colonnes de
+  mesures sous un filet. 318 sur 430, rayon 36. L'objet du plan ; le haut de l'accueil en est la version plein écran.
+- `HZTuile` : un libellé en haut, un grand chiffre en bas, rayon 24. Quatre formats (`HZFormatDeTuile`) : `seance` 160 × 190,
+  `course` 160 × 150, `record` 150 × 150, `objectif` 150 × 170. `HZTuileLegendee` y ajoute le titre et sa précision dessous.
+- `HZTuileChiffre` : ce qu'on mesure, puis sa valeur, sur la surface claire — `stats` (rayon 22) ou `resume` (20). L'option `sombre`
+  en fait la tuile noire de la série en cours, la seule des quatre qui dise quelque chose d'aujourd'hui.
+
+**Listes — `HZListe.swift`**
+- `HZLigneDeListe` : une tête, un titre et son sous-titre, une queue (distance, chevron) laissées à l'appelant. La dernière ligne
+  d'une liste n'a pas de filet. `HZChevron`, `HZValeurDeLigne` (« 8,9 km » sur « 6:14/km »).
+- `HZSemaineEnPoints` : sept jours sur l'accent, quatre états (`HZEtatDeJour`) — fait (point plein), aujourd'hui (grand anneau), à
+  venir (petit anneau), repos (point éteint). Le canvas ne montre plus la charge de chaque jour : c'est la porte vers le plan, pas un
+  graphique. L'état se lit par la **forme** autant que par la teinte.
+
+**Réglages — `HZReglages.swift`**
+- `HZGroupeDeReglages` (un titre au-dessus d'un groupe gris de rayon 22) et `HZLigneDeReglage` (64 de haut sans précision, plus haute
+  avec). `HZStyleDInterrupteur` : un vrai `Toggle` que VoiceOver annonce comme tel, capsule noire de 52 sur 32, bouton blanc de 26.
+- `HZCompteur` (− valeur +), `HZChoixADeux` (une piste grise, la valeur choisie dans une pastille blanche), `HZPastilleDeCouleur`
+  (32, anneau noir détaché quand elle est choisie), `HZCarteDOffre` (le noir, le nom de l'offre en grand, un bouton blanc).
+
+**Pages, feuilles, formulaires — `HZFeuille.swift`, `HZHub.swift`**
+- `HZPage`, `HZCommandesDuHaut` (§ 4.3) ; `HZFeuille`, `HZTitreDeSection` (le titre à `section`, et le lien qui lui fait face),
+  `HZBandeauDuCoach` (la marque dans un disque noir, une phrase, rayon 18, toujours en tête de feuille).
+- `HZChampDeRecherche` (une pilule de 48 où l'on écrit, voilée sur le noir), `HZChampDeTexte` (le titre en gris au-dessus, la saisie
+  dans une pastille claire de rayon 18 ; `securise` pour un mot de passe), `HZPhrase` (un vide, une erreur, une invitation : un état
+  vide dit quoi faire), `HZPlaque` (un bloc de surface claire de rayon 22 qui n'est ni une tuile de chiffre ni une ligne).
+- `HZJauge` (un rail et son remplissage), `HZCouronne` (le pourcentage d'un objectif), `HZReponse` (une grande ligne tapable de 68 au
+  moins, la choisie en noir), `HZSegments` (un segment par question), `HZLigneDePersonne` (photo, nom, ligne grise, et ce qu'on veut
+  à droite).
+
+**Le coach — `HZConversation.swift`.** `HZTuileDuCoach` (« ce qu'il regarde », 104 de haut ; la première à l'accent, les autres sur le
+noir doux), `HZBulle` et `HZTexteDeBulle` (15 points, interligne 1,4 ; blanc sur la bulle noire, encre sur la claire ; `HZAuteurDeBulle`
+dit qui parle), `HZSaisie` (une capsule claire de 54, le bouton d'envoi noir à droite).
+
+**Explorer, fil, stats, plan**
+- `HZChampDExploration`, `HZCarteDItineraire` (un grand bloc noir, le tracé en accent, la distance en très grand), `HZTuileDeCourse`.
+- `HZCarteDeClub`, `HZSortieDuFil` (le bloc est à l'accent quand la sortie est un record, noir sinon ; le nom ouvre la personne, le
+  bloc ouvre la sortie), `HZNoteDuFil` (une phrase et une coche : ce n'est pas une sortie), `HZMiniatureDeSortie` (le tracé, ou le
+  dessin d'itinéraire quand il n'y en a pas).
+- `HZCourbeDAllure` (la forme de l'allure, trait de 4 ; le calcul reste dans l'écran), `HZCarteDAllure`, `HZLigneDeTemps`,
+  `HZCarteDeLien`, `HZPeriode` (7 j, 4 sem., 3 mois, 1 an), `HZSplits` (les barres de kilomètres, qui balaient l'une après l'autre),
+  `HZColonneDeJour` (la colonne tapable de la rangée des jours du plan), `HZCarrousel` (§ 7).
+
+**La course et ce qui l'entoure**
+- **Course en direct** : une carte de 400 de haut, qui cède la place au panneau sur un écran plus court, puis un panneau en
+  `noirFranc` — l'allure en `direct`, trois mesures en `chiffreDuDirect`, les commandes du pouce (terminer 62, pause 88, coach 62).
+  Les chiffres sont tabulaires et rétrécissent plutôt que de se couper. Les bandeaux GPS sont noirs, texte blanc.
+- `HZCourseEnCours` : la pastille qui ramène à une course commencée quand on a quitté son écran — accent plein, encre sur l'accent,
+  chrono tabulaire pour qu'elle ne tremble pas. Elle se pose au-dessus de la barre flottante.
+- `HZToast` (avec `ToastCenter`) : le message qui passe, une pilule noire au-dessus de la barre, 2,2 s à l'écran. Avec les repères
+  posés sur une carte et le cœur du double-tape, c'est l'un des trois endroits où une ombre légère existe : ce qui flotte sur un
+  contenu qui bouge.
+- `HZLancement` : la tuile de la marque (72, rayon égal à 0,26 de son côté), son tracé, puis le mot qui se dévoile (§ 7).
+- `HZEntree` : l'entrée dans l'app, cinq écrans, une question chacun — le nom, l'objectif, les jours, le niveau, le compte.
+  `HZPaywall` : noir plein écran, « Haizo Plus » en grand, tout ce que l'App Store exige visible sans défiler. `HZRecap` : le bilan
+  de la semaine, ce que le haut noir ajoute à celui des Stats.
+
+---
+
+## 6. Les feuilles
+
+Toute feuille présentée par-dessus un écran est la même, et s'écrit en deux morceaux, parce que le second ne se pose que sur la vue
+présentée :
+
+```
+.sheet { HZFeuilleModale(titre: …) { … }.hzFeuille() }
+```
+
+`HZFeuilleModale` dessine le contenu ; `.hzFeuille()` règle la présentation. Ensemble :
+
+| Pièce | Valeur |
+| --- | --- |
+| Coins du haut | `HZRayon.feuille`, 30 |
+| Poignée | celle du système, toujours visible |
+| Fond | `blanc` |
+| Titre | `HZAffichage.section`, 22, à gauche |
+| Fermeture | bouton rond de 44 (`HZDiametre.outil`), fond `surfaceClaire`, icône `fermer`, nom « Fermer » |
+| Marges | 20 de chaque côté (`HZEspace.marge`), 12 au-dessus du titre, 14 en dessous |
+| Hauteurs | moyenne et grande par défaut ; `detents:` pour n'en offrir qu'une (souvent `.large`) |
+| Actions | en pilules (`HZBoutonPilule`) dans le contenu : une feuille n'invente pas un second style de bouton |
+
+**`gereSonBas`.** Par défaut, `.hzFeuille()` réserve 28 points au pied de la feuille pour que le dernier élément ne colle pas au
+bord. Une feuille qui gère elle-même son bas — un bouton collé en bas, un défilement qui va jusqu'au bord, un écran plein comme les
+réglages — se déclare `.hzFeuille(gereSonBas: true)`, sans quoi on aurait deux réserves l'une sur l'autre.
+
+Une feuille ne s'ouvre jamais avec l'habillage du système : fond blanc, coins de 30, poignée, ou ce n'est pas une feuille de Haizo.
+`check_feuilles.py` le tient.
+
+---
+
+## 7. Le mouvement
+
+`HZMouvement`, dans `HZMouvement.swift` : quelques réglages, pas une collection ; chacun garde la raison qu'il avait.
+
+| Jeton | Réglage | Pour quoi |
 | --- | --- | --- |
-| `caption` | 12 | micro-chiffres, valeurs de pastille |
-| `label` | 16 | libellés de bouton, valeurs en ligne |
-| `subtitle` | 20 | titres de ligne de liste, grille de mesures dense |
-| `figure` | 28 | LE chiffre d'une carte, et les titres de page, de feuille et de carte sous l'alias `title` |
-| `banner` | 40 | le chiffre unique d'un écran, une accroche, un record — **au plus un par écran** — et le titre d'écran sous l'alias `hero` |
+| `ecran` | `easeOut`, 220 ms | un changement d'écran : assez court pour ne pas se faire attendre, assez long pour que le fond vide des deux écrans croisés se couvre |
+| `chiffre` | `easeOut`, 180 ms | un chiffre qui change (chrono, allure) : sous les 200 ms au-delà desquelles un chrono tremble au lieu de défiler |
+| `ressort` | ressort, 280 ms, rebond 0,12 | ce qui arrive à l'écran et se pose : une carte, une pastille |
+| `glisse` | ressort, 500 ms, sans rebond | une valeur qui se parcourt : une barre qui avance. Elle ne remplace rien, elle montre une quantité qui se remplit |
+| `trace` | courbe (0,22 ; 0,61 ; 0,36 ; 1), 700 ms | un tracé qui se dessine : il doit être fini avant qu'on ait besoin de le lire |
+| `choix` | ressort, 260 ms, rebond 0,26 | un choix qui s'ouvre sous le doigt, avec un léger rebond |
 
-**Quatre noms sont des ALIAS, pas des crans.** `label` est `body`, `title` est `emphasis`,
-et côté chiffres `title` est `figure`, `hero` est `banner`. Swift refuse deux cas d'énumération
-à la même valeur brute — le compilateur l'a dit en quatre lignes le 15 novembre — et l'échelle
-unique fait tomber ces paires sur le même nombre.
+Une page ouverte depuis une autre se décale de 28 points en entrant (`decalageDePage`) ; la racine d'un onglet se fond en passant par
+une échelle de 0,98 (`echelleDOnglet`). Chaque écran emporte sa transition (`AppScreen.transitionDecran`) : rien ne se croise, parce
+qu'un seul des deux écrans se déplace. Le carrousel du plan a son mouvement propre (`HZCarrousel`) : 340 ms, la courbe du canvas
+(0,2 ; 0,8 ; 0,2 ; 1), qui part vite et se pose doucement ; au-delà de 40 points de glissement horizontal, le geste change de carte.
 
-Les garder en alias plutôt que de les supprimer, c'est garder ce qu'ils disent : un libellé de
-carte n'est pas un corps de texte, même quand les deux font 16 points. Ce qui les sépare à taille
-égale, c'est la graisse. Et le jour où l'un des deux rôles doit bouger, il bougera sans emporter
-l'autre.
+**« Réduire les animations » ne veut pas dire des animations plus courtes : la valeur doit SAUTER.** C'est
+`HZMouvement.respecter(reduireLeMouvement, animation)`, qui rend `nil` quand la personne a demandé moins de mouvement. Une animation
+ne s'appelle pas directement : elle passe par `respecter`. Deux réglages n'y passent pas encore par ce jeton : l'interrupteur des
+réglages (150 ms, sans `respecter`) et le ressort de l'écran de course (400 ms, que l'écran coupe lui-même).
 
-**Une conséquence à assumer** : `title`, côté chiffres, prend la graisse de `figure`. Un titre de
-page passe donc du demi-gras au gras. Le brief le demande — « titres d'écran en 40 lourd ».
+Une animation de **transition** remplace une chose par une autre et reste courte. Une animation de **valeur**, un tracé qui se
+dessine ou une barre qui se remplit, ne remplace rien : sa seule contrainte est d'être finie avant qu'on ait besoin de lire ou
+d'agir.
 
-**La graisse suit le cran**, parce que la graisse perçue baisse quand la taille monte : `figure`,
-`hero` et `banner` passent en grasse, les quatre crans du bas non.
-
-Une taille hors échelle s'écrit `display(horsEchelle: 52)`, et l'étiquette est là pour que
-l'exception se voie : un `grep horsEchelle` donne la liste complète. Il y en a dix, dans cinq
-fichiers, et `check_echelle.py` tient le compte par fichier avec une raison par entrée.
-
-### 4.2 La casse : pas de capitales, sauf sur un bouton
-
-> « Supprimer les majuscules espacées ("TA JOURNÉE", "CE QU'IL REGARDE", "ALLURE CIBLE") : ce
-> sont des labels en 12 gris, casse normale. » — brief du 15 novembre, point 1.
-
-Les trois exemples sont des **labels**, et c'est ce que la règle vise. Un bouton en capitales est
-autre chose : une convention assumée, que le brief ne nomme nulle part. **`check_majuscules.py`
-le tient** — un libellé tout en capitales est refusé, sauf entrée comptée avec sa raison.
-
-Il y en a 67, dans 30 fichiers : des boutons, deux affiches qu'on exporte (la carte de partage et
-les images de la vidéo), l'onglet `RUN`, et une dette nommée — « EN PAUSE » et « EN COURS » sur
-la montre, parce que la capture livrée à Apple est empreintée contre toute la cible `HaizoWatch`
-et ne se refait pas sans machine macOS.
-
-**Les capitales vivaient de trois façons**, et retirer l'une laissait les deux autres : un
-`.textCase(.uppercase)` sur la vue, un `tracking` positif sur une chaîne déjà capitalisée, et les
-capitales **dans la chaîne elle-même**, au catalogue, en trois langues — quarante-trois clés.
-C'est la troisième qui demande un garde : les deux premières se voient en relisant une vue.
-
-### 4.3 Le libellé d'un chiffre : `metaStyle`
-
-12 points, gris, casse normale, **pas d'interlettrage**. L'interlettrage positif existe pour
-rendre des capitales lisibles ; en casse normale il ne fait qu'écarter les lettres d'un mot qui
-se lit très bien sans.
-
-Il était écrit **cinq fois** — `.font(RUFont.sans(.micro, weight: .bold)).tracking(1.5)`, mot
-pour mot, dans `LiveRunView` (trois fois), `RecapView`, `StatsView` et `RaceGoalView`. C'est ce
-qui a permis à `eyebrowStyle` de perdre ses capitales le 15 novembre pendant que les cinq autres
-gardaient les leurs.
-
-`medium` et non `bold` : la graisse perçue monte quand la taille baisse, et le libellé doit
-nommer le chiffre, pas le concurrencer — l'inverse exact de ce que fait `RUDisplaySize.grasse`
-en haut de l'échelle.
-
-### 4.4 Les sept crans d'icône
-
-`RUIconSize`, relevés sur les 170 appels existants plutôt qu'inventés : 9, 11, 13, 15, puis les
-trois crans hauts. Les deux plus employés — 13 et 15, 65 appels à eux deux — n'ont pas bougé.
-
-**Décision de Charlotte, 11 novembre 2026 : les SF Symbols restent.** Le brief demande Phosphor ou
-Lucide au trait 1,5 px. 200 appels, et les SF Symbols suivent seuls la ligne de base, le poids de
-la fonte et les tailles d'accessibilité. Gain esthétique, coût structurel : non.
+**L'ouverture est finie avant que l'écran ne s'efface.** `HZLancement.Tempo` donne les départs et les durées (tuile à 0,42 s,
+dévoilement à 0,58 s, tracé de 0,75 s) et le début du fondu (1,15 s, pour une durée de 0,28 s). Chaque valeur est raisonnable toute
+seule ; le défaut ne vit que dans leur somme, et `check_lancement.py` refait l'addition à chaque CI.
 
 ---
 
-## 5. Les règles de l'écran de séance
+## 8. Les trois langues et l'accessibilité
 
-C'est le seul écran qu'on regarde en courant : essoufflée, en mouvement, à bout de bras. Ses
-règles ne sont pas celles des écrans de consultation.
+**Les trois langues.** Français, anglais, espagnol, au catalogue `Localizable.xcstrings` (le français est la langue de développement).
+Toute chaîne affichée existe dans les trois, et **la mise en page se tient dans la plus longue** : un libellé anglais ou espagnol plus
+long rétrécit avant de se couper (`HZAction.retraitDuLibelle`), et une hauteur ne dépend pas de la langue. Le tutoiement s'accorde
+au féminin comme au masculin ; les nombres décimaux s'écrivent avec la virgule en français et en espagnol ; l'allure au format qu'un
+coureur lit (`4:45/km`) ; on cite « comme ceci » ou “comme cela”, jamais avec le guillemet droit de la machine à écrire.
 
-**Il reste sombre dans les deux thèmes.** Voir § 2.6.
+**Les cibles et les noms.**
+- **Toute cible tactile fait au moins 44 sur 44** (`HZBoutonRond.zoneTactile`). Un dessin plus petit étend sa zone sans bouger :
+  disques de 36 et de 40, interrupteur, compteur, pastilles de couleur, croix d'effacement d'un champ.
+- **Une commande qui n'est qu'une icône a un nom.** `HZBoutonRond`, `HZAvatar` et `HZCompteur` exigent le nom que VoiceOver annonce ;
+  `HZIcone` est muette, c'est la commande qui parle.
+- **L'état se dit.** Un filtre, un segment, une pastille de couleur ou une réponse choisie porte le trait « sélectionné ». Une carte
+  qui regroupe plusieurs textes se lit comme un seul élément. La progression d'une inscription dit « Question 2 sur 5 », pas cinq
+  segments.
+- **La forme porte autant que la couleur** : les quatre états d'un jour (plein, anneau, grand anneau, éteint) et les trois
+  intensités ne reposent jamais sur la seule teinte. Les petits textes sur l'accent suivent la règle du rose (§ 2.1) ; un texte
+  secondaire est un jeton opaque, jamais une opacité.
 
-**La consigne d'abord, le chronomètre ensuite.** Le chrono est le chiffre le moins coaché de
-l'écran — une montre à vingt euros le donne. Ce qu'une app de coaching a de plus à dire, c'est quoi
-faire maintenant. La consigne est donc au-dessus, avec le segment en surtitre et l'allure visée en
-gros ; le chrono descend de 64 à 52 points quand il y a une consigne, et retrouve ses 64 quand il
-n'y en a pas (HYROX, course libre).
-
-**L'allure cible est le plus grand corps de l'écran**, au cran `banner` — celui que l'échelle
-réserve à « au plus un par écran ». Le chrono prend `hero` quand une consigne l'accompagne, et
-retrouve son très grand corps hors échelle (64) quand il est le seul chiffre, en course libre ou
-en HYROX.
-
-Ça n'a pas toujours été vrai : l'allure était à `hero` sous un chrono à 52, donc 1,49 fois plus
-petit que ce que le code appelait « la première chose lue de l'écran ». Les deux phrases étaient
-écrites à soixante lignes l'une de l'autre.
-
-**Le plafond de l'allure est 44, et c'est une mesure.** Sur l'iPhone le plus étroit il reste 284
-points utiles. « CIBLE 10:30/km » — le pire cas, un coureur lent pendant son échauffement — occupe
-261 points à 44 et 301 à 52. Au-delà de 44, la consigne se tronque en course.
-
-**Tout grand chiffre tenu sur une ligne peut rétrécir.** `lineLimit(1)` sans `minimumScaleFactor`
-tronque, et sur un nombre la troncature ment : « 1:23:45 » devient « 1:23… » sans que rien ne dise
-que ce n'est pas l'heure complète. Ni le chrono ni l'allure n'en portaient, et la ligne débordait
-dès 1,31× de taille de texte quand l'app en autorise 2,00×. `check_grands_chiffres.py` le tient.
-
-**Les chiffres roulent, ils ne sautent pas.** `monospacedDigit` d'abord, et c'est le plus important
-des deux : avec des chiffres de largeurs différentes, un chrono de 52 points se décale
-horizontalement à chaque seconde — un tremblement permanent au centre de l'écran, sur le seul
-objet qu'on fixe en courant.
-
-**Rien ne s'invente quand il n'y a rien à dire.** Sans allure cible au plan, le bloc de consigne
-disparaît. Pendant l'échauffement, la récupération et le retour au calme, l'allure cible perd
-l'accent et gagne le mot CIBLE : l'écran affichait « ÉCHAUFFEMENT » suivi de l'allure des
-répétitions dans le même accent, soit, lu à bout de souffle, la consigne de courir son
-échauffement à l'allure de son travail. Même place, même taille, aucun saut de mise en page toutes
-les quatre-vingt-dix secondes — l'accent seul dit « c'est maintenant ».
-
-**Le chiffre lui-même est le bouton.** Pas une petite croix qu'on finit par détester.
+**Les grands textes.** Le texte d'**interface** suit le réglage « Taille du texte » d'iOS **jusqu'à 1,3 fois** sa taille
+(`HZPolice.plafondDInterface`) ; l'**affichage** ne grandit pas — un « 500 » de 128 points occupe déjà la largeur de l'écran. Le
+plafond est celui où les hauteurs fixes du canvas (pilule de 40, ligne de 64) tiennent encore. Aller plus haut demande de
+réorganiser chaque écran et de le photographier aux grandes tailles : ce travail est à faire écran par écran (§ 11).
 
 ---
 
-## 6. Le mouvement
+## 9. Les gardes
 
-`RUMotion`. Sept valeurs nommées, et `RUMotion.respecting(reduceMotion, …)` rend `nil` quand le
-système demande moins d'animation — une animation n'est jamais appelée directement.
+Les contrôles de `ci_scripts/` qui tiennent cette DA ; `check_cablage.py` vérifie que chacun est bien lancé par un workflow.
 
-| Jeton | Durée | Pour quoi |
-| --- | --- | --- |
-| `digit` | 180 ms | un chiffre qui change |
-| `ecran` | 220 ms | une transition d'écran |
-| `snap` | 260 ms | une réponse à un geste |
-| `settle` | 280 ms | l'arrivée d'une carte, **et le changement d'onglet** |
-| `glide` | 500 ms | le remplissage d'un anneau |
-| `draw` | 700 ms | le tracé d'un itinéraire |
+| Garde | Ce qu'il tient |
+| --- | --- |
+| `check_valeurs.py` | une vue de la refonte ne contient pas un nombre (§ 4.5) |
+| `check_majuscules.py` | aucun libellé tout en capitales, sauf entrée comptée avec sa raison (§ 3.3) |
+| `check_degrade.py` | aucun dégradé décoratif : seuls la marque et les images qu'on exporte peuvent en porter, à compte exact par fichier |
+| `check_verre.py` | aucun verre dépoli (`Material`) |
+| `check_emoji.py` | aucun emoji dans le code ni dans les trois langues du catalogue ; `✓`, `▲`, `▼`, `·`, `—` sont des marques typographiques et passent |
+| `check_fonts.py` | toute police demandée par le code est livrée, enregistrée dans la cible, et son nom est celui du fichier |
+| `ci_scripts/icones.py --verifier` | `HZDessins.swift` est à jour avec `design/icones.json` (§ 3.5) |
+| `check_feuilles.py` | toute feuille s'ouvre avec le fond, les coins et la poignée de l'app (§ 6) |
+| `check_grands_chiffres.py` | un grand corps tenu sur une ligne peut rétrécir (§ 3.4) |
+| `check_lancement.py` | l'animation d'ouverture est finie quand l'écran commence à s'effacer (§ 7) |
+| `check_a11y.py` | une commande qui n'est qu'une icône a un nom prononçable (§ 8) |
+| `check_grand_texte.py` | la campagne en grand texte a bien pris le réglage : ses images diffèrent des ordinaires |
+| `check_etapes.py` | les cinq écrans de l'inscription disent la même chose dans `HZEntree` et dans le conteneur |
+| `check_strings.py` | toute chaîne affichée existe au catalogue, donc dans les trois langues |
+| `check_guillemets.py` | aucune chaîne n'est citée avec le guillemet droit de la machine à écrire |
+| `check_decimales.py` | un nombre à virgule s'affiche avec la locale : la virgule en français et en espagnol |
+| `check_marque.py` | l'app s'appelle Haizo ; l'ancien nom ne subsiste que là où une raison est écrite |
+| `check_design.py` | compare les valeurs de ce document au code du système de design |
 
-Plus `stagger` à 55 ms, plafonné à 6 éléments — au-delà, le dernier d'une liste arriverait une
-demi-seconde après le premier.
-
-**La fourchette du brief ne couvre pas tout, et c'est la distinction qui tranche.** Elle parle des
-TRANSITIONS — ce qui remplace une chose par une autre. Une animation de VALEUR, un anneau qui se
-remplit ou un tracé qui se dessine, ne remplace rien : elle montre une quantité en train d'être
-parcourue. Sa contrainte est autre, et simple : **être finie avant qu'on ait besoin de lire ou
-d'agir.**
-
-`digit`, `ecran` et `settle` sont des transitions, et les trois tiennent la fourchette.
-
-`settle` gouvernait le **changement d'onglet** — ce que son propre commentaire appelle
-« l'animation la plus vue de l'app » — à 440 ms. Toute l'app paraissait lente de 160 ms, à chaque
-passage d'un onglet à l'autre.
-
-`glide` et `draw` sont des animations de valeur. Leurs bornes sont mesurées, pas choisies :
-`glide` doit laisser le dévoilement de l'écran d'ouverture finir avant le fondu, `draw` joue sur
-chaque carte du fil qui porte un tracé — ce n'est pas un moment rare qu'on regarde, c'est du
-contenu qu'on attend.
-
-**L'ouverture est finie avant que l'écran ne s'efface**, et ça ne l'était pas : le dévoilement
-finissait à 1,38 s quand le fondu commençait à 1,15 — 29 % du mouvement d'ouverture de l'app se
-jouait pendant qu'elle disparaissait. Chaque valeur était raisonnable toute seule ; le défaut ne
-vivait que dans leur somme. `check_lancement.py` refait l'addition à chaque CI.
+Ce qu'aucun garde ne voit, et que la comparaison côte à côte avec le canvas attrape seule : qu'une valeur nommée est la bonne, qu'un
+écran ressemble à sa planche, qu'un texte n'est pas générique.
 
 ---
 
-## 7. Ce que Charlotte a décidé, et qu'on ne rouvre pas
+## 10. Ce que Charlotte a décidé, et qu'on ne rouvre pas
 
 | Décision | Quand |
 | --- | --- |
-| **D1** — les huit nuanciers d'accent restent | 9 novembre 2026 |
-| **D2** — fond clair par défaut, pas forcément chaud | 9 novembre 2026 |
-| **D3** — la barre basse garde ses cinq entrées (le brief en demandait trois) | 9 novembre 2026 |
-| **D4** — l'inscription reste longue, et vise le plan le plus sur mesure possible | 9 novembre 2026 |
-| D1 à D4 tiennent, face au brief re-transmis | 11 novembre 2026 |
-| Le Club reste sous l'onglet Profil — **ne pas y revenir** | 11 novembre 2026 |
-| Les SF Symbols restent | 11 novembre 2026 |
-| ~~Les sept teintes d'intensité actuelles restent~~ — **renversée le 15 novembre** | 11 novembre 2026 |
-| La signature de la carte de nuit s'étend aux quatre écrans qui ne l'avaient pas | 13 novembre 2026 |
-| **D1 amendée** — les huit nuanciers restent, et `#F0225F` devient le défaut | 15 novembre 2026 |
-| Le thème sombre survit, et sera redessiné APRÈS le clair | 15 novembre 2026 |
-| Les six teintes d'intensité du brief s'appliquent, ardoise `#44506B` comprise | 15 novembre 2026 |
-| L'en-tête d'accueil ne porte pas de photo : c'est le tracé GPS en grand | 15 novembre 2026 |
-| L'avatar et le récap de fin de course gardent leur dégradé, comme le logo | 15 novembre 2026 |
-| **L'app s'appelle Haizo.** L'identifiant de l'app, le groupe applicatif, le domaine, le schéma d'URL, l'en-tête HTTP et les variables Vercel ne changent PAS : invisibles, et leur renommage coûte une panne. Le dépôt GitHub non plus, parce que l'adresse de confidentialité de la fiche App Store contient son nom. Le journal raconte l'avant ; `check_marque.py` tient l'après. | 16 novembre 2026 |
+| **La barre garde cinq entrées** (le brief en demandait trois). Ce ne sont plus les mêmes : Aujourd'hui, Explorer, Club, Statistiques, Coach. | 9 novembre 2026 (D3), 17 novembre 2026 |
+| **L'inscription vise le plan le plus sur mesure possible.** Le critère est la qualité du plan, pas le nombre d'écrans ; le brief demandait trois questions. | 9 novembre 2026 (D4) |
+| **D1 à D4 tiennent, face au brief re-transmis.** | 11 novembre 2026 |
+| **L'app s'appelle Haizo.** L'identifiant de l'app, le groupe applicatif, le domaine, le schéma d'URL, l'en-tête HTTP et les variables Vercel ne changent PAS : invisibles, et leur renommage coûte une panne. Le dépôt GitHub non plus, parce que l'adresse de confidentialité de la fiche App Store contient son nom. `check_marque.py` tient l'après. | 16 novembre 2026 |
 | **La graphie : en capitales au logo et à l'écran de lancement, en capitale initiale dans les phrases.** Dans une phrase, c'est un mot, pas un cri. | 16 novembre 2026 |
-| **La refonte visuelle : le canvas fait foi.** « Le design est arrêté. Tu ne réinterprètes pas, tu reproduis. » Voir § 10 pour ce qu'elle renverse dans ce tableau, écran par écran. | 17 novembre 2026 |
+| **La refonte visuelle : le canvas fait foi.** « Le design est arrêté. Tu ne réinterprètes pas, tu reproduis. » Tailles, couleurs, rayons, espacements et graisses y sont écrits en clair. | 17 novembre 2026 |
+| **Les hypothèses faute de canvas sont laissées à l'équipe** : « Fait tout comme il te semble parfait, ajoute s'il faut ajouter, enlève s'il faut enlever, et on tranchera une fois qu'on aura la maquette sous les yeux. » Elles sont provisoires, et listées au § 11. | 17 novembre 2026 |
+| **Tout passe sous la nouvelle DA, par lots**, chacun vérifié par captures : « tu mets tout sous la nouvelle DA ». Fin de la méthode « un écran, une validation, puis le suivant ». | 18 novembre 2026 |
+| **La photo de profil reste modifiable** : le crayon sur l'avatar est conservé, c'est ce que voit tout le club. | 18 novembre 2026 |
+| **Le fil rend le double-tape pour applaudir**, la ligne « Aimé par … » et l'aperçu du dernier commentaire sous Bravo et Commenter. | 18 novembre 2026 |
 
----
+### Ce que le canvas a renversé
 
-## 8. Ce qui attend une décision de Charlotte
+Ces décisions portaient sur l'ancien système et ne sont plus en vigueur. La ligne reste pour qu'on ne les redécide pas sans le savoir.
 
-| Question | L'état mesuré |
+| Décision d'avant | Ce que le canvas en fait |
 | --- | --- |
-| La chaleur du fond de consultation | Le brief demande `#FBF9F7`, blanc chaud ; l'app porte `#F4F3F8`, gris-lavande froid. **C'est le plus grand écart visible qui reste**, et D2 a explicitement laissé le chaud non imposé. |
-| ~~La nuance de l'accent par défaut~~ | **Tranchée le 15 novembre** : `#F0225F` en clair, `#FF0A78` reste la valeur sombre tant que le thème sombre n'est pas redessiné. |
-| La teinte des surfaces secondaires | Le brief du 15 novembre demande `#F3EEF4` pour les pastilles et les sous-surfaces — une lavande FROIDE. Les fonds clairs sont passés au CHAUD le 12 novembre, et les quatre jetons de texte ont suivi la famille du fond le même jour. Adopter `#F3EEF4` tel quel remet du froid sur une page chaude ; c'est la même question que la ligne au-dessus, et elle se tranche avec elle. |
-| **L'app n'a de signature que sur deux écrans sur six** | Voir § 9. C'est la question qui reste après tout le reste. |
-
-
----
-
-## 9. La signature : la carte de nuit
-
-Le test final de la DA — « sorti de son cadre de téléphone et sans logo, l'écran doit être
-reconnaissable comme Haizo » — ne tenait que sur deux écrans sur six. Charlotte a tranché le
-13 novembre : l'étendre aux quatre autres.
-
-### Ce que l'app avait d'authored
-
-Une seule chose : **la carte sombre au tracé néon.** Un presque-noir plein cadre, un tracé GPS qui
-s'y dessine en rose-violet lumineux, la date et les deux chiffres posés dessus. Elle a un point de
-vue — la sortie comme un objet qui brille dans le noir — et elle ne ressemble à rien d'autre.
-
-### Avant et après, mesurés
-
-Part de l'image occupée par une surface sombre, **en thème clair** — donc là où le sombre est un
-choix et non le thème. Même mesure des deux côtés : un pixel compte comme sombre quand la moyenne
-de ses trois composantes est sous 70, sur un échantillon d'un pixel sur quatre.
-
-| Écran | Avant | Après |
-| --- | --- | --- |
-| Club | 30,1 % | 30,1 % *(inchangé — il la portait déjà)* |
-| Coach | 2,7 % | **20,3 %** |
-| Stats | 1,9 % | **20,2 %** |
-| Journée | 1,5 % | **19,4 %** |
-| Accueil | 15,1 % | 15,0 % *(inchangé — c'est l'original)* |
-| Plan | 1,3 % | **13,8 %** |
-
-Les trois dessins qui suivent la journée — le ruban du Coach, l'anneau de la Journée, la courbe
-des Stats — bougent de quelques dixièmes d'une campagne à l'autre, puisque leur contenu change
-avec le jour. La colonne « après » est celle du 14 novembre.
-
-Les six écrans tiennent maintenant entre 13,8 % et 30,1 %. Avant, quatre d'entre eux étaient sous
-3 % : ils n'avaient aucun élément de signature, et étaient interchangeables avec ceux de n'importe
-quelle app de course.
-
-### LA RÈGLE
-
-Elle est écrite dans `Haizo/Views/Components/CarteDeNuit.swift`, qui est le composant, pour qu'on
-ne puisse pas la suivre sans la lire. Quatre choses ensemble, et il faut les quatre :
-
-1. **Ce qui est mesuré devient le dessin.** Pas une illustration de la donnée : la donnée
-   elle-même, tracée. Le tracé EST la sortie, les barres SONT le plan, la courbe EST l'allure, le
-   ruban EST la semaine. Un écran qui n'a rien à dessiner n'a pas de carte de nuit.
-2. **Le dessin occupe le cadre**, bord à bord à la marge près. Il n'est pas une vignette posée
-   dans une carte : c'est le cadre qui lui est donné.
-3. **La nuit, et rien d'autre d'allumé.** `RUColor.traceBackground` (`#14131E`) dans les deux
-   thèmes, et l'accent y est à pleine force — ce qu'il n'est nulle part ailleurs sur page claire.
-4. **Les chiffres se posent dessus.** Pas dessous, pas à côté : sur le dessin, sous un voile qui
-   garantit la lecture quelle que soit la forme. Ils légendent une image, ils n'étiquettent pas un
-   graphique.
-
-Et une cinquième, négative : **une seule par écran.** Deux points de fixation n'en font aucun.
-
-### Ce que chaque écran y met
-
-| Écran | Le dessin | Ce qui est posé dessus |
-| --- | --- | --- |
-| Accueil | le tracé GPS de la dernière sortie | sa date, sa distance, son allure |
-| Plan | seize semaines de volume, en couleurs de phase | le nombre de semaines, le plus gros volume |
-| Coach | les sept jours de la semaine, famille et durée | forme, séance du jour, dernière sortie |
-| Journée | l'anneau des trois objectifs | le compte, **au moyeu** et non en bas à gauche |
-| Stats | la courbe d'allure et son point RECORD | l'allure moyenne et son écart |
-| Club | le tracé GPS de chaque sortie du mur | *(inchangé — il la portait déjà)* |
-
-La Journée est la seule où les chiffres sont DANS la forme plutôt que dessus : son compte est le
-moyeu de l'anneau. C'est une exception à la règle 4, et elle est nommée ici pour ne pas être
-imitée ailleurs sans raison.
-
-### L'ENCRE DE LA NUIT
-
-La nuit ne suit pas le thème. Ce qu'on y peint ne doit donc pas le suivre non plus — et c'était le
-cas partout :
-
-- l'anneau de départ du tracé était en `RUColor.textPrimary`, soit `#181511` en thème clair : du
-  presque-noir à 85 % sur du presque-noir. Sur la capture de l'accueil, il ne se lit pas comme un
-  repère mais comme un **trou** percé dans la lueur ;
-- la trace fantôme, à 7 % de la même encre, disparaissait tout court ;
-- le tracé lisait `RUColor.rose`, qui rend `primaryOnLight` en thème clair — une valeur descendue
-  pour rester lisible **sur du blanc**, qu'il n'y a pas ici.
-
-Mesuré sur les huit nuanciers, rapport de luminance de l'accent contre `#14131E` :
-
-| nuancier | sombre | clair | perte |
-| --- | --- | --- | --- |
-| rose, violet, bleu, magenta | 4,23 à 5,55 | idem à 6 % près | ≤ 6 % |
-| corail | 5,94 | 5,25 | 12 % |
-| ambre | 10,10 | 5,26 | 48 % |
-| cyan | 10,37 | 5,25 | 49 % |
-| lime | 12,34 | 5,23 | 58 % |
-
-Le nuancier par défaut ne perdait presque rien, ce qui explique que personne ne l'ait vu pendant
-deux mois : trois nuanciers sur huit perdaient la moitié de l'éclat de leur tracé.
-
-Sur la nuit, on lit donc : `surLaNuit`, `surLaNuit2` (0,72) et `surLaNuit3` (0,16) pour l'encre ;
-`accentsDeLaNuit` ou `AccentTheme.current.*` pour l'accent ; `limeSombre`, `cyanSombre`,
-`amberSombre`, `emberSombre`, `azureSombre`, `grapeSombre` pour le sens. **`check_nuit.py` le
-tient** — il refuse un jeton de page dans le corps d'un appel à `CarteDeNuit`, et dans les
-fichiers qui ne dessinent que sur la nuit.
-
-**IL N'Y A PLUS QU'UNE CARTE DE NUIT DANS L'APP**, depuis le 16 novembre : le tracé de la
-dernière sortie, sur l'accueil. Le brief du 15 novembre la borne à deux emplois — « les cartes
-noires n'existent que pour un tracé GPS ou l'écran de séance » — et le dit une deuxième et une
-troisième fois sur deux écrans nommés : la courbe des Stats « sur carte blanche et non noire »,
-le bloc « Ce qu'il regarde » du Coach « passe en blanc ». Les quatre autres y sont donc
-repassées, avec le graphique du Plan et l'anneau de la Journée.
-
-Trois composants recevaient un booléen `surLaNuit` pour vivre sur les deux fonds —
-`DailyGoalsBarsView`, `RubanDeSemaine`, la ligne d'allure des Stats. Les trois n'ont plus qu'un
-fond, et le booléen est parti avec : **un paramètre qui ne prend plus qu'une valeur entretient
-l'idée qu'il reste un choix.** `SessionFamily.tintSurLaNuit`, que seul le ruban lisait, est parti
-de même.
-
-### La Journée : tranché, et pourquoi
-
-Un anneau de progression sur fond noir est le vocabulaire de l'app Activité d'Apple, reconnue
-partout. La question 3 de la DA — « est-ce qu'on devine qu'il a été généré ? », et par extension
-copié ? — se posait là, et seulement là. Posée à Charlotte le 14 novembre, elle m'a renvoyé la
-décision. **L'anneau reste sur la nuit**, pour trois raisons, dans l'ordre de leur poids :
-
-1. **La forme diffère vraiment.** Apple empile trois anneaux concentriques et ne met aucun chiffre
-   au centre. Celui-ci est une piste UNIQUE coupée en trois arcs, avec le compte au moyeu. Apple
-   montre trois efforts séparés ; nous montrons une journée dont on a bouclé deux tiers.
-2. **L'anneau de progression n'appartient à personne.** C'est un objet de vocabulaire, comme une
-   barre ou une courbe. Ce qui fait la signature, c'est la nuit sous le dessin et les chiffres
-   posés dessus.
-3. **L'alternative coûte plus qu'elle ne rapporte.** Revenir au fond clair ferait retomber la
-   Journée à 1,5 % de surface sombre : le seul des six écrans sans signature, pour écarter une
-   ressemblance qui ne tient qu'au premier coup d'œil.
-
-**Le seul endroit où la réponse serait différente :** la grille de captures de l'App Store, où une
-vignette est tout ce qu'on voit. Les six écrans de la fiche sont un choix séparé, et le changer ne
-touche pas l'app.
-
-### L'accueil ne répète pas ce qui vit ailleurs
-
-Règle née le 14 novembre, d'une phrase de Charlotte devant la capture : « ça fait beaucoup d'infos
-du coup ». Elle avait raison, et c'est moi qui l'avais densifié le matin même.
-
-**L'accueil est un hub.** Tout ce qu'il pourrait dessiner appartient déjà à un autre écran — la
-semaine au Plan, l'anneau à la Journée, les chiffres aux Stats. Son travail est d'orienter, pas de
-résumer. Une carte qui raccourcit d'un tap un trajet déjà ouvert par la barre d'onglets ne gagne
-pas sa place.
-
-Ce qu'il garde, dans l'ordre des questions qu'on se pose en l'ouvrant : **qu'est-ce que je fais
-aujourd'hui · qu'est-ce que je viens de faire · où j'en suis dans mon plan · suis-je à jour de ma
-journée.** Quatre blocs. Ce qui a été retiré ce jour-là — les trente derniers jours, les trois
-mesures du jour, le pied du programme — vit en entier à un tap de là.
+| D1 — les huit nuanciers d'accent restent (9, 11 et 15 novembre) | **quatre couleurs, un seul jeton d'accent** : rose, violet, bleu, vert. « 4 choix seulement, un seul token accent. Supprimer l'habillage Teinté et les autres couleurs. » |
+| D2 — fond clair par défaut (9 novembre) | le fond est l'aplat du canvas : noir en haut, feuille blanche, gris clair `#F4F4F6` ; plus de fond « chaud » ou « froid » à trancher |
+| Le Club reste sous l'onglet Profil, ne pas y revenir (11 novembre) | le Club est une entrée de la barre flottante, le profil s'ouvre par l'avatar |
+| Les SF Symbols restent (11 novembre) | remplacés par les vingt-neuf dessins du canvas, là où le canvas en dessine un |
+| Les six teintes d'intensité, ardoise `#44506B` comprise (15 novembre) | trois : vert, bleu, violet |
+| La signature de la carte de nuit (13 et 16 novembre) | la signature est l'aplat d'accent ou noir et le très grand chiffre |
+| L'en-tête d'accueil porte le tracé GPS, pas une photo (15 novembre) | le haut de l'accueil est la carte-affiche de la séance du jour |
+| L'avatar et le récap gardent leur dégradé, comme le logo (15 novembre) | l'avatar est un disque uni portant deux initiales ; aucun dégradé dans l'interface |
+| Le thème sombre sera redessiné après le clair (15 novembre) | le canvas ne dessine qu'un rendu ; voir § 2.5 et § 11 |
 
 ---
 
-## 10. La refonte du 17 novembre : le canvas fait foi
+## 11. Ce qui attend une décision de Charlotte
 
-Charlotte a arrêté un design complet, dessiné hors de l'app, sur un canvas de dix écrans :
-Accueil, Plan, Run, Resume, Coach, Stats, Club, Explorer, Profil, Reglages. Sa consigne tient en
-deux phrases : « Ces fichiers sont la référence exacte : tailles, couleurs, rayons, espacements
-et graisses y sont écrits en clair. Tu ne réinterprètes pas, tu reproduis. »
+D'après `PROGRESS.md`. Les contenus du canvas sont des exemples ; là où il se tait, l'équipe a posé une hypothèse, écrite ici pour
+qu'on la retrouve, à revoir sur la maquette.
 
-**Tant que la refonte est en cours, deux systèmes cohabitent.** Les §§ 1 à 9 décrivent l'app
-livrée, écran par écran, jusqu'à ce que chacun bascule ; ce § décrit ce vers quoi elle va. Le
-nouveau système vit dans `Haizo/DesignSystem/Refonte/` sous le préfixe `HZ`, les écrans refaits
-dans `Haizo/Views/Refonte/`. Un écran bascule d'un bloc — refait à partir des composants, jamais
-repeint par-dessus l'existant — et l'ancien système est retiré avec le dernier.
-
-### Ce qui change
-
-| | L'app livrée | Le canvas |
-| --- | --- | --- |
-| La fonte | Oswald pour l'affichage, Inter pour le texte | **Archivo variable**, seule. Affichage : graisse 800, largeur 125 %. Interface : largeur 100 %, graisses 500, 600, 700. Chiffres tabulaires. |
-| L'accent | huit nuanciers, trois valeurs chacun | **quatre couleurs d'app**, une valeur chacune, un seul jeton d'accent |
-| Les intensités | six teintes | **trois** : vert, bleu, violet |
-| Les rayons | cinq, de 2 à 24 | **dix**, de 14 à 36 : cartes 36, feuilles 30, tuiles 24, groupes 22, boutons en pilule |
-| La grille | un pas de 2 jusqu'à 14, puis 18, 24 | les mesures du canvas, écran par écran, chacune nommée |
-| Les icônes | SF Symbols | les **vingt-neuf dessins du canvas**, trait pour trait |
-| La navigation | barre d'onglets du système | **barre flottante noire** : Aujourd'hui, Explorer, Club, Stats, Coach. Le profil par l'avatar, le plan par les points de la semaine. |
-| Les surfaces | cartes bordées, fond chaud | aplats : accent, noir, blanc, gris clair. **Aucun dégradé, aucune ombre, aucun trait décoratif.** |
-
-### La règle du rose
-
-**Jamais de petit texte blanc sur l'accent.** Sur le rose, un libellé s'écrit dans l'encre
-sombre de l'accent ; le blanc y est réservé aux grands chiffres et aux titres. Les trois autres
-couleurs d'app sont assez sombres pour porter du blanc à toutes les tailles : leur encre est le
-blanc. C'est `HZAccent.encre`, et c'est la seule différence de traitement entre les quatre.
-
-### Ce que la refonte renverse dans le § 7
-
-Aucune de ces lignes n'est renversée tant que l'écran qui la porte n'a pas basculé.
-
-| Décision du § 7 | Ce que le canvas en fait |
+| Question | L'état |
 | --- | --- |
-| **D1** — huit nuanciers | quatre couleurs. L'habillage « Teinté » disparaît. |
-| **D3** — cinq entrées dans la barre | toujours cinq, mais pas les mêmes : le profil en sort, Explorer et Club y entrent. |
-| Le Club reste sous l'onglet Profil | le Club est une entrée de la barre. |
-| Les SF Symbols restent | remplacés par les dessins du canvas, là où le canvas en dessine un. |
-| Les six teintes d'intensité | trois. |
-| L'avatar garde son dégradé | l'avatar est un disque uni portant deux initiales. |
-| La signature : la carte de nuit (§ 9) | la signature devient l'aplat d'accent et le très grand chiffre. |
+| **Le mode clair et sombre** | Le canvas montre un interrupteur Clair / Sombre et ne dessine qu'un mode. Les jetons n'ont qu'une valeur ; le réglage « Mode » règle l'apparence du système. Dessiner la seconde ambiance, ou retirer l'interrupteur ? |
+| **La couleur d'une séance de qualité** | Le canvas n'a que trois intensités. Le seuil, le fractionné et le renforcement prennent l'accent, avec son encre (accueil, plan). Un repos prend le noir doux. |
+| **Le texte agrandi** | L'interface suit le réglage jusqu'à 1,3 fois, l'affichage ne bouge pas. Faire le travail écran par écran pour aller plus haut, ou garder 1,3 ? |
+| **La course libre d'une autre discipline** | La barre du canvas n'a pas de bouton de course : sur l'accueil on démarre la séance du jour. Où va, dans le design, une sortie libre à vélo, en trail ou en natation ? Posée le 17 novembre, non tranchée dans `PROGRESS.md`. |
+| **Les écrans hors canvas** | L'app comptait cinquante-trois écrans au 17 novembre, le canvas dix. Le plan complet, les phases Récupération et Choix, le plan verrouillé, l'historique, le récap hebdo, les chaussures, la carte de chaleur, les pages de course et le hub du Club sont habillés avec les mêmes composants, à montrer avant validation. |
+| **Ce que l'équipe a posé faute de canvas** | Une séance passée et non faite porte une pastille « Non faite » (plan) ou s'affiche comme un repos (accueil) ; les calories ne s'affichent plus pendant la course (elles restent enregistrées et au résumé) ; la marque d'un badge est son symbole et non un court texte ; la flamme de la série est retirée ; « Passer à un objectif » propose quatre tuiles au plus ; le bandeau du coach du plan dit ce que le déplacement fait vraiment, pas « je réorganise le reste ». |
+| **La longueur de l'inscription** | D4 (9 novembre) fait de la qualité du plan sur mesure le critère. L'inscription compte aujourd'hui cinq écrans, une question chacun, et `PROGRESS.md` n'enregistre pas d'arbitrage de Charlotte sur ce raccourcissement : confirmer que les cinq écrans tiennent D4. |
 
-### Ce que la refonte ne touche pas
-
-Les données, la logique, le coach, le GPS, les calculs. Les contenus du canvas sont des
-exemples : chaque écran branche les vraies données de l'app à leur place. Les cartes de Run et
-de Resume sont dessinées à la main dans la maquette ; l'app garde sa vraie carte, avec le tracé
-dans la couleur d'accent sur liseré blanc.
-
-### Les écrans refaits
-
-| Écran | Où | Commit |
-| --- | --- | --- |
-| **Accueil** | `Haizo/Views/Refonte/AccueilView.swift`, logique dans `Haizo/Models/AccueilModele.swift` | 17 novembre |
-| **Plan** (« Ta semaine ») | `Haizo/Views/Refonte/PlanSemaineView.swift`, logique dans `Haizo/Models/PlanSemaineModele.swift`, rangée des jours et mouvement du carrousel dans `HZSemaineDuPlan.swift` | 17 novembre |
-
-Les autres (Run, Resume, Stats, Coach, Club, Explorer, Profil, Reglages) gardent leur
-ancien habillage et l'ancienne barre d'onglets jusqu'à leur tour. La barre flottante est posée par
-`RootTabView` sur les écrans de cette liste, et seulement sur eux.
-
-### Les gardes de la refonte
-
-- `check_valeurs.py` — une vue de la refonte ne contient pas un nombre. Toute mesure porte un
-  nom et se déclare dans le système de design.
-- `check_grille.py` et `check_majuscules.py` continuent de tenir l'ancienne app ; le premier
-  passe les deux dossiers de la refonte au garde ci-dessus, dont la règle est plus dure.
-- La comparaison côte à côte : chaque écran est photographié sur un simulateur de 390 points de
-  large — la largeur des planches du canvas — et posé à côté du rendu de sa référence. C'est
-  elle, et aucun script, qui dit si une valeur nommée est la bonne.
-
+Les trois questions ouvertes le 15 novembre — la chaleur du fond de consultation, la teinte des surfaces secondaires, l'app qui n'a
+de signature que sur deux écrans sur six — disparaissent avec l'ancien système : le canvas fixe le fond, les surfaces et la
+signature. Les questions hors design (contenu des séances HYROX, branches à reprendre, production) sont dans `PROGRESS.md`.
