@@ -1,8 +1,10 @@
 import SwiftUI
 import UIKit
 
-/// Root screen switcher + floating tab bar. Mirrors the `SCREENS` map and tab-bar visibility
-/// logic in app.jsx (`showBar = !['live','recap'].includes(screen)`).
+/// L'aiguilleur de l'app : l'écran courant, et la barre flottante posée par-dessus.
+///
+/// La barre est celle de la refonte, sur tous les écrans sauf deux : la course en direct et son
+/// résumé, qui prennent tout l'écran.
 struct RootTabView: View {
     @Environment(AppState.self) private var appState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -11,75 +13,18 @@ struct RootTabView: View {
         appState.screen != .live && appState.screen != .recap
     }
 
-    /// Le petit panneau de choix de discipline est-il ouvert ?
-    ///
-    /// Ici et pas dans `TabBarView` : le panneau se dessine AU-DESSUS de la barre, donc dans cette
-    /// pile-ci, à côté de `RunInProgressPill`. Le mettre dans la barre l'enfermerait dans une
-    /// capsule de 56 points de haut, et il faudrait le faire déborder — ce qui est précisément le
-    /// piège de `clipShape` que le bouton RUN a déjà coûté une fois.
-    @State private var choixDisciplineOuvert = false
-
-    /// Où en est le doigt, compté depuis le centre du bouton RUN.
-    ///
-    /// Ici et pas dans la barre, parce que c'est ici qu'on dessine le cadran : le rond mis en
-    /// avant se déduit de ce déplacement par `DisciplineDial.option(pour:)`, et la barre ne fait
-    /// que rapporter ce que le doigt lui dit. Remis à zéro à chaque relâchement, ce qui suffit à
-    /// éteindre la mise en avant — zéro est sous la zone morte.
-    @State private var glissement: CGSize = .zero
-
-    /// Quel onglet la barre affiche comme actif — ce n'est pas toujours l'écran courant. Deux
-    /// écrans sont des destinations SOUS un onglet, ouvertes par une carte, et sans cette
-    /// translation y entrer éteindrait la barre entière : cinq onglets dont aucun sélectionné,
-    /// alors qu'on est bien quelque part.
-    ///
-    /// Les deux sont sous le PROFIL, qui est le hub social et porte les cartes qui les ouvrent :
-    /// `SocialView` (Club, Amis, Courses, Itinéraires) par ses quatre tuiles, et `WallView` par
-    /// la carte du fil posée au-dessus d'elles.
-    ///
-    /// Et ça ne sert pas qu'à ne pas éteindre la barre : l'onglet resté allumé est précisément
-    /// celui par lequel on REVIENT.
-    private var tabSelection: AppScreen {
-        switch appState.screen {
-        case .club, .fil: return .profile
-        default: return appState.screen
-        }
-    }
-
     /// Les écrans qui reçoivent du texte À MÊME LA PAGE.
     ///
     /// PARTOUT AILLEURS, UN ENCART DE CLAVIER N'A AUCUN SENS. Il n'y a rien à y taper : s'il en
-    /// arrive un, c'est un reste — le clavier d'un écran qu'on vient de quitter, ou d'une feuille
-    /// système qu'on vient de refermer. Et il ne se voit pas comme un clavier, il se voit comme
-    /// une page cassée : trois cents points de vide en bas, la barre d'onglets échouée au milieu
-    /// de l'écran, et la carte du programme coupée en deux dessous.
+    /// arrive un, c'est un reste, et il se voit comme une page cassée.
     ///
-    /// Ces deux-là gardent le comportement d'origine — tout remonte avec le clavier, barre
-    /// d'onglets comprise, et le champ reste au-dessus.
-    ///
-    /// LA LISTE SE LIT DANS `currentScreen`, et « à même la page » en est la moitié importante :
-    /// une feuille est une hiérarchie séparée, que ce modificateur n'atteint pas. Les champs de
-    /// `AddShoeSheet`, `LogSessionSheet`, `MoreSettingsView` ou `AddRunSheet` continuent donc de
-    /// remonter tout seuls, et ces écrans-là ne sont pas dans la liste. Restent le Coach, et le
-    /// social — `SocialView` affiche `ClubView` et `FriendsView` en place, tous deux avec un
-    /// champ de recherche ou de code d'invitation.
+    /// Ces deux-là gardent le comportement d'origine : tout remonte avec le clavier, barre
+    /// comprise, et le champ reste au-dessus. Une feuille est une hiérarchie séparée, que ce
+    /// modificateur n'atteint pas : ses champs remontent tout seuls.
     private var typesText: Bool { appState.screen == .coach || appState.screen == .club }
 
-    // MARK: - La barre de la refonte
-
-    /// Les écrans déjà refaits portent la barre flottante ; les autres gardent l'ancienne, jusqu'à
-    /// ce que chacun soit refait. Un écran bascule d'un bloc, barre comprise : le canvas dessine
-    /// la barre dans CHAQUE planche, elle fait partie de l'écran.
-    ///
-    /// Tant que les deux coexistent, chacune mène à tous les écrans de l'autre : l'ancienne
-    /// barre garde « Prog », qui ouvre l'accueil refait, et la nouvelle ouvre Coach, Stats et
-    /// Club, qui ont encore l'ancienne. Ce qui n'existe que dans l'ancienne — le bouton de course
-    /// libre et son cadran de discipline — reste donc joignable depuis tout écran qui n'est pas
-    /// l'accueil. Voir PROGRESS.md : le canvas n'a pas de bouton de course dans la barre.
-    private var barreRefaite: Bool {
-        [AppScreen.home, .plan, .coach, .stats, .fil, .profile, .explorer, .club,
-         .history, .weeklyRecap, .shoes, .heatmap].contains(appState.screen)
-    }
-
+    /// Quelle entrée la barre allume. Les pages ouvertes depuis un onglet gardent celui qui les
+    /// porte allumé : c'est par lui qu'on y REVIENT.
     private var ongletRefait: Binding<HZOnglet> {
         Binding(
             get: {
@@ -103,135 +48,45 @@ struct RootTabView: View {
             })
     }
 
-    private func fermerLeChoix() {
-        glissement = .zero
-        withAnimation(RUMotion.snap) { choixDisciplineOuvert = false }
-    }
-
     var body: some View {
         ZStack(alignment: .bottom) {
-            RUColor.bg.ignoresSafeArea()
+            HZCouleur.blanc.ignoresSafeArea()
 
             currentScreen
-                // Chaque écran emporte la sienne — voir `AppScreen.transitionDecran`. Celle qui
-                // était écrite ici était symétrique : les deux écrans partaient vers la droite
-                // et se croisaient, la gauche vide.
+                // Chaque écran emporte sa transition : voir `AppScreen.transitionDecran`.
                 .transition(appState.screen.transitionDecran)
                 .id(appState.screen)
 
             if showBar && appState.isRunActive {
-                RunInProgressPill(elapsed: appState.liveRun.map { PaceModel.formatDuration($0.elapsedSeconds) } ?? "0:00") {
+                HZCourseEnCours(ecoule: appState.liveRun.map { PaceModel.formatDuration($0.elapsedSeconds) } ?? "0:00") {
                     appState.go(.live)
                 }
-                .padding(.bottom, RUSpacing.tabBarBottomInset + RUSpacing.tabBarHeight + 14)
+                .padding(.bottom, HZEspace.sousLaBarre + HZCourseEnCours.hauteurDeLaBarre + HZCourseEnCours.souffle)
             }
 
-            // L'ATTRAPE-CLIC, sous le panneau et au-dessus de tout le reste. Sans lui, refermer
-            // le panneau demanderait de viser le bouton une seconde fois, et un appui n'importe où
-            // ailleurs partirait dans l'écran du dessous — on ouvrirait une carte de séance en
-            // croyant annuler. `Color.clear` ne suffit pas : une vue transparente ne reçoit rien
-            // tant qu'elle n'a pas de forme à toucher.
-            if choixDisciplineOuvert {
-                Color.black.opacity(0.001)
-                    .ignoresSafeArea()
-                    .contentShape(Rectangle())
-                    .onTapGesture { fermerLeChoix() }
-                    .accessibilityHidden(true)
-            }
-
-            if showBar && choixDisciplineOuvert {
-                DisciplineDialView(selection: appState.runDiscipline,
-                                   visee: DisciplineDial.option(pour: glissement)) { discipline in
-                    appState.setRunDiscipline(discipline)
-                    fermerLeChoix()
-                }
-                // CENTRÉ SUR LE BOUTON RUN, pas posé au-dessus de la barre. Toute la géométrie
-                // du cadran — les trois angles, le rayon, la direction du doigt — part du centre
-                // du bouton, et le dessin doit partir du même point : un demi-écart ici ferait
-                // viser les ronds de travers.
-                //
-                // Dans une pile alignée en bas, un enfant de hauteur H avec P de marge basse a son
-                // CENTRE à P + H/2 du bas. On veut ce centre au centre du bouton, soit à la marge
-                // de la barre plus une demi-hauteur de barre : d'où la soustraction. Elle rend un
-                // nombre négatif — le cadre dépasse sous l'écran — et c'est sans effet, cette
-                // moitié basse ne contient rien.
-                .padding(.bottom, RUSpacing.tabBarBottomInset + RUSpacing.tabBarHeight / 2
-                         - DisciplineDial.hauteurCadran / 2)
-                // Il SORT du bouton : il s'ouvre depuis le point où le doigt est encore posé.
-                .transition(.scale(scale: 0.6, anchor: .bottom).combined(with: .opacity))
-            }
-
-            if showBar && barreRefaite {
-                // 28 points DU BORD DE L'ÉCRAN, comme dans le canvas — pas 28 au-dessus de la
-                // zone de l'indicateur d'accueil, qui la montait de 34 points.
-                //
-                // `ignoresSafeArea` posé sur la barre elle-même ne faisait rien (capture : 63 pt
-                // du bord au lieu de 28) : une vue de taille fixe garde sa taille et reste dans la
-                // zone sûre. C'est une surface qui OCCUPE l'écran qui l'ignore, et la barre y est
-                // posée en bas.
+            if showBar {
+                // À vingt-huit points DU BORD DE L'ÉCRAN, comme dans le canvas. `ignoresSafeArea`
+                // posé sur la barre elle-même ne ferait rien : c'est une surface qui OCCUPE
+                // l'écran qui l'ignore, et la barre y est posée en bas.
                 Color.clear
-                    // La surface couvre l'écran : sans ceci, elle recevrait les touches destinées à
-                    // la page dessous. Posé AVANT l'`overlay`, le réglage ne touche que la surface ;
-                    // la barre, elle, reste touchable.
+                    // Sans ceci la surface recevrait les touches destinées à la page dessous ;
+                    // posé AVANT l'`overlay`, le réglage ne touche que la surface.
                     .allowsHitTesting(false)
                     .overlay(alignment: .bottom) {
-                        HZBarreFlottante(selection: ongletRefait, aucuneActive: [AppScreen.profile, .club, .shoes].contains(appState.screen))
+                        HZBarreFlottante(selection: ongletRefait,
+                                         aucuneActive: [AppScreen.profile, .club, .shoes].contains(appState.screen))
                             .padding(.bottom, HZEspace.sousLaBarre)
                     }
                     .ignoresSafeArea(edges: .bottom)
-            }
-
-            if showBar && !barreRefaite {
-                TabBarView(
-                    selected: tabSelection,
-                    onSelect: { appState.go($0) },
-                    onStartRun: {
-                        if appState.isRunActive { appState.go(.live) }
-                        else { appState.startRun(appState.runDiscipline) }
-                    },
-                    discipline: appState.runDiscipline,
-                    dialOpen: choixDisciplineOuvert,
-                    onOpenDial: {
-                        glissement = .zero
-                        withAnimation(RUMotion.snap) { choixDisciplineOuvert = true }
-                    },
-                    // Sans animation : c'est le doigt qui mène, et une animation sur une valeur
-                    // qui change soixante fois par seconde ne fait que retarder le rond mis en
-                    // avant par rapport à là où le doigt est vraiment. Les ronds, eux, animent
-                    // leur propre changement d'état.
-                    onDialDrag: { glissement = $0 },
-                    // LE CHOIX SE FAIT AU RELÂCHEMENT. Un déplacement qui ne vise rien — le doigt
-                    // n'a pas bougé, il est parti vers le bas, ou beaucoup trop loin — referme le
-                    // cadran sans rien changer. C'est l'annulation, et elle n'a pas besoin d'être
-                    // expliquée : on tire vers le bas, à l'opposé de l'ouverture.
-                    onDialEnd: { translation in
-                        if let choisie = DisciplineDial.option(pour: translation) {
-                            Haptics.selection()
-                            appState.setRunDiscipline(choisie)
-                        }
-                        fermerLeChoix()
-                    },
-                    // Pas pendant une course : on ne change pas de discipline au milieu d'une
-                    // sortie, et un appui long qui ne fait rien vaut mieux qu'un qui touche à un
-                    // relevé déjà commencé.
-                    canChooseDiscipline: !appState.isRunActive
-                )
-                .padding(.horizontal, RUSpacing.tabBarSideInset)
-                .padding(.bottom, RUSpacing.tabBarBottomInset)
             }
         }
         // Un jeu de bords VIDE plutôt qu'un `if` autour du modificateur : la valeur change, pas
         // la structure de la vue. Un `if` en donnerait deux différentes, et SwiftUI recréerait
         // tout l'arbre — donc l'écran courant — à chaque passage sur le Coach.
         .ignoresSafeArea(.keyboard, edges: typesText ? [] : .bottom)
-        // `RUMotion.settle` — « ce qui arrive à l'écran ». L'animation la plus vue de l'app
-        // était la seule à ne pas passer par le système de mouvement : un `.easeInOut(0.25)`
-        // écrit à la main, c'est-à-dire une courbe qui FREINE là où tout le reste de l'app se
-        // POSE. C'est exactement l'écart que `Motion.swift` existe pour supprimer.
-        //
-        // Et elle respecte « Réduire les animations », ce qu'elle ne faisait pas : la valeur
-        // saute, elle ne s'anime pas plus vite.
-        .animation(RUMotion.respecting(reduceMotion, RUMotion.settle), value: appState.screen)
+        // `HZMouvement.ressort` : « ce qui arrive à l'écran » se pose au lieu de freiner. Et il
+        // respecte « Réduire les animations » : la valeur saute, elle ne s'anime pas plus vite.
+        .animation(HZMouvement.respecter(reduceMotion, HZMouvement.ressort), value: appState.screen)
         // Un seul point d'émission pour toute l'app : chaque écran passe par ce `switch`, donc
         // rien ne peut être oublié ni compté deux fois. `onChange` plutôt qu'un `onAppear` par
         // écran, qui se serait redéclenché à chaque retour de feuille modale.
@@ -245,13 +100,6 @@ struct RootTabView: View {
             // pour qu'il ne puisse plus rien casser s'il revenait par un autre chemin.
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                             to: nil, from: nil, for: nil)
-            // Et le panneau de choix de discipline se referme. Il est posé dans la pile ci-dessus,
-            // pas dans la barre : sans ça il survivrait à la navigation et resterait ouvert
-            // au-dessus d'un autre écran. Ici plutôt que dans un second `onChange` sur la même
-            // valeur — deux abonnements à un même changement se lisent comme deux règles alors
-            // qu'il n'y en a qu'une : « on a changé d'écran, range ce qui appartenait au
-            // précédent. »
-            choixDisciplineOuvert = false
             Analytics.shared.track(.screenViewed, ["screen": .string(screen.rawValue)])
         }
         .sheet(isPresented: Binding(get: { appState.sessionDetailPresented }, set: { appState.sessionDetailPresented = $0 })) {

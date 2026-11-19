@@ -986,9 +986,9 @@ final class AppState {
     /// Le SEUL chemin pour changer d'écran, et c'est ce qui le rend animable une fois pour
     /// toutes. Les six autres affectations de `screen` passent par ici ; `private(set)` interdit
     /// qu'une septième se glisse ailleurs et reparte sans animation, ce qui ramènerait le trou
-    /// de trois images décrit dans `RUMotion.ecran`.
+    /// de trois images décrit dans `HZMouvement.ecran`.
     func go(_ screen: AppScreen) {
-        withAnimation(RUMotion.ecran) { self.screen = screen }
+        withAnimation(HZMouvement.ecran) { self.screen = screen }
     }
 
     /// `discipline` par défaut `.run` : les deux autres entrées — la carte de séance de

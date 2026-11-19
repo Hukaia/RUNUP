@@ -14,7 +14,7 @@ enum AppScreen: String, Hashable {
     case explorer
     /// Le fil — un écran à part entière, pas un mode du hub social.
     ///
-    /// Il n'a pas d'onglet : la quatrième place de la barre est aux Stats (voir `TabBarView`).
+    /// Il n'a pas d'onglet : la quatrième place de la barre est aux Stats (voir `HZBarreFlottante`).
     /// Il s'ouvre par sa carte en tête de la section Communauté du Profil, et compte comme une
     /// racine parce qu'il partage l'onglet du Profil.
     ///

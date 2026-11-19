@@ -550,10 +550,10 @@ struct StatsView: View {
             // Markdown illisible (une étoile orpheline dans une traduction) : la phrase passe
             // telle quelle, sans gras. Mieux vaut sans relief que pas de phrase.
             var repli = AttributedString(brut)
-            repli.foregroundColor = RUColor.text2
+            repli.foregroundColor = HZCouleur.secondaireSurClair
             return Text(repli)
         }
-        phrase.foregroundColor = RUColor.text2
+        phrase.foregroundColor = HZCouleur.secondaireSurClair
         let passagesForts = phrase.runs.filter {
             $0.inlinePresentationIntent?.contains(.stronglyEmphasized) == true
         }.map(\.range)

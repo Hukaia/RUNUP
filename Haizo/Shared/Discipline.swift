@@ -268,7 +268,7 @@ enum Discipline: String, Codable, Equatable, CaseIterable {
     ///
     /// LE CADRAN LIT CE DRAPEAU. Sans lui, ajouter la natation à l'énumération aurait posé un
     /// quatrième rond sous le bouton RUN, et ce rond aurait démarré une course qui ne mesure
-    /// rien. Voir `DisciplineDial`.
+    /// rien.
     var seDemarreDepuisLeTelephone: Bool {
         switch self {
         case .run, .bike, .trail: return true

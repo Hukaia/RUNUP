@@ -14,7 +14,7 @@ struct HaizoApp: App {
         WindowGroup {
             RootView()
                 .modelContainer(container)
-                .preferredColorScheme(RUColor.colorScheme)
+                .preferredColorScheme(ThemeStore.shared.isLightMode ? .light : .dark)
         }
     }
 }
@@ -75,7 +75,7 @@ private struct RootView: View {
 
     var body: some View {
         ZStack {
-            RUColor.bg.ignoresSafeArea()
+            HZCouleur.blanc.ignoresSafeArea()
             if let appState {
                 ContentRouterView()
                     .environment(appState)

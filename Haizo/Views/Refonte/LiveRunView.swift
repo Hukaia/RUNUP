@@ -49,7 +49,7 @@ struct LiveRunView: View {
                    value: vm?.gpsState)
         // Sans ça la transition du bandeau ne joue pas : une transition ne s'exécute que si la mutation
         // qui la déclenche est animée.
-        .animation(RUMotion.ecran, value: messageEcranVerrouilleVisible)
+        .animation(HZMouvement.ecran, value: messageEcranVerrouilleVisible)
         .onChange(of: vm?.gpsState) { _, state in
             // Un seul buzz quand le signal se dégrade, pas à chaque image où il reste dégradé : elle
             // court, elle ne regarde pas l'écran, et l'avertissement est inutile s'il arrive en silence.
@@ -209,7 +209,7 @@ struct LiveRunView: View {
             .scaleEffect(beating ? HZLive.grossissementDuPoint : HZLive.echelleAuRepos)
             .opacity(beating ? HZLive.opaciteDuPoint : HZLive.opaciteAuRepos)
             .animation(beating ? .easeInOut(duration: HZLive.dureeDuBattement).repeatForever(autoreverses: true)
-                               : RUMotion.digit,
+                               : HZMouvement.chiffre,
                        value: beating)
             .onAppear { pulse = true }
             .accessibilityHidden(true)
@@ -375,7 +375,7 @@ struct LiveRunView: View {
                         Text("Encore \(reste)")
                             .monospacedDigit()
                             .contentTransition(.numericText())
-                            .animation(RUMotion.respecting(reduceMotion, RUMotion.digit), value: reste)
+                            .animation(HZMouvement.respecter(reduceMotion, HZMouvement.chiffre), value: reste)
                     }
                 }
                 .hzTexte(.c13, .semi)
@@ -410,7 +410,7 @@ struct LiveRunView: View {
                         Capsule().fill(HZCouleur.accent)
                             .frame(width: geo.size.width * min(max(progress, 0), HZLive.progressionPleine))
                     }
-                    .animation(RUMotion.respecting(reduceMotion, RUMotion.glide), value: progress)
+                    .animation(HZMouvement.respecter(reduceMotion, HZMouvement.glisse), value: progress)
                 }
             }
             .clipShape(Capsule())
@@ -494,7 +494,7 @@ struct LiveRunView: View {
                     .padding(.leading, -HZLive.debordDeLAllure)
                     .monospacedDigit()
                     .contentTransition(.numericText())
-                    .animation(RUMotion.respecting(reduceMotion, RUMotion.digit), value: valeur)
+                    .animation(HZMouvement.respecter(reduceMotion, HZMouvement.chiffre), value: valeur)
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(nomParle)
@@ -544,7 +544,7 @@ struct LiveRunView: View {
                 .minimumScaleFactor(HZLive.reductionDeLAllure)
                 .monospacedDigit()
                 .contentTransition(.numericText())
-                .animation(RUMotion.respecting(reduceMotion, RUMotion.digit), value: valeur)
+                .animation(HZMouvement.respecter(reduceMotion, HZMouvement.chiffre), value: valeur)
             Text(libelle)
                 .hzTexte(.c13, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurSombre)
