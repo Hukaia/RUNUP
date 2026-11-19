@@ -24,7 +24,7 @@ struct EditTextPostSheet: View {
     var texteInitial: String
     /// 500 côté serveur pour les deux murs. Recopié ici pour que la limite se voie AVANT l'envoi
     /// plutôt que sous la forme d'un texte tronqué après coup.
-    var longueurMax: Int = 500
+    var longueurMax: Int = HZFeuillesDuFil.longueurDUnTexte
     var onSave: (String) async throws -> Void
 
     @State private var texte = ""
@@ -39,55 +39,50 @@ struct EditTextPostSheet: View {
         !propre.isEmpty && propre != texteInitial.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private var peutValider: Bool {
+        peutEnregistrer && propre.count <= longueurMax && !enCours
+    }
+
     var body: some View {
-        NavigationStack {
+        HZFeuilleModale(titre: titreDeLaFeuille) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    TextField("", text: $texte, axis: .vertical)
-                        .lineLimit(4...12)
-                        .font(RUFont.sans(.emphasis))
-                        .foregroundColor(RUColor.textPrimary)
-                        .padding(12)
-                        .background(RUColor.card2, in: RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous))
-                        .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous)
-                            .stroke(RUColor.line, lineWidth: RUSpacing.hairline))
+                VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
+                    // Une seule fois : `onAppear` repart à chaque retour de premier plan, et prendre un
+                    // appel au milieu d'une correction effacerait ce qui vient d'être tapé.
+                    HZChampDeTexte(titre: String(localized: "Message"), invite: "", texte: $texte,
+                                   lignes: HZFeuillesDuFil.lignesDUneAnnonce)
+                        .onAppear {
+                            guard !prerempli else { return }
+                            prerempli = true
+                            texte = texteInitial
+                        }
 
                     // Le compteur n'apparaît qu'à l'approche de la borne. Affiché en permanence,
                     // il transforme un champ libre en exercice de concision pour des messages
                     // qui font trois lignes.
-                    if propre.count > longueurMax - 80 {
+                    if propre.count > longueurMax - HZFeuillesDuFil.margeDuCompteur {
                         Text(verbatim: "\(propre.count) / \(longueurMax)")
-                            .font(RUFont.mono(.small))
-                            .foregroundColor(propre.count > longueurMax ? RUColor.rose : RUColor.text3)
+                            .hzTexte(.c13, .gras, tabulaire: true)
+                            .foregroundStyle(propre.count > longueurMax ? HZCouleur.encre : HZCouleur.secondaireSurClair)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
 
                     if let errorMessage {
-                        Text(errorMessage).font(RUFont.sans(.body)).foregroundColor(RUColor.rose)
-                            .fixedSize(horizontal: false, vertical: true)
+                        HZAvisDeFeuille(texte: errorMessage)
                     }
                 }
-                .padding(RUSpacing.pagePadding)
+                .padding(.horizontal, HZEspace.marge)
             }
-            .background(RUColor.pageBackground)
-            .navigationTitle(titreDeLaFeuille)
-            .navigationBarTitleDisplayMode(.inline)
-            // Une seule fois : `onAppear` repart à chaque retour de premier plan, et prendre un
-            // appel au milieu d'une correction effacerait ce qui vient d'être tapé.
-            .onAppear {
-                guard !prerempli else { return }
-                prerempli = true
-                texte = texteInitial
-            }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Annuler") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Enregistrer") { Task { await enregistrer() } }
-                        .disabled(!peutEnregistrer || propre.count > longueurMax || enCours)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                HZBasDeFeuille {
+                    HZBoutonPilule(libelle: String(localized: "Enregistrer"), etendu: true) {
+                        Task { await enregistrer() }
+                    }
+                    .opacity(peutValider ? HZHub.opaciteNormale : HZHub.opaciteEteinte)
+                    .disabled(!peutValider)
                 }
             }
         }
-        .preferredColorScheme(RUColor.colorScheme)
     }
 
     private func enregistrer() async {
@@ -97,7 +92,7 @@ struct EditTextPostSheet: View {
             try await onSave(propre)
             Haptics.success()
             dismiss()
-        } catch ClubServiceError.badResponse(422, _) {
+        } catch ClubServiceError.badResponse(let code, _) where code == HZHub.refuse {
             errorMessage = String(localized: "Ce texte n'est pas autorisé — reformule.")
         } catch {
             errorMessage = String(localized: "Impossible d'enregistrer, réessaie.")

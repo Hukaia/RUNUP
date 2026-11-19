@@ -28,21 +28,19 @@ struct RouteDetailSheet: View {
     private var current: SharedRoute { detailed ?? route }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                photo
-                map
-                title
-                stats
-                if let notes = current.notes, !notes.isEmpty { notesCard(notes) }
-                actions
-                ceQuOnEnSait
-                reportButton
+        HZFeuilleModale(titre: current.name) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: HZEspace.entreSections) {
+                    carte
+                    mesures
+                    if let notes = current.notes, !notes.isEmpty { notesCard(notes) }
+                    actions
+                    ceQuOnEnSait
+                    reportButton
+                }
+                .padding(.horizontal, HZEspace.marge)
             }
-            // La marge de page de l'app, et non un nombre à soi. Voir `RUSpacing.pagePadding`.
-            .padding(RUSpacing.pagePadding)
         }
-        .background(RUColor.pageBackground)
         .task {
             await loadFullTrace()
             await chargerLesCommentaires()
@@ -58,17 +56,31 @@ struct RouteDetailSheet: View {
 
     // MARK: - Morceaux
 
+    /// La carte d'abord — c'est elle qu'on voit quand la feuille n'est qu'à demi ouverte — puis
+    /// la photo du coin, et qui a partagé.
+    private var carte: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
+            map
+            photo
+            if let author = current.authorName {
+                Text(String(localized: "Partagé par \(author)"))
+                    .hzTexte(.c14, .medium)
+                    .foregroundStyle(HZCouleur.secondaireSurClair)
+            }
+        }
+    }
+
     @ViewBuilder
     private var photo: some View {
         if let photoUrl = current.photoUrl, let url = URL(string: photoUrl) {
             AsyncImage(url: url) { image in
                 image.resizable().scaledToFill()
             } placeholder: {
-                RUColor.card2
+                HZCouleur.surfaceClaire
             }
-            .frame(height: 200)
+            .frame(height: HZFeuillesDuFil.hauteurDeLaPhotoDeFiche)
             .frame(maxWidth: .infinity)
-            .clipShape(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
             .accessibilityLabel(Text("Photo du parcours"))
         }
     }
@@ -78,91 +90,67 @@ struct RouteDetailSheet: View {
         return Map(initialPosition: .region(regionFitting(coordinates))) {
             if coordinates.count > 1 {
                 MapPolyline(coordinates: coordinates)
-                    .stroke(RUColor.rose, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+                    .stroke(HZCouleur.accent,
+                            style: StrokeStyle(lineWidth: HZHub.traitDeLaCarte, lineCap: .round, lineJoin: .round))
             }
         }
-        .frame(height: 220)
-        .clipShape(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+        .frame(height: HZFeuillesDuFil.hauteurDeLaCarte)
+        .clipShape(RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
         .allowsHitTesting(false)
         .accessibilityLabel(Text("Tracé de l'itinéraire"))
     }
 
-    private var title: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(current.name)
-                .font(RUFont.display(.title))
-                .foregroundColor(RUColor.textPrimary)
-            if let author = current.authorName {
-                Text(String(localized: "Partagé par \(author)"))
-                    .font(RUFont.sans(.label))
-                    .foregroundColor(RUColor.text3)
-            }
-        }
-    }
+    private let colonnes = Array(repeating: GridItem(.flexible(), spacing: HZEspace.entreTuiles, alignment: .top),
+                                 count: HZFeuillesDuFil.colonnesDeMesures)
 
-    private var stats: some View {
-        HStack(spacing: 10) {
+    private var mesures: some View {
+        LazyVGrid(columns: colonnes, spacing: HZEspace.entreTuiles) {
             if let km = current.distanceKm {
-                statTile(String(format: "%.1f", locale: Locale.current, km), "km")
+                HZTuileChiffre(libelle: String(localized: "km"),
+                               valeur: String(format: "%.1f", locale: Locale.current, km), format: .resume)
             }
             if let elevation = current.elevationGainM, elevation > 0 {
-                statTile("\(elevation)", String(localized: "D+"))
+                HZTuileChiffre(libelle: String(localized: "D+"), valeur: "\(elevation)", format: .resume)
             }
             // Le temps de la personne qui a publié, pas un objectif : le libellé le dit, sinon la
             // carte d'entraide devient un classement déguisé.
             if let seconds = current.durationSeconds, seconds > 0 {
-                statTile(PaceModel.formatDuration(Double(seconds)), String(localized: "Son temps"))
+                HZTuileChiffre(libelle: String(localized: "Son temps"),
+                               valeur: PaceModel.formatDuration(Double(seconds)), format: .resume)
             }
-            statTile("\(current.savesCount)", String(localized: "Gardé"))
+            HZTuileChiffre(libelle: String(localized: "Gardé"), valeur: "\(current.savesCount)", format: .resume)
         }
-    }
-
-    private func statTile(_ value: String, _ label: String) -> some View {
-        VStack(spacing: 2) {
-            Text(value).font(RUFont.display(.title)).foregroundColor(RUColor.textPrimary)
-            Text(label).font(RUFont.sans(.micro, weight: .semibold)).tracking(1).foregroundColor(RUColor.text3)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 10)
-        .background(RUColor.card2, in: RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous))
     }
 
     private func notesCard(_ notes: String) -> some View {
-        Text(notes)
-            .font(RUFont.sans(.emphasis))
-            .foregroundColor(RUColor.text2)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(RUSpacing.cardPadding)
-            .background(RUColor.card, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous)
-                .stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
+        HZPlaque {
+            Text(notes)
+                .hzParagraphe(.c15, .medium, interligne: HZBandeauDuCoach.interligne)
+                .foregroundStyle(HZCouleur.encre)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private var actions: some View {
-        VStack(spacing: 10) {
-            Button(current.saved ? String(localized: "RETIRER DE MES ITINÉRAIRES")
-                                 : String(localized: "GARDER CET ITINÉRAIRE")) {
+        VStack(spacing: HZEspace.entreCommandes) {
+            HZBoutonPilule(libelle: current.saved ? String(localized: "Retirer de mes itinéraires")
+                                                  : String(localized: "Garder cet itinéraire"),
+                           etendu: true) {
                 toggleSaved()
             }
-            .buttonStyle(PrimaryButtonStyle())
+            .opacity(isSaving ? HZHub.opaciteEteinte : HZHub.opaciteNormale)
             .disabled(isSaving)
-            .opacity(isSaving ? 0.5 : 1)
 
             // Le départ affiché est celui du tracé rogné, donc à ~300 m de chez son autrice. C'est
             // exactement ce qu'il faut ouvrir dans Plans : le point où l'itinéraire commence pour
             // qui le découvre, pas le pas de porte de quelqu'un.
-            Button {
+            HZBoutonPilule(libelle: String(localized: "M'y rendre"), fond: HZCouleur.surfaceClaire,
+                           couleur: HZCouleur.encre, etendu: true) {
                 let placemark = MKPlacemark(coordinate: current.startCoordinate)
                 let item = MKMapItem(placemark: placemark)
                 item.name = current.name
                 item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking])
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "location.fill")
-                    Text("M'Y RENDRE")
-                }
             }
-            .buttonStyle(SecondaryButtonStyle())
         }
     }
 
@@ -178,75 +166,49 @@ struct RouteDetailSheet: View {
     /// Le titre n'est pas « Commentaires » : on ne vient pas commenter un parcours, on vient dire
     /// ce qu'on en sait. Le mot change ce qu'on écrit.
     private var ceQuOnEnSait: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            RUCardHeader(icon: "text.bubble", title: "Ce qu'on en sait")
+        VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+            HZTitreDeSection(titre: String(localized: "Ce qu'on en sait"))
 
             if commentaires.isEmpty {
-                RUEmpty(forme: .ligne,
-                        message: String(localized: "Personne n'a encore rien dit sur ce parcours."))
+                HZPhrase(texte: String(localized: "Personne n'a encore rien dit sur ce parcours."))
             } else {
-                ForEach(commentaires) { commentaire in
-                    HStack(alignment: .top, spacing: 10) {
-                        Button(action: { appState.ouvrirLeProfil(commentaire.userId) }) {
-                            AvatarView(urlString: commentaire.avatarUrl,
-                                       base64DataURI: commentaire.avatarBase64,
-                                       initial: String(commentaire.name.prefix(1)),
-                                       size: 28, seed: commentaire.userId)
-                        }
-                        .buttonStyle(PressableStyle())
-                        .accessibilityLabel(String(localized: "Voir le profil de \(commentaire.name)"))
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            HStack(spacing: 6) {
-                                Text(commentaire.nomComplet)
-                                    .font(RUFont.sans(.body, weight: .semibold))
-                                    .foregroundColor(RUColor.textPrimary)
-                                Text(commentaire.createdAt.relativeDescription)
-                                    .font(RUFont.sans(.micro))
-                                    .foregroundColor(RUColor.text3)
-                            }
-                            Text(commentaire.text)
-                                .font(RUFont.sans(.body))
-                                .foregroundColor(RUColor.text2)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        Spacer(minLength: 0)
-                    }
-                    .contextMenu {
-                        Button("Signaler ce commentaire") {
-                            cibleSignalee = ReportTarget(targetType: "route_comment",
-                                                         targetId: commentaire.id,
-                                                         displayName: commentaire.nomComplet)
-                            reportReason = ""
-                            reportPresented = true
-                        }
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(commentaires) { commentaire in
+                        ligneDeCommentaire(commentaire)
                     }
                 }
             }
 
-            HStack(alignment: .bottom, spacing: 10) {
-                TextField("Écris ce que tu sais de ce parcours…", text: $brouillon, axis: .vertical)
-                    .textFieldStyle(.plain)
-                    .font(RUFont.sans(.label))
-                    .foregroundColor(RUColor.textPrimary)
-                    .lineLimit(1...4)
-                    .padding(.horizontal, 14).padding(.vertical, 10)
-                    .background(RUColor.card, in: RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous)
-                        .stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
-
-                Button(action: { Task { await envoyer() } }) {
-                    Image(systemName: "arrow.up.circle.fill")
-                        .font(RUFont.icone(.hero))
-                        .foregroundStyle(brouillon.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                                         ? RUColor.text3 : RUColor.rose)
-                }
-                .buttonStyle(PressableStyle())
-                .disabled(brouillon.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || envoiEnCours)
-                .accessibilityLabel("Envoyer")
+            HZSaisie(texte: $brouillon, invite: String(localized: "Écris ce que tu sais de ce parcours…"),
+                     nomDuBouton: String(localized: "Envoyer"), peutEnvoyer: peutEnvoyer) {
+                if peutEnvoyer { Task { await envoyer() } }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var peutEnvoyer: Bool {
+        !brouillon.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !envoiEnCours
+    }
+
+    private func ligneDeCommentaire(_ commentaire: CommentItem) -> some View {
+        HZLigneDeCommentaire(
+            nom: commentaire.nomComplet,
+            date: commentaire.createdAt.relativeDescription,
+            texte: commentaire.text,
+            photo: HZPhotoDePersonne(urlString: commentaire.avatarUrl, base64DataURI: commentaire.avatarBase64,
+                                     initiales: String(commentaire.name.prefix(1))),
+            nomDuProfil: String(localized: "Voir le profil de \(commentaire.name)"),
+            ouvrir: { appState.ouvrirLeProfil(commentaire.userId) })
+        .contextMenu {
+            Button("Signaler ce commentaire") {
+                cibleSignalee = ReportTarget(targetType: "route_comment",
+                                             targetId: commentaire.id,
+                                             displayName: commentaire.nomComplet)
+                reportReason = ""
+                reportPresented = true
+            }
+        }
     }
 
     private func chargerLesCommentaires() async {
@@ -263,7 +225,7 @@ struct RouteDetailSheet: View {
             brouillon = ""
             await chargerLesCommentaires()
             Haptics.impact(.light)
-        } catch ClubServiceError.badResponse(422, _) {
+        } catch ClubServiceError.badResponse(let code, _) where code == HZHub.refuse {
             appState.toast(String(localized: "Ce texte a été refusé par le filtre de contenu. Reformule-le."))
         } catch {
             appState.toast(String(localized: "Impossible de publier — \(PanneReseau.motif(pour: error))."))
@@ -272,10 +234,14 @@ struct RouteDetailSheet: View {
     }
 
     private var reportButton: some View {
-        Button("Signaler cet itinéraire") { reportPresented = true }
-            .font(RUFont.sans(.body))
-            .foregroundColor(RUColor.text3)
-            .frame(maxWidth: .infinity, minHeight: 44)
+        Button { reportPresented = true } label: {
+            Text("Signaler cet itinéraire")
+                .hzTexte(.c14, .semi)
+                .foregroundStyle(HZCouleur.secondaireSurClair)
+                .frame(maxWidth: .infinity, minHeight: HZBoutonRond.zoneTactile)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Actions
@@ -284,16 +250,17 @@ struct RouteDetailSheet: View {
     private func regionFitting(_ coordinates: [CLLocationCoordinate2D]) -> MKCoordinateRegion {
         guard !coordinates.isEmpty else {
             return MKCoordinateRegion(center: current.startCoordinate,
-                                      span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))
+                                      span: MKCoordinateSpan(latitudeDelta: HZFeuillesDuFil.etendueSansTrace,
+                                                         longitudeDelta: HZFeuillesDuFil.etendueSansTrace))
         }
         let lats = coordinates.map(\.latitude)
         let lngs = coordinates.map(\.longitude)
         let minLat = lats.min()!, maxLat = lats.max()!
         let minLng = lngs.min()!, maxLng = lngs.max()!
         return MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2, longitude: (minLng + maxLng) / 2),
-            span: MKCoordinateSpan(latitudeDelta: max((maxLat - minLat) * 1.3, 0.005),
-                                   longitudeDelta: max((maxLng - minLng) * 1.3, 0.005))
+            center: CLLocationCoordinate2D(latitude: (minLat + maxLat) / HZHub.moitieDeLEtendue, longitude: (minLng + maxLng) / HZHub.moitieDeLEtendue),
+            span: MKCoordinateSpan(latitudeDelta: max((maxLat - minLat) * HZHub.margeDuCadrage, HZFeuillesDuFil.etendueMinimale),
+                                   longitudeDelta: max((maxLng - minLng) * HZHub.margeDuCadrage, HZFeuillesDuFil.etendueMinimale))
         )
     }
 

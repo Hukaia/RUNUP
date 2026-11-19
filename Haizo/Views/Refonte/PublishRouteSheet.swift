@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreLocation
 import PhotosUI
+import MapKit
 
 /// Publier une sortie déjà courue comme itinéraire, pour quelqu'un qui débarque dans la ville.
 ///
@@ -42,75 +43,38 @@ struct PublishRouteSheet: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                header
+        HZFeuilleModale(titre: String(localized: "Partager cet itinéraire")) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: HZEspace.entreSections) {
+                    HZPhrase(texte: String(localized: "Quelqu'un qui arrive dans le coin verra ton parcours et pourra le suivre."))
 
-                if let payload {
-                    trimmedPreview(payload.points)
-                    privacyNote
-                    photoSection
-                } else {
-                    tooShortNote
+                    if let payload {
+                        trimmedPreview(payload.points)
+                        privacyNote
+                        photoSection
+                    } else {
+                        tooShortNote
+                    }
+
+                    champs
+
+                    if let errorMessage { HZAvisDeFeuille(texte: errorMessage) }
                 }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Nom de l'itinéraire")
-                        .font(RUFont.sans(.small, weight: .semibold))
-                        .tracking(1)
-                        .foregroundColor(RUColor.text3)
-                    TextField(placeholderName, text: $name)
-                        .font(RUFont.sans(.emphasis))
-                        .foregroundColor(RUColor.textPrimary)
-                        .padding(12)
-                        .background(RUColor.card2, in: RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous))
-                        .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous)
-                            .stroke(RUColor.line, lineWidth: RUSpacing.hairline))
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Ce qu'il faut savoir (optionnel)")
-                        .font(RUFont.sans(.small, weight: .semibold))
-                        .tracking(1)
-                        .foregroundColor(RUColor.text3)
-                    TextField("Plat, le long du fleuve. Ça grimpe au km 3.", text: $notes, axis: .vertical)
-                        .lineLimit(2...4)
-                        .font(RUFont.sans(.emphasis))
-                        .foregroundColor(RUColor.textPrimary)
-                        .padding(12)
-                        .background(RUColor.card2, in: RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous))
-                        .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous)
-                            .stroke(RUColor.line, lineWidth: RUSpacing.hairline))
-                }
-
-                if let errorMessage {
-                    Text(errorMessage)
-                        .font(RUFont.sans(.label))
-                        .foregroundColor(RUColor.rose)
-                }
-
-                // SEUL LE GESTE PRINCIPAL MONTE DANS LA BARRE, et « Annuler » reste ici.
-                //
-                // Les deux épinglés auraient fait une barre de cent points — un quart de la
-                // feuille occupé en permanence pour proposer deux fois de partir. Et refermer
-                // n'a pas besoin d'être à portée constante : la feuille se tire vers le bas,
-                // son indicateur de glissement est affiché (voir `haizoSheetStyle`), et ce
-                // bouton-ci reste pour qui descend jusqu'au bout.
-                Button("Annuler") { dismiss() }
-                    .buttonStyle(SecondaryButtonStyle())
+                .padding(.horizontal, HZEspace.marge)
             }
-            // La marge de page de l'app, et non un nombre à soi. Voir `RUSpacing.pagePadding`.
-            .padding(RUSpacing.pagePadding)
-        }
-        .background(RUColor.pageBackground)
-        // Le geste pour lequel cette feuille est ouverte, épinglé — voir `ruBarreDuBas`.
-        .ruBarreDuBas {
-            Button(isPublishing ? String(localized: "PUBLICATION…") : String(localized: "PUBLIER L'ITINÉRAIRE")) {
-                publish()
+            // Le geste pour lequel cette feuille est ouverte, épinglé.
+            //
+            // SEUL LE GESTE PRINCIPAL MONTE DANS LE BAS, et « Annuler » n'a plus de bouton : la
+            // croix de la feuille le remplace.
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                HZBasDeFeuille {
+                    HZBoutonPilule(libelle: isPublishing ? String(localized: "Publication…")
+                                                         : String(localized: "Publier l'itinéraire"),
+                                   etendu: true) { publish() }
+                        .opacity(canPublish ? HZHub.opaciteNormale : HZHub.opaciteEteinte)
+                        .disabled(!canPublish)
+                }
             }
-            .buttonStyle(PrimaryButtonStyle())
-            .disabled(!canPublish)
-            .opacity(canPublish ? 1 : 0.5)
         }
         .task { await resolveLocality() }
         .onAppear { if name.isEmpty { name = placeholderName } }
@@ -118,71 +82,71 @@ struct PublishRouteSheet: View {
 
     // MARK: - Morceaux
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Partager cet itinéraire")
-                .font(RUFont.display(.figure))
-                .foregroundColor(RUColor.textPrimary)
-            Text("Quelqu'un qui arrive dans le coin verra ton parcours et pourra le suivre.")
-                .font(RUFont.sans(.emphasis))
-                .foregroundColor(RUColor.text2)
+    private var champs: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
+            HZChampDeTexte(titre: String(localized: "Nom de l'itinéraire"), invite: placeholderName,
+                           texte: $name)
+            HZChampDeTexte(titre: String(localized: "Ce qu'il faut savoir (optionnel)"),
+                           invite: String(localized: "Plat, le long du fleuve. Ça grimpe au km 3."),
+                           texte: $notes, lignes: HZFeuillesDuFil.lignesDesNotes)
         }
     }
 
     private func trimmedPreview(_ points: [RunRecord.RoutePoint]) -> some View {
-        RouteThumbnail(route: points, lineWidth: 3)
-            .frame(height: 160)
-            .frame(maxWidth: .infinity)
-            .padding(RUSpacing.cardPadding)
-            .background(RUColor.card, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous)
-                .stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
-            .accessibilityLabel(Text("Aperçu du tracé qui sera publié"))
+        let coordonnees = points.map { CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lng) }
+        return Map(initialPosition: .region(HZHub.cadre(de: coordonnees) ?? MKCoordinateRegion())) {
+            if coordonnees.count > 1 {
+                MapPolyline(coordinates: coordonnees)
+                    .stroke(HZCouleur.accent,
+                            style: StrokeStyle(lineWidth: HZHub.traitDeLaCarte, lineCap: .round, lineJoin: .round))
+            }
+        }
+        .frame(height: HZFeuillesDuFil.hauteurDeLApercu)
+        .frame(maxWidth: .infinity)
+        .clipShape(RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
+        .allowsHitTesting(false)
+        .accessibilityLabel(Text("Aperçu du tracé qui sera publié"))
     }
 
     /// La photo est ce qui donne envie d'y aller ; le tracé dit seulement où c'est. Optionnelle,
     /// et présentée comme telle : la rendre obligatoire ferait abandonner la moitié des
     /// publications sur une sortie faite de nuit ou sous la pluie.
     private var photoSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
             Text("Une photo du coin (optionnel)")
-                .font(RUFont.sans(.small, weight: .semibold))
-                .tracking(1)
-                .foregroundColor(RUColor.text3)
+                .hzTexte(.c13, .semi)
+                .foregroundStyle(HZCouleur.secondaireSurClair)
 
             if let photoPreview {
                 ZStack(alignment: .topTrailing) {
                     Image(uiImage: photoPreview)
                         .resizable()
                         .scaledToFill()
-                        .frame(height: 150)
+                        .frame(height: HZFeuillesDuFil.hauteurDeLaPhotoAjoutee)
                         .frame(maxWidth: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
-                    Button {
+                        .clipShape(RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
+                    HZBoutonRond(dessin: .fermer, nom: String(localized: "Retirer la photo"), diametre: .outil,
+                                 cote: HZHub.coteDeLaCroix, trait: HZHub.traitDeLaCroix) {
                         self.photoPreview = nil
                         self.photoDataURI = nil
                         self.photoItem = nil
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(RUFont.icone(.xlarge))
-                            .foregroundStyle(.white, .black.opacity(0.45))
-                            .padding(8)
                     }
-                    .accessibilityLabel(Text("Retirer la photo"))
+                    .padding(HZEspace.entrePilules)
                 }
             } else {
                 PhotosPicker(selection: $photoItem, matching: .images) {
-                    HStack(spacing: 8) {
-                        if chargementPhoto {
-                            ProgressView().controlSize(.small).tint(RUColor.textPrimary)
-                            Text("PRÉPARATION…")
-                        } else {
-                            Image(systemName: "photo.on.rectangle")
-                            Text("AJOUTER UNE PHOTO")
-                        }
+                    HStack(spacing: HZEspace.entrePilules) {
+                        if chargementPhoto { ProgressView().controlSize(.small).tint(HZCouleur.encre) }
+                        Text(chargementPhoto ? String(localized: "Préparation…")
+                                             : String(localized: "Ajouter une photo"))
+                            .hzTexte(HZHauteurDeBouton.moyenne.corps, .gras)
+                            .foregroundStyle(HZCouleur.encre)
                     }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: HZHauteurDeBouton.moyenne.rawValue)
+                    .background(HZCouleur.surfaceClaire, in: Capsule())
+                    .contentShape(Capsule())
                 }
-                .buttonStyle(SecondaryButtonStyle())
                 // Choisir une seconde photo pendant que la première se prépare écraserait l'état
                 // en cours de route.
                 .disabled(chargementPhoto)
@@ -192,31 +156,17 @@ struct PublishRouteSheet: View {
     }
 
     private var privacyNote: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: "lock.shield")
-                .foregroundColor(RUColor.rose)
-            // Le chiffre est repris de la constante, pas recopié : si le rognage change un jour,
-            // cette phrase ne peut pas devenir un mensonge.
-            Text(verbatim: Accord.selon(
-                f: String(localized: "Les \(Int(RouteGeometry.sharingTrimMeters)) premiers et derniers mètres sont retirés avant l'envoi : personne ne verra d'où tu es partie ni où tu es rentrée. C'est le tracé ci-dessus qui sera publié, pas celui que tu as couru."),
-                m: String(localized: "Les \(Int(RouteGeometry.sharingTrimMeters)) premiers et derniers mètres sont retirés avant l'envoi : personne ne verra d'où tu es parti ni où tu es rentré. C'est le tracé ci-dessus qui sera publié, pas celui que tu as couru.")))
-                .font(RUFont.sans(.body))
-                .foregroundColor(RUColor.text2)
-        }
-        .padding(12)
-        .background(RUColor.card2, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+        // Le chiffre est repris de la constante, pas recopié : si le rognage change un jour,
+        // cette phrase ne peut pas devenir un mensonge.
+        HZAvisDeFeuille(texte: Accord.selon(
+            f: String(localized: "Les \(Int(RouteGeometry.sharingTrimMeters)) premiers et derniers mètres sont retirés avant l'envoi : personne ne verra d'où tu es partie ni où tu es rentrée. C'est le tracé ci-dessus qui sera publié, pas celui que tu as couru."),
+            m: String(localized: "Les \(Int(RouteGeometry.sharingTrimMeters)) premiers et derniers mètres sont retirés avant l'envoi : personne ne verra d'où tu es parti ni où tu es rentré. C'est le tracé ci-dessus qui sera publié, pas celui que tu as couru.")),
+                        graisse: .medium)
     }
 
     private var tooShortNote: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: "exclamationmark.triangle")
-                .foregroundColor(RUColor.rose)
-            Text("Cette sortie est trop courte pour être partagée : une fois les extrémités retirées, il ne resterait pas assez de tracé pour être utile.")
-                .font(RUFont.sans(.body))
-                .foregroundColor(RUColor.text2)
-        }
-        .padding(12)
-        .background(RUColor.card2, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
+        HZAvisDeFeuille(texte: String(localized: "Cette sortie est trop courte pour être partagée : une fois les extrémités retirées, il ne resterait pas assez de tracé pour être utile."),
+                        graisse: .medium)
     }
 
     /// « Boucle de 8 km » — un nom déjà rempli, que l'utilisatrice n'a qu'à corriger. Un champ vide
@@ -267,8 +217,8 @@ struct PublishRouteSheet: View {
             errorMessage = String(localized: "Impossible de lire cette photo. Choisis-en une autre.")
             return
         }
-        let resized = image.resized(maxDimension: 1080)
-        guard let jpeg = resized.jpegData(compressionQuality: 0.6) else {
+        let resized = image.resized(maxDimension: HZFeuillesDuFil.coteMaxDUnePhoto)
+        guard let jpeg = resized.jpegData(compressionQuality: HZFeuillesDuFil.qualiteDUnePhoto) else {
             errorMessage = String(localized: "Impossible de préparer cette photo. Choisis-en une autre.")
             return
         }
