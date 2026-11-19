@@ -25,7 +25,6 @@ final class SymbolesTests: XCTestCase {
     /// Tenue à jour par `ci_scripts/check_symboles.py`, qui refuse la construction si elle
     /// s'écarte des `systemName:` du code — dans un sens comme dans l'autre.
     static let tous: [String] = [
-        "apple.logo",
         "applewatch",
         "arrow.clockwise",
         "arrow.down.doc",
@@ -34,8 +33,6 @@ final class SymbolesTests: XCTestCase {
         "arrow.triangle.swap",
         "arrow.up.circle.fill",
         "arrow.up.left.and.arrow.down.right",
-        "arrow.uturn.backward.circle",
-        "bell",
         "bell.slash",
         "bicycle",
         "bolt.fill",
@@ -44,8 +41,6 @@ final class SymbolesTests: XCTestCase {
         "calendar.badge.clock",
         "camera.fill",
         "chart.line.uptrend.xyaxis",
-        "checkmark",
-        "checkmark.circle",
         "chevron.left",
         "chevron.right",
         "chevron.up.chevron.down",
@@ -78,7 +73,6 @@ final class SymbolesTests: XCTestCase {
         "lock.shield",
         "lock.slash",
         "map",
-        "minus",
         "moon.zzz.fill",
         "mountain.2.fill",
         "pause.circle",
@@ -91,7 +85,6 @@ final class SymbolesTests: XCTestCase {
         "photo.on.rectangle",
         "play.fill",
         "play.rectangle.fill",
-        "plus",
         "rectangle.portrait.and.arrow.right",
         "scalemass",
         "shoeprints.fill",
@@ -107,7 +100,6 @@ final class SymbolesTests: XCTestCase {
         "trophy.fill",
         "waveform",
         "xmark",
-        "xmark.circle",
         "xmark.circle.fill",
     ]
 

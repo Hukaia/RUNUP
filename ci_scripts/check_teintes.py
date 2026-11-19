@@ -156,8 +156,6 @@ DIRECTES_AUTORISEES = {
     "Haizo/Views/Home/Sheets/MoveSessionSheet.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Onboarding/RaceDetailsStepView.swift": (2, AVERTISSEMENT + " Un dénivelé de "
                                                         "course qu'on n'a pas renseigné."),
-    "Haizo/Views/Onboarding/RunningDaysStepView.swift": (1, AVERTISSEMENT + " Moins de jours "
-                                                         "cochés que le minimum de l'objectif."),
     "Haizo/Views/Race/RacePageView.swift": (3, AVERTISSEMENT + " Un bandeau d'alerte de course, "
                                             "plus la teinte d'« état confirmé » déjà déclarée "
                                             "en haut de ce fichier."),
