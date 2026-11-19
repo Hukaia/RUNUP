@@ -67,6 +67,10 @@ struct HZAction: View {
     var pleine: Bool = false
     var cote: CGFloat = 20
     var trait: CGFloat = 2
+    /// Sur l'accent, la pastille est un voile noir et le libellé l'encre de l'accent ; sur le noir, une
+    /// surface sombre et du blanc.
+    var fondDeLaPastille: Color = HZCouleur.voile
+    var encreDuLibelle: Color = HZCouleur.encreSurAccent
     let action: () -> Void
 
     var body: some View {
@@ -75,10 +79,10 @@ struct HZAction: View {
                 HZIcone(dessin: dessin, cote: cote, trait: trait,
                         couleur: pleine ? HZCouleur.noir : HZCouleur.blanc)
                     .frame(width: HZDiametre.action.rawValue, height: HZDiametre.action.rawValue)
-                    .background(pleine ? HZCouleur.blanc : HZCouleur.voile, in: Circle())
+                    .background(pleine ? HZCouleur.blanc : fondDeLaPastille, in: Circle())
                 Text(libelle)
                     .hzTexte(.c13, .gras)
-                    .foregroundStyle(HZCouleur.encreSurAccent)
+                    .foregroundStyle(encreDuLibelle)
                     .lineLimit(1)
                     .minimumScaleFactor(HZAction.retraitDuLibelle)
             }
@@ -216,6 +220,7 @@ struct HZAvatar: View {
 /// champ : on n'y écrit pas, on la touche.
 struct HZAmorceDeRecherche: View {
     let invite: String
+    var fond: Color = HZCouleur.voile
     let action: () -> Void
 
     var body: some View {
@@ -231,7 +236,7 @@ struct HZAmorceDeRecherche: View {
             }
             .padding(.horizontal, HZAmorceDeRecherche.marge)
             .frame(height: HZDiametre.commande.rawValue)
-            .background(HZCouleur.voile, in: Capsule())
+            .background(fond, in: Capsule())
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)

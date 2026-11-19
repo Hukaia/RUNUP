@@ -188,18 +188,22 @@ struct PlanSemaineView: View {
         var encre: Color
     }
 
-    /// Une couleur par jour, comme le canvas : le noir doux d'un repos, l'accent d'aujourd'hui, et
-    /// les trois teintes d'intensité pour l'endurance, la récupération et la sortie longue. Le
-    /// seuil, le fractionné et le renforcement n'ont pas de teinte dans le canvas : ils prennent
-    /// l'accent, comme sur l'accueil. C'est une hypothèse, écrite dans PROGRESS.md.
+    /// Une couleur par jour, comme le canvas : le noir doux d'un repos, aujourd'hui avec la couleur de sa
+    /// séance (son point est blanc), et les trois teintes d'intensité pour l'endurance, la récupération et la
+    /// sortie longue. Le seuil, le fractionné et le renforcement n'ont pas de teinte : ils prennent le
+    /// noir doux. Le rose n'est plus une surface, c'est une touche (décision du 19 novembre).
     private func couleurs(de jour: PlanSemaineModele.Jour) -> Couleurs {
-        let accent = Couleurs(fond: HZCouleur.accent, point: HZCouleur.accent, encre: HZCouleur.encreSurAccent)
-        if jour.etat == .aujourdhui { return accent }
+        let base: Couleurs
         if jour.estUnRepos {
-            return Couleurs(fond: HZCouleur.surfaceSombre, point: HZCouleur.pointEteint, encre: HZCouleur.blanc)
+            base = Couleurs(fond: HZCouleur.surfaceSombre, point: HZCouleur.pointEteint, encre: HZCouleur.blanc)
+        } else if let intensite = AccueilModele.intensite(de: jour.famille) {
+            base = Couleurs(fond: intensite.couleur, point: intensite.point, encre: HZCouleur.blanc)
+        } else {
+            base = Couleurs(fond: HZCouleur.surfaceSombre, point: HZCouleur.secondaireSurSombre, encre: HZCouleur.blanc)
         }
-        guard let intensite = AccueilModele.intensite(de: jour.famille) else { return accent }
-        return Couleurs(fond: intensite.couleur, point: intensite.point, encre: HZCouleur.blanc)
+        // Aujourd'hui garde la couleur de sa séance ; seul son point passe au blanc.
+        guard jour.etat == .aujourdhui else { return base }
+        return Couleurs(fond: base.fond, point: HZCouleur.blanc, encre: base.encre)
     }
 
     /// Les appelants ont déjà tenu compte du verrou : la rangée est éteinte quand le plan l'est, et

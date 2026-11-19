@@ -309,8 +309,8 @@ struct StatsView: View {
             HStack(spacing: HZEspace.entreTuiles) {
                 HZTuile(libelle: String(localized: "Plus longue, km"),
                         valeur: longestRun.map { String(format: "%.1f", locale: Locale.current, $0.distanceKm) } ?? "—",
-                        format: .record, fond: HZCouleur.accent,
-                        encreDuLibelle: HZCouleur.encreSurAccent, graisseDuLibelle: .gras)
+                        format: .record, fond: HZCouleur.surfaceSombre,
+                        encreDuLibelle: HZCouleur.blanc, graisseDuLibelle: .semi)
                 HZTuile(libelle: String(localized: "Meilleure allure"),
                         valeur: bestPaceSecPerKm.map { PaceModel.formatDuration($0) } ?? "—",
                         format: .record, fond: HZCouleur.noir,

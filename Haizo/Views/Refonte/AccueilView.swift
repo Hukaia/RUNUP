@@ -65,11 +65,11 @@ struct AccueilView: View {
             }
         }
         .scrollIndicators(.hidden)
-        // Deux moitiés de fond : l'accent en haut, le blanc en bas. Un défilement qui dépasse son
+        // Deux moitiés de fond : le noir en haut, le blanc en bas. Un défilement qui dépasse son
         // bord — vers le haut comme vers le bas — montre alors la couleur de ce qui s'y trouve.
         .background {
             VStack(spacing: 0) {
-                HZCouleur.accent
+                HZCouleur.noir
                 HZCouleur.blanc
             }
             .ignoresSafeArea()
@@ -81,7 +81,7 @@ struct AccueilView: View {
         }
     }
 
-    // MARK: - Le haut, sur l'accent
+    // MARK: - Le haut, sur le noir
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -95,21 +95,22 @@ struct AccueilView: View {
         .padding(.top, HZEspace.haut)
         .padding(.bottom, HZRayon.feuille)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(HZCouleur.accent)
+        .background(HZCouleur.noir)
     }
 
     private var entete: some View {
         HStack(spacing: HZEspace.entreCommandes) {
             HZAvatar(initiales: AccueilModele.initiales(prenom: profile.name, nom: profile.lastName),
-                     nom: String(localized: "Profil")) {
+                     nom: String(localized: "Profil"), fond: HZCouleur.surfaceSombre) {
                 appState.go(.profile)
             }
             // Provisoire : la recherche mène à Explorer, qui n'est pas encore refait. Les parcours,
             // les courses et les clubs vivent aujourd'hui dans le hub du Club.
-            HZAmorceDeRecherche(invite: String(localized: "Où cours-tu aujourd'hui ?")) {
+            HZAmorceDeRecherche(invite: String(localized: "Où cours-tu aujourd'hui ?"),
+                                fond: HZCouleur.surfaceSombre) {
                 appState.go(.club)
             }
-            HZBoutonRond(dessin: .cloche, nom: libelleDesNotifications) {
+            HZBoutonRond(dessin: .cloche, nom: libelleDesNotifications, fond: HZCouleur.surfaceSombre) {
                 appState.openNotifications()
             }
         }
@@ -147,7 +148,8 @@ struct AccueilView: View {
         Button {
             appState.go(.plan)
         } label: {
-            HZSemaineEnPoints(jours: jours)
+            HZSemaineEnPoints(jours: jours, encre: HZCouleur.secondaireSurSombre,
+                              pointDeRepos: HZCouleur.pointEteint)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(String(localized: "Voir la semaine"))
@@ -170,9 +172,10 @@ struct AccueilView: View {
             HStack {
                 Text(AccueilModele.dateDuJour(Demonstration.maintenant))
                     .hzTexte(.c15, .gras)
-                    .foregroundStyle(HZCouleur.encreSurAccent)
+                    .foregroundStyle(HZCouleur.secondaireSurSombre)
                 Spacer(minLength: 0)
-                HZPilule(texte: hero.faite ? String(localized: "Fait") : String(localized: "Aujourd'hui"))
+                HZPilule(texte: hero.faite ? String(localized: "Fait") : String(localized: "Aujourd'hui"),
+                         fond: HZCouleur.surfaceSombre)
             }
             if let prefixe = hero.prefixe {
                 Text(prefixe)
@@ -187,7 +190,8 @@ struct AccueilView: View {
                 .hzTexte(.c20, .gras)
                 .padding(.top, HZAccueil.sousLeNombre)
             if !hero.mesures.isEmpty {
-                HZPilule(texte: hero.mesures.map(texte(de:)).joined(separator: " · "), style: .chiffres)
+                HZPilule(texte: hero.mesures.map(texte(de:)).joined(separator: " · "), style: .chiffres,
+                         fond: HZCouleur.surfaceSombre)
                     .padding(.top, HZAccueil.sousLeNom)
             }
         }
@@ -221,19 +225,22 @@ struct AccueilView: View {
     private var actions: some View {
         HStack(spacing: 0) {
             HZAction(dessin: .lecture, libelle: String(localized: "Démarrer"), pleine: true,
-                     cote: HZAction.coteDeLecture) {
+                     cote: HZAction.coteDeLecture, encreDuLibelle: HZCouleur.blanc) {
                 appState.startRun()
             }
             if planDebloque {
-                HZAction(dessin: .deplacer, libelle: String(localized: "Déplacer")) {
+                HZAction(dessin: .deplacer, libelle: String(localized: "Déplacer"),
+                         fondDeLaPastille: HZCouleur.surfaceSombre, encreDuLibelle: HZCouleur.blanc) {
                     appState.openMoveSession()
                 }
             }
-            HZAction(dessin: .bulle, libelle: String(localized: "Coach")) {
+            HZAction(dessin: .bulle, libelle: String(localized: "Coach"),
+                     fondDeLaPastille: HZCouleur.surfaceSombre, encreDuLibelle: HZCouleur.blanc) {
                 appState.go(.coach)
             }
             if planDebloque {
-                HZAction(dessin: .calendrier, libelle: String(localized: "Semaine")) {
+                HZAction(dessin: .calendrier, libelle: String(localized: "Semaine"),
+                         fondDeLaPastille: HZCouleur.surfaceSombre, encreDuLibelle: HZCouleur.blanc) {
                     appState.go(.plan)
                 }
             }
@@ -312,9 +319,9 @@ struct AccueilView: View {
             valeur: prochaine.duree,
             titre: prochaine.titre,
             precision: precision(de: prochaine),
-            fond: intensite?.couleur ?? HZCouleur.accent,
-            encreDuLibelle: intensite == nil ? HZCouleur.encreSurAccent : HZCouleur.blanc,
-            graisseDuLibelle: intensite == nil ? .gras : .semi)
+            fond: intensite?.couleur ?? HZCouleur.surfaceSombre,
+            encreDuLibelle: HZCouleur.blanc,
+            graisseDuLibelle: .semi)
     }
 
     private func precision(de prochaine: AccueilModele.Prochaine) -> String {

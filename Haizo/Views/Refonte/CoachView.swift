@@ -137,8 +137,7 @@ struct CoachView: View {
         HStack(spacing: HZCoach.ecartDesTuiles) {
             if profile.hasReadinessData {
                 HZTuileDuCoach(libelle: String(localized: "Forme"), valeur: "\(profile.readiness)",
-                               fond: HZCouleur.accent, encreDuLibelle: HZCouleur.encreSurAccent,
-                               graisseDuLibelle: .gras)
+                               encreDuLibelle: HZCouleur.secondaireSurSombre)
             }
             HZTuileDuCoach(libelle: String(localized: "Aujourd'hui"),
                            valeur: profile.todaySession.displayTitle, style: .seanceDuCoach)

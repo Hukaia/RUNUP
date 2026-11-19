@@ -119,6 +119,10 @@ enum HZEtatDeJour {
 struct HZSemaineEnPoints: View {
     /// Sept initiales et sept états, du lundi au dimanche.
     let jours: [(initiale: String, etat: HZEtatDeJour)]
+    /// Sur l'accent : l'encre de l'accent et un point de repos en voile. Sur le noir : du blanc et le
+    /// point éteint.
+    var encre: Color = HZCouleur.encreSurAccent
+    var pointDeRepos: Color = HZCouleur.pointSurCouleur
 
     var body: some View {
         HStack(spacing: 0) {
@@ -128,7 +132,7 @@ struct HZSemaineEnPoints: View {
                 VStack(spacing: HZSemaineEnPoints.sousLInitiale) {
                     Text(jour.initiale)
                         .hzTexte(.c12, .gras)
-                        .foregroundStyle(HZCouleur.encreSurAccent)
+                        .foregroundStyle(encre)
                     point(jour.etat)
                         .frame(height: HZSemaineEnPoints.grandPoint)
                 }
@@ -152,7 +156,7 @@ struct HZSemaineEnPoints: View {
             Circle().strokeBorder(HZCouleur.blanc, lineWidth: HZSemaineEnPoints.anneau)
                 .frame(width: HZSemaineEnPoints.point, height: HZSemaineEnPoints.point)
         case .repos:
-            Circle().fill(HZCouleur.pointSurCouleur)
+            Circle().fill(pointDeRepos)
                 .frame(width: HZSemaineEnPoints.point, height: HZSemaineEnPoints.point)
         }
     }
