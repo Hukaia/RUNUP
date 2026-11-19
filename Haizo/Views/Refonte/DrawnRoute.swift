@@ -27,17 +27,17 @@ import SwiftUI
 /// course, visibles côte à côte dans l'historique.
 struct DrawnRoute: View, Animatable {
     var route: [RunRecord.RoutePoint]
-    var lineWidth: CGFloat = 4
+    var lineWidth: CGFloat = HZMarque.traitDuTrace
     /// Le tracé est peint d'un dégradé d'accent : il part discret et arrive à pleine valeur, donc
     /// l'arrivée est le point le plus lumineux de la forme.
     ///
     /// `accentsDeLaNuit` et non `[rose2, rose, violet]` : ces trois-là rendent les variantes
     /// descendues pour le fond blanc dès que le thème est clair, et ce tracé n'est jamais sur du
     /// blanc. Trois nuanciers sur huit y perdaient la moitié de leur éclat — la mesure est dans
-    /// `RUColor.surLaNuit`.
-    var colors: [Color] = RUColor.accentsDeLaNuit
+    /// `HZCouleur.blanc`.
+    var colors: [Color] = [HZAccent.rose.couleur, HZAccent.violet.couleur]
     /// Plus de sommets qu'une vignette : à pleine largeur, 60 points donnent une ligne brisée.
-    var targetPoints: Int = 220
+    var targetPoints: Int = HZMarque.pointsDuTrace
     /// Marque le départ d'un anneau creux une fois le tracé fini.
     var showsStart = true
     /// 0 = rien, 1 = le tracé entier. Animable par l'appelant.
@@ -64,10 +64,10 @@ struct DrawnRoute: View, Animatable {
 
             // Dessiné dans le plus grand carré centré, comme `RouteThumbnail` : `normalized` rend
             // un carré, l'étirer sur un rectangle défairait sa correction de rapport de forme.
-            let inset = lineWidth * 2
-            let side = max(min(size.width, size.height) - inset * 2, 1)
-            let originX = (size.width - side) / 2
-            let originY = (size.height - side) / 2
+            let inset = lineWidth * HZMarque.deux
+            let side = max(min(size.width, size.height) - inset * HZMarque.deux, 1)
+            let originX = (size.width - side) / HZMarque.deux
+            let originY = (size.height - side) / HZMarque.deux
             func place(_ p: CGPoint) -> CGPoint {
                 CGPoint(x: originX + p.x * side, y: originY + p.y * side)
             }
@@ -90,7 +90,7 @@ struct DrawnRoute: View, Animatable {
 
             // La trace fantôme du reste du parcours. Sans elle, l'œil ne sait pas où ça va et le
             // dessin se lit comme une barre de progression. Avec elle, on voit la forme à remplir.
-            context.stroke(full, with: .color(RUColor.surLaNuit.opacity(0.07)),
+            context.stroke(full, with: .color(HZCouleur.blanc.opacity(HZMarque.opaciteDuFond)),
                            style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
 
             // LE HALO EST PARTI. Il doublait le trait d'une copie floutée à 1,6 fois sa largeur :
@@ -101,26 +101,26 @@ struct DrawnRoute: View, Animatable {
             context.stroke(drawn, with: shading,
                            style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
 
-            if showsStart, t > 0.02 {
+            if showsStart, t > HZMarque.seuilDeDepart {
                 let start = place(pts[0])
-                let r = lineWidth * 1.5
+                let r = lineWidth * HZMarque.rayonDeLaTete
                 context.stroke(Path(ellipseIn: CGRect(x: start.x - r, y: start.y - r,
-                                                      width: r * 2, height: r * 2)),
-                               with: .color(RUColor.surLaNuit.opacity(0.85)),
-                               lineWidth: lineWidth * 0.7)
+                                                      width: r * HZMarque.deux, height: r * HZMarque.deux)),
+                               with: .color(HZCouleur.blanc.opacity(HZMarque.opaciteDeLaTete)),
+                               lineWidth: lineWidth * HZMarque.traitDuContour)
             }
 
             // La tête. Elle disparaît une fois arrivée : un point lumineux qui reste au bout d'un
             // tracé fini n'est plus un déplacement, c'est une pastille de notification.
-            if t > 0.01 && t < 0.995 {
+            if t > HZMarque.debutDeLaTete && t < HZMarque.finDeLaTete {
                 let head = headPoint(of: full, at: t) ?? place(pts[0])
                 // LA LUEUR EST PARTIE AUSSI, ET LA TÊTE RESTE. Ce qui fait lire un déplacement
                 // plutôt qu'un chargement, c'est qu'un point AVANCE au bout du trait, pas qu'il
                 // brille : un disque blanc net sur un tracé d'accent se détache sans flou.
-                let r = lineWidth * 1.35
+                let r = lineWidth * HZMarque.rayonDuPoint
                 context.fill(Path(ellipseIn: CGRect(x: head.x - r, y: head.y - r,
-                                                    width: r * 2, height: r * 2)),
-                             with: .color(RUColor.surLaNuit))
+                                                    width: r * HZMarque.deux, height: r * HZMarque.deux)),
+                             with: .color(HZCouleur.blanc))
             }
         }
     }
@@ -132,7 +132,7 @@ struct DrawnRoute: View, Animatable {
     /// milieu, et c'est beaucoup moins de calcul que de reparcourir les points pour cumuler les
     /// longueurs à chaque image.
     private func headPoint(of path: Path, at t: Double) -> CGPoint? {
-        let slice = path.trimmedPath(from: max(0, t - 0.001), to: t)
+        let slice = path.trimmedPath(from: max(0, t - HZMarque.pasDeTangente), to: t)
         let box = slice.boundingRect
         guard !box.isNull, box.width.isFinite, box.height.isFinite else { return nil }
         return CGPoint(x: box.midX, y: box.midY)
@@ -146,9 +146,9 @@ struct DrawnRoute: View, Animatable {
 /// interne qu'il n'a pas demandée.
 struct SelfDrawingRoute: View {
     var route: [RunRecord.RoutePoint]
-    var lineWidth: CGFloat = 4
-    var colors: [Color] = RUColor.accentsDeLaNuit
-    var targetPoints: Int = 220
+    var lineWidth: CGFloat = HZMarque.traitDuTrace
+    var colors: [Color] = [HZAccent.rose.couleur, HZAccent.violet.couleur]
+    var targetPoints: Int = HZMarque.pointsDuTrace
     var showsStart = true
 
     @State private var progress: Double = 0
@@ -160,7 +160,7 @@ struct SelfDrawingRoute: View {
             .onAppear {
                 guard progress == 0 else { return }
                 if reduceMotion { progress = 1 } else {
-                    withAnimation(RUMotion.draw) { progress = 1 }
+                    withAnimation(HZMouvement.trace) { progress = 1 }
                 }
             }
     }

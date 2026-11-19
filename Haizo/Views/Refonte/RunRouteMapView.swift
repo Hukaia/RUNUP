@@ -8,7 +8,7 @@ import MapKit
 /// decorative treatment in that case rather than showing an empty map.
 struct RunRouteMapView: View {
     var route: [RunRecord.RoutePoint]
-    var lineWidth: CGFloat = 4
+    var lineWidth: CGFloat = HZMarque.traitDuTrace
     var lineColor: Color = HZCouleur.accent
     /// Est-ce que la carte se manipule — pincer, déplacer, zoomer ?
     ///
@@ -35,12 +35,12 @@ struct RunRouteMapView: View {
             minLat = min(minLat, c.latitude); maxLat = max(maxLat, c.latitude)
             minLng = min(minLng, c.longitude); maxLng = max(maxLng, c.longitude)
         }
-        let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2, longitude: (minLng + maxLng) / 2)
+        let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / HZMarque.deux, longitude: (minLng + maxLng) / HZMarque.deux)
         // 40% padding so the trace doesn't touch the frame's edges, with a floor so a
         // dead-straight or near-stationary route doesn't zoom in absurdly tight.
         let span = MKCoordinateSpan(
-            latitudeDelta: max((maxLat - minLat) * 1.4, 0.003),
-            longitudeDelta: max((maxLng - minLng) * 1.4, 0.003)
+            latitudeDelta: max((maxLat - minLat) * HZMarque.margeDeCarte, HZMarque.etendueMinimale),
+            longitudeDelta: max((maxLng - minLng) * HZMarque.margeDeCarte, HZMarque.etendueMinimale)
         )
         return MKCoordinateRegion(center: center, span: span)
     }

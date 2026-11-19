@@ -6,7 +6,7 @@ import SwiftUI
 /// deliberately not a progress-ring glyph or parallel bars, both dropped in the handoff for
 /// reading too close to existing marks (Apple Fitness rings / adidas stripes).
 struct AppMarkView: View, Animatable {
-    var size: CGFloat = 24
+    var size: CGFloat = HZMarque.coteParDefaut
     var radius: CGFloat? = nil
     var color: Color = .white
     /// L'avancement du TRACÉ des quatre barres : 0 = la tuile nue, 1 = la marque entière.
@@ -46,16 +46,11 @@ struct AppMarkView: View, Animatable {
         return AnyShapeStyle(HZCouleur.accent)
     }
 
-    private var cornerRadius: CGFloat { radius ?? size * 0.26 }
-    private var glyphSize: CGFloat { size * 0.62 }
+    private var cornerRadius: CGFloat { radius ?? size * HZMarque.rayonRelatif }
+    private var glyphSize: CGFloat { size * HZMarque.glypheRelatif }
 
     /// (x1, y1, x2, y2, lineWidth, opacity) in the design's 100×100 viewBox.
-    private static let bars: [(CGFloat, CGFloat, CGFloat, CGFloat, CGFloat, Double)] = [
-        (11.75, 88, 15.5, 74, 14, 0.3),
-        (29.25, 88, 36.75, 60, 19, 0.5),
-        (49.25, 88, 61.25, 36, 19, 0.75),
-        (69.25, 88, 85.75, 12, 19, 1.0)
-    ]
+    private static let bars = HZMarque.barres
 
     /// Où en est la barre `index` quand la marque entière en est à `d`.
     ///
@@ -64,8 +59,8 @@ struct AppMarkView: View, Animatable {
     /// barres ; en se chevauchant, on lit une accélération — ce que le logo raconte déjà par ses
     /// hauteurs croissantes.
     static func progress(ofBar index: Int, at d: Double) -> Double {
-        let depart = Double(index) * 0.18
-        let duree = 0.46
+        let depart = Double(index) * HZMarque.decalageDesBarres
+        let duree = HZMarque.dureeDUneBarre
         return min(max((d - depart) / duree, 0), 1)
     }
 
@@ -76,7 +71,7 @@ struct AppMarkView: View, Animatable {
             .overlay(
                 ZStack {
                     ForEach(Array(Self.bars.enumerated()), id: \.offset) { index, bar in
-                        let scale = glyphSize / 100
+                        let scale = glyphSize / HZMarque.grilleDuGlyphe
                         Path { path in
                             path.move(to: CGPoint(x: bar.0 * scale, y: bar.1 * scale))
                             path.addLine(to: CGPoint(x: bar.2 * scale, y: bar.3 * scale))
@@ -91,12 +86,6 @@ struct AppMarkView: View, Animatable {
                 .frame(width: glyphSize, height: glyphSize)
             )
     }
-}
-
-#Preview {
-    AppMarkView(size: 88, radius: 26)
-        .padding()
-        .background(HZCouleur.blanc)
 }
 
 /// Le mot de la marque, dessiné — et non composé dans la fonte de l'interface.
@@ -125,7 +114,7 @@ struct AppMarkView: View, Animatable {
 /// # LA HAUTEUR EST CELLE DU KIT, PAS UNE VALEUR CHOISIE À L'ŒIL
 ///
 /// Mesuré sur `haizo_A_white.png` : le mot fait **0,835 fois la hauteur du symbole**. Dans
-/// `AppMarkView`, les barres occupent **0,59** de la tuile — `glyphSize` vaut `size * 0.62` et
+/// `AppMarkView`, les barres occupent **0,59** de la tuile — `glyphSize` vaut `size * HZMarque.glypheRelatif` et
 /// les barres traversent 95 % de leur zone de dessin. Le mot vaut donc `0,835 × 0,59 ≈ 0,49`
 /// fois la tuile qui l'accompagne, et c'est la seule constante de ce fichier.
 struct MotDeMarque: View {
@@ -133,7 +122,7 @@ struct MotDeMarque: View {
     var tuile: CGFloat
 
     /// Le rapport mesuré sur le kit — voir le commentaire en tête.
-    static let hauteurRelative: CGFloat = 0.49
+    static let hauteurRelative: CGFloat = HZMarque.hauteurDuMot
 
     var body: some View {
         Image("haizo-mot")

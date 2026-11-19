@@ -220,7 +220,16 @@ struct FriendsView: View {
                 VStack(alignment: .leading, spacing: HZEspace.groupe) {
                     HZPhrase(texte: String(localized: "Cherche quelqu'un par son nom ou son pseudo juste au-dessus — ou invite ceux avec qui tu cours déjà."),
                              titre: String(localized: "Personne à suivre pour l'instant"))
-                    InvitationCard()
+                    ShareLink(item: String(localized: "Rejoins-moi sur Haizo, mon appli de coaching running : https://runup-nu.vercel.app")) {
+                        Text("Inviter un ami")
+                            .hzTexte(HZHauteurDeBouton.moyenne.corps, .gras)
+                            .foregroundStyle(HZCouleur.blanc)
+                            .padding(.horizontal, HZHauteurDeBouton.moyenne.marge)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: HZHauteurDeBouton.moyenne.rawValue)
+                            .background(HZCouleur.encre, in: Capsule())
+                            .contentShape(Capsule())
+                    }
                 }
             }
             LazyVStack(spacing: 0) {

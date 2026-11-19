@@ -9,7 +9,7 @@ struct ElevationProfileView: View {
     var lineColor: Color = HZCouleur.accent
 
     static func hasData(_ route: [RunRecord.RoutePoint]) -> Bool {
-        route.compactMap(\.altitude).count >= 2
+        route.compactMap(\.altitude).count >= HZMarque.pointsMinimaux
     }
 
     /// Carries the last known real altitude forward across a gap (a fix with untrustworthy
@@ -47,10 +47,10 @@ struct ElevationProfileView: View {
             fill.closeSubpath()
 
             context.fill(fill, with: .linearGradient(
-                Gradient(colors: [lineColor.opacity(0.28), .clear]),
+                Gradient(colors: [lineColor.opacity(HZMarque.opaciteDeLAire), .clear]),
                 startPoint: CGPoint(x: 0, y: 0), endPoint: CGPoint(x: 0, y: size.height)
             ))
-            context.stroke(line, with: .color(lineColor), style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+            context.stroke(line, with: .color(lineColor), style: StrokeStyle(lineWidth: HZMarque.traitDuProfil, lineCap: .round, lineJoin: .round))
         }
     }
 }

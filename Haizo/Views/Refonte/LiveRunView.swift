@@ -572,7 +572,7 @@ struct LiveRunView: View {
                     .frame(width: HZDiametre.controle.rawValue, height: HZDiametre.controle.rawValue)
                     .background(HZCouleur.surfaceSombre, in: Circle())
             }
-            .buttonStyle(PressableStyle())
+            .buttonStyle(HZStyleDAppui())
             .accessibilityLabel(String(localized: "Terminer"))
             // Un bouton à côté de la pause terminait la séance, irréversiblement, d'un seul toucher :
             // un faux pas en pleine course la tuait.
@@ -601,7 +601,7 @@ struct LiveRunView: View {
                 .frame(width: HZDiametre.principal.rawValue, height: HZDiametre.principal.rawValue)
                 .background(HZCouleur.blanc, in: Circle())
             }
-            .buttonStyle(PressableStyle())
+            .buttonStyle(HZStyleDAppui())
             .accessibilityLabel(vm?.isPaused == true ? "Reprendre" : "Mettre en pause")
 
             boutonDuCoach
@@ -646,7 +646,7 @@ struct LiveRunView: View {
                 }
             }
         }
-        .buttonStyle(PressableStyle())
+        .buttonStyle(HZStyleDAppui())
         .disabled(!locked && (state == .thinking || state == .speaking))
         .accessibilityLabel(locked ? "Le coach vocal fait partie de Haizo Plus"
                                    : (state == .listening ? "Arrêter et envoyer" : "Parler au coach"))
