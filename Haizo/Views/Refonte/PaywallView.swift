@@ -49,6 +49,8 @@ struct PaywallView: View {
         .scrollIndicators(.hidden)
         .foregroundStyle(HZCouleur.blanc)
         .background(HZCouleur.noir.ignoresSafeArea())
+        // Noir plein écran : l'heure grise de la barre d'état s'y perdrait, comme sur les pages.
+        .statusBarHidden()
         .task {
             await subscriptions.start()
             if selected == nil { selected = subscriptions.products.first }
