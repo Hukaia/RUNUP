@@ -53,73 +53,59 @@ struct EditActivitySheet: View {
         _note = State(initialValue: item.note ?? "")
     }
 
-    private static let maxTitle = 80
-    private static let maxNote = 500
+    private static let maxTitle = HZFeuillesDuFil.longueurDUnTitre
+    private static let maxNote = HZFeuillesDuFil.longueurDUnTexte
 
     var body: some View {
-        NavigationStack {
+        HZFeuilleModale(titre: String(localized: "Modifier ma sortie")) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    // Ce qui NE bouge PAS, montré en premier et grisé. Une feuille d'édition qui
-                    // n'affiche que les champs modifiables laisse croire qu'elle a tout effacé.
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Ta sortie")
-                            .font(RUFont.sans(.micro, weight: .bold))
-                            .tracking(1.2)
-                            .foregroundColor(RUColor.text3)
-                        Text(item.localizedText)
-                            .font(RUFont.sans(.label))
-                            .foregroundColor(RUColor.text2)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(RUSpacing.cardPadding)
-                    .ruCard()
-
-                    field(label: "Titre", placeholder: "Mon premier 10 km") {
-                        TextField("", text: $title, prompt: Text("Mon premier 10 km").foregroundColor(RUColor.text3))
-                            .font(RUFont.sans(.label))
-                            .foregroundColor(RUColor.textPrimary)
-                            .onChange(of: title) { _, new in
-                                if new.count > Self.maxTitle { title = String(new.prefix(Self.maxTitle)) }
-                            }
-                    }
-
-                    field(label: "Note", placeholder: "Comment c'était ?") {
-                        TextField("", text: $note, prompt: Text("Comment c'était ?").foregroundColor(RUColor.text3), axis: .vertical)
-                            .font(RUFont.sans(.label))
-                            .foregroundColor(RUColor.textPrimary)
-                            .lineLimit(3...8)
-                            .onChange(of: note) { _, new in
-                                if new.count > Self.maxNote { note = String(new.prefix(Self.maxNote)) }
-                            }
-                    }
-
+                VStack(alignment: .leading, spacing: HZEspace.entreSections) {
+                    ceQuiNeBougePas
+                    champs
                     photoSection
-
                     if item.routePreview != nil { routeSection }
-
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(RUFont.sans(.small, weight: .semibold))
-                            .foregroundColor(RUColor.rose)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                    if let errorMessage { HZAvisDeFeuille(texte: errorMessage) }
                 }
-                .padding(RUSpacing.pagePadding)
+                .padding(.horizontal, HZEspace.marge)
             }
-            .background(RUColor.pageBackground)
-            .navigationTitle("Modifier ma sortie")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Enregistrer") { save() }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                HZBasDeFeuille {
+                    HZBoutonPilule(libelle: String(localized: "Enregistrer"), etendu: true) { save() }
+                        .opacity(saving ? HZHub.opaciteEteinte : HZHub.opaciteNormale)
                         .disabled(saving)
                 }
             }
+        }
+    }
+
+    /// Ce qui NE bouge PAS, montré en premier. Une feuille d'édition qui n'affiche que les champs
+    /// modifiables laisse croire qu'elle a tout effacé.
+    private var ceQuiNeBougePas: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
+            Text("Ta sortie")
+                .hzTexte(.c13, .semi)
+                .foregroundStyle(HZCouleur.secondaireSurClair)
+            HZPlaque {
+                Text(item.localizedText)
+                    .hzParagraphe(.c15, .medium, interligne: HZBandeauDuCoach.interligne)
+                    .foregroundStyle(HZCouleur.encre)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var champs: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
+            HZChampDeTexte(titre: String(localized: "Titre"), invite: String(localized: "Mon premier 10 km"),
+                           texte: $title)
+                .onChange(of: title) { _, new in
+                    if new.count > Self.maxTitle { title = String(new.prefix(Self.maxTitle)) }
+                }
+            HZChampDeTexte(titre: String(localized: "Note"), invite: String(localized: "Comment c'était ?"),
+                           texte: $note, lignes: HZFeuillesDuFil.lignesDUneNote)
+                .onChange(of: note) { _, new in
+                    if new.count > Self.maxNote { note = String(new.prefix(Self.maxNote)) }
+                }
         }
     }
 
@@ -127,43 +113,21 @@ struct EditActivitySheet: View {
     /// doit l'être : quelqu'un qui réalise après coup que le dessin de sa boucle en dit trop ne
     /// doit pas avoir à choisir entre garder ça et effacer sa course.
     private var routeSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Toggle(isOn: $removeRoute) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Retirer le tracé")
-                        .font(RUFont.sans(.emphasis, weight: .semibold))
-                        .foregroundColor(RUColor.textPrimary)
-                    Text("Le dessin du parcours disparaît du fil. Le début et la fin de ta course n'y ont jamais été envoyés.")
-                        .font(RUFont.sans(.small))
-                        .foregroundColor(RUColor.text2)
-                        .fixedSize(horizontal: false, vertical: true)
+        VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
+            HZPlaque {
+                HZLigneDeReglage(
+                    titre: String(localized: "Retirer le tracé"),
+                    precision: String(localized: "Le dessin du parcours disparaît du fil. Le début et la fin de ta course n'y ont jamais été envoyés."),
+                    filet: false) {
+                    Toggle("", isOn: $removeRoute)
+                        .labelsHidden()
+                        .toggleStyle(HZStyleDInterrupteur())
+                        .accessibilityLabel(String(localized: "Retirer le tracé"))
                 }
             }
-            .tint(RUColor.rose)
             if removeRoute {
-                Text("C'est définitif : le tracé ne pourra pas être remis.")
-                    .font(RUFont.sans(.small, weight: .semibold))
-                    .foregroundColor(RUColor.amberText)
-                    .fixedSize(horizontal: false, vertical: true)
+                HZAvisDeFeuille(texte: String(localized: "C'est définitif : le tracé ne pourra pas être remis."))
             }
-        }
-        .padding(RUSpacing.cardPadding)
-        .ruCard()
-    }
-
-    private func field<Content: View>(label: LocalizedStringKey, placeholder: LocalizedStringKey,
-                                      @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(label)
-                .font(RUFont.sans(.micro, weight: .bold))
-                .tracking(1.2)
-                .foregroundColor(RUColor.text3)
-            content()
-                .padding(12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(RUColor.card, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous)
-                    .stroke(RUColor.line, lineWidth: RUSpacing.hairline))
         }
     }
 
@@ -174,11 +138,10 @@ struct EditActivitySheet: View {
     /// les sorties déjà publiées en deviennent candidates, ce qu'un ajout au moment de la
     /// publication n'aurait jamais permis.
     private var photoSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
             Text("Photo")
-                .font(RUFont.sans(.micro, weight: .bold))
-                .tracking(1.2)
-                .foregroundColor(RUColor.text3)
+                .hzTexte(.c13, .semi)
+                .foregroundStyle(HZCouleur.secondaireSurClair)
 
             if let apercu = photoPreview {
                 zoneDePhoto { Image(uiImage: apercu).resizable().scaledToFill() }
@@ -188,28 +151,25 @@ struct EditActivitySheet: View {
                     AsyncImage(url: url) { image in
                         image.resizable().scaledToFill()
                     } placeholder: {
-                        RUColor.card2
+                        HZCouleur.surfaceClaire
                     }
                 }
             } else {
                 PhotosPicker(selection: $photoItem, matching: .images) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "camera.fill").font(RUFont.icone(.medium))
-                        Text("Ajouter une photo")
-                    }
-                    .font(RUFont.sans(.label, weight: .semibold))
-                    .foregroundColor(RUColor.rose2)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: 52)
-                    .background(RUColor.card2, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous)
-                        .stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
+                    Text("Ajouter une photo")
+                        .hzTexte(HZHauteurDeBouton.moyenne.corps, .gras)
+                        .foregroundStyle(HZCouleur.encre)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: HZHauteurDeBouton.moyenne.rawValue)
+                        .background(HZCouleur.surfaceClaire, in: Capsule())
+                        .contentShape(Capsule())
                 }
             }
 
             Text("Elle sera visible par ton club et par tes abonnés.")
-                .font(RUFont.sans(.small))
-                .foregroundColor(RUColor.text3)
+                .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
+                .foregroundStyle(HZCouleur.secondaireSurClair)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .onChange(of: photoItem) { _, nouveau in Task { await chargerLaPhoto(nouveau) } }
@@ -218,22 +178,18 @@ struct EditActivitySheet: View {
     private func zoneDePhoto<Contenu: View>(@ViewBuilder _ contenu: () -> Contenu) -> some View {
         ZStack(alignment: .topTrailing) {
             contenu()
-                .frame(height: 170)
+                .frame(height: HZFeuillesDuFil.hauteurDeLaPhotoDeSortie)
                 .frame(maxWidth: .infinity)
                 .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
-            Button(action: {
+                .clipShape(RoundedRectangle(cornerRadius: HZRayon.tuile, style: .circular))
+            HZBoutonRond(dessin: .fermer, nom: String(localized: "Retirer la photo"), diametre: .outil,
+                         cote: HZHub.coteDeLaCroix, trait: HZHub.traitDeLaCroix) {
                 photoPreview = nil
                 photoDataURI = nil
                 photoItem = nil
                 photoRetiree = true
-            }) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(RUFont.icone(.xlarge))
-                    .foregroundStyle(.white, .black.opacity(0.45))
-                    .padding(8)
             }
-            .accessibilityLabel("Retirer la photo")
+            .padding(HZEspace.entrePilules)
         }
     }
 
@@ -262,8 +218,8 @@ struct EditActivitySheet: View {
             errorMessage = String(localized: "Impossible de lire cette photo. Choisis-en une autre.")
             return
         }
-        let reduite = image.resized(maxDimension: 1080)
-        guard let jpeg = reduite.jpegData(compressionQuality: 0.6) else {
+        let reduite = image.resized(maxDimension: HZFeuillesDuFil.coteMaxDUnePhoto)
+        guard let jpeg = reduite.jpegData(compressionQuality: HZFeuillesDuFil.qualiteDUnePhoto) else {
             errorMessage = String(localized: "Impossible de préparer cette photo. Choisis-en une autre.")
             return
         }
