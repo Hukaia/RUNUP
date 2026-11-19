@@ -33,18 +33,12 @@ AUTORISE = {
     # parce qu'un logo n'a effectivement pas de raison de suivre l'échelle du texte. Il n'est
     # plus composé du tout : c'est une image, et une image n'a pas de cran de typographie. La
     # sortie d'échelle disparaît avec la cause qui la justifiait.
-    "Haizo/Views/Live/RunShareCardView.swift":
-        (1, "carte d'export : géométrie de pixels fixe pour une image partagée"),
-    "Haizo/Views/Live/RunVideoFrameView.swift":
-        (2, "image de la vidéo d'export : même raison"),
     "Haizo/Views/Components/AvatarView.swift":
         (3, "initiales à 0,4 × le diamètre de l'avatar : une suite continue, pas un cran"),
 }
 
 # fichier → (nombre de sorties attendu, la raison) — pour le MONOSPACE
 AUTORISE_MONO = {
-    "Haizo/Views/Live/RunShareCardView.swift":
-        (2, "carte d'export : géométrie de pixels fixe pour une image partagée"),
 }
 
 MOTIF_NOMBRE = re.compile(r"(?:\.displayStyle|RUFont\.display)\(\s*\d")

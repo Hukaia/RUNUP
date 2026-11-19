@@ -133,7 +133,7 @@ struct ClubEventsSection: View {
                                                    startsAt: date, repeatsWeekly: chaqueSemaine,
                                                    paceGroups: groupes, badges: badges)
             }, existant: event)
-            .haizoSheetStyle()
+            .hzFeuille(detents: [.large], gereSonBas: true)
         }
     }
 

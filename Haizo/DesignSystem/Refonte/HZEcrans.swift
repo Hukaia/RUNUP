@@ -251,8 +251,6 @@ enum HZProfil {
     static let reductionDuNom: CGFloat = 0.6
     static let opaciteEnCours: Double = 0.5
     static let opaciteNormale: Double = 1
-    /// La feuille de détail d'un badge.
-    static let hauteurDuDetailDeBadge: CGFloat = 300
     /// De l'identité à la capsule d'objectif.
     static let sousLIdentite: CGFloat = 14
     /// De la capsule aux trois totaux.

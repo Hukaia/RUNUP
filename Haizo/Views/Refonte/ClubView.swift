@@ -156,7 +156,7 @@ struct ClubView: View {
                 try await magasin.creerLaSortie(title: title, location: location, startsAt: date,
                                                 repeatsWeekly: chaqueSemaine, paceGroups: groupes)
             }
-            .haizoSheetStyle()
+            .hzFeuille(detents: [.large], gereSonBas: true)
         }
         // LA FEUILLE D'ÉDITION D'UN MESSAGE DU MUR ÉTAIT ACCROCHÉE À `eventsCard`.
         //
@@ -179,11 +179,11 @@ struct ClubView: View {
                 // ferait clignoter la liste sous les doigts de qui vient de la corriger.
                 try await magasin.modifierLeMessage(message, texte: texte)
             }
-            .haizoSheetStyle()
+            .hzFeuille(detents: [.medium, .large], gereSonBas: true)
         }
         .sheet(item: $mur.editingActivity) { activity in
             EditActivitySheet(item: activity, onSaved: { Task { await magasin.loadFeed() } })
-                .haizoSheetStyle()
+                .hzFeuille(detents: [.large], gereSonBas: true)
         }
         .sheet(item: $mur.commentsActivity) { activity in
             ActivityCommentsSheet(
@@ -206,7 +206,7 @@ struct ClubView: View {
                     }
                 }
             )
-                .haizoSheetStyle(detents: [.large], gereSonBas: true)
+                .hzFeuille(detents: [.medium, .large], gereSonBas: true)
         }
         .onChange(of: auth.isSignedIn) { _, signedIn in
             if signedIn { Task { await magasin.loadIfSignedIn(badges: badges) } }

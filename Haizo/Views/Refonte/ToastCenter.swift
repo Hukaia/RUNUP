@@ -52,7 +52,7 @@ struct ToastHost: ViewModifier {
                     .background(HZCouleur.noir, in: Capsule())
                     .shadow(color: HZCouleur.noirFranc.opacity(HZToast.opaciteDeLOmbre),
                             radius: HZToast.rayonDeLOmbre, x: 0, y: HZToast.decalageDeLOmbre)
-                    .padding(.bottom, HZEspace.sousLaBarre + HZCourseEnCours.hauteurDeLaBarre + HZToast.souffle)
+                    .padding(.bottom, HZEspace.sousLaBarre + HZMesuresDeLaCourse.hauteurDeLaBarre + HZToast.souffle)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .allowsHitTesting(false)
             }

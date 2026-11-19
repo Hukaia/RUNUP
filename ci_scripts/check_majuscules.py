@@ -135,8 +135,6 @@ PERMIS_A_LA_VOLEE: dict = {
 
 PERMIS = {
     # ── 1. DES BOUTONS ────────────────────────────────────────────────────────────────────────
-    "Haizo/Views/Race/CreateRaceSheet.swift": (1, BOUTON),
-    "Haizo/Views/Race/RacePageView.swift": (5, BOUTON),
 
     # ── 2. UNE IMAGE PRODUITE, PAS UN ÉCRAN ───────────────────────────────────────────────────
 

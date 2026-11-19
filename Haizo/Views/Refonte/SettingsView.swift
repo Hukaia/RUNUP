@@ -41,6 +41,7 @@ struct SettingsView: View {
         .background(HZCouleur.blanc)
         .sheet(isPresented: $showMoreSettings) {
             MoreSettingsView()
+                .hzFeuille(detents: [.large])
         }
         // Le bloc du cycle n'est pas dans CETTE feuille : il est derrière « Plus de réglages ».
         #if DEBUG

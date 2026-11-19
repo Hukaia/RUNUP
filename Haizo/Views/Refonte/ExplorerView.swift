@@ -80,7 +80,7 @@ struct ExplorerView: View {
             RouteDetailSheet(route: route) { mise in
                 if let index = itineraires.firstIndex(where: { $0.id == mise.id }) { itineraires[index] = mise }
             }
-            .haizoSheetStyle()
+            .hzFeuille(detents: [.medium, .large])
         }
         // PLEIN ÉCRAN, comme depuis la liste des courses : la page d'une course est une destination,
         // pas une parenthèse.

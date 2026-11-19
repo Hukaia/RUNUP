@@ -26,10 +26,7 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 
 # fichier → { ligne : raison }. La ligne est indicative ; c'est le COMPTE par fichier qui est
 # tenu, pour qu'un ajout de code au-dessus ne fasse pas échouer le build pour rien.
-AUTORISE = {
-    "Haizo/Views/Race/RacePageView.swift":
-        (1, "« Je prépare cette course » en vert : la couleur nomme un état confirmé"),
-}
+AUTORISE = {}
 
 # UN APPEL, PAS UNE LIGNE — et c'est une correction de ce script lui-même.
 #
@@ -151,9 +148,6 @@ AVERTISSEMENT = ("un avertissement : `amber` y veut dire MOINS BIEN, et c'est ex
 #: fichier → (nombre d'emplois directs autorisés, pourquoi)
 DIRECTES_AUTORISEES = {
     # ── 1. DES AVERTISSEMENTS ─────────────────────────────────────────────────────────────────
-    "Haizo/Views/Race/RacePageView.swift": (3, AVERTISSEMENT + " Un bandeau d'alerte de course, "
-                                            "plus la teinte d'« état confirmé » déjà déclarée "
-                                            "en haut de ce fichier."),
 
     # ── 2. DEUX PALETTES QUI ATTENDENT UNE DÉCISION ───────────────────────────────────────────
     #

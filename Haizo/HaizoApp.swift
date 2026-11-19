@@ -340,7 +340,7 @@ private struct ContentRouterView: View {
             // paragraphe qui nomme ce que « Repartir à neuf » détruit passait sous le bord —
             // et rien ne permettait d'aller le chercher.
             AccountSwitchSheet()
-                .haizoSheetStyle(detents: [.large])
+                .hzFeuille(detents: [.large])
         }
         // Une seule présentation du paywall, à la racine — au-dessus des onglets, donc il
         // survit à un changement d'onglet, et aucun écran verrouillé n'a à savoir comment on

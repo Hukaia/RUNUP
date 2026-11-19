@@ -9525,6 +9525,23 @@
         }
       }
     },
+    "Créer la page": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create the page"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crear la página"
+          }
+        }
+      }
+    },
     "Créer mon compte": {
       "extractionState": "manual",
       "localizations": {
@@ -15318,6 +15335,40 @@
         }
       }
     },
+    "Modifier": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar"
+          }
+        }
+      }
+    },
+    "Nouveau record": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New record"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuevo récord"
+          }
+        }
+      }
+    },
     "Où en es-tu ?": {
       "extractionState": "manual",
       "localizations": {
@@ -15365,6 +15416,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Publicando…"
+          }
+        }
+      }
+    },
+    "Publier": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Post"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicar"
           }
         }
       }
@@ -15433,6 +15501,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dejar de seguir"
+          }
+        }
+      }
+    },
+    "Seconde course": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Second run"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segunda carrera"
           }
         }
       }

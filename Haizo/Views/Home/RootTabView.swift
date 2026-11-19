@@ -61,7 +61,7 @@ struct RootTabView: View {
                 HZCourseEnCours(ecoule: appState.liveRun.map { PaceModel.formatDuration($0.elapsedSeconds) } ?? "0:00") {
                     appState.go(.live)
                 }
-                .padding(.bottom, HZEspace.sousLaBarre + HZCourseEnCours.hauteurDeLaBarre + HZCourseEnCours.souffle)
+                .padding(.bottom, HZEspace.sousLaBarre + HZMesuresDeLaCourse.hauteurDeLaBarre + HZMesuresDeLaCourse.souffle)
             }
 
             if showBar {
@@ -104,23 +104,23 @@ struct RootTabView: View {
         }
         .sheet(isPresented: Binding(get: { appState.sessionDetailPresented }, set: { appState.sessionDetailPresented = $0 })) {
             SessionDetailSheet()
-                .haizoSheetStyle(gereSonBas: true)
+                .hzFeuille(detents: [.medium, .large], gereSonBas: true)
         }
         .sheet(isPresented: Binding(get: { appState.moveSessionPresented }, set: { appState.moveSessionPresented = $0 })) {
             MoveSessionSheet()
-                .haizoSheetStyle()
+                .hzFeuille(detents: [.medium, .large])
         }
         .sheet(isPresented: Binding(get: { appState.logSessionPresented }, set: { appState.logSessionPresented = $0 })) {
             LogSessionSheet()
-                .haizoSheetStyle(detents: [.medium], gereSonBas: true)
+                .hzFeuille(detents: [.medium], gereSonBas: true)
         }
         .sheet(isPresented: Binding(get: { appState.programSettingsPresented }, set: { appState.programSettingsPresented = $0 })) {
             ProgramSettingsSheet()
-                .haizoSheetStyle(gereSonBas: true)
+                .hzFeuille(detents: [.large], gereSonBas: true)
         }
         .sheet(isPresented: Binding(get: { appState.notificationsPresented }, set: { appState.notificationsPresented = $0 })) {
             NotificationsSheet()
-                .haizoSheetStyle()
+                .hzFeuille(detents: [.medium, .large])
         }
         // Presented from the ROOT, same reasoning as the debrief sheet above — "Refaire un
         // programme" is reachable from Profil's "Plus de réglages" sheet, so this must be able to
@@ -141,7 +141,7 @@ struct RootTabView: View {
             get: { appState.pendingDebriefs.first },
             set: { newValue in if newValue == nil, !appState.pendingDebriefs.isEmpty { appState.pendingDebriefs.removeFirst() } }
         )) { run in
-            DebriefSheet(run: run).haizoSheetStyle(gereSonBas: true)
+            DebriefSheet(run: run).hzFeuille(detents: [.medium, .large], gereSonBas: true)
         }
         // Tapping the weekly-recap local notification lands here rather than wherever the app
         // happened to be left open — `NotificationService` can't reach `AppState` directly (it's a

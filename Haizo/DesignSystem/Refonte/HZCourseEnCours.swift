@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Les mesures de la pastille « Course en cours ».
-enum HZCourseEnCours {
+enum HZMesuresDeLaCourse {
     static let cotePoint: CGFloat = 8
     static let margeHorizontale: CGFloat = 18
     static let margeVerticale: CGFloat = 12
@@ -23,17 +23,17 @@ struct HZCourseEnCours: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: HZCourseEnCours.ecart) {
+            HStack(spacing: HZMesuresDeLaCourse.ecart) {
                 Circle().fill(HZCouleur.encreSurAccent)
-                    .frame(width: HZCourseEnCours.cotePoint, height: HZCourseEnCours.cotePoint)
+                    .frame(width: HZMesuresDeLaCourse.cotePoint, height: HZMesuresDeLaCourse.cotePoint)
                 Text("Course en cours · \(ecoule)")
                     .hzTexte(.c14, .semi, tabulaire: true)
                     .foregroundStyle(HZCouleur.encreSurAccent)
                     .lineLimit(1)
             }
-            .padding(.horizontal, HZCourseEnCours.margeHorizontale)
-            .padding(.vertical, HZCourseEnCours.margeVerticale)
-            .frame(minHeight: HZCourseEnCours.hauteurMinimale)
+            .padding(.horizontal, HZMesuresDeLaCourse.margeHorizontale)
+            .padding(.vertical, HZMesuresDeLaCourse.margeVerticale)
+            .frame(minHeight: HZMesuresDeLaCourse.hauteurMinimale)
             .background(HZCouleur.accent, in: Capsule())
         }
         .buttonStyle(.plain)

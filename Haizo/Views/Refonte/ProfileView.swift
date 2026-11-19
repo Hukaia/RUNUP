@@ -63,7 +63,7 @@ struct ProfileView: View {
         }
         .sheet(isPresented: $showSettings) {
             SettingsView()
-                .haizoSheetStyle(detents: [.large])
+                .hzFeuille(detents: [.large])
         }
         // La feuille des réglages s'ouvre d'elle-même pour la campagne de captures : elle n'est
         // pas un `AppScreen`, le harnais ne sait pas l'atteindre autrement.
@@ -75,7 +75,7 @@ struct ProfileView: View {
                 .hzFeuille(detents: [.large])
         }
         .sheet(item: $selectedBadge) { badge in
-            BadgeDetailView(badge: badge).haizoSheetStyle(detents: [.height(HZProfil.hauteurDuDetailDeBadge)])
+            BadgeDetailView(badge: badge).hzFeuille(detents: [.height(HZClubGestion.hauteurDuDetailDeBadge)])
         }
     }
 

@@ -130,7 +130,7 @@ struct WallView: View {
                     }
                 }
             }
-            .haizoSheetStyle()
+            .hzFeuille(detents: [.medium, .large], gereSonBas: true)
         }
         .onChange(of: filtre) { _, _ in
             finDuFil = false
@@ -148,11 +148,11 @@ struct WallView: View {
                 },
                 onBlock: { commentaire in pendingBlock = (commentaire.userId, commentaire.name) }
             )
-            .haizoSheetStyle(detents: [.large], gereSonBas: true)
+            .hzFeuille(detents: [.medium, .large], gereSonBas: true)
         }
         .sheet(item: $editing) { item in
             EditActivitySheet(item: item, onSaved: { Task { await charger() } })
-                .haizoSheetStyle(detents: [.large])
+                .hzFeuille(detents: [.large], gereSonBas: true)
         }
         .alert("Signaler", isPresented: Binding(
             get: { reportTarget != nil },

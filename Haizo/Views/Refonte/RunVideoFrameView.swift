@@ -105,7 +105,7 @@ struct RunVideoFrameView: View {
     private var compteurs: some View {
         HStack(alignment: .top, spacing: 0) {
             compteur(Text("KM"), TimeFormat.distance(km: instant.metres / HZJournee.metresParKilometre))
-            compteur(Text("TEMPS"), TimeFormat.horloge(instant.secondes))
+            compteur(Text("Temps"), TimeFormat.horloge(instant.secondes))
             if let denivele = instant.denivelePositifM {
                 compteur(Text("M D+"), "\(Int(denivele.rounded()))")
             }

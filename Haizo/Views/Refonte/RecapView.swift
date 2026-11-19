@@ -118,11 +118,11 @@ struct RecapView: View {
             .statusBarHidden()
             .sheet(isPresented: $showPublishRoute) {
                 PublishRouteSheet(run: run)
-                    .haizoSheetStyle(gereSonBas: true)
+                    .hzFeuille(detents: [.large], gereSonBas: true)
             }
             .sheet(isPresented: $showDebrief) {
                 DebriefSheet(run: run)
-                    .haizoSheetStyle(gereSonBas: true)
+                    .hzFeuille(detents: [.medium, .large], gereSonBas: true)
             }
             // UN ÉCRAN ENTIER, ET PAS UNE FEUILLE. Une feuille se referme en la tirant vers le bas, et
             // c'est exactement le geste qu'on fait pour déplacer une carte : les deux se disputeraient
