@@ -36,30 +36,30 @@ struct RunVideoFrameView: View {
     var instant: RunVideoTimeline.Instant
 
     /// La taille LOGIQUE, en points. Multipliée par `echelle` à la rasterisation.
-    static let taille = CGSize(width: 360, height: 640)
+    static let taille = CGSize(width: HZJournee.largeurDeLImage, height: HZJournee.hauteurDeLImage)
     /// Trois : 1080 × 1920, le neuf-seizièmes que tous les réseaux acceptent sans recadrer.
-    static let echelle: CGFloat = 3
+    static let echelle: CGFloat = HZJournee.echelleDeLaVideo
 
-    static let rose = Color(hex: 0xFF3D9A)
-    static let violet = Color(hex: 0x8A5CFF)
-    static let encre = Color(hex: 0x0B0B12)
+    static let rose = HZJournee.rose
+    static let violet = HZJournee.violet
+    static let encre = HZCouleur.noir
 
     var body: some View {
         ZStack {
             fond
             VStack(spacing: 0) {
-                entete.padding(.top, 52)
+                entete.padding(.top, HZJournee.hautDeLaVideo)
                 DrawnRoute(route: route,
-                           lineWidth: 3.6,
+                           lineWidth: HZJournee.traitDuTraceDeLaVideo,
                            colors: [Self.rose, Self.rose, Self.violet],
-                           targetPoints: 320,
+                           targetPoints: HZJournee.pointsDuTrace,
                            showsStart: true,
                            progress: instant.fractionDuTrace)
-                    .frame(width: 300, height: 300)
-                    .padding(.vertical, 14)
+                    .frame(width: HZJournee.coteDuTraceDeLaVideo, height: HZJournee.coteDuTraceDeLaVideo)
+                    .padding(.vertical, HZJournee.autourDuTraceDeLaVideo)
                 compteurs
                 Spacer(minLength: 0)
-                signature.padding(.bottom, 44)
+                signature.padding(.bottom, HZJournee.basDeLaVideo)
             }
         }
         .frame(width: Self.taille.width, height: Self.taille.height)
@@ -75,25 +75,27 @@ struct RunVideoFrameView: View {
             Self.encre
             // Deux halos plutôt qu'un dégradé plein : le tracé est le sujet, et un aplat de
             // marque sur toute la hauteur lui disputerait l'œil.
-            RadialGradient(colors: [Self.rose.opacity(0.38), .clear],
-                           center: .init(x: 0.12, y: 0.10), startRadius: 0, endRadius: 420)
-            RadialGradient(colors: [Self.violet.opacity(0.32), .clear],
-                           center: .init(x: 0.92, y: 0.88), startRadius: 0, endRadius: 390)
+            RadialGradient(colors: [Self.rose.opacity(HZJournee.opaciteDuHaloRose), .clear],
+                           center: HZJournee.centreDuHaloRose, startRadius: 0,
+                           endRadius: HZJournee.rayonDuHaloRose)
+            RadialGradient(colors: [Self.violet.opacity(HZJournee.opaciteDuHaloViolet), .clear],
+                           center: HZJournee.centreDuHaloViolet, startRadius: 0,
+                           endRadius: HZJournee.rayonDuHaloViolet)
         }
     }
 
     private var entete: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: HZJournee.entreTitreEtDate) {
             Text(verbatim: run.titreAffiche)
-                .font(RUFont.display(horsEchelle: 26))
-                .foregroundColor(.white)
+                .hzAffichage(.titreDEcran)
+                .foregroundStyle(HZCouleur.blanc)
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .padding(.horizontal, 30)
+                .lineLimit(HZJournee.lignesDuTitreDeLaVideo)
+                .padding(.horizontal, HZJournee.margeDuTitreDeLaVideo)
             Text(verbatim: Self.dateFormatee(run.date))
-                .font(RUFont.sans(.small, weight: .bold))
-                .tracking(2.5)
-                .foregroundColor(.white.opacity(0.62))
+                .font(HZJournee.police(HZJournee.tailleDuLibelleDeLaVideo, .gras))
+                .tracking(HZJournee.interlettrageDuLibelle)
+                .foregroundStyle(HZCouleur.blanc.opacity(HZJournee.opaciteDeLaDateDeLaVideo))
         }
     }
 
@@ -102,13 +104,13 @@ struct RunVideoFrameView: View {
     /// ce que `RunVideoTimeline` refuse de produire.
     private var compteurs: some View {
         HStack(alignment: .top, spacing: 0) {
-            compteur(Text("KM"), TimeFormat.distance(km: instant.metres / 1000))
+            compteur(Text("KM"), TimeFormat.distance(km: instant.metres / HZJournee.metresParKilometre))
             compteur(Text("TEMPS"), TimeFormat.horloge(instant.secondes))
             if let denivele = instant.denivelePositifM {
                 compteur(Text("M D+"), "\(Int(denivele.rounded()))")
             }
         }
-        .padding(.horizontal, 18)
+        .padding(.horizontal, HZJournee.margeDesCompteurs)
     }
 
     /// L'étiquette arrive en `Text` et non en `String` : c'est ce qui laisse le littéral visible
@@ -116,27 +118,28 @@ struct RunVideoFrameView: View {
     /// aurait traversé le contrôle du catalogue sans être vu, et « TEMPS » serait sorti en
     /// français en anglais et en espagnol.
     private func compteur(_ label: Text, _ valeur: String) -> some View {
-        VStack(spacing: 2) {
+        VStack(spacing: HZJournee.entreLibelleEtValeur) {
             label
-                .font(RUFont.sans(.small, weight: .bold))
-                .tracking(2.5)
-                .foregroundColor(.white.opacity(0.6))
+                .font(HZJournee.police(HZJournee.tailleDuLibelleDeLaVideo, .gras))
+                .tracking(HZJournee.interlettrageDuLibelle)
+                .foregroundStyle(HZCouleur.blanc.opacity(HZJournee.opaciteDuLibelleDeLaVideo))
             Text(verbatim: valeur)
-                .font(RUFont.display(horsEchelle: 34))
+                .hzAffichage(.chiffreDeProfil)
                 .foregroundStyle(LinearGradient(colors: [Self.rose, Self.violet],
                                                 startPoint: .leading, endPoint: .trailing))
                 .lineLimit(1)
-                .minimumScaleFactor(0.5)
-                .shadow(color: Self.rose.opacity(0.35), radius: 10)
+                .minimumScaleFactor(HZJournee.reductionDuCompteur)
+                .shadow(color: Self.rose.opacity(HZJournee.opaciteDeLaLueurDuCompteur),
+                        radius: HZJournee.rayonDeLaLueurDuCompteur)
         }
         .frame(maxWidth: .infinity)
     }
 
     private var signature: some View {
-        HStack(spacing: 8) {
-            AppMarkView(size: 24)
-            MotDeMarque(tuile: 24)
-                .foregroundStyle(Color.white)
+        HStack(spacing: HZJournee.entreLaMarqueEtLeMot) {
+            AppMarkView(size: HZJournee.coteDeLaSignature)
+            MotDeMarque(tuile: HZJournee.coteDeLaSignature)
+                .foregroundStyle(HZCouleur.blanc)
         }
     }
 
