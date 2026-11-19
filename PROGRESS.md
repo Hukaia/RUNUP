@@ -8794,4 +8794,23 @@ sur un iPhone 375 ; les trois « Jour J » (inatteignables, voir plus haut).
 
 **Les gardes** : `ci_scripts/check_*.py`, tous verts dans cet arbre, hors `check_branche` et `check_cjs` (nom de branche, `node_modules`) qui ne tournent qu'en CI.
 `check_valeurs` s'applique maintenant à tout `Views/Refonte` (le seul dossier de vues qui reste, hors `RootTabView` et trois petits fichiers du Club).
-Non vérifié à cet instant : la compilation du dernier arbre (la suppression de l'ancien système) et les captures des feuilles.
+
+**Vérifié le 19 novembre** : Refonte #61 vert sur `38df334` (compilation, 72 captures) ; TestFlight #653 sur `64b1055` : tous les contrôles, la compilation,
+les 933 tests unitaires verts (le test des symboles a dû voir son plancher baissé de 50 à 10 : la plupart des icônes sont maintenant dessinées). Une première
+tentative avait échoué sur deux oublis de ma part : un nom en double (`HZCourseEnCours`) et la taille de texte de l'appareil (`TextSizeStore`), qui vivait dans
+l'ancienne typographie et que la refonte appelait encore. **Captures regardées** : séance, réglages, déplacer, journal, programme, notifications, objectif,
+Journée, objectif de course. Le workflow « Serveur » est rouge pour une raison sans rapport : la page de confidentialité publiée (servie depuis `main`) diffère de
+`privacy.html`, et ne se corrige pas depuis cette branche.
+
+## Moins de rose (19 novembre) : décision de Charlotte
+
+Charlotte : « le rose est trop présent, c'est too much ». Elle a choisi **moins de rose** (plutôt qu'une autre couleur par défaut). Le rose n'est plus une
+surface, c'est une touche : l'**Accueil passe sur le noir** (hero blanc, pilules et actions en noir doux), les **cartes du plan** gardent la couleur de leur séance
+(vert, bleu, violet) ou prennent le noir doux (seuil, fractionné, renforcement, repos), **aujourd'hui** n'est plus une carte rose (son point est blanc), les
+tuiles « plus longue » (Stats), « Forme » (Coach) et celles de « La suite » quittent l'accent. Reste en accent, en petit : l'anneau et les jauges de la Journée,
+la dernière barre de la charge, les tracés, la pastille « Course en cours », les pastilles étiquetées. Le choix du rose, du violet, du bleu ou du vert reste dans
+Réglages. Nouveaux paramètres des composants pour porter ces deux fonds : `HZAction`, `HZSemaineEnPoints`, `HZAmorceDeRecherche`.
+
+**Reste à confirmer** (rien de tout cela n'est de Charlotte) : veut-on une teinte d'alerte dans le système ? Relier « Préparer une course » à la date de la course
+(le programme ne s'y cale pas aujourd'hui). Le rose du widget et de la montre est encore l'ancien (`#FF0A78`, contre `#FF2E6E` dans l'app) : leurs palettes
+recopiées n'ont plus de garde depuis la suppression de `check_accent` et `check_encres`. Les rouges et le « Serveur » ci-dessus.
