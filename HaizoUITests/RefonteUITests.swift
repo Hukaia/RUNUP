@@ -251,6 +251,17 @@ final class RefonteUITests: XCTestCase {
                           "réservé à refonte.yml")
         let inscription = lancer(arguments: ["--ecran=prog", "--inscription"])
         photographier("inscription-1", app: inscription)
+        // Le nom d'abord : sans lui, « Continuer » reste éteint.
+        let champs = inscription.textFields
+        XCTAssertTrue(champs.firstMatch.waitForExistence(timeout: 5), "les champs du nom doivent exister")
+        champs.element(boundBy: 0).tap()
+        champs.element(boundBy: 0).typeText("Charlotte")
+        champs.element(boundBy: 1).tap()
+        champs.element(boundBy: 1).typeText("Perret")
+        photographier("inscription-nom", app: inscription)
+        inscription.buttons["Continuer"].tap()
+        Thread.sleep(forTimeInterval: 1.0)
+        photographier("inscription-objectif", app: inscription)
         for (reponse, nom) in [("Progresser", "inscription-2"), ("4 jours", "inscription-3")] {
             let ligne = inscription.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", reponse)).firstMatch
             XCTAssertTrue(ligne.waitForExistence(timeout: 5), "la réponse « \(reponse) » doit exister")

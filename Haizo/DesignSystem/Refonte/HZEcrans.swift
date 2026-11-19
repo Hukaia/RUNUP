@@ -489,9 +489,9 @@ enum HZRecap {
     static let decalageDesBarres: Double = 0.05
 }
 
-/// L'ENTRÉE DANS L'APP : trois questions, une par écran.
+/// L'ENTRÉE DANS L'APP : quatre écrans, une question chacun — le nom, l'objectif, les jours, le niveau.
 enum HZEntree {
-    static let ecrans = 3
+    static let ecrans = 4
     static let hauteurDUnSegment: CGFloat = 6
     static let ecartDesSegments: CGFloat = 6
     static let sousLaProgression: CGFloat = 28
@@ -512,7 +512,7 @@ enum HZEntree {
     /// Quatre jours, le choix du milieu : celui que prend le bouton si l'on n'a rien touché.
     static let parDefaut = 4
     /// Les noms des trois questions, pour la mesure.
-    static let noms = ["goal", "running_days", "level"]
+    static let noms = ["name", "goal", "running_days", "level"]
 
     /// Les jours de la semaine que dit le nombre choisi.
     static func joursDeCourse(_ nombre: Int) -> Set<Int> {
