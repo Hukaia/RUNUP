@@ -54,7 +54,7 @@ import re
 import sys
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-VUES = "Haizo/Views/Refonte"
+VUES = "Haizo/Views"
 SYSTEME = "Haizo/DesignSystem/Refonte"
 ENGENDRES = {"HZDessins.swift"}
 

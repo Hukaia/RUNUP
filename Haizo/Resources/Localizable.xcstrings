@@ -15573,19 +15573,19 @@
         }
       }
     },
-    "Tu choisiras ta course juste après : le plan se calera sur sa date.": {
+    "Tu choisiras ta course juste après.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You'll pick your race right after: the plan will be built around its date."
+            "value": "You will pick your race right after."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elegirás tu carrera justo después: el plan se ajustará a su fecha."
+            "value": "Elegirás tu carrera justo después."
           }
         }
       }

@@ -8740,3 +8740,58 @@ tailles), le tracé du bloc noir qui ne croise plus la distance. **Tous les écr
 Club, Profil, Réglages, Run, Résumé, Explorer. **Reste, hors canvas** : le hub du Club (`SocialView`, `ClubView`, `FriendsView`, `RouteDiscoveryView`,
 `RaceDiscoveryView`), les pages de course, l'historique, le récap hebdo, les chaussures, la carte de chaleur, l'inscription, le paywall, les feuilles ; puis le
 retrait de l'ancien système de design.
+
+## La refonte est terminée (19 novembre) : plus un écran dans l'ancienne DA, et l'ancien système est supprimé
+
+**Ce qui a été refait ce jour-là**, à partir du brief « On termine la refonte » : le paywall (noir plein écran, « Haizo Plus » en grand, trois
+bénéfices, deux formules dont la choisie en blanc, prix et conditions sans défilement) ; **toutes les feuilles** sur un seul composant,
+`HZFeuilleModale` (titre d'affichage 22, bouton rond de fermeture 44, rayon 30, poignée, actions en pilules), posé par un seul réglage,
+`.hzFeuille(detents:gereSonBas:)` ; et tout ce qui était resté dans l'ancienne DA :
+
+- **Feuilles** : séance, déplacer une séance, journal d'une séance, bilan, ajouter une sortie, réglages (« Plus de réglages », administration,
+  changement de compte, notifications, réglages du programme, sauvegarde), gestion du club (défi, sortie, profil d'un membre), détail d'un badge,
+  commentaires, modifier une sortie ou une annonce, publier et détailler un itinéraire, formulaire de participation, ajouter une course, les trois
+  « Jour J ».
+- **Pages** : profil public, objectif de course, page d'une course, plan complet, Journée (`RingsView`), nouvel objectif, fin de programme et
+  récupération, badge débloqué (plein écran noir), le tracé en grand.
+- **Transverse** : la barre flottante est maintenant celle de **tous** les écrans (sauf la course en direct et son résumé). L'ancienne barre et son cadran
+  de discipline sont supprimés : le bouton de course n'est plus dans la barre depuis le canvas, démarrer est la première action de l'accueil. Le retour
+  vers une course commencée passe par une pastille « Course en cours · 12:34 » (`HZCourseEnCours`), au-dessus de la barre. Le message passager
+  (`ToastCenter`) est une pilule noire.
+
+**Ce qui est supprimé, et la preuve** : `Colors.swift`, `Typography.swift`, `Spacing.swift`, `Motion.swift`, `AccentTheme.swift`, `Habillage.swift` ;
+tout `Views/Components` sauf six fichiers déplacés dans `Views/Refonte` et passés aux jetons (la marque, le tracé, le profil d'altitude, la carte du
+tracé, le bouton de code promo) ; une vingtaine de fichiers morts (ancien accueil, onboarding en onze écrans, rubans, ligne Strava) ; les gardes qui
+ne gardaient que l'ancien système (`check_filet`, `check_vides`, `check_nuit`, `check_grille`, `check_jetons_de_texte`, `check_echelle`, `check_encres`,
+`check_accent`, `check_barre`, `check_inscription`). `check_design.py` est réécrit : il lit `HZCouleur` et `HZMouvement` et compare `DESIGN.md`.
+La recherche `RUColor|RUFont|RUSpacing|RURadius|RUMotion|RUTextSize|RUDisplaySize|RUIconSize|haizoSheetStyle|ruBarreDuBas|ruCard|displayStyle|metaStyle|AccentTheme|Habillage`
+dans `Haizo`, `HaizoTests`, `HaizoUITests`, `HaizoWidgets`, `HaizoWatch` ne rend plus rien que des commentaires d'histoire (listés plus bas s'il en reste).
+Ce qui reste du réglage : `ThemeStore` (accent et clair/sombre, dans `HZApparence.swift`) ; `UserProfile.habillageID` reste un champ enregistré que
+plus rien ne lit, parce qu'une propriété enregistrée ne se retire pas sans migration et qu'il est dans les sauvegardes déjà exportées.
+
+**Décisions de ma part, à confirmer** (aucune n'est de Charlotte) :
+- Les erreurs, avertissements et états (« Signaler ce club », « Quitter le club », un dossard à confirmer, une erreur de saisie) n'ont **plus de teinte** : le
+  système n'a pas de couleur d'alerte, ils s'écrivent en encre sur la surface claire. À trancher : veut-on une teinte d'alerte dans le système ?
+- Les capitales des boutons et des étiquettes sont passées en casse normale, partout (« ENREGISTRER » → « Enregistrer »), y compris sur les cartes partagées
+  en image (« Nouveau record », « Distance », « Allure », « Temps »).
+- Le champ d'écriture d'un commentaire est sur une ligne (envoi au retour clavier), comme celui du coach.
+- La carte de marque (icône, lancement) est en accent plein : le dégradé de marque n'existe plus dans l'app. Les images de la fiche App Store gardent leur
+  palette, écrite dans `screenshots.py`.
+- Le plan complet : les phases n'ont pas de couleur dans le canvas ; Base = accent, Spécifique = encre, Affûtage = la teinte « longue », décharge = gris.
+  L'icône SF par famille de séance est retirée au profit de la bande colorée : les familles ne se distinguent plus que par la couleur et le libellé
+  (repère forme perdu pour les daltoniens, à valider).
+- **« Préparer une course » à l'inscription ne cale pas encore le programme sur la date de la course** : le choix pose un objectif « progresser » (aucune date),
+  et ouvre la liste des courses. « Je prépare cette course » n'écrit rien dans le profil. La phrase qui promettait « le plan se calera sur sa date » était fausse ;
+  elle est retirée. À faire : relier le choix d'une course à l'objectif et à la date du profil (`raceDate`), ce qui change le programme généré — pas fait ici,
+  parce que c'est une décision de logique d'entraînement.
+- Bogue connu, non touché : dans `RaceGoalView`, `strategieStructurelle` ne rend rien pour le triathlon et le duathlon, donc leurs feuilles « Jour J » sont
+  injoignables (comme avant).
+- Au retour depuis l'écran des jours du nouvel objectif, un objectif sans étape de détails demande deux appuis. Défaut hérité, non corrigé.
+
+**À vérifier à l'œil** (non vérifiable sans appareil) : la connexion Apple et le pseudo (`SignInView`) ; le clavier qui ne s'ouvre plus tout seul sur « Distance »
+dans le journal d'une séance (`HZChampDeTexte` n'expose pas de focus) ; le détent de 400 pt du détail d'un badge (estimé) ; les rangées de choix qui défilent
+sur un iPhone 375 ; les trois « Jour J » (inatteignables, voir plus haut).
+
+**Les gardes** : `ci_scripts/check_*.py`, tous verts dans cet arbre, hors `check_branche` et `check_cjs` (nom de branche, `node_modules`) qui ne tournent qu'en CI.
+`check_valeurs` s'applique maintenant à tout `Views/Refonte` (le seul dossier de vues qui reste, hors `RootTabView` et trois petits fichiers du Club).
+Non vérifié à cet instant : la compilation du dernier arbre (la suppression de l'ancien système) et les captures des feuilles.

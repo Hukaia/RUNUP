@@ -218,7 +218,7 @@ struct OnboardingContainerView: View {
     private func precision(de choix: Objectif) -> String? {
         switch choix {
         case .but(let but): return but.subtitle
-        case .course: return String(localized: "Tu choisiras ta course juste après : le plan se calera sur sa date.")
+        case .course: return String(localized: "Tu choisiras ta course juste après.")
         }
     }
 

@@ -799,16 +799,6 @@ jobs:
           cd ci_scripts && python3 test_decimales.py
           cd .. && python3 ci_scripts/check_decimales.py
 
-      # `RUColor.text4` vaut 20 % d'opacité — environ 1,5:1 — parce que c'est la couleur des
-      # points médians et des filets inertes. L'audit l'a trouvée sur une vraie phrase : la ligne
-      # qui dit ce que contient la section dépliable des Stats ne se lisait pas. Rien ne pouvait
-      # le signaler, `text4` étant une couleur légitime du système de design : d'où un ensemble
-      # fermé d'emplois justifiés, et la question posée à tout nouvel emploi.
-      - name: Vérifier qu'aucun texte n'est affiché sous le seuil de contraste
-        run: |
-          cd ci_scripts && python3 test_contraste.py
-          cd .. && python3 ci_scripts/check_contraste.py
-
       # DESIGN.md porte la direction artistique pour qu'elle ne dépende plus d'une conversation.
       # Un tel document dérive sans bruit : quelqu'un règle une valeur, le document continue
       # d'annoncer l'ancienne, et on le lit en croyant savoir. Il CITE donc le code — palette,

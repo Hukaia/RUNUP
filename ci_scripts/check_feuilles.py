@@ -126,7 +126,7 @@ def main() -> int:
         print(f"{len(griefs)} feuille(s) sans l'habillage de l'app :\n")
         for g in griefs:
             print(f"  • {g}\n")
-        print("Voir `haizoSheetStyle` dans Haizo/Views/Components/SheetPresentationModifier.swift.")
+        print("Voir `.hzFeuille` dans Haizo/DesignSystem/Refonte/HZHub.swift.")
         return 1
     print("Feuilles : toutes passent par `haizoSheetStyle`.")
     return 0
