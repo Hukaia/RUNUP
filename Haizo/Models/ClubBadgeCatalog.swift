@@ -45,20 +45,4 @@ enum ClubBadgeCatalog {
         Definition(key: "nightRun", symbole: "moon.fill", name: String(localized: "Course de nuit"), detail: String(localized: "Termine une séance après 21h.")),
         Definition(key: "weekendWarrior", symbole: "calendar.badge.checkmark", name: String(localized: "Guerrière du week-end"), detail: String(localized: "Cumule 10 sorties un samedi ou un dimanche."))
     ]
-
-    /// A themed color per badge instead of the same neutral tile for all 15+ — fire/série in
-    /// ambre, vitesse/nuit en violet, aube en rose2, dénivelé en lime, volume/comptage en cyan,
-    /// paliers de distance de course en rose. Every color already exists in `RUColor` — no new
-    /// hue introduced, just distinguishing badges from each other at a glance.
-    static func color(for key: String) -> Color {
-        switch key {
-        case "streak3", "streak7", "streak30", "weekendWarrior": return RUColor.amber
-        case "interval3", "nightRun": return RUColor.violet
-        case "earlyRun": return RUColor.rose2
-        case "elevation300": return RUColor.lime
-        case "firstRun", "tenRuns", "fiftyRuns", "distance50", "distance250", "distance1000": return RUColor.cyan
-        case "halfMarathonDistance", "marathonDistance": return RUColor.rose
-        default: return RUColor.rose
-        }
-    }
 }

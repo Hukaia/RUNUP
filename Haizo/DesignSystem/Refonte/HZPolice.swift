@@ -93,7 +93,7 @@ enum HZPolice {
         return UIFont(descriptor: UIFontDescriptor(fontAttributes: attributs), size: taille)
     }
 
-    /// Même mécanisme que `RUFont` : la catégorie vient de `TextSizeStore`, pour que le
+    /// Le même mécanisme que l'ancienne échelle : la catégorie vient de `TextSizeStore`, pour que le
     /// changement de réglage invalide les vues qui ont dessiné du texte.
     /// La taille réelle d'un corps de texte, une fois le réglage de l'utilisateur appliqué.
     static func taille(_ corps: HZCorps) -> CGFloat { aLEchelle(corps.rawValue) }

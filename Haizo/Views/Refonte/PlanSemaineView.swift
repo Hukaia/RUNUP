@@ -85,7 +85,6 @@ struct PlanSemaineView: View {
         .statusBarHidden()
         .fullScreenCover(isPresented: $planCompletOuvert) {
             PlanView(retour: { planCompletOuvert = false })
-                .background(RUColor.bg.ignoresSafeArea())
         }
     }
 

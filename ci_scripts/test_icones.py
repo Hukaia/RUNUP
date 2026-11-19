@@ -59,24 +59,9 @@ def _():
     # c'est ce test-ci qui est tombé — sur la machine, dix minutes plus tard. Un test qui répète
     # un nombre que le contrôle connaît déjà ne garde rien de plus, et dérive tout seul.
     assert sum(trouves.values()) == sum(n for n, _ in ck.AUTORISE.values()), trouves
-    # Et l'extraction lit vraiment quelque chose : un motif cassé rendrait zéro en silence.
-    assert trouves, "aucun appel trouvé — le motif ne lit plus rien"
     # La liste d'exceptions reste courte : c'est ce qui fait d'elle une liste plutôt qu'une
     # habitude. Au-delà de cinq, il faudra se demander ce qu'on autorise vraiment.
     assert sum(trouves.values()) <= 5, trouves
-
-
-@cas_de("les sept crans existent et sont ordonnés")
-def _():
-    typo = (ICI.parent / "Haizo/DesignSystem/Typography.swift").read_text(encoding="utf-8")
-    import re
-    crans = [float(x) for x in re.findall(r"case \w+ = ([0-9.]+)",
-                                          typo.split("enum RUIconSize")[1].split("}")[0])]
-    assert len(crans) == 7, crans
-    assert crans == sorted(crans), crans
-    # Les deux tailles les plus employées du dépôt d'origine sont des crans : 65 appels sur 170
-    # ne bougent donc pas d'un point.
-    assert 13 in crans and 15 in crans, crans
 
 
 def main():

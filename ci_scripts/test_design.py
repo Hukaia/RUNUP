@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
 """Ce que `check_design.py` doit voir, et ce qu'il ne doit pas inventer.
 
-Trois des cas ci-dessous sont des DÉFAUTS RÉELS, commis en écrivant `DESIGN.md` le 12 novembre :
-
-  • trois gardes CITÉS QUI N'EXISTAIENT PAS — `check_degrades.py` au pluriel, `check_polices.py`
-    qui s'appelle `check_fonts.py`, et un contrôle des emojis qui n'existe pas du tout. Le
-    document promettait trois barrières dont une n'a jamais été écrite ;
-  • `title` COMPARÉ À LA MAUVAISE ÉCHELLE : le cran existe dans `RUTextSize` à 18,5 et dans
-    `RUDisplaySize` à 22, et la première version du garde criait un écart qui n'en était pas un ;
-  • le document VIDÉ de ses tableaux, qui passait tous les contrôles en silence.
+Trois des cas viennent de défauts réels commis en écrivant `DESIGN.md` : des gardes CITÉS QUI
+N'EXISTAIENT PAS, une valeur recopiée qui a dérivé, et le document VIDÉ de ses tableaux, qui
+passait tous les contrôles en silence.
 """
 
 import pathlib
@@ -16,8 +11,6 @@ import sys
 import tempfile
 
 import check_design as ck
-import couleurs
-import swift
 
 cas = []
 
@@ -43,158 +36,17 @@ def _sur(document: str) -> list:
 
 
 def _vrai_document() -> str:
-    return (couleurs.RACINE / "DESIGN.md").read_text(encoding="utf-8")
+    return ck.DESIGN.read_text(encoding="utf-8")
 
 
 def _fausse(avant: str, apres: str) -> str:
-    """Le document avec une substitution qui a VRAIMENT eu lieu.
-
-    Un cas de ce fichier a déjà passé en ne testant rien : il remplaçait `#5B5563` par une valeur
-    fausse, la valeur du dépôt est devenue `#5B5651` quelques heures plus tard, la substitution
-    est devenue sans effet, et le cas a continué d'afficher « ok » en ne vérifiant plus rien. Un
-    test qui ne teste plus rien est pire qu'un test absent : il rassure.
-    """
+    """Le document avec une substitution qui a VRAIMENT eu lieu : un cas qui ne teste plus rien
+    est pire qu'un cas absent, il rassure."""
     document = _vrai_document()
     assert avant in document, (
         f"« {avant} » n'est plus dans DESIGN.md — ce cas ne teste plus rien. "
         "Reprenez-le sur la valeur actuelle au lieu de le laisser passer.")
-    return document.replace(avant, apres)
-
-
-# ── 1. les défauts réels ─────────────────────────────────────────────────────────────────────
-
-@cas_test("un garde cité qui n'existe pas est refusé (le défaut du 12 novembre)")
-def _():
-    doc = _vrai_document() + "\n\nUn contrôle imaginaire : `check_degrades.py`.\n"
-    assert any("check_degrades.py" in quoi for _, quoi, _ in _sur(doc))
-
-
-@cas_test("les trois noms réellement cités existent tous")
-def _():
-    import re
-    for cite in set(re.findall(r"`(check_[a-z_0-9]+\.py)`", _vrai_document())):
-        assert (couleurs.RACINE / "ci_scripts" / cite).is_file(), cite
-
-
-@cas_test("chaque échelle est lue dans son propre tableau, sans fuite de l'autre")
-def _():
-    """LE DÉFAUT D'ORIGINE : `title` existait des deux côtés avec deux valeurs — 18,5 pour le
-    texte, 22 pour les chiffres — et le contrôle pouvait aller chercher la mauvaise.
-
-    Le 15 novembre, l'échelle unique a supprimé TOUS les homonymes : `title` et `hero` sont
-    devenus des alias, et les deux énumérations n'ont plus un seul nom en commun. La prémisse
-    d'origine ne peut donc plus s'écrire, et ce cas aurait pu être supprimé — ce qui aurait
-    retiré la seule protection contre un contrôle qui mélangerait les deux tables.
-
-    Il porte maintenant sur la propriété qui rendait le défaut possible : l'ÉTANCHÉITÉ. Un cran
-    qui n'appartient qu'à une échelle ne doit jamais apparaître dans l'autre.
-    """
-    textes, affichage = ck.echelle("RUTextSize"), ck.echelle("RUDisplaySize")
-    assert textes and affichage, (textes, affichage)
-    for cran in ("caption", "subtitle", "figure", "banner"):
-        assert cran not in textes, f"« {cran} » est un cran de chiffre, pas de texte : {textes}"
-    for cran in ("micro", "small", "body", "emphasis"):
-        assert cran not in affichage, f"« {cran} » est un cran de texte : {affichage}"
-    # Et le document, tel qu'il est, passe — donc les deux tableaux sont lus chacun dans sa règle.
-    assert ck.ecarts() == [], ck.ecarts()
-
-
-@cas_test("un document vidé de ses tableaux est refusé")
-def _():
-    doc = "\n".join(l for l in _vrai_document().splitlines()
-                    if not l.lstrip().startswith("|"))
-    problemes = _sur(doc)
-    quoi = {q for _, q, _ in problemes}
-    for attendu in ("jetons", "accents", "familles", "crans", "durees"):
-        assert attendu in quoi, (attendu, quoi)
-
-
-# ── 2. chaque famille de valeurs est bien tenue ──────────────────────────────────────────────
-
-@cas_test("un jeton de couleur faux est attrapé")
-def _():
-    actuel = couleurs.declarations()["text3"]["clair"]
-    doc = _fausse(f"| `text3` | `#{actuel:06X}` |", "| `text3` | `#616161` |")
-    assert any("text3" in quoi for _, quoi, _ in _sur(doc))
-
-
-@cas_test("une valeur de nuancier fausse est attrapée")
-def _():
-    primaire = couleurs.accents()["rose"][0]
-    doc = _fausse(f"| Rose | `#{primaire:06X}` |", "| Rose | `#F0225F` |")
-    assert any("Rose" in quoi for _, quoi, _ in _sur(doc))
-
-
-@cas_test("une teinte de famille fausse est attrapée")
-def _():
-    # LA VALEUR EST LUE DANS LE CODE, PAS ÉCRITE ICI. Ce cas a été épinglé sur « ember » tant
-    # que le fractionné s'appelait ainsi ; le 16 novembre la famille est passée à `intervalles`
-    # et la fausse substitution ne trouvait plus rien à remplacer — le cas passait en ne testant
-    # rien, et c'est le garde de péremption de `_fausse` qui l'a dit. Réécrit sur le jeton
-    # courant, il survit au prochain changement de palette.
-    familles = ck.teintes_des_familles()
-    vrai, autre = familles["intervals"], familles["endurance"]
-    # Un AUTRE jeton de famille, et pas un nom inventé : avec un nom qui n'est pas une couleur,
-    # la ligne cesse d'être lisible et le garde se plaint du COMPTE de lignes au lieu de nommer
-    # le fractionné — le cas passerait alors pour la mauvaise raison.
-    assert vrai != autre, "les deux familles partagent un jeton, ce cas ne prouve plus rien"
-    doc = _fausse(f"| Fractionné | `{vrai}` |", f"| Fractionné | `{autre}` |")
-    problemes = _sur(doc)
-    assert any("Fractionné" in quoi for _, quoi, _ in problemes), problemes
-
-
-@cas_test("un cran de typographie faux est attrapé")
-def _():
-    doc = _fausse(f"| `figure` | {ck.echelle('RUDisplaySize')['figure']:g} |",
-                  "| `figure` | 30 |")
-    assert any("figure" in quoi for _, quoi, _ in _sur(doc))
-
-
-@cas_test("une durée de mouvement fausse est attrapée")
-def _():
-    # La durée est lue dans Motion.swift, pas recopiée : elle est passée de 1 450 à 700 ms le
-    # 13 novembre, et ce cas a cessé de tester quoi que ce soit — `_fausse` l'a dit.
-    ms = ck.durees()["draw"]
-    espace = "\u202f" if ms >= 1000 else ""
-    ecrit = f"{ms // 1000}{espace}{ms % 1000:03d}" if ms >= 1000 else str(ms)
-    doc = _fausse(f"| `draw` | {ecrit} ms |", "| `draw` | 1 ms |")
-    problemes = _sur(doc)
-    assert any("draw" in quoi for _, quoi, _ in problemes), problemes
-
-
-@cas_test("une des trois questions retirée est attrapée")
-def _():
-    doc = _fausse("s'y sent à sa place", "s'y sent bien")
-    problemes = _sur(doc)
-    assert any("s'y sent à sa place" in quoi for _, quoi, _ in problemes), problemes
-
-
-# ── 3. les lecteurs partagés ─────────────────────────────────────────────────────────────────
-
-@cas_test("`sans_commentaires_seuls` garde les chaînes, `sans_commentaires` les efface")
-def _():
-    src = 'let x = AccentTheme(id: "rose") // un commentaire\n'
-    assert '"rose"' in swift.sans_commentaires_seuls(src)
-    assert "rose" not in swift.sans_commentaires(src)
-    for fonction in (swift.sans_commentaires, swift.sans_commentaires_seuls):
-        assert "commentaire" not in fonction(src)
-
-
-@cas_test("les huit nuanciers se lisent, avec leurs trois valeurs")
-def _():
-    a = couleurs.accents()
-    assert len(a) == 8, sorted(a)
-    for ident, valeurs in a.items():
-        assert len(valeurs) == 3, (ident, valeurs)
-        assert all(0 <= v <= 0xFFFFFF for v in valeurs), (ident, valeurs)
-
-
-@cas_test("les sept familles de séance ont chacune leur teinte")
-def _():
-    t = ck.teintes_des_familles()
-    assert set(t) == set(ck.FAMILLES.values()), (sorted(t), sorted(ck.FAMILLES.values()))
-    # Une famille est une information : deux familles ne peuvent pas partager une teinte.
-    assert len(set(t.values())) == len(t), t
+    return document.replace(avant, apres, 1)
 
 
 @cas_test("le dépôt tel qu'il est passe")
@@ -202,22 +54,49 @@ def _():
     assert ck.ecarts() == [], ck.ecarts()
 
 
-@cas_test("UN JETON QUI EN NOMME UN AUTRE EST RÉSOLU, une fois et une seule")
+@cas_test("un jeton dont la valeur a dérivé est refusé")
 def _():
-    # `lime` lit `limeSombre` pour sa branche sombre depuis que la carte de nuit a eu besoin de
-    # la variante sombre sans la branche de thème. Sans résolution, `declarations()` rendait la
-    # chaîne « limeSombre » et ce garde refusait la table de DESIGN.md — à juste titre, puisqu'il
-    # ne pouvait plus vérifier ce qu'elle annonce.
-    source = """
-    static let limeSombre = Color(hex: 0xC8FF3D)
-    static var lime: Color { isLight ? Color(hex: 0x6B9E00) : limeSombre }
-    static var inconnue: Color { isLight ? Color(hex: 0x111111) : pasUnJeton }
-    """
-    lus = couleurs.declarations(source)
-    assert lus["lime"]["sombre"] == 0xC8FF3D, lus["lime"]
-    assert lus["lime"]["clair"] == 0x6B9E00, lus["lime"]
-    # Ce qui ne nomme rien de connu reste brut : c'est une information, pas une erreur.
-    assert lus["inconnue"]["sombre"] == "pasUnJeton", lus["inconnue"]
+    assert any("noir" in quoi for _, quoi, _ in _sur(_fausse("`#0B0B0C`", "`#0B0B0D`")))
+
+
+@cas_test("un accent dont la couleur a dérivé est refusé")
+def _():
+    assert any("accent Rose" in quoi for _, quoi, _ in _sur(_fausse("`#FF2E6E`", "`#FF2E6F`")))
+
+
+@cas_test("une teinte d'intensité qui a dérivé est refusée")
+def _():
+    assert any("intensité" in quoi for _, quoi, _ in _sur(_fausse("`#177A50`", "`#177A51`")))
+
+
+@cas_test("une des trois questions disparue est refusée")
+def _():
+    assert any(ck.ANCRES[0] in quoi for _, quoi, _ in _sur(_fausse(ck.ANCRES[0], "xxx")))
+
+
+@cas_test("un garde cité qui n'existe pas est refusé")
+def _():
+    assert any("check_inexistant.py" in quoi
+               for _, quoi, _ in _sur(_vrai_document() + "\n`check_inexistant.py`\n"))
+
+
+@cas_test("le document vidé de ses tableaux est refusé, pas laissé passer")
+def _():
+    vide = "\n".join(ck.ANCRES)
+    assert any(quoi in ("jetons", "accents", "intensites") for _, quoi, _ in _sur(vide))
+
+
+@cas_test("chaque jeton du code se lit")
+def _():
+    j = ck.jetons()
+    assert j.get("noir") == 0x0B0B0C and len(j) >= 12, j
+
+
+@cas_test("les durées du mouvement se lisent")
+def _():
+    d = ck.durees()
+    for jeton in ("ecran", "chiffre", "ressort", "glisse", "trace", "choix"):
+        assert jeton in d, (jeton, sorted(d))
 
 
 def main() -> int:

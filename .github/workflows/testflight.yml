@@ -382,22 +382,6 @@ jobs:
           cd ci_scripts && python3 test_boutons.py
           cd .. && python3 ci_scripts/check_boutons.py
 
-      # DEUX COULEURS ET TROIS GRAISSES POUR LA MÊME PHRASE : « IL N'Y A RIEN ICI ».
-      #
-      # `RUEmpty` existait et six écrans l'utilisaient ; seize endroits continuaient d'écrire le
-      # leur, avec .bold/.semibold/.medium pour le titre, text3/text2 pour le message,
-      # .small/.body pour le corps, .hero/.xlarge pour l'icône. Et le composant partagé était
-      # LUI-MÊME le seul à ne pas utiliser `RUIconSize.hero`, dont la documentation dit « l'icône
-      # d'un état vide, celle qu'on voit avant même de lire ».
-      #
-      # Ce contrôle garde ce qui se garde — le bloc écrit à la main, le site d'appel qui restyle,
-      # le composant qui dérive — et DIT ce qu'il ne sait pas garder : la forme `.ligne` n'a
-      # aucune signature détectable, et une règle à trente dispenses ne décrit pas un défaut.
-      - name: Vérifier que l'état vide ne s'écrit qu'une fois
-        run: |
-          cd ci_scripts && python3 test_vides.py
-          cd .. && python3 ci_scripts/check_vides.py
-
       # « 63 FICHIERS UTILISENT ForEach, 11 SEULEMENT UNE LISTE PARESSEUSE » NE MESURAIT RIEN.
       #
       # Un `ForEach` sur les sept jours de la semaine n'a aucun besoin d'être paresseux, et un
@@ -475,19 +459,6 @@ jobs:
           cd .. && python3 ci_scripts/check_cablage.py
 
 
-      # LE TRAIT QUI SÉPARE DEUX LIGNES ÉTAIT ÉCRIT DE DEUX FAÇONS, ET UNE DES DEUX ÉTAIT FAUSSE.
-      #
-      # Trente endroits posaient `Divider().background(RUColor.line)`. Le `Divider` de SwiftUI a
-      # sa propre épaisseur — un pixel d'écran, un tiers de point sur un ×3 — et sa propre
-      # couleur ; `.background` peint derrière lui, elle ne le recolore pas. Douze autres
-      # dessinaient le bon filet à la main, sur une ligne qu'on ne relit pas et qu'on recopie.
-      # Aucun contrôle ne le voyait, et aucune capture non plus : les écrans qui employaient
-      # l'un des deux idiomes ne sont pas photographiés.
-      - name: Vérifier que chaque filet passe par RUFilet
-        run: |
-          cd ci_scripts && python3 test_filet.py
-          cd .. && python3 ci_scripts/check_filet.py
-
       # UN NOM DE SYMBOLE FAUX NE DESSINE RIEN, SANS ERREUR NI JOURNAL.
       #
       # `Image(systemName: "mountain.2.fill")` sur un nom inexistant rend un `Image` vide de la
@@ -541,11 +512,6 @@ jobs:
           cd ci_scripts && python3 test_session.py
           cd .. && python3 ci_scripts/check_session.py
 
-      - name: Vérifier que la couleur de marque est la même partout
-        run: |
-          cd ci_scripts && python3 test_accent.py
-          cd .. && python3 ci_scripts/check_accent.py
-
       # L'échelle de titrage avait vingt-six tailles écrites à la main, dont sept dans six points.
       # Le compilateur refuse maintenant un nombre nu ; il ne peut pas refuser la porte de
       # service `horsEchelle:`, et c'est par une porte de service que les vingt-six étaient
@@ -564,9 +530,6 @@ jobs:
           cd ci_scripts && python3 test_icones.py
           cd .. && python3 ci_scripts/check_icones.py
 
-      - name: Vérifier que l'échelle de titrage reste fermée
-        run: python3 ci_scripts/check_echelle.py
-
       # Les capitales vivaient de TROIS façons : un `textCase` sur la vue, un `tracking` sur une
       # chaîne déjà capitalisée, et les capitales DANS LA CHAÎNE, au catalogue, en trois langues.
       # Les deux premières se voient en relisant une vue ; la troisième non — « ÉCHAUFFEMENT »
@@ -575,12 +538,6 @@ jobs:
         run: |
           cd ci_scripts && python3 test_majuscules.py
           cd .. && python3 ci_scripts/check_majuscules.py
-
-      # Dix-neuf écarts verticaux continus de 0 à 22, et trente-trois valeurs de marge. `spacing: 9`
-      # à côté de cent `spacing: 8` est un nombre parfaitement valide pour le compilateur, et c'est
-      # comme ça que les dix-neuf sont arrivées — une par une, sans que personne ait à les défendre.
-      - name: Vérifier que les écarts et les marges tiennent sur la grille
-        run: python3 ci_scripts/check_grille.py
 
       # « Aucune valeur en dur dans les vues » — la méthode de la refonte, point 5. Le garde
       # ci-dessus compare trois écritures à la grille de l'ancien système ; celui-ci refuse tout
@@ -852,17 +809,6 @@ jobs:
           cd ci_scripts && python3 test_contraste.py
           cd .. && python3 ci_scripts/check_contraste.py
 
-      # Les trois jetons de texte secondaires étaient des opacités de noir et de blanc, donc leur
-      # couleur était décidée par la surface posée derrière, et leurs rapports de contraste ne
-      # vivaient que dans un commentaire. Ce garde les lit dans `Colors.swift`, reconstruit ce que
-      # les opacités rendaient, et refuse toute valeur qui perdrait du contraste sur l'un des cinq
-      # fonds — les quatre surfaces littérales et une borne du fond teinté. Il imprime le tableau
-      # mesuré, qui n'est donc recopié nulle part.
-      - name: Vérifier les jetons de texte — opaques, en famille, aucun contraste perdu
-        run: |
-          cd ci_scripts && python3 test_jetons_de_texte.py
-          cd .. && python3 ci_scripts/check_jetons_de_texte.py
-
       # DESIGN.md porte la direction artistique pour qu'elle ne dépende plus d'une conversation.
       # Un tel document dérive sans bruit : quelqu'un règle une valeur, le document continue
       # d'annoncer l'ancienne, et on le lit en croyant savoir. Il CITE donc le code — palette,
@@ -873,26 +819,6 @@ jobs:
         run: |
           cd ci_scripts && python3 test_design.py
           cd .. && python3 ci_scripts/check_design.py
-
-      # Deux encres de l'app sont RECOPIÉES hors du système de design, et ne peuvent pas ne pas
-      # l'être : celle du widget traverse une frontière de cible, celle de `onAccent` répond à une
-      # question que `textPrimary` ne pose pas. Le 12 novembre, le fond clair est passé au chaud et
-      # les deux sont restées froides — le widget aurait porté l'ancienne encre sur l'écran
-      # d'accueil du téléphone. Une copie est tolérée ; une copie sans correspondance déclarée non.
-      - name: Vérifier que les encres recopiées suivent le système de design
-        run: |
-          cd ci_scripts && python3 test_encres.py
-          cd .. && python3 ci_scripts/check_encres.py
-
-      # La carte de nuit est le seul élément authored de l'app, et elle était peinte avec les
-      # jetons de la PAGE : l'anneau de départ du tracé en `textPrimary`, soit du presque-noir
-      # sur du presque-noir dès que le thème est clair — sur la capture, un trou dans la lueur.
-      # Et le tracé portait l'accent descendu pour le fond blanc : lime y perdait 58 % de son
-      # éclat, cyan 49 %, ambre 48 %. Aucun des trois n'avait de symptôme technique.
-      - name: Vérifier que rien de la page n'est peint sur la nuit
-        run: |
-          cd ci_scripts && python3 test_nuit.py
-          cd .. && python3 ci_scripts/check_nuit.py
 
       # La règle 7 interdit les emojis, et rien ne la tenait : `check_strings.py` ignore
       # explicitement les chaînes sans lettre, puisque son sujet est la traduction. DESIGN.md le

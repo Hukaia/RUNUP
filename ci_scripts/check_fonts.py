@@ -66,10 +66,9 @@ def constants():
     if m:
         out["DisplayFont.family"] = m.group(1)
         out["family"] = m.group(1)
-    typo = (ROOT / "Haizo/DesignSystem/Typography.swift").read_text(encoding="utf-8")
-    m = re.search(r'bodyFamily\s*=\s*(?:DisplayFont\.family|"([^"]+)")', typo)
-    if m:
-        out["bodyFamily"] = m.group(1) or out.get("DisplayFont.family", "")
+    # L'ancienne échelle (`Typography.swift`) nommait aussi `bodyFamily` ; elle a disparu avec
+    # l'ancien système, et la famille du texte courant est celle de l'affichage.
+    out["bodyFamily"] = out.get("DisplayFont.family", "")
     return out
 
 

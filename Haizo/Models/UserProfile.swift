@@ -358,7 +358,7 @@ final class UserProfile {
     var paceAlertsEnabled: Bool = true
     /// Which `AccentTheme` swatch the user picked in Profil → Apparence — mirrored into
     /// `ThemeStore.shared` on load so `RUColor.rose`/`.rose2`/`.violet` reflect it everywhere.
-    var accentThemeID: String = AccentTheme.defaultID
+    var accentThemeID: String = ThemeStore.accentParDefaut
     /// Dark (default) or light app-wide theme — same mirror-into-`ThemeStore` pattern as
     /// `accentThemeID`, see `RUColor`'s theme-aware tokens.
     /// CLAIR PAR DÉFAUT — décision de Charlotte, 9 novembre 2026.
@@ -367,13 +367,10 @@ final class UserProfile {
     /// propriété booléenne prend quand personne ne se prononce. Ça ne vaut que pour un profil
     /// NEUF : un profil déjà enregistré porte sa valeur, et personne ne se fait retourner son app.
     var isLightMode: Bool = true
-    /// L'habillage choisi — `Habillage.rawValue`. Voir `Habillage` : la direction artistique est
-    /// un réglage, pas un commit, pour qu'en revenir coûte un appui.
-    ///
-    /// Stocké en texte brut et non en énumération, comme `RunRecord.disciplineRaw` : une valeur
-    /// inconnue (un habillage ajouté par une version plus récente, relue par celle qu'on vient de
-    /// réinstaller) retombe sur le classique au lieu de faire planter la lecture du profil.
-    var habillageID: String = Habillage.defaut.rawValue
+    /// L'habillage d'autrefois (« classique » ou « trace »), que plus rien ne lit : le champ reste
+    /// parce qu'il est écrit dans les profils déjà enregistrés et dans les sauvegardes déjà
+    /// exportées, et qu'une propriété enregistrée ne se retire pas sans migration.
+    var habillageID: String = "classique"
     /// The kudos count last seen per own posted activity (`FeedItem.id`) — lets `ClubView` notice
     /// when someone new claps for one of your runs and post a real notification for it, instead
     /// of silently refetching the same feed over and over.

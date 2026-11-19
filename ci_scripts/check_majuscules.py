@@ -122,9 +122,6 @@ PERMIS_A_LA_VOLEE: dict = {
     "Haizo/Models/Session.swift": (
         2, "les initiales des sept jours — « L M M J V S D ». Une seule lettre n'est pas un "
            "libellé, et la capitale y est la forme attendue d'une initiale."),
-    "Haizo/Views/Components/AvatarView.swift": (
-        3, "l'initiale d'un prénom dans une pastille d'avatar. Même raison : une lettre, pas un "
-           "mot."),
     "Haizo/DesignSystem/Refonte/HZBoutons.swift": (
         1, "`HZAvatar.initiales` — l'avatar de la refonte, deux initiales au lieu d'une : celle "
            "du prénom, celle du nom. Des lettres, pas un mot."),

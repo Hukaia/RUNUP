@@ -260,12 +260,12 @@ def _():
 
 # ── Le vrai dépôt ─────────────────────────────────────────────────────────────────────────────
 
-@cas_test("la table du vrai code voit les composants d'onboarding, et pas `RunRecord`")
+@cas_test("la table du vrai code voit les composants à paramètre localisé, et pas `RunRecord`")
 def _():
     fichiers = [f for d in ck.DOSSIERS for f in sorted((ck.RACINE / d).rglob("*.swift"))]
     table = ck.parametres_localises([f.read_text(encoding="utf-8") for f in fichiers])
-    assert "eyebrow" in table.get("ObTitle", set()), "ObTitle.eyebrow manque"
-    assert "text" in table.get("EyebrowLabel", set()), "EyebrowLabel.text manque"
+    assert "phraseDeLaJournee" in table.get("DuathlonRaceDaySheet", set()), "DuathlonRaceDaySheet.phraseDeLaJournee manque"
+    assert "text" in table.get("LiveRunView", set()), "LiveRunView.text manque"
     # `RunRecord(title:)` stocke le titre français du relevé — il ne doit jamais être réclamé.
     assert "title" not in table.get("RunRecord", set()), "RunRecord.title réclamé à tort"
 

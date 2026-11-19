@@ -160,13 +160,6 @@ DIRECTES_AUTORISEES = {
     # Les retirer touche sept écrans pour la première et l'onboarding entier pour la seconde.
     # C'est un chantier, pas une ligne, et il attend d'être fait plutôt que d'être oublié : le
     # compte ci-dessous le dira tant qu'il reste à faire.
-    "Haizo/Models/ClubBadgeCatalog.swift": (
-        3, "une couleur par FAMILLE de badge — série en ambre, dénivelé en lime, volume en "
-           "turquoise. Sept écrans la lisent. Le point 4 du brief dit ce qui doit la remplacer : "
-           "l'accent pour les obtenus, le gris pour les autres."),
-    "Haizo/DesignSystem/Colors.swift": (
-        3, "`GoalType.tint` — une couleur par OBJECTIF, posée sur les cartes de l'onboarding. "
-           "Huit teintes dont trois sémantiques. Le brief n'en veut qu'une."),
 }
 
 def ecarts_directs(racine=None):
@@ -214,13 +207,12 @@ def ecarts_directs(racine=None):
 #
 # CE QUE ÇA NE DIT PAS : qu'une couleur proche est fautive. Une valeur voisine d'un chiffre n'est
 # pas la même couleur, et l'app en porte beaucoup. On ne juge que l'identité.
-VALEURS_DECORATIVES = {}
-for _num, _ligne in enumerate(
-        (RACINE / "Haizo/DesignSystem/Colors.swift").read_text(encoding="utf-8").splitlines(), 1):
-    _m = re.search(r"static let (lime|cyan|amber|amberText|cyanSombre|limeSombre|ambreSombre)"
-                   r"\b[^\n]*?0x([0-9A-Fa-f]{6})", _ligne)
-    if _m:
-        VALEURS_DECORATIVES.setdefault(_m.group(2).upper(), set()).add(_m.group(1))
+# Les valeurs de l'ancienne palette décorative, écrites ici depuis la suppression du fichier de
+# couleurs de l'ancien système : le garde cherche toujours ces valeurs recopiées dans une vue.
+VALEURS_DECORATIVES = {
+    "6B9E00": {"lime"}, "0E9C8C": {"cyan"}, "B86A00": {"amber"}, "8A5A00": {"amberText"},
+    "FFD79A": {"amberText"}, "C8FF3D": {"limeSombre"}, "38E0D0": {"cyanSombre"},
+}
 
 #: Les valeurs recopiées qui restent, avec leur raison et leur compte exact.
 RECOPIEES_AUTORISEES = {
@@ -238,8 +230,6 @@ def ecarts_recopies(racine=None):
     fautes, compte_recopie = [], {}
     for f in sorted((racine / "Haizo").rglob("*.swift")):
         rel = f.relative_to(racine).as_posix()
-        if rel == "Haizo/DesignSystem/Colors.swift":
-            continue
         for num, ligne in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
             if ligne.lstrip().startswith("//"):
                 continue

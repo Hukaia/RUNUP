@@ -150,11 +150,6 @@ def _():
     assert avec({"Haizo/V.swift": "Color(hex: 0x38E0D1)"}) == []
 
 
-@cas_de("le fichier des jetons n'est pas jugé — c'est lui qui les DÉFINIT")
-def _():
-    assert avec({"Haizo/DesignSystem/Colors.swift": "static let cyanSombre = Color(hex: 0x38E0D0)"}) == []
-
-
 @cas_de("une valeur recopiée de plus sonne")
 def _():
     d = {"Haizo/V.swift": "a(0x38E0D0)\nb(0x38e0d0)"}

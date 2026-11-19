@@ -255,8 +255,7 @@ final class AppState {
         // jusqu'à chacune n'aurait servi qu'à ça. Voir `Accord`.
         AccordStore.shared.appliquer(Genre.depuis(sexe: self.profile.sex))
         ThemeStore.shared.appliquer(themeID: self.profile.accentThemeID,
-                                    isLightMode: self.profile.isLightMode,
-                                    habillage: Habillage.depuis(self.profile.habillageID))
+                                    isLightMode: self.profile.isLightMode)
         NotificationService.shared.rescheduleDailyReminder(for: self.profile)
         NotificationService.shared.rescheduleInactivityReminder(for: self.profile)
         NotificationService.shared.scheduleWeeklyRecapReminder(for: self.profile)
@@ -731,8 +730,7 @@ final class AppState {
             rafraichirLaCourseLibre()
             AccordStore.shared.appliquer(Genre.depuis(sexe: profile.sex))
             ThemeStore.shared.appliquer(themeID: profile.accentThemeID,
-                                        isLightMode: profile.isLightMode,
-                                        habillage: Habillage.depuis(profile.habillageID))
+                                        isLightMode: profile.isLightMode)
             NotificationService.shared.rescheduleDailyReminder(for: profile)
             go(.home)
             return .faite(courses: compte.courses, messages: compte.messages,

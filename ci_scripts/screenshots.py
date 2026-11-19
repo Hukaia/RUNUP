@@ -170,14 +170,10 @@ SUFFIXES = {".png", ".jpg", ".jpeg"}
 # suivi (`check_accent.py` les tient ensemble) ; ce fichier-ci, non — et c'est lui qui fabrique la
 # seule surface que les gens voient AVANT d'installer.
 #
-# Plutôt que d'en faire une cinquième copie à surveiller, on lit la source. Une copie qui n'existe
-# pas ne peut pas dériver. L'import marche parce que `check_accent` ne dépend que de la
-# bibliothèque standard et que les deux fichiers sont voisins — c'est déjà ainsi que
-# `test_accent.py` l'utilise.
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import check_accent as accents  # noqa: E402
-
-
+# Les couleurs de la marque des images de la fiche App Store, écrites ici une fois : le rose, sa
+# variante claire et la queue violette des affiches. Ce sont les valeurs de l'ancien nuancier
+# « rose », gardées telles quelles : l'ancien système disparaît de l'app, pas des images déjà
+# publiées sur la fiche.
 def _rgb(hexa: str) -> tuple:
     """« 0xff0a78 » → (255, 10, 120)."""
     v = int(hexa, 16)
@@ -188,9 +184,8 @@ def _sombre(rgb: tuple, facteur: float) -> tuple:
     return tuple(max(0, min(255, round(c * facteur))) for c in rgb)
 
 
-# Les trois couleurs du nuancier « rose » : le primaire, sa variante claire, et la queue violette
-# des dégradés. Exactement ce que l'app affiche.
-_PALETTE = accents.nuanciers(accents.SOURCE.read_text(encoding="utf-8"))["rose"]
+# Le rose de la marque, sa variante claire, et la queue violette des affiches.
+_PALETTE = ("0xff0a78", "0xff4d9e", "0x7c5cff")
 PRIMAIRE = _rgb(_PALETTE[0])
 CLAIR = _rgb(_PALETTE[1])
 QUEUE = _rgb(_PALETTE[2])
