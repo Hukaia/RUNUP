@@ -35,8 +35,6 @@ MOTIF = re.compile(r"\.font\(\s*\.system\(size:")
 AUTORISE = {
     "Haizo/Views/Home/Sheets/NotificationsSheet.swift":
         (1, "le repli qui affiche l'emoji d'une notification déjà enregistrée en base"),
-    "Haizo/Views/ProgramEnd/NewGoalWizardView.swift":
-        (1, "la coche typographique « ✓ » de la fin de construction du plan"),
 }
 
 

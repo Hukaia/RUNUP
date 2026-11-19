@@ -3990,6 +3990,23 @@
         }
       }
     },
+    "Annuler la demande": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel request"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar solicitud"
+          }
+        }
+      }
+    },
     "Aucun club à te proposer pour l'instant. Cherche le tien par son nom depuis le Club.": {
       "extractionState": "manual",
       "localizations": {
@@ -6683,6 +6700,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "CONTINUAR"
+          }
+        }
+      }
+    },
+    "Construire mon programme": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Build my program"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Construir mi programa"
           }
         }
       }
@@ -9685,6 +9719,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "SOLICITAR SEGUIR"
+          }
+        }
+      }
+    },
+    "Demander à suivre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request to follow"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solicitar seguir"
           }
         }
       }
@@ -14335,6 +14386,40 @@
         }
       }
     },
+    "Je suis prêt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'm ready"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estoy listo"
+          }
+        }
+      }
+    },
+    "Je suis prête": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'm ready"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estoy lista"
+          }
+        }
+      }
+    },
     "Jour de repos": {
       "extractionState": "manual",
       "localizations": {
@@ -15114,6 +15199,23 @@
         }
       }
     },
+    "Passer la récupération": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip recovery"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saltar la recuperación"
+          }
+        }
+      }
+    },
     "Publication…": {
       "extractionState": "manual",
       "localizations": {
@@ -15178,6 +15280,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quitar de mis rutas"
+          }
+        }
+      }
+    },
+    "Se désabonner": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unfollow"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dejar de seguir"
           }
         }
       }
