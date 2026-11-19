@@ -61,9 +61,9 @@ PERMIS = {
            "splash et le logo. `AppMarkView` est son unique appelant."),
 
     # ── 2. UNE IMAGE PRODUITE, PAS UN ÉCRAN ───────────────────────────────────────────────────
-    "Haizo/Views/Live/RunShareCardView.swift": (
+    "Haizo/Views/Refonte/RunShareCardView.swift": (
         1, "La carte qu'on partage après une course, style « Haizo ». Même raison."),
-    "Haizo/Views/Live/RunVideoFrameView.swift": (
+    "Haizo/Views/Refonte/RunVideoFrameView.swift": (
         3, "Les images d'une vidéo de course, destinées à être publiées. Deux halos et un titre."),
     "Haizo/Views/Components/AvatarView.swift": (
         2, "L'avatar fabriqué pour quelqu'un qui n'a pas mis de photo. Il REMPLACE une image, "

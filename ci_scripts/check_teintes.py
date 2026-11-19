@@ -151,7 +151,6 @@ AVERTISSEMENT = ("un avertissement : `amber` y veut dire MOINS BIEN, et c'est ex
 #: fichier → (nombre d'emplois directs autorisés, pourquoi)
 DIRECTES_AUTORISEES = {
     # ── 1. DES AVERTISSEMENTS ─────────────────────────────────────────────────────────────────
-    "Haizo/Views/Home/Sheets/MoveSessionSheet.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Race/RacePageView.swift": (3, AVERTISSEMENT + " Un bandeau d'alerte de course, "
                                             "plus la teinte d'« état confirmé » déjà déclarée "
                                             "en haut de ce fichier."),

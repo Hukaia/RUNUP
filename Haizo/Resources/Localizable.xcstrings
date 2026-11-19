@@ -537,6 +537,23 @@
         }
       }
     },
+    "%@ · enchaîne course et mouvement, sans repos complet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · run and movement back-to-back, no full rest"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · encadena carrera y movimiento, sin descanso completo"
+          }
+        }
+      }
+    },
     "%@ · facultatif": {
       "extractionState": "manual",
       "localizations": {
@@ -566,6 +583,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ · camina en cuanto la pendiente lo pida: en un ultra es la técnica, no un fracaso"
+          }
+        }
+      }
+    },
+    "%@ · récupération entre chaque": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · recovery between each"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · recuperación entre cada uno"
           }
         }
       }
@@ -2649,6 +2683,23 @@
         }
       }
     },
+    "%lld′ · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · %@"
+          }
+        }
+      }
+    },
     "%lld′ · %@ /km · %@": {
       "localizations": {
         "en": {
@@ -2697,6 +2748,23 @@
         }
       }
     },
+    "%lld′ · %@ · allure seuil entrecoupée de %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · %@ · threshold pace broken up with %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · %@ · ritmo umbral intercalado con %@"
+          }
+        }
+      }
+    },
     "%lld′ · %@ · c'est la durée qui compte, pas la distance": {
       "localizations": {
         "en": {
@@ -2725,6 +2793,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld′ · %@ · mañana vuelves a salir con estas piernas, así que guarda algo"
+          }
+        }
+      }
+    },
+    "%lld′ · %@ · effort soutenu et continu": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · %@ · sustained, continuous effort"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · %@ · esfuerzo sostenido y continuo"
           }
         }
       }
@@ -10285,6 +10370,23 @@
         }
       }
     },
+    "Deux séances exigeantes à la suite": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two hard sessions in a row"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dos sesiones exigentes seguidas"
+          }
+        }
+      }
+    },
     "Deux transitions, et aucune combinaison à retirer : elles sont plus courtes qu'en triathlon, et elles ne sont jamais là que ta journée se joue. Deux ou trois pour cent du total, pas davantage.": {
       "extractionState": "manual",
       "localizations": {
@@ -15450,6 +15552,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Una primera semana para guardar: %@ km."
+          }
+        }
+      }
+    },
+    "Valider et mettre à jour": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm and update"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirmar y actualizar"
           }
         }
       }

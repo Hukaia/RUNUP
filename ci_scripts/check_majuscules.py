@@ -135,18 +135,10 @@ PERMIS_A_LA_VOLEE: dict = {
 
 PERMIS = {
     # ── 1. DES BOUTONS ────────────────────────────────────────────────────────────────────────
-    "Haizo/Views/Home/Sheets/SessionDetailSheet.swift": (1, BOUTON),
-    "Haizo/Views/Live/DebriefSheet.swift": (1, BOUTON),
     "Haizo/Views/Race/CreateRaceSheet.swift": (1, BOUTON),
     "Haizo/Views/Race/RacePageView.swift": (5, BOUTON),
 
     # ── 2. UNE IMAGE PRODUITE, PAS UN ÉCRAN ───────────────────────────────────────────────────
-    "Haizo/Views/Live/RunShareCardView.swift": (
-        4, "la carte qu'on partage après une course. C'est une affiche qu'on poste ailleurs, pas "
-           "un écran de l'app — la même distinction que `check_degrade.py` fait pour les "
-           "dégradés."),
-    "Haizo/Views/Live/RunVideoFrameView.swift": (
-        1, "les images de la vidéo d'export. Même raison."),
 
     # ── 3. UNE DETTE NOMMÉE, QUI ATTEND UNE MACHINE ──────────────────────────────────────────
     #
