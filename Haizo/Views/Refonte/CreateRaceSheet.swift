@@ -23,7 +23,7 @@ struct CreateRaceSheet: View {
 
     @State private var nom = ""
     @State private var ville = ""
-    @State private var date = Date().addingTimeInterval(60 * 60 * 24 * 60)
+    @State private var date = Date().addingTimeInterval(HZCourse.delaiParDefaut)
     @State private var distance = ""
     @State private var denivele = ""
     @State private var discipline = "run"
@@ -46,72 +46,73 @@ struct CreateRaceSheet: View {
     }()
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                Text("Ajouter une course")
-                    .font(RUFont.display(.title))
-                    .foregroundColor(RUColor.textPrimary)
+        HZFeuilleModale(titre: String(localized: "Ajouter une course")) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: HZEspace.groupe) {
+                    champ(titre: String(localized: "Nom de la course"), texte: $nom,
+                          exemple: String(localized: "Marathon de Paris"))
 
-                champ(titre: String(localized: "Nom de la course"), texte: $nom,
-                      exemple: String(localized: "Marathon de Paris"))
+                    choixDeLaDate
+                    choixDuType
 
-                VStack(alignment: .leading, spacing: 6) {
-                    etiquette(String(localized: "Date"))
-                    DatePicker("", selection: $date, in: Date()..., displayedComponents: .date)
-                        .datePickerStyle(.compact)
-                        .labelsHidden()
-                        .tint(RUColor.rose)
-                }
+                    champ(titre: String(localized: "Ville"), texte: $ville,
+                          exemple: String(localized: "Paris"), facultatif: true)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    etiquette(String(localized: "Type d'épreuve"))
-                    Picker("", selection: $discipline) {
-                        ForEach(Self.disciplines, id: \.self) { clef in
-                            Text(Self.libelle(clef)).tag(clef)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .labelsHidden()
-                }
-
-                champ(titre: String(localized: "Ville"), texte: $ville,
-                      exemple: String(localized: "Paris"), facultatif: true)
-
-                HStack(spacing: 10) {
+                    // L'un sous l'autre et pas côte à côte : « Distance (km) · facultatif » ne tient
+                    // pas dans une demi-largeur à 390 points.
                     champ(titre: String(localized: "Distance (km)"), texte: $distance,
                           exemple: "42,2", facultatif: true, clavier: .decimalPad)
                     champ(titre: String(localized: "D+ (m)"), texte: $denivele,
                           exemple: "1200", facultatif: true, clavier: .numberPad)
+
+                    champ(titre: String(localized: "Site officiel"), texte: $site,
+                          exemple: "https://…", facultatif: true, clavier: .URL)
+
+                    if let erreur {
+                        HZPhrase(texte: erreur)
+                    }
+
+                    HZPhrase(texte: String(localized: "Tout le monde pourra la trouver et la suivre. Les champs laissés vides se complètent plus tard."))
                 }
-
-                champ(titre: String(localized: "Site officiel"), texte: $site,
-                      exemple: "https://…", facultatif: true, clavier: .URL)
-
-                if let erreur {
-                    Text(erreur)
-                        .font(RUFont.sans(.body))
-                        .foregroundColor(RUColor.ember)
-                }
-
-                Text("Tout le monde pourra la trouver et la suivre. Les champs laissés vides se complètent plus tard.")
-                    .font(RUFont.sans(.small))
-                    .foregroundColor(RUColor.text3)
+                .padding(.horizontal, HZEspace.marge)
             }
-            .padding(RUSpacing.pagePadding)
         }
-        .background(RUColor.pageBackground)
-        // Le geste pour lequel cette feuille est ouverte, épinglé — voir `ruBarreDuBas`.
-        .ruBarreDuBas {
-            Button(action: { Task { await creer() } }) {
-                Text(enCours ? String(localized: "Création…") : String(localized: "CRÉER LA PAGE"))
-            }
-            .buttonStyle(PrimaryButtonStyle(isDisabled: nomPropre.isEmpty || enCours))
-            .disabled(nomPropre.isEmpty || enCours)
+        // Le geste pour lequel cette feuille est ouverte, épinglé en bas : l'appelant pose
+        // `gereSonBas: true`.
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            HZActionEpinglee(libelle: enCours ? String(localized: "Création…") : String(localized: "Créer la page"),
+                             eteinte: nomPropre.isEmpty || enCours) { Task { await creer() } }
         }
         .onAppear { if nom.isEmpty { nom = nomPropose } }
     }
 
-    private static func libelle(_ clef: String) -> String {
+    private var choixDeLaDate: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
+            etiquette(String(localized: "Date"))
+            DatePicker("", selection: $date, in: Date()..., displayedComponents: .date)
+                .datePickerStyle(.compact)
+                .labelsHidden()
+                .tint(HZCouleur.accent)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private var choixDuType: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
+            etiquette(String(localized: "Type d'épreuve"))
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: HZEspace.entrePilules) {
+                    ForEach(Self.disciplines, id: \.self) { clef in
+                        HZFiltre(libelle: Self.libelleDuTypeDEpreuve(clef), actif: discipline == clef, fond: .clair) {
+                            discipline = clef
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static func libelleDuTypeDEpreuve(_ clef: String) -> String {
         switch clef {
         case "trail": return String(localized: "Trail")
         case "hyrox": return String(localized: "Hyrox")
@@ -122,26 +123,15 @@ struct CreateRaceSheet: View {
 
     private func etiquette(_ texte: String) -> some View {
         Text(texte)
-            .font(RUFont.sans(.small, weight: .semibold))
-            .foregroundColor(RUColor.text3)
+            .hzTexte(.c13, .semi)
+            .foregroundStyle(HZCouleur.secondaireSurClair)
     }
 
     private func champ(titre: String, texte: Binding<String>, exemple: String,
                        facultatif: Bool = false, clavier: UIKeyboardType = .default) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            etiquette(facultatif ? String(localized: "\(titre) · facultatif") : titre)
-            TextField(exemple, text: texte)
-                .textFieldStyle(.plain)
-                .font(RUFont.sans(.emphasis))
-                .foregroundColor(RUColor.textPrimary)
-                .keyboardType(clavier)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(clavier == .URL ? .never : .sentences)
-                .padding(.horizontal, 14).padding(.vertical, 12)
-                .background(RUColor.card, in: RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusInner, style: .continuous).stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        HZChampDeTexte(titre: facultatif ? String(localized: "\(titre) · facultatif") : titre,
+                       invite: exemple, texte: texte, clavier: clavier,
+                       majuscules: clavier == .URL ? .never : .sentences)
     }
 
     private func creer() async {
@@ -165,9 +155,9 @@ struct CreateRaceSheet: View {
             // Pas de `dismiss()` ici : c'est l'écran appelant qui referme cette feuille, puis
             // ouvre la page de la course. Les deux à la fois feraient refermer deux fois.
             onCreated(course)
-        } catch ClubServiceError.badResponse(422, _) {
+        } catch ClubServiceError.badResponse(let code, _) where code == HZHub.refuse {
             erreur = String(localized: "Ce nom ne passe pas. Mets le nom officiel de la course.")
-        } catch ClubServiceError.badResponse(429, _) {
+        } catch ClubServiceError.badResponse(let code, _) where code == HZCourse.tropDeRequetes {
             erreur = String(localized: "Trop de courses créées aujourd'hui. Réessaie demain.")
         } catch {
             erreur = String(localized: "Impossible de créer la course — \(PanneReseau.motif(pour: error)).")

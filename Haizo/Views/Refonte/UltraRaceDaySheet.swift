@@ -20,47 +20,44 @@ struct UltraRaceDaySheet: View {
     private var connu: Bool { heures >= 1 }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                Text("Le jour J").displayStyle(.title).foregroundColor(RUColor.textPrimary).padding(.top, 8)
-                Text("Trois choses décident d'un ultra, et aucune n'est ton entraînement. Elles se préparent, et elles se testent sur tes sorties longues, jamais le jour J.")
-                    .font(RUFont.sans(.body)).foregroundColor(RUColor.text2).lineSpacing(3)
+        HZFeuilleModale(titre: String(localized: "Le jour J")) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: HZEspace.entreSections) {
+                    HZParagrapheDeCourse(Text("Trois choses décident d'un ultra, et aucune n'est ton entraînement. Elles se préparent, et elles se testent sur tes sorties longues, jamais le jour J."))
 
-                ravitaillement
-                materiel
-                nuit
+                    ravitaillement
+                    materiel
+                    nuit
+                }
+                .padding(.horizontal, HZEspace.marge)
             }
-            .padding(.horizontal, RUSpacing.pagePadding)
-            // L'encart du bas n'est plus posé ici : `haizoSheetStyle` le donne à toutes les
-            // feuilles, d'une seule valeur. Voir `RUSpacing.sheetBottomInset`.
         }
     }
 
     // MARK: Le ravitaillement
 
     private var ravitaillement: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            RUCardHeader(icon: "fork.knife", title: "Le ravitaillement")
+        VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+            HZTitreDeSection(titre: String(localized: "Le ravitaillement"))
 
-            HStack(spacing: 8) {
-                chiffre(glucidesParHeure, Text("g de glucides / h"))
-                chiffre(eauParHeure, Text("ml de boisson / h"))
-                chiffre(sodiumParHeure, Text("mg de sel / h"))
-            }
+            HZChiffresDeCourse(chiffres: [
+                (glucidesParHeure, String(localized: "g de glucides / h")),
+                (eauParHeure, String(localized: "ml de boisson / h")),
+                (sodiumParHeure, String(localized: "mg de sel / h"))
+            ])
 
             if connu {
                 // Deux phrases et non une, et ce n'est pas un choix de style : six interpolations
                 // dans une seule chaîne suffisent à faire abandonner le vérificateur de types de
                 // Swift (« unable to type-check this expression in reasonable time »), qui
                 // abandonne à la compilation. Trois et trois passent.
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Sur une estimation de **\(heuresArrondies) h d'effort**, il te faudra **\(glucidesBas) à \(glucidesHaut) g de glucides**.")
-                    Text("Soit à peu près **\(prises) prises**, et **\(litresBas) à \(litresHaut) litres** de boisson.")
+                VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
+                    HZParagrapheDeCourse(Text("Sur une estimation de **\(heuresArrondies) h d'effort**, il te faudra **\(glucidesBas) à \(glucidesHaut) g de glucides**."))
+                    HZParagrapheDeCourse(Text("Soit à peu près **\(prises) prises**, et **\(litresBas) à \(litresHaut) litres** de boisson."))
                 }
-                .font(RUFont.sans(.body)).foregroundColor(RUColor.text2).lineSpacing(3)
             }
 
-            puces([
+            HZPucesDeCourse(lignes: [
                 Accord.selon(
                     f: String(localized: "Une prise toutes les \(UltraRaceDay.minutesEntreDeuxPrises) minutes, à la montre. « Manger régulièrement » ne se fait pas : une consigne sans horloge ne tient pas quand on est fatiguée."),
                     m: String(localized: "Une prise toutes les \(UltraRaceDay.minutesEntreDeuxPrises) minutes, à la montre. « Manger régulièrement » ne se fait pas : une consigne sans horloge ne tient pas quand on est fatigué.")),
@@ -69,23 +66,20 @@ struct UltraRaceDaySheet: View {
                 String(localized: "Rien de nouveau le jour J. Ce que tu mangeras en course, tu l'as déjà mangé en sortie longue — c'est aussi à ça qu'elles servent.")
             ])
         }
-        .padding(RUSpacing.cardPadding)
-        .ruCard()
     }
 
     // MARK: Le matériel
 
     private var materiel: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            RUCardHeader(icon: "backpack", title: "Le matériel")
+        VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+            HZTitreDeSection(titre: String(localized: "Le matériel"))
 
             // L'AVERTISSEMENT EN PREMIER, ET PAS EN NOTE DE BAS DE CARTE. Un sac non conforme est
-            // un refus au départ : si une seule phrase de cette carte doit être lue, c'est
+            // un refus au départ : si une seule phrase de cette section doit être lue, c'est
             // celle-là, et elle dit que cette liste n'est pas celle qui sera contrôlée.
-            Text("La liste qui compte est celle de **ta** course : l'organisation la publie, et la contrôle au départ. Celle-ci est le socle commun des grands trails — pars de là, puis relis la leur.")
-                .font(RUFont.sans(.body)).foregroundColor(RUColor.text2).lineSpacing(3)
+            HZParagrapheDeCourse(Text("La liste qui compte est celle de **ta** course : l'organisation la publie, et la contrôle au départ. Celle-ci est le socle commun des grands trails — pars de là, puis relis la leur."))
 
-            puces([
+            HZPucesDeCourse(lignes: [
                 String(localized: "Une veste imperméable à capuche — une membrane, pas un coupe-vent. C'est le point le plus souvent recalé au contrôle."),
                 String(localized: "Deux frontales, et des piles de rechange pour chacune."),
                 String(localized: "Un litre d'eau au minimum, en contenance embarquée."),
@@ -98,19 +92,16 @@ struct UltraRaceDaySheet: View {
                 String(localized: "Des bâtons si tu t'en sers, et seulement si tu t'en es servi à l'entraînement.")
             ])
         }
-        .padding(RUSpacing.cardPadding)
-        .ruCard()
     }
 
     // MARK: La nuit
 
     private var nuit: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            RUCardHeader(icon: "moon.stars.fill", title: "La nuit")
-            verdictDeLaNuit
-                .font(RUFont.sans(.body)).foregroundColor(RUColor.text2).lineSpacing(3)
+        VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+            HZTitreDeSection(titre: String(localized: "La nuit"))
+            HZParagrapheDeCourse(verdictDeLaNuit)
 
-            puces([
+            HZPucesDeCourse(lignes: [
                 String(localized: "Deux frontales, parce qu'une frontale qui s'éteint en descente technique arrête la course, et parce que la plupart des grands trails les exigent au contrôle du sac."),
                 String(localized: "Le creux de trois à cinq heures du matin est physiologique, pas un mauvais jour. Mange chaud, marche, remets-toi en mouvement : ça passe."),
                 Accord.selon(
@@ -120,8 +111,6 @@ struct UltraRaceDaySheet: View {
                 String(localized: "Ta sortie de nuit du bloc spécifique existe pour que rien de tout ça ne soit une découverte.")
             ])
         }
-        .padding(RUSpacing.cardPadding)
-        .ruCard()
     }
 
     /// Pas de `@ViewBuilder` ici, et c'est volontaire : un `switch` sous `@ViewBuilder` rend un
@@ -158,39 +147,5 @@ struct UltraRaceDaySheet: View {
     private func litres(_ valeur: Double) -> String {
         let decimales = valeur == valeur.rounded() ? 0 : 1
         return valeur.formatted(.number.precision(.fractionLength(decimales)))
-    }
-
-    // MARK: Les deux briques d'affichage
-
-    private func chiffre(_ valeur: String, _ etiquette: Text) -> some View {
-        VStack(spacing: 4) {
-            Text(verbatim: valeur).displayStyle(.title).foregroundColor(RUColor.rose2)
-                .lineLimit(1).minimumScaleFactor(0.5)
-            etiquette
-                .font(RUFont.sans(.micro, weight: .bold))
-                .foregroundColor(RUColor.text2)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .background(RUColor.card2, in: RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: RUSpacing.radiusCard, style: .continuous).stroke(RUColor.cardBorder, lineWidth: RUSpacing.hairline))
-    }
-
-    /// `Text(verbatim:)` et non `Text(_:)` : les lignes arrivent DÉJÀ traduites, résolues par
-    /// `String(localized:)` au-dessus. Les repasser dans le catalogue chercherait une clé qui est
-    /// la traduction anglaise ou espagnole, ne la trouverait pas, et afficherait… le bon texte,
-    /// par accident. Un accident qui tient jusqu'au jour où une clé existe par coïncidence.
-    private func puces(_ lignes: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ForEach(lignes, id: \.self) { ligne in
-                HStack(alignment: .top, spacing: 10) {
-                    Circle().fill(RUColor.text4).frame(width: 5, height: 5).padding(.top, 8)
-                    Text(verbatim: ligne)
-                        .font(RUFont.sans(.body)).foregroundColor(RUColor.text2).lineSpacing(3)
-                    Spacer(minLength: 0)
-                }
-            }
-        }
     }
 }
