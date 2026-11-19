@@ -21,7 +21,7 @@ struct RingView<Content: View>: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(RUColor.line, lineWidth: strokeWidth)
+                .stroke(HZCouleur.filetGroupe, lineWidth: strokeWidth)
             Circle()
                 .trim(from: 0, to: max(0, min(pct, 100)) / 100)
                 .stroke(color, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))

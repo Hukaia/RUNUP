@@ -6720,6 +6720,23 @@
         }
       }
     },
+    "Course en cours · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run in progress · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carrera en curso · %@"
+          }
+        }
+      }
+    },
     "Course et force": {
       "extractionState": "manual",
       "localizations": {

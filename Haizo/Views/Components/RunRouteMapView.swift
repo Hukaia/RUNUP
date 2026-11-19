@@ -9,7 +9,7 @@ import MapKit
 struct RunRouteMapView: View {
     var route: [RunRecord.RoutePoint]
     var lineWidth: CGFloat = 4
-    var lineColor: Color = RUColor.rose
+    var lineColor: Color = HZCouleur.accent
     /// Est-ce que la carte se manipule — pincer, déplacer, zoomer ?
     ///
     /// `false` PARTOUT SAUF EN PLEIN ÉCRAN, et ce n'est pas de la frilosité. Cette vue sert

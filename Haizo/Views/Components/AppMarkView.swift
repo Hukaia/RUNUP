@@ -43,7 +43,7 @@ struct AppMarkView: View, Animatable {
 
     private var remplissage: AnyShapeStyle {
         if let fond { return AnyShapeStyle(fond) }
-        return AnyShapeStyle(RUColor.brandGradient)
+        return AnyShapeStyle(HZCouleur.accent)
     }
 
     private var cornerRadius: CGFloat { radius ?? size * 0.26 }
@@ -96,7 +96,7 @@ struct AppMarkView: View, Animatable {
 #Preview {
     AppMarkView(size: 88, radius: 26)
         .padding()
-        .background(RUColor.pageBackground)
+        .background(HZCouleur.blanc)
 }
 
 /// Le mot de la marque, dessiné — et non composé dans la fonte de l'interface.

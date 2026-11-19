@@ -13,7 +13,7 @@ import SwiftUI
 struct RouteThumbnail: View {
     var route: [RunRecord.RoutePoint]
     var lineWidth: CGFloat = 2
-    var lineColor: Color = RUColor.rose
+    var lineColor: Color = HZCouleur.accent
     /// Quand il est renseigné, le tracé est peint d'un dégradé plutôt que d'une couleur pleine.
     /// C'est ce que demande la carte du fil, où le tracé est le sujet de la carte et non une
     /// vignette de 52 points au bout d'une ligne.
@@ -70,7 +70,7 @@ struct RouteThumbnail: View {
                 let r = lineWidth * 1.4
                 context.fill(
                     Path(ellipseIn: CGRect(x: start.x - r, y: start.y - r, width: r * 2, height: r * 2)),
-                    with: .color(RUColor.rose)
+                    with: .color(HZCouleur.accent)
                 )
             }
         }
