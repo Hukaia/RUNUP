@@ -4,7 +4,7 @@
 # LE DÉFAUT
 
 `SplashView` joue trois mouvements décalés, puis attend un délai fixe avant de lancer son fondu
-de sortie. Les trois durées viennent de `RUMotion`, le délai est écrit dans le fichier, et
+de sortie. Les trois durées viennent de `HZMouvement`, le délai est écrit dans le fichier, et
 personne ne les avait jamais additionnés.
 
 Mesuré le 13 novembre : le dévoilement démarrait à 0,58 s et durait 800 ms, donc il finissait à
@@ -18,7 +18,7 @@ l'écran de lancement, ce qui est exactement ce qui va arriver.
 
 # CE QUE LE SCRIPT REGARDE
 
-Chaque `withAnimation(RUMotion.<jeton>.delay(<d>))` de `SplashView` : il lit la durée du jeton
+Chaque `withAnimation(HZMouvement.<jeton>.delay(<d>))` de `SplashView` : il lit la durée du jeton
 dans `Motion.swift`, y ajoute le délai, et exige que la somme tienne avant le `Task.sleep` qui
 précède le fondu. Les animations écrites à la main dans le fichier sont lues de la même façon.
 """
@@ -31,8 +31,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from swift import sans_commentaires  # noqa: E402
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
-SPLASH = RACINE / "Haizo/Views/Components/SplashView.swift"
-MOTION = RACINE / "Haizo/DesignSystem/Motion.swift"
+SPLASH = RACINE / "Haizo/DesignSystem/Refonte/HZLancement.swift"
+MOTION = RACINE / "Haizo/DesignSystem/Refonte/HZMouvement.swift"
 
 # La marge qu'on exige entre la fin du dernier mouvement et le début du fondu. Zéro suffirait en
 # arithmétique ; 50 ms laisse de quoi ne pas dépendre de l'image près.
@@ -46,9 +46,9 @@ def durees_du_systeme() -> dict:
 
 
 def tempo() -> dict:
-    """Les constantes nommées de `SplashView.Tempo`."""
+    """Les constantes nommées de `HZLancement.Tempo`."""
     src = sans_commentaires(SPLASH.read_text(encoding="utf-8"))
-    bloc = src.split("private enum Tempo {", 1)
+    bloc = src.split("enum Tempo {", 1)
     if len(bloc) < 2:
         return {}
     corps = bloc[1].split("\n    }", 1)[0]
@@ -59,7 +59,7 @@ def tempo() -> dict:
 def chorégraphie() -> tuple:
     """(mouvements, instant du fondu) — un mouvement est (nom, départ, durée).
 
-    Les départs viennent de `SplashView.Tempo`, les durées de `RUMotion` quand le mouvement
+    Les départs viennent de `HZLancement.Tempo`, les durées de `HZMouvement` quand le mouvement
     emprunte un jeton du système. Rien n'est deviné d'une analyse de la fonction : trois versions
     de ce garde s'y sont cassé les dents, parce qu'une fonction à deux branches ne se lit pas à
     l'expression régulière. Les nombres sont nommés à la source, et ce fichier les lit.
@@ -69,8 +69,8 @@ def chorégraphie() -> tuple:
         return [], None
     mouvements = [
         ("le tracé", 0.0, t.get("traceDuree", 0.0)),
-        ("la tuile (RUMotion.settle)", t.get("tuileDepart", 0.0), durees.get("settle", 0.0)),
-        ("le dévoilement (RUMotion.glide)", t.get("revealDepart", 0.0), durees.get("glide", 0.0)),
+        ("la tuile (HZMouvement.ressort)", t.get("tuileDepart", 0.0), durees.get("ressort", 0.0)),
+        ("le dévoilement (HZMouvement.glisse)", t.get("revealDepart", 0.0), durees.get("glisse", 0.0)),
     ]
     return mouvements, t["fondu"]
 
@@ -79,7 +79,7 @@ def ecarts() -> list:
     mouvements, fondu = chorégraphie()
     if fondu is None:
         return [("SplashView.swift", "",
-                 "`SplashView.Tempo` ne se lit plus : soit l'énumération a disparu, soit ses "
+                 "`HZLancement.Tempo` ne se lit plus : soit l'énumération a disparu, soit ses "
                  "constantes ont changé de nom. Un garde qui ne trouve plus ses nombres ne garde "
                  "rien — remettez-le d'accord avec le fichier plutôt que de le laisser passer.")]
     if not mouvements:
@@ -91,7 +91,7 @@ def ecarts() -> list:
         fin = delai + duree
         if fin > fondu - MARGE:
             problemes.append((
-                "Haizo/Views/Components/SplashView.swift", nom,
+                "Haizo/Views/Refonte/SplashView.swift", nom,
                 f"Démarre à {delai:.2f} s, dure {duree:.2f} s, donc finit à {fin:.2f} s — alors "
                 f"que le fondu commence à {fondu:.2f} s. "
                 f"{100 * (fin - fondu) / duree:.0f} % du mouvement se joue pendant que l'écran "

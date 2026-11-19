@@ -51,7 +51,6 @@ final class SymbolesTests: XCTestCase {
         "exclamationmark.bubble",
         "exclamationmark.triangle",
         "exclamationmark.triangle.fill",
-        "figure.hiking",
         "figure.pool.swim",
         "figure.run",
         "film",

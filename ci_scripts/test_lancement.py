@@ -50,22 +50,22 @@ def _():
     assert len(mouvements) == 3, mouvements
     durees = ck.durees_du_systeme()
     noms = {nom: duree for nom, _, duree in mouvements}
-    assert any("settle" in n for n in noms), noms
+    assert any("ressort" in n for n in noms), noms
     for nom, duree in noms.items():
-        if "settle" in nom:
-            assert duree == durees["settle"], (duree, durees["settle"])
-        if "glide" in nom:
-            assert duree == durees["glide"], (duree, durees["glide"])
+        if "ressort" in nom:
+            assert duree == durees["ressort"], (duree, durees["ressort"])
+        if "glisse" in nom:
+            assert duree == durees["glisse"], (duree, durees["glisse"])
 
 
-@cas_test("les durées viennent de Motion.swift, pas d'une copie")
+@cas_test("les durées viennent de HZMouvement.swift, pas d'une copie")
 def _():
     d = ck.durees_du_systeme()
-    for jeton in ("settle", "glide", "draw", "ecran", "digit"):
+    for jeton in ("ressort", "glisse", "trace", "ecran", "chiffre"):
         assert jeton in d, (jeton, sorted(d))
     # La fourchette du brief pour une TRANSITION de consultation.
     assert 0.20 <= d["ecran"] <= 0.30, d["ecran"]
-    assert 0.20 <= d["settle"] <= 0.30, d["settle"]
+    assert 0.20 <= d["ressort"] <= 0.30, d["ressort"]
 
 
 @cas_test("une énumération Tempo disparue fait crier le garde")
