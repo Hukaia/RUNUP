@@ -61,8 +61,10 @@ final class SymbolesTests: XCTestCase {
                       "symbole(s) inexistant(s), donc icône(s) invisible(s) : \(inconnus.joined(separator: ", "))")
     }
 
-    /// Une liste vide passerait le test ci-dessus sans rien vérifier.
+    /// Une liste vide passerait le test ci-dessus sans rien vérifier. Le plancher est bas depuis la
+    /// refonte : la plupart des icônes sont maintenant dessinées (`HZIcone`), et il ne reste en SF
+    /// Symbols que celles dont le système n'a pas le dessin.
     func testLaListeNEstPasVide() {
-        XCTAssertGreaterThan(Self.tous.count, 50, "la liste des symboles s'est vidée")
+        XCTAssertGreaterThan(Self.tous.count, 10, "la liste des symboles s'est vidée")
     }
 }
