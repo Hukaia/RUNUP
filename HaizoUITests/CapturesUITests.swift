@@ -192,7 +192,7 @@ final class CapturesUITests: XCTestCase {
     ///
     /// ET L'ENCRE DE LA LIGNE DE PHASE EST JUSTE. Je l'ai crue fausse deux fois.
     ///
-    /// Sur l'image française, elle mesurait `#834C33` là où `RUColor.cycle` déclare `#80462E`.
+    /// Sur l'image française, elle mesurait `#834C33` là où le jeton du cycle déclarait `#80462E`.
     /// J'ai d'abord conclu à un fondu saisi en cours — faux : deux campagnes aux attentes
     /// différentes rendaient le même compte de pixels, au pixel près. J'ai ensuite soupçonné le
     /// rendu des teintes saturées — faux aussi : le rose de marque comptait 142 223 pixels
@@ -251,7 +251,7 @@ final class CapturesUITests: XCTestCase {
 
     // ─── LE GRAND TEXTE, QUATRE ÉCRANS ────────────────────────────────────────────────────────
     //
-    // AX2 et pas AX5, et le choix se lit dans `RUFont` : le plafond de l'app vaut 2,0 ×, AX2
+    // AX2 et pas AX5, et le choix se lit dans `HZPolice` : le plafond de l'app vaut 2,0 ×, AX2
     // demande ≈1,94 × et passe donc en entier, tandis qu'AX3 à AX5 (2,35 / 2,76 / 3,12 ×) sont
     // écrêtés. Photographier un cran écrêté montrerait le plafond, pas la mise en page.
     //
@@ -505,7 +505,7 @@ final class CapturesUITests: XCTestCase {
         // `-UIPreferredContentSizeCategoryName` est ce qui la pose au lancement — c'est le
         // réglage Réglages → Affichage → Taille du texte, dit de l'extérieur.
         //
-        // Sans ça, le plafond de 2,0 × de `RUFont` et le travail de réorganisation qui l'a
+        // Sans ça, le plafond de 2,0 × de `HZPolice` et le travail de réorganisation qui l'a
         // autorisé — rangées de mesures qui passent en colonne, bande des sept jours qui laisse
         // tomber le quantième, barre d'onglets qui laisse tomber ses libellés — n'ont JAMAIS
         // été photographiés. Ils sont écrits, commentés, et crus sur parole.

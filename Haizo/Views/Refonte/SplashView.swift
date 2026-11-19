@@ -88,7 +88,7 @@ struct SplashView: View {
     ///
     /// Nommés ici pour deux raisons. On les lit maintenant les uns à côté des autres, ce qui rend
     /// l'addition évidente. Et `check_lancement.py` les lit aussi : il refait la somme à chaque
-    /// CI, avec les durées réelles de `RUMotion`, donc raccourcir ou rallonger un jeton du
+    /// CI, avec les durées réelles de `HZMouvement`, donc raccourcir ou rallonger un jeton du
     /// système de mouvement ne peut plus désaccorder l'ouverture en silence.
     private typealias Tempo = HZLancement.Tempo
 

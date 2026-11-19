@@ -538,7 +538,7 @@ struct MoreSettingsView: View {
     // MARK: - Inviter
 
     /// Le partage système, et rien d'autre : un message qui se suffit à lui-même dans un SMS
-    /// comme dans un mail. La même phrase que `InvitationCard`, qui sert encore ailleurs.
+    /// comme dans un mail. La phrase d'invitation est la même partout.
     private var invitation: some View {
         HZGroupeDeReglages(titre: String(localized: "Inviter un ami")) {
             VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {

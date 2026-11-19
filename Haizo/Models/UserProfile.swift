@@ -356,11 +356,11 @@ final class UserProfile {
     /// comparison against her actual GPS pace), but a real opt-out for anyone who'd rather run in
     /// silence or just glance at the screen.
     var paceAlertsEnabled: Bool = true
-    /// Which `AccentTheme` swatch the user picked in Profil → Apparence — mirrored into
-    /// `ThemeStore.shared` on load so `RUColor.rose`/`.rose2`/`.violet` reflect it everywhere.
+    /// Which accent swatch the user picked in Profil → Apparence — mirrored into
+    /// `ThemeStore.shared` on load so `HZCouleur.accent` reflects it everywhere.
     var accentThemeID: String = ThemeStore.accentParDefaut
     /// Dark (default) or light app-wide theme — same mirror-into-`ThemeStore` pattern as
-    /// `accentThemeID`, see `RUColor`'s theme-aware tokens.
+    /// `accentThemeID`, see `ThemeStore`.
     /// CLAIR PAR DÉFAUT — décision de Charlotte, 9 novembre 2026.
     ///
     /// Le sombre n'avait jamais été CHOISI comme défaut : il tombait de `false`, la valeur qu'une

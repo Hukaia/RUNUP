@@ -2,7 +2,7 @@ import SwiftUI
 
 /// L'APPUI SUR UN BOUTON QUI N'A PAS DE FOND À ENFONCER : il rétrécit à peine et pâlit un peu.
 ///
-/// Il remplace `PressableStyle`, de l'ancien système. Les trois nombres sont ceux qu'il portait.
+/// Il a remplacé le style d'appui de l'ancien système. Les trois nombres sont ceux qu'il portait.
 struct HZStyleDAppui: ButtonStyle {
     static let echelle: CGFloat = 0.96
     static let opacite: Double = 0.88

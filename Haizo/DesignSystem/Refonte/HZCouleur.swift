@@ -2,13 +2,11 @@ import SwiftUI
 
 /// LES COULEURS DE LA REFONTE — relevées dans le canvas du 17 novembre 2026, à la valeur près.
 ///
-/// # POURQUOI UN SECOND JEU DE JETONS, À CÔTÉ DE `RUColor`
+/// # LE SEUL JEU DE JETONS
 ///
-/// La refonte ne repeint pas les écrans existants : elle les refait un par un, à partir de
-/// composants neufs. Tant qu'elle n'est pas finie, l'app livrée doit rester cohérente — un
-/// écran refait à moitié sur des jetons modifiés sous lui serait une régression pour qui
-/// l'utilise aujourd'hui. Les deux systèmes cohabitent donc le temps du chantier : chaque écran
-/// bascule en entier de l'un à l'autre, et `RUColor` disparaît avec le dernier.
+/// La refonte a refait les écrans un par un, à partir de composants neufs, pendant que l'ancien
+/// système tournait à côté. Le dernier écran refait, l'ancien système a été supprimé le
+/// 19 novembre : ces jetons sont maintenant les seuls.
 ///
 /// # CE QUE LE CANVAS NE DESSINE PAS
 ///

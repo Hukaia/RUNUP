@@ -265,7 +265,7 @@ extension Sauvegarde {
         var paceAlertsEnabled: Bool?
         var accentThemeID: String?
         var isLightMode: Bool?
-        /// `Habillage.rawValue` — la direction artistique choisie. Du texte brut, donc un
+        /// L'habillage d'autrefois (« classique » ou « trace ») — la direction artistique choisie alors. Du texte brut, donc un
         /// habillage inconnu d'une version plus ancienne se relit sans faire échouer le profil.
         var habillageID: String?
 

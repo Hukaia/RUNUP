@@ -1,10 +1,10 @@
 import SwiftUI
 
-/// Mirrors just the hex triples from the app's `AccentTheme.all`
-/// (`Haizo/DesignSystem/AccentTheme.swift`) — duplicated by hand rather than shared across the
-/// app/widget target boundary, since the live `ThemeStore`/`RUColor` machinery is an in-process
+/// Mirrors just the hex triples of the eight accent themes the app used to offer (a table retired on
+/// 19 November with the old design system) — kept by hand rather
+/// than shared across the app/widget target boundary, since the live `ThemeStore` is an in-process
 /// `@Observable` singleton the widget's separate process could never actually receive live updates
-/// from anyway. Keep in sync by hand if `AccentTheme.all`'s hex values ever change.
+/// from anyway. The app now offers four accents (`HZAccent`); aligning this table on them is an open item.
 enum WidgetAccentPalette {
     private static let swatches: [String: (primary: UInt32, light: UInt32, tail: UInt32)] = [
         "rose": (0xFF0A78, 0xFF4D9E, 0x7C5CFF),
@@ -19,8 +19,8 @@ enum WidgetAccentPalette {
 
     /// LE CLAIR N'EST PAS LA TABLE BRUTE, ET C'EST CE QUI A DÉRIVÉ.
     ///
-    /// `swatches` ci-dessus recopie `AccentTheme.all`, et `check_accent.py` le vérifie. Mais
-    /// l'app n'affiche PAS `all` en thème clair : elle affiche `AccentTheme.resolvedOnLight`,
+    /// `swatches` ci-dessus recopie l'ancienne table des huit thèmes. Mais l'app n'affichait
+    /// PAS cette table en thème clair : elle affichait sa variante « sur clair »,
     /// qui remplace le rose par la valeur de la maquette — `#F0225F` depuis le 15 novembre — et
     /// descend les autres nuanciers au seuil de contraste. Le miroir était donc exact sur la
     /// table qu'il copiait, et faux sur ce qui est dessiné : le widget rendait un rose

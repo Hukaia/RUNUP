@@ -2,7 +2,7 @@ import SwiftUI
 
 /// LE MOUVEMENT DE L'APP : QUELQUES RÉGLAGES, PAS UNE COLLECTION.
 ///
-/// Il remplace `RUMotion`, de l'ancien système. Chaque réglage garde la raison qu'il avait :
+/// Il a remplacé le mouvement de l'ancien système. Chaque réglage garde la raison qu'il avait :
 ///
 ///   • `ecran`   — le changement d'écran. 0,22 s d'`easeOut` : assez court pour ne pas se faire
 ///                 attendre, assez long pour que le fond vide des deux écrans croisés se couvre.

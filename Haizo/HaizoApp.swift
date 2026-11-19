@@ -90,7 +90,7 @@ private struct RootView: View {
         // UNE PHOTO MONTRE UN ÉCRAN POSÉ, PAS UNE ANIMATION EN VOL.
         //
         // Une seule `transaction`, à la racine : elle vide l'animation de TOUT ce qui passe en
-        // dessous. L'app compte 22 appels à `RUMotion` et une cinquantaine d'animations écrites à
+        // dessous. L'app comptait 22 appels au mouvement de l'ancien système et une cinquantaine d'animations écrites à
         // la main dans les vues — les corriger une par une aurait laissé la cinquante et unième
         // dehors, sans que rien ne le dise. Voir `Demonstration.animationsFigees` pour l'image
         // livrée à Apple qui a fait écrire ceci.

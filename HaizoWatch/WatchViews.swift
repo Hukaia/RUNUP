@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Watch-local design tokens — the iOS app's RUColor/RUFont live in Haizo/DesignSystem (not a
+// Watch-local design tokens — the iOS app's tokens live in Haizo/DesignSystem/Refonte (not a
 // shared target source), and the watch only needs this handful of values. Same Midnight Rose
 // palette as the phone, via the shared Color(hex:).
 private enum WTheme {
@@ -8,7 +8,7 @@ private enum WTheme {
     // gradient "scoreboard" treatment the widgets and Live Activity moved to.
     static let bg = Color.black
     static let card = Color(hex: 0x191922)
-    // Alignés sur `AccentTheme` côté app (rose #FF0A78, violet #7C5CFF, lime #C8FF3D). La montre
+    // Alignés sur l'ancien nuancier de l'app (rose #FF0A78, violet #7C5CFF, lime #C8FF3D). La montre
     // portait #FF3D7F, #8A5CFF et #C8F542 — un écart faible, réel, et justifié nulle part : le
     // même rose n'était pas le même d'un écran à l'autre.
     static let rose = Color(hex: 0xFF0A78)

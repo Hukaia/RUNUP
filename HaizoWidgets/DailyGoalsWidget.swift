@@ -15,7 +15,7 @@ struct DailyGoalsEntry: TimelineEntry {
 }
 
 struct DailyGoalsProvider: TimelineProvider {
-    /// Montré dans la galerie de widgets — « rose » correspond à `AccentTheme.defaultID` dans la
+    /// Montré dans la galerie de widgets — « rose » correspond à `ThemeStore.accentParDefaut` dans la
     /// cible de l'app, et `isLightMode: true` au thème par défaut depuis le 9 novembre 2026. Un
     /// aperçu de galerie doit montrer ce que l'app montre à quelqu'un qui vient de l'installer.
     private static let placeholderSnapshot = DailyGoalsSnapshot(

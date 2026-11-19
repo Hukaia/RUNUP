@@ -8358,22 +8358,6 @@
         }
       }
     },
-    "Classique": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Classic"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clásico"
-          }
-        }
-      }
-    },
     "Club": {
       "localizations": {
         "en": {
@@ -12714,22 +12698,6 @@
         }
       }
     },
-    "Fond neutre, cartes au filet fin.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neutral background, cards with a hairline border."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fondo neutro, tarjetas con borde fino."
-          }
-        }
-      }
-    },
     "Footing": {
       "localizations": {
         "en": {
@@ -13137,22 +13105,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gestionar mi suscripción"
-          }
-        }
-      }
-    },
-    "Habillage": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Look"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aspecto"
           }
         }
       }
@@ -16880,22 +16832,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "El feed se llena entre varios"
-          }
-        }
-      }
-    },
-    "Le fond prend ta couleur, les cartes flottent dessus.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The background takes your colour, cards float on it."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El fondo toma tu color, las tarjetas flotan encima."
           }
         }
       }
@@ -24872,22 +24808,6 @@
         }
       }
     },
-    "Run en cours · %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Run in progress · %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Carrera en curso · %@"
-          }
-        }
-      }
-    },
     "Running Club": {
       "extractionState": "manual",
       "localizations": {
@@ -28731,22 +28651,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Técnica"
-          }
-        }
-      }
-    },
-    "Teinté": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tinted"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Teñido"
           }
         }
       }

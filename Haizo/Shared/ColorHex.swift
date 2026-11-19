@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Lives in `Shared/` (compiles into both the `Haizo` app target and the `HaizoWidgets` extension)
-/// rather than alongside `RUColor` in `Haizo/DesignSystem/Colors.swift` — this math is pure and
+/// rather than alongside the design system — this math is pure and
 /// target-agnostic, so one copy here means a future fix to hex parsing or the darkening algorithm
 /// reaches both targets automatically instead of needing to be applied twice (which is what
 /// `HaizoWidgets/WidgetColor.swift` used to be, a hand-kept second copy of this exact code).

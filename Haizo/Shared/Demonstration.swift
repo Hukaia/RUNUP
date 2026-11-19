@@ -66,7 +66,7 @@ enum Demonstration {
     /// d'où la distinction plutôt qu'un simple « pas d'animation en démonstration ».
     ///
     /// Figer est appliqué EN UN SEUL ENDROIT, à la racine des vues, par une `transaction` qui
-    /// vide l'animation de tout ce qui passe en dessous. L'app compte 22 appels à `RUMotion` et
+    /// vide l'animation de tout ce qui passe en dessous. L'app comptait 22 appels au mouvement de l'ancien système et
     /// une cinquantaine d'animations écrites à la main : les corriger une par une aurait laissé
     /// la cinquante et unième dehors sans que rien ne le dise.
     static var animationsFigees: Bool { enCours && !filme }

@@ -51,7 +51,7 @@ enum DisplayFont {
     /// qui a été validée ; changer de police ne devait pas la changer.
     ///
     /// Le même multiplicateur qu'au corps s'applique toujours des deux côtés — voir
-    /// `RUFont.bodySizeFactor` — pour qu'aucun titre ne passe sous le texte qu'il coiffe.
+    /// le facteur de taille du texte courant — pour qu'aucun titre ne passe sous le texte qu'il coiffe.
     ///
     /// Inter est 4,9 % plus large qu'Archivo ; au facteur réduit, une ligne occupe donc 1 % de
     /// plus qu'avant. Rien à reprendre dans les gabarits.
@@ -87,7 +87,7 @@ enum DisplayFont {
     static func pointSize(for designSize: CGFloat) -> CGFloat { designSize * sizeFactor }
 
     /// La police à taille fixe, pour le widget et la montre — qui n'ont pas le mécanisme Dynamic
-    /// Type plafonné de l'app (`RUFont.scaled`) et n'en veulent pas : un widget est un carré, il
+    /// Type plafonné de l'app (`HZPolice`) et n'en veulent pas : un widget est un carré, il
     /// ne peut pas grandir avec le réglage de taille du texte.
     static func font(_ designSize: CGFloat) -> Font {
         .custom(postScriptName, size: pointSize(for: designSize))

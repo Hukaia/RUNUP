@@ -227,7 +227,7 @@ targets:
   # widget extension is a separate process, restarted on its own schedule by the system — it can
   # never hold a live reference to `AppState`). Reuses `Haizo/Shared`'s `Color(hex:)`/`.darkened(_:)`
   # (pure, target-agnostic math) and the app's real brand fonts (bundled + declared below, same as
-  # the main target), but not the rest of `Haizo/DesignSystem` — `RUColor`/`ThemeStore` are
+  # the main target), but not the rest of `Haizo/DesignSystem` — `HZCouleur`/`ThemeStore` are
   # in-memory singletons the app's process keeps live and this one can't, so
   # `WidgetAccentPalette.swift` mirrors just the handful of theme values needed.
   HaizoWidgets:

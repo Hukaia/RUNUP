@@ -126,7 +126,7 @@ struct DailyGoalsSnapshot: Codable, Equatable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         progress = try c.decodeIfPresent([Double].self, forKey: .progress) ?? []
         streak = try c.decodeIfPresent(Int.self, forKey: .streak) ?? 0
-        // "rose" est la valeur de AccentTheme.defaultID, recopiee ici : ce fichier est
+        // "rose" est la valeur de ThemeStore.accentParDefaut, recopiee ici : ce fichier est
         // compile dans la cible HaizoWidgets, qui ne voit pas Haizo/DesignSystem.
         accentThemeID = try c.decodeIfPresent(String.self, forKey: .accentThemeID) ?? "rose"
         // `false` ET NON `true`, CONTRAIREMENT AU DÉFAUT DE L'APP, et c'est voulu : un instantané
