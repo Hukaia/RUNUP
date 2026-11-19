@@ -32,18 +32,18 @@ struct SplashView: View {
     @State private var opacity: Double = 1
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private let markSize: CGFloat = 72
+    private let markSize = HZLancement.coteDeLaTuile
 
     var body: some View {
         ZStack {
-            RUColor.bg.ignoresSafeArea()
-            HStack(spacing: 18) {
-                AppMarkView(size: markSize, radius: markSize * 0.26, drawn: drawn)
+            HZCouleur.blanc.ignoresSafeArea()
+            HStack(spacing: HZLancement.ecartTuileMot) {
+                AppMarkView(size: markSize, radius: markSize * HZLancement.rayonRelatif, drawn: drawn)
                     // La tuile arrive derrière les barres, pas avec elles : les traits blancs se
                     // posent sur le noir, et le dégradé de marque monte dessous une fois qu'ils
                     // sont lisibles. Dans l'autre ordre, on voit un carré rose avant de voir un logo.
                     .opacity(tile)
-                    .scaleEffect(0.88 + 0.12 * tile)
+                    .scaleEffect(HZLancement.echelleDeDepart + HZLancement.gainDEchelle * tile)
 
                 // L'ENCRE EST CELLE DU KIT, PAS CELLE DE L'INTERFACE. `#1A1023` est un noir
                 // FROID — bleu nettement au-dessus du rouge — là où `textPrimary` est passé au
@@ -52,13 +52,13 @@ struct SplashView: View {
                 // différence ne se voit qu'à côté : un logo garde son encre, c'est tout ce qui
                 // le distingue d'un mot de l'interface.
                 MotDeMarque(tuile: markSize)
-                    .foregroundStyle(RUColor.encreDeMarque)
+                    .foregroundStyle(HZLancement.encreDeMarque)
                     .fixedSize()
                     // Un volet qui s'ouvre depuis la tuile. `scaleEffect` sur un masque plutôt
                     // qu'une largeur animée : la largeur reflowerait le `HStack` à chaque image et
                     // ferait glisser la tuile pendant que le mot se dévoile.
                     .mask(alignment: .leading) {
-                        Rectangle().scaleEffect(x: reveal, y: 1, anchor: .leading)
+                        Rectangle().scaleEffect(x: reveal, y: HZLancement.echellePleine, anchor: .leading)
                     }
             }
         }
@@ -90,24 +90,7 @@ struct SplashView: View {
     /// l'addition évidente. Et `check_lancement.py` les lit aussi : il refait la somme à chaque
     /// CI, avec les durées réelles de `RUMotion`, donc raccourcir ou rallonger un jeton du
     /// système de mouvement ne peut plus désaccorder l'ouverture en silence.
-    private enum Tempo {
-        /// Le tracé se dessine, dès la première image.
-        static let traceDuree = 0.75
-        /// La tuile arrive — durée empruntée à `RUMotion.settle`.
-        static let tuileDepart = 0.42
-        /// Le nom se dévoile — durée empruntée à `RUMotion.glide`.
-        static let revealDepart = 0.58
-        /// Quand l'écran commence à s'effacer. TOUT doit être fini avant.
-        static let fondu = 1.150
-        static let fonduDuree = 0.28
-        /// Ce qu'on laisse au fondu avant de rendre la main.
-        static let apresFondu = 0.290
-
-        /// La version sans animation : on montre l'image finie, on la tient, on s'efface.
-        static let replatTenue = 0.650
-        static let replatFondu = 0.25
-        static let replatApres = 0.260
-    }
+    private typealias Tempo = HZLancement.Tempo
 
     private func jouer() {
         guard !reduceMotion else {
@@ -121,9 +104,9 @@ struct SplashView: View {
             return
         }
 
-        withAnimation(.timingCurve(0.2, 0.7, 0.3, 1, duration: Tempo.traceDuree)) { drawn = 1 }
-        withAnimation(RUMotion.settle.delay(Tempo.tuileDepart)) { tile = 1 }
-        withAnimation(RUMotion.glide.delay(Tempo.revealDepart)) { reveal = 1 }
+        withAnimation(.timingCurve(HZLancement.courbe.0, HZLancement.courbe.1, HZLancement.courbe.2, HZLancement.courbe.3, duration: Tempo.traceDuree)) { drawn = 1 }
+        withAnimation(HZMouvement.ressort.delay(Tempo.tuileDepart)) { tile = 1 }
+        withAnimation(HZMouvement.glisse.delay(Tempo.revealDepart)) { reveal = 1 }
 
         Task {
             try? await Task.sleep(for: .seconds(Tempo.fondu))
