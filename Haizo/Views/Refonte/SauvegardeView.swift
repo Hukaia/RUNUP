@@ -26,6 +26,8 @@ struct SauvegardeDocument: FileDocument {
 }
 
 /// « Mes données » dans Plus de réglages : écrire la sauvegarde, et la relire.
+///
+/// Elle rend deux LIGNES, que l'appelant range dans son groupe de réglages.
 struct CarteDeSauvegarde: View {
     @Environment(AppState.self) private var appState
 
@@ -37,46 +39,25 @@ struct CarteDeSauvegarde: View {
     var body: some View {
         VStack(spacing: 0) {
             Button(action: preparerLExport) {
-                HStack(spacing: 12) {
-                    icone("square.and.arrow.up")
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Exporter mes données")
-                            .font(RUFont.sans(.emphasis, weight: .medium))
-                            .foregroundColor(RUColor.textPrimary)
-                        Text("Un fichier à ranger où tu veux. Il contient tout — ton historique, ta conversation avec le coach, tes chaussures, ta série. Il ne part sur aucun serveur.")
-                            .font(RUFont.sans(.small))
-                            .foregroundColor(RUColor.text3)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    Spacer(minLength: 0)
+                HZLigneDeReglage(
+                    titre: String(localized: "Exporter mes données"),
+                    precision: String(localized: "Un fichier à ranger où tu veux. Il contient tout — ton historique, ta conversation avec le coach, tes chaussures, ta série. Il ne part sur aucun serveur.")) {
+                    HZChevron()
                 }
-                .padding(.horizontal, 14).padding(.vertical, 14)
-                .frame(minHeight: 44)
                 .contentShape(Rectangle())
             }
-            .buttonStyle(PressableStyle())
-
-            RUFilet()
+            .buttonStyle(.plain)
 
             BoutonDeRestauration {
-                HStack(spacing: 12) {
-                    icone("arrow.down.doc")
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Restaurer depuis un fichier")
-                            .font(RUFont.sans(.emphasis, weight: .medium))
-                            .foregroundColor(RUColor.textPrimary)
-                        Text("Ne s'applique qu'à une app qui repart de zéro.")
-                            .font(RUFont.sans(.small))
-                            .foregroundColor(RUColor.text3)
-                    }
-                    Spacer(minLength: 0)
+                HZLigneDeReglage(
+                    titre: String(localized: "Restaurer depuis un fichier"),
+                    precision: String(localized: "Ne s'applique qu'à une app qui repart de zéro."),
+                    filet: false) {
+                    HZChevron()
                 }
-                .padding(.horizontal, 14).padding(.vertical, 14)
-                .frame(minHeight: 44)
                 .contentShape(Rectangle())
             }
         }
-        .ruCard()
         .fileExporter(isPresented: $exportOuvert, document: document,
                       contentType: .json, defaultFilename: nomPropose) { resultat in
             // L'annulation n'est pas un échec : le sélecteur rend `CocoaError.userCancelled`, et
@@ -97,13 +78,6 @@ struct CarteDeSauvegarde: View {
         } message: {
             Text(message ?? "")
         }
-    }
-
-    private func icone(_ nom: String) -> some View {
-        Image(systemName: nom)
-            .font(RUFont.icone(.body, weight: .semibold))
-            .foregroundColor(RUColor.rose2)
-            .frame(width: 22)
     }
 
     private func preparerLExport() {
@@ -149,7 +123,7 @@ struct BoutonDeRestauration<Label: View>: View {
 
     var body: some View {
         Button { ouvrir() } label: { label() }
-            .buttonStyle(PressableStyle())
+            .buttonStyle(.plain)
             .fileImporter(isPresented: $selecteurOuvert,
                           allowedContentTypes: [.json], allowsMultipleSelection: false) { resultat in
                 guard case .success(let urls) = resultat, let url = urls.first else { return }
