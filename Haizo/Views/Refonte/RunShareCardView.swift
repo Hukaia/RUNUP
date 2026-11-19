@@ -32,22 +32,22 @@ struct RunShareCardView: View {
     var isPersonalRecord: Bool = false
 
     /// The big stat values — a flat color, or the brand rose→violet sweep for the `haizo` style
-    /// (fixed hexes, same stops as the route trace, deliberately not the in-app theme tokens: the
-    /// exported image shouldn't change with an unrelated app setting).
+    /// (`HZAccent` fixed colors, same stops as the route trace, deliberately not the in-app theme
+    /// token: the exported image shouldn't change with an unrelated app setting).
     private var valueStyle: AnyShapeStyle {
         switch textColor {
-        case .blanc: return AnyShapeStyle(Color.white)
-        case .noir: return AnyShapeStyle(Color(hex: 0x0E0E14))
-        case .haizo: return AnyShapeStyle(LinearGradient(colors: [Color(hex: 0xFF3D9A), Color(hex: 0x8A5CFF)], startPoint: .leading, endPoint: .trailing))
+        case .blanc: return AnyShapeStyle(HZCouleur.blanc)
+        case .noir: return AnyShapeStyle(HZCouleur.encre)
+        case .haizo: return AnyShapeStyle(LinearGradient(colors: [HZJournee.rose, HZJournee.violet], startPoint: .leading, endPoint: .trailing))
         }
     }
 
     /// Labels, wordmark and date — a quieter companion to `valueStyle`.
     private var secondaryColor: Color {
         switch textColor {
-        case .blanc: return .white.opacity(0.9)
-        case .noir: return Color(hex: 0x0E0E14).opacity(0.9)
-        case .haizo: return Color(hex: 0xFF3D9A)
+        case .blanc: return HZCouleur.blanc.opacity(HZJournee.opaciteDuSecondaire)
+        case .noir: return HZCouleur.encre.opacity(HZJournee.opaciteDuSecondaire)
+        case .haizo: return HZJournee.rose
         }
     }
 
@@ -56,9 +56,9 @@ struct RunShareCardView: View {
 
     private var roseGlowOpacity: Double {
         switch textColor {
-        case .blanc: return 0.12
+        case .blanc: return HZJournee.lueurSurBlanc
         case .noir: return 0
-        case .haizo: return 0.16
+        case .haizo: return HZJournee.lueurSurMarque
         }
     }
 
@@ -92,75 +92,77 @@ struct RunShareCardView: View {
 
     var body: some View {
         // One compact, centered block with generous transparent margins around it — the previous
-        // pass spread the content across the full 360×640 canvas, which covered the whole photo
-        // once layered on a story. A tight sticker-like block over an untouched photo is the
+        // pass spread the content across the full canvas, which covered the whole photo once
+        // layered on a story. A tight sticker-like block over an untouched photo is the
         // instagramable shape.
         VStack(spacing: 0) {
             if isPersonalRecord {
                 Text("NOUVEAU RECORD")
-                    .font(RUFont.sans(.body, weight: .bold))
-                    .tracking(2)
-                    .foregroundColor(secondaryColor)
+                    .font(HZJournee.police(HZJournee.tailleDuLibelle, .gras))
+                    .tracking(HZJournee.interlettrageDuRecord)
+                    .foregroundStyle(secondaryColor)
                     .modifier(OutlinedTextShadow(light: outlineIsLight))
-                    .padding(.bottom, 10)
+                    .padding(.bottom, HZJournee.sousLeRecord)
             }
             if normalizedRoutePoints.count > 1 {
                 neonRouteTrace
-                    // Carré, et non plus 160 pt de haut sur toute la largeur : le tracé ne peut
-                    // occuper qu'un carré sans se déformer, donc réserver un bandeau large
-                    // laissait de toute façon deux marges vides de part et d'autre. 200 pt tient
-                    // dans les 360 pt de la carte tout en gardant au tracé son rôle de visuel
-                    // principal.
-                    .frame(width: 200, height: 200)
-                    .padding(.bottom, 8)
+                    // Carré : le tracé ne peut occuper qu'un carré sans se déformer, donc réserver
+                    // un bandeau large laissait de toute façon deux marges vides de part et d'autre.
+                    .frame(width: HZJournee.coteDuTrace, height: HZJournee.coteDuTrace)
+                    .padding(.bottom, HZJournee.sousLeTrace)
             }
 
-            VStack(spacing: 18) {
+            VStack(spacing: HZJournee.entreLesMesures) {
                 // `statBlock` rend son libellé par un `Text(String)` nu.
-                statBlock(String(localized: "DISTANCE"), String(format: "%.2f km", locale: Locale.current, run.distanceKm), valueSize: 58)
-                statBlock(String(localized: "ALLURE"), "\(run.avgPace) /km", valueSize: 40)
-                statBlock(String(localized: "TEMPS"), PaceModel.formatDuration(Double(run.durationSeconds)), valueSize: 40)
+                statBlock(String(localized: "DISTANCE"), String(format: "%.2f km", locale: Locale.current, run.distanceKm), style: HZJournee.distanceDeLaCarte)
+                statBlock(String(localized: "ALLURE"), "\(run.avgPace) /km", style: HZJournee.mesureDeLaCarte)
+                statBlock(String(localized: "TEMPS"), PaceModel.formatDuration(Double(run.durationSeconds)), style: HZJournee.mesureDeLaCarte)
             }
 
-            VStack(spacing: 6) {
-                HStack(spacing: 8) {
-                    AppMarkView(size: 22, radius: 6)
-                    MotDeMarque(tuile: 22).foregroundStyle(valueStyle)
-                }
-                Text(Self.dateFormatter.string(from: run.date))
-                    .font(RUFont.mono(horsEchelle: 9.5))
-                    .tracking(1)
-                    .foregroundColor(secondaryColor.opacity(0.85))
-                // L'adresse, sans code. Plus petite et plus discrète que la date : sur une
-                // story, c'est une mention qu'on lit si on a envie de savoir, pas une bannière.
-                // Une carte qui crie son adresse ne se partage pas — et une carte qu'on ne
-                // partage pas ne recrute personne, quelle que soit la taille du lien.
-                Text(verbatim: Self.hoteDuLien)
-                    .font(RUFont.mono(horsEchelle: 8))
-                    .tracking(0.5)
-                    .foregroundColor(secondaryColor.opacity(0.6))
-            }
-            .modifier(OutlinedTextShadow(light: outlineIsLight))
-            .padding(.top, 24)
+            signature
         }
-        .frame(width: 360, height: 640)
+        .frame(width: HZJournee.largeurDeLImage, height: HZJournee.hauteurDeLImage)
+    }
+
+    /// La marque, la date et l'adresse, en pied de carte.
+    private var signature: some View {
+        VStack(spacing: HZJournee.entreLesLignesDeLaSignature) {
+            HStack(spacing: HZJournee.entreLaMarqueEtLeMot) {
+                AppMarkView(size: HZJournee.coteDeLaMarque, radius: HZJournee.rayonDeLaMarque)
+                MotDeMarque(tuile: HZJournee.coteDeLaMarque).foregroundStyle(valueStyle)
+            }
+            Text(Self.dateFormatter.string(from: run.date))
+                .font(HZJournee.police(HZJournee.tailleDeLaDate, .medium, tabulaire: true))
+                .tracking(HZJournee.interlettrageDeLaDate)
+                .foregroundStyle(secondaryColor.opacity(HZJournee.opaciteDeLaDate))
+            // L'adresse, sans code. Plus petite et plus discrète que la date : sur une
+            // story, c'est une mention qu'on lit si on a envie de savoir, pas une bannière.
+            // Une carte qui crie son adresse ne se partage pas — et une carte qu'on ne
+            // partage pas ne recrute personne, quelle que soit la taille du lien.
+            Text(verbatim: Self.hoteDuLien)
+                .font(HZJournee.police(HZJournee.tailleDeLAdresse, .medium, tabulaire: true))
+                .tracking(HZJournee.interlettrageDeLAdresse)
+                .foregroundStyle(secondaryColor.opacity(HZJournee.opaciteDeLAdresse))
+        }
+        .modifier(OutlinedTextShadow(light: outlineIsLight))
+        .padding(.top, HZJournee.auDessusDeLaSignature)
     }
 
     /// One Strava-style stacked stat — small tracked label over a big display-face value, centered.
-    private func statBlock(_ label: String, _ value: String, valueSize: CGFloat) -> some View {
-        VStack(spacing: 2) {
+    private func statBlock(_ label: String, _ value: String, style: HZAffichage) -> some View {
+        VStack(spacing: HZJournee.entreLibelleEtValeur) {
             Text(label)
-                .font(RUFont.sans(.body, weight: .bold))
-                .tracking(2.5)
-                .foregroundColor(secondaryColor)
+                .font(HZJournee.police(HZJournee.tailleDuLibelle, .gras))
+                .tracking(HZJournee.interlettrageDuLibelle)
+                .foregroundStyle(secondaryColor)
                 .modifier(OutlinedTextShadow(light: outlineIsLight))
             Text(value)
-                .font(RUFont.display(horsEchelle: valueSize))
+                .hzAffichage(style)
                 .foregroundStyle(valueStyle)
                 .modifier(OutlinedTextShadow(light: outlineIsLight))
                 // A whisper of rose around white, a restrained one on the gradient style, none on
-                // black — tuned down twice from the original 0.3, which read as too much.
-                .shadow(color: Color(hex: 0xFF0A78).opacity(roseGlowOpacity), radius: 20)
+                // black — tuned down twice from the original, which read as too much.
+                .shadow(color: HZJournee.rose.opacity(roseGlowOpacity), radius: HZJournee.rayonDeLaLueur)
         }
         .frame(maxWidth: .infinity)
     }
@@ -173,11 +175,13 @@ struct RunShareCardView: View {
         var light: Bool = false
 
         func body(content: Content) -> some View {
-            // Softened from 0.85/0.45 — enough presence for legibility over a photo, without the
-            // grey-black smudge the heavier version drew around every glyph.
+            // Enough presence for legibility over a photo, without the grey-black smudge the
+            // heavier version drew around every glyph.
             content
-                .shadow(color: light ? .white.opacity(0.7) : .black.opacity(0.55), radius: 1.5, x: 0, y: light ? 0 : 1)
-                .shadow(color: light ? .white.opacity(0.3) : .black.opacity(0.25), radius: 8, x: 0, y: light ? 0 : 2)
+                .shadow(color: light ? HZJournee.halo : HZJournee.ombreDuContour,
+                        radius: HZJournee.rayonDuContour, x: 0, y: light ? 0 : HZJournee.decalageDuContour)
+                .shadow(color: light ? HZJournee.haloLarge : HZJournee.ombreLarge,
+                        radius: HZJournee.rayonDuHalo, x: 0, y: light ? 0 : HZJournee.decalageDuHalo)
         }
     }
 
@@ -187,16 +191,12 @@ struct RunShareCardView: View {
     /// smear the crisp stroke drawn after it.
     private var neonRouteTrace: some View {
         Canvas { context, size in
-            let inset: CGFloat = 20
             // `normalizedRoutePoints` rend un CARRÉ unité : le parcours y est déjà centré et à
-            // son vrai rapport de forme. L'étaler séparément sur la largeur et la hauteur du
-            // canevas défaisait exactement ce travail — ce bloc fait ~360 pt de large pour 160 de
-            // haut, donc la forme repartait étirée d'un facteur 2,2 en plus de la déformation de
-            // longitude. On dessine donc dans le plus grand carré centré disponible : c'est la
-            // seule mise à l'échelle qui conserve la forme.
-            let side = max(min(size.width, size.height) - inset * 2, 1)
-            let originX = (size.width - side) / 2
-            let originY = (size.height - side) / 2
+            // son vrai rapport de forme. On dessine dans le plus grand carré centré disponible :
+            // c'est la seule mise à l'échelle qui conserve la forme.
+            let side = max(min(size.width, size.height) - HZJournee.margeDuTrace * HZJournee.deuxCotes, 1)
+            let originX = (size.width - side) / HZHub.moitie
+            let originY = (size.height - side) / HZHub.moitie
             let points = normalizedRoutePoints.map {
                 CGPoint(x: originX + $0.x * side, y: originY + $0.y * side)
             }
@@ -206,21 +206,21 @@ struct RunShareCardView: View {
             for p in points.dropFirst() { path.addLine(to: p) }
 
             let gradient = GraphicsContext.Shading.linearGradient(
-                Gradient(colors: [Color(hex: 0xFF3D9A), Color(hex: 0x8A5CFF)]),
+                Gradient(colors: [HZJournee.rose, HZJournee.violet]),
                 startPoint: first,
                 endPoint: last
             )
-            let style = StrokeStyle(lineWidth: 4.5, lineCap: .round, lineJoin: .round)
+            let style = StrokeStyle(lineWidth: HZJournee.traitDuTrace, lineCap: .round, lineJoin: .round)
 
             context.drawLayer { glow in
-                glow.addFilter(.blur(radius: 14))
-                glow.opacity = 0.65
-                glow.stroke(path, with: gradient, style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
+                glow.addFilter(.blur(radius: HZJournee.flouDuTrace))
+                glow.opacity = HZJournee.opaciteDuFlou
+                glow.stroke(path, with: gradient, style: StrokeStyle(lineWidth: HZJournee.traitDuFlou, lineCap: .round, lineJoin: .round))
             }
             context.stroke(path, with: gradient, style: style)
 
-            context.fill(Path(ellipseIn: CGRect(x: first.x - 4, y: first.y - 4, width: 8, height: 8)), with: .color(.white))
-            context.fill(Path(ellipseIn: CGRect(x: last.x - 5, y: last.y - 5, width: 10, height: 10)), with: .color(.white))
+            context.fill(Path(ellipseIn: HZJournee.pastille(en: first, rayon: HZJournee.rayonDuDepart)), with: .color(HZCouleur.blanc))
+            context.fill(Path(ellipseIn: HZJournee.pastille(en: last, rayon: HZJournee.rayonDeLArrivee)), with: .color(HZCouleur.blanc))
         }
     }
 }

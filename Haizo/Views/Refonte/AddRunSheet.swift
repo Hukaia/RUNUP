@@ -40,7 +40,7 @@ struct AddRunSheet: View {
     /// Le plafond de distance vit sur `Discipline` : il est dans l'unité de la saisie, et une
     /// nage ne se borne pas au même nombre qu'une sortie vélo. Celui de la durée est commun —
     /// une séance ne dure pas plus d'une journée, quelle que soit la discipline.
-    private static let maxDurationMinutes: Double = 1440
+    private static let maxDurationMinutes: Double = HZJournee.dureeMaximaleDUneJournee
 
     /// `Double(_:)` accepte « 1e30 », « inf » et « nan » — pas seulement ce qu'un clavier
     /// numérique produit, mais exactement ce qu'un collage produit. Sans le test de finitude,
@@ -72,53 +72,39 @@ struct AddRunSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
+        // « Une séance » et non « une course » : cette feuille ajoute aussi des nages.
+        HZFeuilleModale(titre: String(localized: "Ajouter une séance")) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    EyebrowLabel(text: "Informations générales", color: RUColor.text3)
-                    VStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: HZEspace.entreSections) {
+                    HZGroupeDeReglages(titre: String(localized: "Informations générales")) {
                         disciplineRow
-                        RUFilet()
                         dateRow
-                        RUFilet()
                         typeRow
-                        RUFilet()
-                        numRow(icon: "ruler", label: "Distance", value: $distanceText,
+                        numRow(label: String(localized: "Distance"), value: $distanceText,
                                unit: discipline.uniteDeSaisieLabel,
                                placeholder: discipline.exempleDeDistance)
-                        RUFilet()
-                        numRow(icon: "clock", label: "Durée", value: $durationMinutesText, unit: "min", placeholder: "45")
+                        numRow(label: String(localized: "Durée"), value: $durationMinutesText,
+                               unit: HZJournee.uniteDeDuree, placeholder: HZJournee.exempleDeDuree,
+                               derniere: true)
                     }
-                    .ruCard()
 
                     // Only shown once she's actually added a pair — no point cluttering this form
                     // with a picker for a feature she isn't using. Et jamais hors de la course à
                     // pied : une paire de chaussures ne vieillit pas dans un bassin ni sur une
                     // selle, donc la question ne se pose pas. Voir `Discipline.wearsShoes`.
                     if !activeShoes.isEmpty, discipline.wearsShoes {
-                        EyebrowLabel(text: "Chaussures", color: RUColor.text3)
-                        VStack(spacing: 0) {
+                        HZGroupeDeReglages(titre: String(localized: "Chaussures")) {
                             shoeRow
                         }
-                        .ruCard()
                     }
+
+                    HZBoutonPilule(libelle: String(localized: "Ajouter"), etendu: true) { save() }
+                        .opacity(isValid ? HZHub.opaciteNormale : HZHub.opaciteEteinte)
+                        .disabled(!isValid)
                 }
-                .padding(RUSpacing.pagePadding)
-            }
-            .background(RUColor.pageBackground)
-            // « Une séance » et non « une course » : cette feuille ajoute aussi des nages.
-            .navigationTitle("Ajouter une séance")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Ajouter") { save() }.disabled(!isValid)
-                }
+                .padding(.horizontal, HZEspace.marge)
             }
         }
-        .preferredColorScheme(RUColor.colorScheme)
         .onAppear { selectedShoeID = appState.profile.defaultShoeID }
     }
 
@@ -127,7 +113,7 @@ struct AddRunSheet: View {
         // une valeur saisie et une conversion en entier qui termine le processus si elle déborde.
         // Une garde en double sur ce chemin coûte une ligne.
         guard isValid, let distanceKm, let durationMinutes else { return }
-        let seconds = durationMinutes * 60
+        let seconds = durationMinutes * Double(HZJournee.secondesParMinute)
         // Toujours des secondes AU KILOMÈTRE, pour toutes les disciplines — c'est l'unité de
         // stockage de `avgPace`, et `TimeFormat.rythme(_:secondesParKm:)` la relit dans celle que
         // la discipline affiche : au kilomètre à pied, aux cent mètres en bassin, en km/h à vélo.
@@ -170,27 +156,13 @@ struct AddRunSheet: View {
         dismiss()
     }
 
-    /// Small leading glyph on every row — same treatment `MoreSettingsView` uses so a manual
-    /// entry form and a settings form read as the same design language.
-    private func rowIcon(_ systemName: String) -> some View {
-        Image(systemName: systemName)
-            .font(RUFont.icone(.body, weight: .semibold))
-            .foregroundColor(RUColor.rose2)
-            .frame(width: 22)
-    }
-
     private var dateRow: some View {
-        HStack {
-            rowIcon("calendar")
-            Text("Date").font(RUFont.sans(.emphasis, weight: .medium)).foregroundColor(RUColor.textPrimary)
-            Spacer()
+        HZLigneDeReglage(titre: String(localized: "Date")) {
             DatePicker("", selection: $date, in: ...Date.now, displayedComponents: .date)
                 .datePickerStyle(.compact)
                 .labelsHidden()
-                .colorScheme(RUColor.colorScheme)
+                .tint(HZCouleur.encre)
         }
-        .padding(.horizontal, 14)
-        .frame(minHeight: 48)
     }
 
     /// Le choix de la discipline, en tête de formulaire — avant la date, parce qu'il commande
@@ -201,10 +173,7 @@ struct AddRunSheet: View {
     /// téléphone : le premier usage de cette feuille est précisément d'avoir oublié d'appuyer sur
     /// « démarrer ». Voir `Discipline.saisissables`, qui n'est pas `demarrables`.
     private var disciplineRow: some View {
-        HStack {
-            rowIcon(discipline.sfSymbol)
-            Text("Discipline").font(RUFont.sans(.emphasis, weight: .medium)).foregroundColor(RUColor.textPrimary)
-            Spacer()
+        HZLigneDeReglage(titre: String(localized: "Discipline")) {
             Menu {
                 ForEach(Discipline.saisissables, id: \.self) { d in
                     Button {
@@ -214,16 +183,9 @@ struct AddRunSheet: View {
                     }
                 }
             } label: {
-                HStack(spacing: 4) {
-                    Text(discipline.title)
-                    Image(systemName: "chevron.up.chevron.down").font(RUFont.icone(.small, weight: .semibold))
-                }
-                .font(RUFont.sans(.emphasis, weight: .medium))
-                .foregroundColor(RUColor.text2)
+                valeurDeMenu(discipline.title)
             }
         }
-        .padding(.horizontal, 14)
-        .frame(minHeight: 48)
     }
 
     /// Changer de discipline remet le type de séance à zéro, et VIDE LA DISTANCE.
@@ -246,10 +208,7 @@ struct AddRunSheet: View {
     }
 
     private var typeRow: some View {
-        HStack {
-            rowIcon("list.bullet")
-            Text("Type de séance").font(RUFont.sans(.emphasis, weight: .medium)).foregroundColor(RUColor.textPrimary)
-            Spacer()
+        HZLigneDeReglage(titre: String(localized: "Type de séance")) {
             Menu {
                 ForEach(discipline.typesDeSeanceSaisis, id: \.self) { t in
                     // `Button(t)` avec un `String` ne passe jamais par le catalogue (seul
@@ -258,62 +217,66 @@ struct AddRunSheet: View {
                     Button(LocalizedStringKey(t)) { title = t }
                 }
             } label: {
-                HStack(spacing: 4) {
-                    Text(LocalizedStringKey(title))
-                    Image(systemName: "chevron.up.chevron.down").font(RUFont.icone(.small, weight: .semibold))
-                }
-                .font(RUFont.sans(.emphasis, weight: .medium))
-                .foregroundColor(RUColor.text2)
+                valeurDeMenu(String(localized: String.LocalizationValue(title)))
             }
         }
-        .padding(.horizontal, 14)
-        .frame(minHeight: 48)
     }
 
     private var shoeRow: some View {
-        HStack {
-            rowIcon("shoeprints.fill")
-            Text("Chaussures").font(RUFont.sans(.emphasis, weight: .medium)).foregroundColor(RUColor.textPrimary)
-            Spacer()
+        HZLigneDeReglage(titre: String(localized: "Chaussures"), filet: false) {
             Menu {
                 Button("Aucune") { selectedShoeID = nil }
                 ForEach(activeShoes) { shoe in
                     Button(shoe.name) { selectedShoeID = shoe.id }
                 }
             } label: {
-                HStack(spacing: 4) {
-                    Text(selectedShoeName)
-                    Image(systemName: "chevron.up.chevron.down").font(RUFont.icone(.small, weight: .semibold))
-                }
-                .font(RUFont.sans(.emphasis, weight: .medium))
-                .foregroundColor(RUColor.text2)
+                valeurDeMenu(selectedShoeName)
             }
         }
-        .padding(.horizontal, 14)
-        .frame(minHeight: 48)
     }
 
-    private func numRow(icon: String, label: String, value: Binding<String>, unit: String, placeholder: String) -> some View {
-        HStack {
-            rowIcon(icon)
-            Text(LocalizedStringKey(label)).font(RUFont.sans(.emphasis, weight: .medium)).foregroundColor(RUColor.textPrimary)
-            Spacer()
-            TextField("", text: value, prompt: Text(placeholder).foregroundColor(RUColor.text3))
-                .keyboardType(.decimalPad)
-                .multilineTextAlignment(.trailing)
-                .foregroundColor(RUColor.textPrimary)
-                .frame(width: 60)
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard) {
-                        Spacer()
-                        Button("Terminé") {
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    /// Ce que montre un menu replié : la valeur choisie, et les deux chevrons qui disent qu'on peut
+    /// la changer.
+    private func valeurDeMenu(_ valeur: String) -> some View {
+        HStack(spacing: HZEspace.entrePilules) {
+            Text(valeur)
+                .hzTexte(.c15, .semi)
+                .foregroundStyle(HZCouleur.secondaireSurClair)
+                .lineLimit(1)
+            Image(systemName: "chevron.up.chevron.down")
+                .font(HZPolice.texte(.c12, .semi))
+                .foregroundStyle(HZCouleur.secondaireSurClair)
+        }
+        .frame(minHeight: HZBoutonRond.zoneTactile)
+        .contentShape(Rectangle())
+    }
+
+    private func numRow(label: String, value: Binding<String>, unit: String, placeholder: String,
+                        derniere: Bool = false) -> some View {
+        HZLigneDeReglage(titre: label, filet: !derniere) {
+            HStack(spacing: HZEspace.entrePilules) {
+                TextField(text: value,
+                          prompt: Text(placeholder).foregroundStyle(HZCouleur.secondaireSurClair)) { EmptyView() }
+                    .accessibilityLabel(label)
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.trailing)
+                    .font(HZPolice.texte(.c16, .semi))
+                    .foregroundStyle(HZCouleur.encre)
+                    .tint(HZCouleur.encre)
+                    .frame(width: HZJournee.largeurDuChampNumerique)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("Terminé") {
+                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                            }
                         }
                     }
-                }
-            Text(unit).font(RUFont.sans(.body, weight: .semibold)).foregroundColor(RUColor.text2)
+                Text(unit)
+                    .hzTexte(.c15, .semi)
+                    .foregroundStyle(HZCouleur.secondaireSurClair)
+                    .lineLimit(1)
+            }
         }
-        .padding(.horizontal, 14)
-        .frame(minHeight: 48)
     }
 }
