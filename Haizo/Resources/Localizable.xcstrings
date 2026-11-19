@@ -12704,6 +12704,23 @@
         }
       }
     },
+    "Garder cet itinéraire": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save this route"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar esta ruta"
+          }
+        }
+      }
+    },
     "Gardé": {
       "localizations": {
         "en": {
@@ -15012,6 +15029,23 @@
         }
       }
     },
+    "M'y rendre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get me there"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cómo llegar"
+          }
+        }
+      }
+    },
     "Ma semaine sur Haizo : %@ km.": {
       "extractionState": "manual",
       "localizations": {
@@ -15080,6 +15114,23 @@
         }
       }
     },
+    "Publication…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publishing…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicando…"
+          }
+        }
+      }
+    },
     "Quel est ton objectif ?": {
       "extractionState": "manual",
       "localizations": {
@@ -15110,6 +15161,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pregunta %lld de %lld"
+          }
+        }
+      }
+    },
+    "Retirer de mes itinéraires": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove from my routes"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar de mis rutas"
           }
         }
       }

@@ -152,7 +152,6 @@ AVERTISSEMENT = ("un avertissement : `amber` y veut dire MOINS BIEN, et c'est ex
 DIRECTES_AUTORISEES = {
     # ── 1. DES AVERTISSEMENTS ─────────────────────────────────────────────────────────────────
     "Haizo/Views/Auth/AccountSwitchSheet.swift": (1, AVERTISSEMENT),
-    "Haizo/Views/Club/EditActivitySheet.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Home/Sheets/MoveSessionSheet.swift": (1, AVERTISSEMENT),
     "Haizo/Views/Onboarding/RaceDetailsStepView.swift": (2, AVERTISSEMENT + " Un dénivelé de "
                                                         "course qu'on n'a pas renseigné."),
