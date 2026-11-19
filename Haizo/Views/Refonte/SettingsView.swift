@@ -50,7 +50,7 @@ struct SettingsView: View {
         #endif
         .sheet(isPresented: $showPaywall) {
             PaywallView(subscriptions: subscriptions, onClose: { showPaywall = false })
-                .haizoSheetStyle(detents: [.large], gereSonBas: true)
+                .hzFeuille(detents: [.large], gereSonBas: true)
         }
     }
 

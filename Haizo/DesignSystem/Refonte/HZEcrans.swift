@@ -527,3 +527,18 @@ enum HZEntree {
     static let minutesEnSemaine = 45
     static let minutesLeWeekEnd = 90
 }
+
+/// LE MUR D'ABONNEMENT : noir, plein écran, tout ce que l'App Store exige visible sans défiler.
+enum HZPaywall {
+    static let hautDePage: CGFloat = 8
+    static let basDePage: CGFloat = 12
+    static let sousLeTitre: CGFloat = 22
+    static let sousLesAvantages: CGFloat = 24
+    static let sousLesFormules: CGFloat = 20
+    static let disqueDeLaCoche: CGFloat = 26
+    static let coteDeLaCoche: CGFloat = 14
+    static let reductionDuTitre: CGFloat = 0.5
+    static let reductionDuPrix: CGFloat = 0.6
+    static let moisParAn: Double = 12
+    static let moisParAnEntier = 12
+}
