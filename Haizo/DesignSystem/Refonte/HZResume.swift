@@ -4,7 +4,7 @@ import SwiftUI
 /// de CETTE sortie, son temps. La dernière, en accent.
 ///
 /// Les barres balaient l'une après l'autre au lieu d'apparaître toutes dessinées : « révélé, pas
-/// déversé ». La longueur vient de `SplitsView.fractions`, la même mesure que partagent la page d'une
+/// déversé ». La longueur vient de `HZSplits.fractions`, la même mesure que partagent la page d'une
 /// sortie et le résumé : deux écrans ne décrivent pas deux fois la même course.
 struct HZSplits: View {
     let splits: [String]
@@ -13,11 +13,27 @@ struct HZSplits: View {
     let reduceMotion: Bool
 
     var body: some View {
-        let fractions = SplitsView.fractions(splits)
+        let fractions = HZSplits.fractions(splits)
         VStack(spacing: HZSplits.entreLesLignes) {
             ForEach(splits.indices, id: \.self) { index in
                 ligne(index, splits[index], fractions[index], derniere: index == splits.count - 1)
             }
+        }
+    }
+
+    /// La longueur d'une barre, relative au plus rapide et au plus lent split de CETTE sortie : un
+    /// dix kilomètres couru entre 5:10 et 5:20 doit se lire comme une sortie régulière, pas comme
+    /// dix barres identiques. Sans durée connue, une longueur moyenne.
+    static func fractions(_ splits: [String]) -> [Double] {
+        let seconds = splits.map { PaceModel.parseSecPerKm($0) }
+        let known = seconds.compactMap { $0 }
+        guard let minSec = known.min(), let maxSec = known.max(), maxSec > minSec else {
+            return splits.map { _ in HZSplits.fractionMoyenne }
+        }
+        return seconds.map { sec in
+            guard let sec else { return HZSplits.fractionMoyenne }
+            let t = (sec - minSec) / (maxSec - minSec) // 0 = le plus rapide … 1 = le plus lent
+            return HZSplits.fractionMinimale + (1 - t) * HZSplits.etendueDeLaFraction
         }
     }
 
@@ -62,6 +78,11 @@ struct HZSplits: View {
     }
 
     static let entreLesLignes: CGFloat = 6
+    /// Les longueurs de barre : la plus lente à `fractionMinimale`, la plus rapide à `fractionMinimale`
+    /// plus `etendueDeLaFraction`, et `fractionMoyenne` quand aucune durée ne se lit.
+    static let fractionMoyenne: Double = 0.6
+    static let fractionMinimale: Double = 0.35
+    static let etendueDeLaFraction: Double = 0.6
     static let largeurDuNumero: CGFloat = 22
     static let reductionDuNumero: CGFloat = 0.7
     static let hauteurDeLaBarre: CGFloat = 22
