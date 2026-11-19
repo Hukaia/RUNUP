@@ -262,7 +262,8 @@ final class RefonteUITests: XCTestCase {
         inscription.buttons["Continuer"].tap()
         Thread.sleep(forTimeInterval: 1.0)
         photographier("inscription-objectif", app: inscription)
-        for (reponse, nom) in [("Progresser", "inscription-2"), ("4 jours", "inscription-3")] {
+        for (reponse, nom) in [("Progresser", "inscription-2"), ("4 jours", "inscription-3"),
+                               ("Intermédiaire", "inscription-compte")] {
             let ligne = inscription.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", reponse)).firstMatch
             XCTAssertTrue(ligne.waitForExistence(timeout: 5), "la réponse « \(reponse) » doit exister")
             ligne.tap()

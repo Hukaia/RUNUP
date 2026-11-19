@@ -509,6 +509,7 @@ enum HZAllures {
 }
 
 /// UN CHAMP DE TEXTE de formulaire : son titre en gris au-dessus, la saisie dans une pastille claire.
+/// `securise` en fait un champ de mot de passe.
 struct HZChampDeTexte: View {
     let titre: String
     let invite: String
@@ -516,19 +517,19 @@ struct HZChampDeTexte: View {
     var clavier: UIKeyboardType = .default
     var majuscules: TextInputAutocapitalization = .sentences
     var lignes: ClosedRange<Int> = HZHub.uneLigne
+    var securise: Bool = false
+    var contenu: UITextContentType? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
             Text(titre)
                 .hzTexte(.c13, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
-            TextField(text: $texte,
-                      prompt: Text(invite).foregroundStyle(HZCouleur.secondaireSurClair),
-                      axis: .vertical) { EmptyView() }
+            saisie
                 .accessibilityLabel(titre)
+                .textContentType(contenu)
                 .keyboardType(clavier)
                 .textInputAutocapitalization(majuscules)
-                .lineLimit(lignes)
                 .font(HZPolice.texte(.c16, .semi))
                 .foregroundStyle(HZCouleur.encre)
                 .tint(HZCouleur.encre)
@@ -537,6 +538,19 @@ struct HZChampDeTexte: View {
                 .frame(minHeight: HZHub.hauteurDuChamp, alignment: .leading)
                 .background(HZCouleur.surfaceClaire,
                             in: RoundedRectangle(cornerRadius: HZRayon.bandeau, style: .circular))
+        }
+    }
+
+    @ViewBuilder private var saisie: some View {
+        if securise {
+            SecureField(text: $texte, prompt: Text(invite).foregroundStyle(HZCouleur.secondaireSurClair)) {
+                EmptyView()
+            }
+        } else {
+            TextField(text: $texte,
+                      prompt: Text(invite).foregroundStyle(HZCouleur.secondaireSurClair),
+                      axis: .vertical) { EmptyView() }
+                .lineLimit(lignes)
         }
     }
 }
@@ -660,4 +674,19 @@ extension HZHub {
             span: MKCoordinateSpan(latitudeDelta: max((maxLat - minLat) * margeDuCadrage, cadrageMinimal),
                                    longitudeDelta: max((maxLng - minLng) * margeDuCadrage, cadrageMinimal)))
     }
+}
+
+extension HZHub {
+    static let longueurDuMotDePasse = 8
+    static let pseudoMinimal = 3
+    static let pseudoMaximal = 20
+    static let baseDuPseudo = 15
+    static let suffixesDePseudo = 10...99
+}
+
+extension HZHub {
+    static let conflit = 409
+    static let nonAutorise = 401
+    static let refuse = 422
+    static let malFormee = 400
 }

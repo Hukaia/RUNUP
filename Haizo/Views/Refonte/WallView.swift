@@ -119,7 +119,7 @@ struct WallView: View {
         .onChange(of: appState.auth.isSignedIn) { _, connectee in
             if connectee { Task { await charger() } }
         }
-        .sheet(isPresented: $showSignIn) { SignInView().haizoSheetStyle(detents: [.large]) }
+        .sheet(isPresented: $showSignIn) { SignInView().hzFeuille(detents: [.large]) }
         .sheet(item: $annonceEnModification) { post in
             EditTextPostSheet(titreDeLaFeuille: String(localized: "Modifier l'annonce"),
                               texteInitial: post.text) { texte in

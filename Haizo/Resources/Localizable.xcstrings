@@ -9372,6 +9372,23 @@
         }
       }
     },
+    "Créer mon compte": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create my account"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crear mi cuenta"
+          }
+        }
+      }
+    },
     "Créer mon programme": {
       "extractionState": "manual",
       "localizations": {
@@ -11599,6 +11616,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Resistencia de hierro"
+          }
+        }
+      }
+    },
+    "Enregistre ton programme": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save your program"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guarda tu programa"
           }
         }
       }
@@ -14961,6 +14995,23 @@
         }
       }
     },
+    "Me connecter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log in"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar sesión"
+          }
+        }
+      }
+    },
     "Membres": {
       "extractionState": "manual",
       "localizations": {
@@ -15076,6 +15127,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Podrás mover cada sesión."
+          }
+        }
+      }
+    },
+    "Un compte garde ton programme et te donne tes identifiants pour le Club : un classement et un fil d'activité réels, et tes amis qui te retrouvent.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An account keeps your program and gives you your Club identity: a real leaderboard and activity feed, and friends who can find you."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una cuenta guarda tu programa y te da tu identidad en el Club: una clasificación y un feed reales, y amigos que te encuentran."
           }
         }
       }

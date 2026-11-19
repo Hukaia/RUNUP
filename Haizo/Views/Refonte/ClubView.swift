@@ -136,7 +136,7 @@ struct ClubView: View {
         }
         .sheet(isPresented: $showSignIn) {
             SignInView()
-                .haizoSheetStyle(detents: [.large])
+                .hzFeuille(detents: [.large])
         }
         // ET « PROPOSER UNE SORTIE » NE FAISAIT RIEN SUR UN CLUB EN SOMMEIL.
         //

@@ -135,7 +135,6 @@ PERMIS_A_LA_VOLEE: dict = {
 
 PERMIS = {
     # ── 1. DES BOUTONS ────────────────────────────────────────────────────────────────────────
-    "Haizo/Views/Auth/SignInView.swift": (3, BOUTON),
     "Haizo/Views/Club/PublicProfileView.swift": (4, BOUTON),
     "Haizo/Views/Club/PublishRouteSheet.swift": (4, BOUTON),
     "Haizo/Views/Club/RouteDetailSheet.swift": (3, BOUTON),

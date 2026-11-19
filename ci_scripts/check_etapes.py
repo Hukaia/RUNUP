@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Les questions de l'inscription disent la même chose partout.
 
-L'inscription compte QUATRE écrans, une question chacun (`OnboardingContainerView`). Elle les décrit à
+L'inscription compte CINQ écrans, une question chacun (`OnboardingContainerView`). Elle les décrit à
 trois endroits : le nombre d'écrans et les noms que mesure l'analytique (`HZEntree`), et le
 `switch` du conteneur qui choisit la question. Ajouter une question et oublier l'un des trois est
 une étape qui s'affiche sans se mesurer, ou qui se mesure sans s'afficher.
@@ -10,7 +10,7 @@ Ce script vérifie :
 
   1. `HZEntree.ecrans` est le nombre de noms de `HZEntree.noms` ;
   2. l'`enum Question` du conteneur compte autant de cas que d'écrans, et chacun est aiguillé ;
-  3. l'inscription n'a jamais plus de quatre écrans (le nom, l'objectif, les jours, le niveau) : c'est la règle de la refonte, et une
+  3. l'inscription n'a jamais plus de cinq écrans (le nom, l'objectif, les jours, le niveau, le compte) : c'est la règle de la refonte, et une
      quatrième question demande une décision, pas une ligne.
 """
 import re
@@ -20,7 +20,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parent.parent
 SYSTEME = RACINE / "Haizo/DesignSystem/Refonte/HZEcrans.swift"
 CONTENEUR = RACINE / "Haizo/Views/Refonte/OnboardingContainerView.swift"
-MAXIMUM = 4
+MAXIMUM = 5
 
 
 def sans_commentaires(source: str) -> str:

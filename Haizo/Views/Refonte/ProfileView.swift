@@ -72,7 +72,7 @@ struct ProfileView: View {
         #endif
         .sheet(isPresented: $showSignIn) {
             SignInView()
-                .haizoSheetStyle(detents: [.large])
+                .hzFeuille(detents: [.large])
         }
         .sheet(item: $selectedBadge) { badge in
             BadgeDetailView(badge: badge).haizoSheetStyle(detents: [.height(HZProfil.hauteurDuDetailDeBadge)])

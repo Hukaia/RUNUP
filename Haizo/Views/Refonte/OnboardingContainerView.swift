@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// L'INSCRIPTION : quatre écrans, une question chacun. Le nom, l'objectif, les jours, le niveau — le nom
-/// parce que le réseau social ne vit pas sans identifiants, le reste parce que le plan en a besoin pour
-/// exister, rien de plus. La question en très grand, les réponses en grandes lignes sur la
+/// L'INSCRIPTION : cinq écrans, une question chacun. Le nom, l'objectif, les jours, le niveau, puis le
+/// compte — comme dans les applis de course : on dit qui on est et ce qu'on veut, et le compte (Apple ou
+/// e-mail, puis un pseudo) enregistre le programme et donne ses identifiants au réseau social. La question en très grand, les réponses en grandes lignes sur la
 /// surface claire (la choisie en noir), la progression en segments, un bouton pilule noir en bas.
 /// Aucun tutoriel, aucun carrousel.
 ///
@@ -49,7 +49,7 @@ struct OnboardingContainerView: View {
 
     /// Les quatre questions, dans l'ordre : le rang de l'écran dit laquelle on pose.
     private enum Question: Int {
-        case nom, objectif, jours, niveau
+        case nom, objectif, jours, niveau, compte
     }
 
     private var question: Question { Question(rawValue: etape) ?? .niveau }
@@ -66,6 +66,7 @@ struct OnboardingContainerView: View {
         case .objectif: return objectif != nil
         case .jours: return jours != nil
         case .niveau: return niveau != nil
+        case .compte: return true
         }
     }
 
@@ -88,6 +89,8 @@ struct OnboardingContainerView: View {
                 case .objectif: questionDeLObjectif
                 case .jours: questionDesJours
                 case .niveau: questionDuNiveau
+                case .compte:
+                    SignInView(dansLInscription: true) { finir() }
                 }
             }
             .id(etape)
@@ -107,14 +110,16 @@ struct OnboardingContainerView: View {
                 }
                 .padding(.top, HZEntree.sousLesReponses)
             }
-            HZBoutonPilule(libelle: etape == HZEntree.ecrans - 1 ? String(localized: "Créer mon programme")
-                                                                    : String(localized: "Continuer"),
-                           fond: peutContinuer ? HZCouleur.encre : HZCouleur.filetGroupe,
-                           couleur: peutContinuer ? HZCouleur.blanc : HZCouleur.secondaireSurClair,
-                           etendu: true) { avancer() }
-                .disabled(!peutContinuer)
-                .padding(.top, HZEntree.sousLesReponses)
-                .padding(.bottom, HZEntree.basDeLEcran)
+            // Le compte a ses propres boutons (Apple, e-mail, « Plus tard ») : pas de « Continuer » dessous.
+            if question != .compte {
+                HZBoutonPilule(libelle: String(localized: "Continuer"),
+                               fond: peutContinuer ? HZCouleur.encre : HZCouleur.filetGroupe,
+                               couleur: peutContinuer ? HZCouleur.blanc : HZCouleur.secondaireSurClair,
+                               etendu: true) { avancer() }
+                    .disabled(!peutContinuer)
+                    .padding(.top, HZEntree.sousLesReponses)
+                    .padding(.bottom, HZEntree.basDeLEcran)
+            }
         }
         .padding(.horizontal, HZEspace.marge)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -234,6 +239,12 @@ struct OnboardingContainerView: View {
         if etape < HZEntree.ecrans - 1 {
             // Un objectif plus exigeant que les jours déjà choisis les remet en question.
             if question == .objectif, let jours, jours < butChoisi.joursMinimumParSemaine { self.jours = nil }
+            // Le nom donné passe dans le profil avant le compte : c'est lui qui prend le relais quand Apple
+            // ne rend pas le sien, et qui préremplit le formulaire.
+            if question == .niveau {
+                appState.profile.name = prenom.trimmingCharacters(in: .whitespaces)
+                appState.profile.lastName = nom.trimmingCharacters(in: .whitespaces)
+            }
             etape += 1
         } else {
             finir()
