@@ -24,6 +24,8 @@ struct ProgramSettingsSheet: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.horizontal, HZEspace.marge)
+                // Un titre sur deux lignes ne doit pas coller à ce qu'il coiffe.
+                .padding(.top, HZEspace.entreCommandes)
             }
             .scrollIndicators(.hidden)
         }
