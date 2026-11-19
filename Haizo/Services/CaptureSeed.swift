@@ -273,6 +273,17 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains("--seance")
     }
 
+    /// `--feuille=<nom>` : ouvrir une feuille que l'état de l'app suffit à présenter, pour la photographier.
+    ///
+    /// Un seul drapeau pour toutes celles qui n'ont rien à choisir : `deplacer`, `journal`,
+    /// `programme`, `notifications`, `objectif`. Les feuilles de la refonte sont toutes les mêmes
+    /// (rayon, poignée, titre, bouton de fermeture) : une capture de chacune montre que c'est vrai.
+    static var feuilleDemandee: String? {
+        ProcessInfo.processInfo.arguments
+            .first { $0.hasPrefix("--feuille=") }
+            .map { String($0.dropFirst("--feuille=".count)) }
+    }
+
     /// `--encours` : démarrer une course, pour photographier l'écran de course.
     ///
     /// ET IL N'Y AURA PAS DE DISTANCE DESSUS, C'EST ATTENDU. Le simulateur n'a pas de signal GPS,

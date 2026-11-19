@@ -200,6 +200,14 @@ private struct RootView: View {
                 if CaptureSeed.seanceDemandee {
                     appState?.openSessionDetail()
                 }
+                switch CaptureSeed.feuilleDemandee {
+                case "deplacer": appState?.moveSessionPresented = true
+                case "journal": appState?.logSessionPresented = true
+                case "programme": appState?.programSettingsPresented = true
+                case "notifications": appState?.notificationsPresented = true
+                case "objectif": appState?.newGoalWizardPresented = true
+                default: break
+                }
                 #endif
             }
             // Cold launch never fires the `scenePhase` handler below (there's no previous phase to

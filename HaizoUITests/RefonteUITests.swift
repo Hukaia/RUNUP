@@ -154,6 +154,18 @@ final class RefonteUITests: XCTestCase {
         photographier("profil-reglages-bas", app: reglages)
         XCTAssertNotEqual(avant, reglages.screenshot().pngRepresentation, "« Réglages » doit ouvrir la feuille")
         reglages.terminate()
+        // Les feuilles que l'état de l'app suffit à présenter : `--feuille=<nom>`.
+        for nom in ["deplacer", "journal", "programme", "notifications", "objectif"] {
+            let feuille = lancer(arguments: ["--ecran=prog", "--feuille=\(nom)"])
+            photographier("feuille-\(nom)", app: feuille)
+            feuille.terminate()
+        }
+        // Les deux pages entières qui n'avaient pas encore été refaites.
+        for (ecran, nom) in [("rings", "journee"), ("race", "objectif-course")] {
+            let page = lancer(arguments: ["--ecran=\(ecran)"])
+            photographier(nom, app: page)
+            page.terminate()
+        }
     }
 
     /// L'ÉCRAN DE COURSE : le décompte d'abord, puis la course (sans GPS en simulateur : la distance
