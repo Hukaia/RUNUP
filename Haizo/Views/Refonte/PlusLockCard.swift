@@ -31,47 +31,57 @@ struct PlusLockCard: View {
     var showsFreeReminder = true
 
     var body: some View {
-        VStack(alignment: .leading, spacing: compact ? 8 : 12) {
-            HStack(spacing: 8) {
-                Image(systemName: "sparkles")
-                    .font(RUFont.icone(compact ? .body : .medium, weight: .semibold))
-                Text(verbatim: "Haizo PLUS")
-                    .font(RUFont.sans(.micro, weight: .bold))
-                    .tracking(1.6)
-            }
-            .foregroundColor(RUColor.rose)
+        VStack(alignment: .leading, spacing: compact ? HZCompte.ecartDuVerrouCompact : HZCompte.ecartDuVerrou) {
+            Text("Haizo Plus")
+                .hzTexte(.c13, .semi)
+                .foregroundStyle(HZCouleur.secondaireSurSombre)
 
-            Text(feature.title)
-                .font(compact ? RUFont.sans(.emphasis, weight: .semibold) : RUFont.display(.title))
-                .foregroundColor(RUColor.textPrimary)
-                .fixedSize(horizontal: false, vertical: true)
+            titre
 
             Text(feature.pitch)
-                .font(RUFont.sans(.small))
-                .foregroundColor(RUColor.text2)
+                .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
+                .foregroundStyle(HZCouleur.secondaireSurSombre)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Button("Découvrir Haizo Plus") { appState.plusPrompt = feature }
-                .buttonStyle(compact ? AnyButtonStyleBox(SecondaryButtonStyle())
-                                     : AnyButtonStyleBox(PrimaryButtonStyle()))
-                .padding(.top, 2)
+            HZBoutonPilule(libelle: String(localized: "Découvrir Haizo Plus"),
+                           hauteur: compact ? .petite : .reponse,
+                           fond: HZCouleur.blanc, couleur: HZCouleur.noir) {
+                appState.plusPrompt = feature
+            }
+            .padding(.top, HZCompte.avantLeBoutonDuVerrou)
 
             if showsFreeReminder {
                 Text("Le suivi de tes courses, ton historique et le Club restent gratuits.")
-                    .font(RUFont.sans(.micro))
-                    .foregroundColor(RUColor.text3)
+                    .hzParagraphe(.c12, .medium, interligne: HZBandeauDuCoach.interligne)
+                    .foregroundStyle(HZCouleur.secondaireSurSombre)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(compact ? 16 : 20)
-        .ruCard()
+        .padding(compact ? HZEspace.groupe : HZEspace.marge)
+        .background(HZCouleur.noir,
+                    in: RoundedRectangle(cornerRadius: HZRayon.offre, style: .circular))
+    }
+
+    /// Le nom de la fonctionnalité : en grand sur un écran entier, plus bas dans une section.
+    @ViewBuilder private var titre: some View {
+        if compact {
+            Text(feature.title)
+                .hzAffichage(.section)
+                .foregroundStyle(HZCouleur.blanc)
+                .fixedSize(horizontal: false, vertical: true)
+        } else {
+            Text(feature.title)
+                .hzAffichage(.titreDEcran)
+                .foregroundStyle(HZCouleur.blanc)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 }
 
 /// `buttonStyle` veut un type concret, et les deux branches d'un ternaire doivent avoir le même —
-/// or `PrimaryButtonStyle` et `SecondaryButtonStyle` sont deux types distincts. Cette boîte les
-/// ramène à un seul, sans dupliquer tout le bouton dans un `if`.
+/// or deux styles de bouton sont deux types distincts. Cette boîte les ramène à un seul,
+/// sans dupliquer tout le bouton dans un `if`.
 struct AnyButtonStyleBox: ButtonStyle {
     private let render: (Configuration) -> AnyView
     init<S: ButtonStyle>(_ style: S) {
@@ -90,8 +100,8 @@ extension View {
     @ViewBuilder
     func plusTeaser(_ locked: Bool) -> some View {
         if locked {
-            self.blur(radius: 5)
-                .opacity(0.45)
+            self.blur(radius: HZCompte.flouDApercu)
+                .opacity(HZCompte.opaciteDApercu)
                 .allowsHitTesting(false)
                 .accessibilityHidden(true)
         } else {
@@ -110,14 +120,14 @@ struct PlusSection<Content: View>: View {
     @Environment(SubscriptionService.self) private var subscriptions
     let feature: PlusFeature
     /// Hauteur de l'aperçu estompé. Assez pour reconnaître un graphique, pas assez pour le lire.
-    var teaserHeight: CGFloat = 150
+    var teaserHeight: CGFloat = HZCompte.hauteurDApercu
     @ViewBuilder var content: () -> Content
 
     var body: some View {
         if subscriptions.unlocks(feature) {
             content()
         } else {
-            VStack(spacing: 10) {
+            VStack(spacing: HZEspace.entreCommandes) {
                 content()
                     .plusTeaser(true)
                     .frame(maxHeight: teaserHeight, alignment: .top)
