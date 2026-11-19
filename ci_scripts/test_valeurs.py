@@ -42,6 +42,7 @@ def lancer_sur(vues: dict, systeme: dict | None = None, sans: str | None = None)
             (dossier_systeme / nom).write_text(contenu)
         if sans == "vues":
             dossier_vues.rmdir()
+            dossier_vues.parent.rmdir()
         (racine / "ci_scripts").mkdir()
         copie = racine / "ci_scripts" / "check_valeurs.py"
         copie.write_text((ICI / "check_valeurs.py").read_text())
