@@ -135,11 +135,10 @@ struct ShoesView: View {
                 }
                 HZJauge(fraction: fraction, couleur: usee ? HZCouleur.accent : HZCouleur.encre,
                         rail: HZCouleur.blanc, epaisseur: HZHub.hauteurDeLaProgression)
-                HStack {
+                VStack(alignment: .leading, spacing: 0) {
                     Text(verbatim: "/ \(String(format: "%.0f", shoe.alertThresholdKm)) km")
                         .hzTexte(.c13, .semi, tabulaire: true)
                         .foregroundStyle(HZCouleur.secondaireSurClair)
-                    Spacer(minLength: 0)
                     if fraction >= 1 {
                         Text("À remplacer").hzTexte(.c13, .gras).foregroundStyle(HZCouleur.encre)
                     } else if usee {

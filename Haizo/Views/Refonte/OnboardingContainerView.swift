@@ -141,10 +141,10 @@ struct OnboardingContainerView: View {
     private var questionDuNom: some View {
         question(String(localized: "Comment tu t'appelles ?")) {
             VStack(alignment: .leading, spacing: HZEspace.entreTuiles) {
-                HZChampDeTexte(titre: String(localized: "Prénom"), invite: String(localized: "Prénom"),
+                HZChampDeTexte(titre: String(localized: "Prénom"), invite: String(localized: "Ton prénom"),
                                texte: $prenom, majuscules: .words)
                 HZChampDeTexte(titre: String(localized: "Nom de famille"),
-                               invite: String(localized: "Nom de famille"),
+                               invite: String(localized: "Ton nom de famille"),
                                texte: $nom, majuscules: .words)
                 Text("Ton coach s'adressera à toi par ton prénom. Le nom sert à tes amis, pour te retrouver dans le Club.")
                     .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)

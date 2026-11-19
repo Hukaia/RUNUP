@@ -3741,6 +3741,23 @@
         }
       }
     },
+    "8 caractères minimum": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8 characters minimum"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8 caracteres como mínimo"
+          }
+        }
+      }
+    },
     "8 caractères minimum.": {
       "localizations": {
         "en": {
@@ -15097,6 +15114,40 @@
         }
       }
     },
+    "Ton nom de famille": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your last name"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu apellido"
+          }
+        }
+      }
+    },
+    "Ton prénom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your first name"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu nombre"
+          }
+        }
+      }
+    },
     "Tu choisiras ta course juste après : le plan se calera sur sa date.": {
       "extractionState": "manual",
       "localizations": {
@@ -19800,6 +19851,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "¿En qué punto estás?"
+          }
+        }
+      }
+    },
+    "lettres minuscules, chiffres, _": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lowercase letters, digits, _"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "minúsculas, cifras, _"
           }
         }
       }
@@ -31543,6 +31611,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "rutas registradas"
+          }
+        }
+      }
+    },
+    "prenom@exemple.com": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "firstname@example.com"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nombre@ejemplo.com"
           }
         }
       }

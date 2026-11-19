@@ -138,7 +138,7 @@ struct SignInView: View {
                 .hzParagraphe(.c15, .medium, interligne: HZBandeauDuCoach.interligne)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
                 .fixedSize(horizontal: false, vertical: true)
-            HZChampDeTexte(titre: String(localized: "Pseudo"), invite: String(localized: "Pseudo"),
+            HZChampDeTexte(titre: String(localized: "Pseudo"), invite: String(localized: "lettres minuscules, chiffres, _"),
                            texte: $usernameField, majuscules: .never)
             if let usernameError {
                 Text(usernameError)
@@ -170,15 +170,15 @@ struct SignInView: View {
     private var emailForm: some View {
         VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
             if mode == .signUp && !nomConnu {
-                HZChampDeTexte(titre: String(localized: "Prénom"), invite: String(localized: "Prénom"),
+                HZChampDeTexte(titre: String(localized: "Prénom"), invite: String(localized: "Ton prénom"),
                                texte: $name, majuscules: .words, contenu: .givenName)
                 HZChampDeTexte(titre: String(localized: "Nom (facultatif)"),
-                               invite: String(localized: "Nom (facultatif)"),
+                               invite: String(localized: "Ton nom de famille"),
                                texte: $lastName, majuscules: .words, contenu: .familyName)
             }
-            HZChampDeTexte(titre: String(localized: "Email"), invite: String(localized: "Email"),
+            HZChampDeTexte(titre: String(localized: "Email"), invite: String(localized: "prenom@exemple.com"),
                            texte: $email, clavier: .emailAddress, majuscules: .never, contenu: .emailAddress)
-            HZChampDeTexte(titre: String(localized: "Mot de passe"), invite: String(localized: "Mot de passe"),
+            HZChampDeTexte(titre: String(localized: "Mot de passe"), invite: String(localized: "8 caractères minimum"),
                            texte: $password, securise: true,
                            contenu: mode == .signIn ? .password : .newPassword)
 
