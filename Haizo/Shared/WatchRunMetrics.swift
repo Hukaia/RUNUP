@@ -103,7 +103,9 @@ struct WatchRunMetrics {
 
     // MARK: L'encombrement
 
-    /// Inter : 0,969 de montée + 0,242 de descente ≈ 1,211 fois la taille de point.
+    /// Inter : 0,969 de montée + 0,242 de descente ≈ 1,211 fois la taille de point. La montre est
+    /// maintenant en Archivo, dont la ligne naturelle fait 1,088 : on garde 1,211 exprès, comme une
+    /// borne haute — l'écran de course n'occupera jamais PLUS que ce que ce calcul annonce.
     private static let interLineFactor: CGFloat = 1.211
 
     static func sansLine(_ size: CGFloat) -> CGFloat { size * interLineFactor }

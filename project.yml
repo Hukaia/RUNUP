@@ -385,13 +385,16 @@ targets:
           # Cette cible ne déclare que 3 fichiers dans son UIAppFonts, et ce que l'UIAppFonts
           # n'enregistre pas ne peut pas se charger : embarquer les 5 autres n'ajouterait que
           # ~750 Ko de poids mort au poignet.
+          # La montre est en Archivo (Archivo-Variable.ttf, déclarée ci-dessous) : elle n'enregistre
+          # plus aucune Instrument Sans, et ce que l'UIAppFonts n'enregistre pas ne peut pas se
+          # charger. Embarquer ces fichiers n'ajouterait que du poids mort au poignet.
           - "InstrumentSans-Regular.ttf"
           - "InstrumentSans-Italic.ttf"
+          - "InstrumentSans-Medium.ttf"
+          - "InstrumentSans-SemiBold.ttf"
+          - "InstrumentSans-Bold.ttf"
           - "DMMono-Regular.ttf"
           - "DMMono-Medium.ttf"
-          # La fonte de la refonte n'est pas déclarée par cette cible : 660 Ko de poids mort tant
-          # que cette surface n'est pas redessinée avec elle.
-          - "Archivo-Variable.ttf"
       # Le MÊME catalogue de chaînes que l'app iPhone. Le partager plutôt que d'en créer un second
       # évite d'avoir à traduire deux fois les libellés communs (KM, TEMPS, KCAL, EN PAUSE…).
       - path: Haizo/Resources/Localizable.xcstrings
@@ -417,10 +420,9 @@ targets:
         NSHealthShareUsageDescription: "Haizo lit ta fréquence cardiaque pendant la course pour l'afficher en direct au poignet."
         NSHealthUpdateUsageDescription: "Haizo enregistre ta course comme une vraie séance dans Santé — elle compte dans tes anneaux."
         NSLocationWhenInUseUsageDescription: "Haizo utilise ta position pour mesurer distance et allure pendant une course depuis la montre."
+        # La fonte de l'iPhone, variable : une seule face, la graisse se règle par axe (WatchViews).
         UIAppFonts:
-          - InstrumentSans-Medium.ttf
-          - InstrumentSans-Bold.ttf
-          - InstrumentSans-SemiBold.ttf
+          - Archivo-Variable.ttf
     entitlements:
       path: HaizoWatch/HaizoWatch.entitlements
       properties:

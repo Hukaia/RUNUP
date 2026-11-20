@@ -1,3 +1,4 @@
+import CoreText
 import SwiftUI
 
 // Les jetons de la montre. Le système HZ de l'iPhone (`HZCouleur`, `HZPolice`, `HZForme`) vit dans
@@ -33,12 +34,34 @@ private enum WT {
 
     // MARK: Les polices
 
-    /// Passe par `DisplayFont` (Haizo/Shared) : même famille que l'app et le widget, décidée à un
-    /// seul endroit. Les grands chiffres et les titres sont en 700, serrés (`serre`) ; le texte
-    /// courant en 600 ou 500.
-    static func gras(_ taille: CGFloat) -> Font { .custom("\(DisplayFont.family)-Bold", size: taille) }
-    static func semi(_ taille: CGFloat) -> Font { .custom("\(DisplayFont.family)-SemiBold", size: taille) }
-    static func moyen(_ taille: CGFloat) -> Font { DisplayFont.font(taille) }
+    /// ARCHIVO, comme l'iPhone (`HZPolice`) : le même fichier variable, `Archivo-Variable.ttf`, que
+    /// cette cible embarque et enregistre dans son `UIAppFonts`. Un axe de graisse, réglé ici par
+    /// CoreText : UIKit n'existe pas sur le poignet, et `Font.custom` ne sait pas régler un axe.
+    ///
+    /// Les trois graisses de l'interface de l'iPhone — 500, 600, 700 — et la largeur 100. La
+    /// largeur d'affichage de l'iPhone (125 %) n'est PAS reprise : à 42 points le chrono « 1:02:45 »
+    /// y perdrait un quart de place sur un écran de 184 points de large, pour un gain de style.
+    ///
+    /// Une famille introuvable ne lève rien : CoreText rend la police système. D'où la capture de
+    /// la montre, seul endroit où l'on voit si Archivo s'est chargée (voir PROGRESS.md).
+    static func gras(_ taille: CGFloat) -> Font { archivo(taille, graisse: 700) }
+    static func semi(_ taille: CGFloat) -> Font { archivo(taille, graisse: 600) }
+    static func moyen(_ taille: CGFloat) -> Font { archivo(taille, graisse: 500) }
+
+    private static let famille = "Archivo"
+    /// « wght » et « wdth », lus comme un entier de quatre octets : la forme que
+    /// `kCTFontVariationAttribute` attend, et qui n'a pas de constante nommée.
+    private static let axeDeGraisse = 0x7767_6874
+    private static let axeDeLargeur = 0x7764_7468
+    private static let largeur: CGFloat = 100
+
+    private static func archivo(_ taille: CGFloat, graisse: CGFloat) -> Font {
+        let descripteur = CTFontDescriptorCreateWithAttributes([
+            kCTFontFamilyNameAttribute: famille,
+            kCTFontVariationAttribute: [axeDeGraisse: graisse, axeDeLargeur: largeur],
+        ] as CFDictionary)
+        return Font(CTFontCreateWithFontDescriptor(descripteur, taille, nil))
+    }
 
     /// L'interlettrage d'un chiffre ou d'un titre : quatre centièmes du corps, dans la mesure de
     /// l'iPhone (−6 sur 100, −1,2 sur 28). Jamais positif : il n'y a plus de capitales à espacer.
