@@ -8874,3 +8874,18 @@ réglé sur « lime » affichait un anneau lime sous une app verte. **Le rose du
 
 **Restes** : (1) `AccentColor.colorset` de l'app vaut `#FF0F5B`, un troisième rose, non demandé et non touché ; (2) `DisplayFont` (Instrument Sans) ne sert plus qu'à `WatchRunMetrics.displayLine`, avec un facteur 1,0 : à retirer le jour où ce calcul
 n'en dépend plus ; (3) les nombres de mise en page des widgets (marges, espacements) sont encore littéraux dans les vues, hors du contrôle `check_valeurs` qui ne couvre que `Haizo/Views`.
+
+## Une belle Live Activity (20 novembre) : « Je veux une belle live activity »
+
+`RunActivityWidget` est redessiné, écran verrouillé et Dynamic Island. **Écran verrouillé** : le chrono domine (52 points, Archivo gras et serré, en chiffres tabulaires), la distance et
+l'allure sont posées dans deux tuiles `surfaceSombre` à droite, une barre avance vers la durée prévue avec cette durée à côté (masquée quand la séance n'en a pas), et l'accent n'est que le point
+d'état et le remplissage de la barre. **Trois états** : en direct (point d'accent), en pause (point éteint, chrono et barre en gris), terminée (coche d'accent, « Sortie terminée »).
+**Dynamic Island déployé** : chrono et état à gauche, distance et allure à droite, barre et titre en bas. Compact et minimal inchangés (le coureur d'accent, le chrono).
+
+**Pourquoi deux colonnes.** La pile verticale (chrono pleine largeur puis les tuiles), plus proche de la grande fonte large de l'iPhone, mesurait 172 points : sous le plafond d'environ 160 que le système
+accorde à une carte d'écran verrouillé, elle aurait été coupée. La carte retenue en mesure 138. Les deux ont été comparées sur une maquette Chromium rendue avec le vrai `Archivo-Variable.ttf`,
+à 359 points de large ; les tailles et formes sont des jetons (`WG.Corps`, `WG.Forme`).
+
+**Vérifié** : compilation de l'extension et du build complet (TestFlight n° 663), contrôles de chaînes, de polices et de capitales. **Pas vérifié** : le rendu sur appareil. La maquette n'est pas une capture, et
+aucun contrôle CI ne photographie une Live Activity. La barre suit `elapsedSeconds`, republié toutes les ~5 secondes par l'app : sur 40 minutes elle bouge d'un huitième de point par seconde, ce qui ne se voit pas ;
+le chrono, lui, avance seul (`Text(timerInterval:)`). À regarder : écran verrouillé en course, pause, fin, Dynamic Island compact et déployé, une course sans durée prévue (barre absente), un chrono de plus d'une heure.
