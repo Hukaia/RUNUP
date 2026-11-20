@@ -36,10 +36,10 @@ enum WG {
     static let secondaireSurClair = Color(hex: 0x6E6E73)
     static let secondaireSurSombre = Color(hex: 0xA1A1A6)
 
-    /// LE ROSE DE LA MONTRE ET DU WIDGET RESTE `#FF0A78` — décision de Charlotte, qui ne le
-    /// rapproche pas du `#FF2E6E` de l'app. C'est la seule valeur de ce fichier qui ne soit pas
-    /// celle de l'app ; les trois autres accents le sont (`WidgetAccentPalette`).
-    static let rose = Color(hex: 0xFF0A78)
+    /// `HZAccent.rose` : le rose de l'app, `#FF2E6E`. Il valait `#FF0A78` jusqu'au 20 novembre
+    /// (décision de Charlotte de le laisser), puis elle a demandé de l'aligner sur l'app : les
+    /// quatre accents de ce fichier sont désormais ceux de l'app, au bit près.
+    static let rose = Color(hex: 0xFF2E6E)
 
     // MARK: La fonte
 

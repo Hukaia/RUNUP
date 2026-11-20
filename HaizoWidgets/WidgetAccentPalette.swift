@@ -21,8 +21,9 @@ import SwiftUI
 ///
 /// # LE ROSE
 ///
-/// Le rose de la montre et du widget reste `#FF0A78` (`WG.rose`), décision de Charlotte, contre
-/// `#FF2E6E` dans l'app. Les trois autres sont ceux de l'app, au bit près.
+/// Le rose du widget et de la montre était `#FF0A78` (l'ancien), contre `#FF2E6E` dans l'app.
+/// Charlotte l'a d'abord laissé, puis demandé aligné le 20 novembre : `WG.rose` vaut maintenant
+/// celui de l'app, comme les trois autres accents.
 enum WidgetAccentPalette {
     /// La couleur de l'accent. Un seul tableau de trois valeurs identiques est rendu par
     /// `ringColors` : l'anneau est mono-accent, comme celui de l'accueil.

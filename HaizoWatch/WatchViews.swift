@@ -27,10 +27,11 @@ private enum WT {
     /// opacité.
     static let secondaire = Color(hex: 0xA1A1A6)
     static let blanc = Color(hex: 0xFFFFFF)
-    /// LE ROSE DE LA MONTRE RESTE `#FF0A78` — décision de Charlotte, qui ne le rapproche pas du
-    /// `#FF2E6E` de l'iPhone. Mais il ne couvre plus de surface : il reste sur la barre de
-    /// progression, l'anneau du bilan et les chiffres clés (l'allure).
-    static let rose = Color(hex: 0xFF0A78)
+    /// `HZAccent.rose` : le rose de l'app, `#FF2E6E`. Il valait `#FF0A78` jusqu'au 20 novembre
+    /// (décision de Charlotte de le laisser), puis elle a demandé de les aligner. Il ne couvre
+    /// aucune surface : il reste sur la barre de progression, l'anneau du bilan et les chiffres
+    /// clés (l'allure).
+    static let rose = Color(hex: 0xFF2E6E)
 
     // MARK: Les polices
 
