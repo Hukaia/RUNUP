@@ -8889,3 +8889,27 @@ accorde à une carte d'écran verrouillé, elle aurait été coupée. La carte r
 **Vérifié** : compilation de l'extension et du build complet (TestFlight n° 663), contrôles de chaînes, de polices et de capitales. **Pas vérifié** : le rendu sur appareil. La maquette n'est pas une capture, et
 aucun contrôle CI ne photographie une Live Activity. La barre suit `elapsedSeconds`, republié toutes les ~5 secondes par l'app : sur 40 minutes elle bouge d'un huitième de point par seconde, ce qui ne se voit pas ;
 le chrono, lui, avance seul (`Text(timerInterval:)`). À regarder : écran verrouillé en course, pause, fin, Dynamic Island compact et déployé, une course sans durée prévue (barre absente), un chrono de plus d'une heure.
+
+## Quatre retours de Charlotte du 20 novembre : accueil fade, balayage du Plan, carte sous la barre, débrief
+
+**1. « Le noir et blanc fait trop fade »** (après « le rose est trop présent »). Règle posée : **le très grand chiffre d'un écran porte l'accent, et rien d'autre à cette taille.** `hzVedette()`
+(`HZPolice.swift`) sur : le nombre de la séance du jour (accueil), le total de la période (stats), celui du bilan hebdo, la distance de la sortie (résumé, détail d'une activité), l'allure en direct et le
+décompte, et le grand nombre d'une carte du plan **neutre** (repos, séance sans teinte) ; sur une teinte d'intensité le nombre reste blanc (du rose sur du vert ou du violet serait une collision).
+Vu sur la capture CI : le « 39' » rose de l'accueil est lisible et donne enfin un point d'accroche ; la carte violette du plan garde son blanc. Une ligne pour revenir en arrière. Écrit dans DESIGN.md.
+S'il paraît encore fade, le levier suivant est de teinter davantage la feuille de l'accueil, pas d'ajouter du rose aux petits éléments.
+
+**2. Le balayage des cartes du Plan** : la carte ne bougeait qu'à la fin du geste, d'un cran, quelle que soit la vitesse. Elle suit maintenant le doigt (`HZCarrousel`, `seuilDeDebut` 8 points), résiste au
+bout de la semaine (0,3), et un geste rapide saute jusqu'à deux cartes ; un geste surtout vertical reste un défilement de la page. La décision du cran est une fonction pure testée (`CarrouselDuPlanTests`, 8 cas).
+**Pas vérifié** : le ressenti du geste, qui ne se voit que sur l'appareil (le suivi du doigt, la fluidité, l'interaction avec le défilement vertical de la page).
+
+**3. La carte sous la barre flottante** (Mes routes) : la feuille blanche s'arrêtait à la zone sûre du bas, la carte (qui l'ignore) reparaissait dessous avec son attribution. Le fond blanc descend jusqu'au bord
+de l'écran. Vérifié sur la capture. Les autres cartes plein écran (itinéraires) passent volontairement sous la barre : il n'y a pas de feuille dessus.
+
+**4. Le débrief de fin de course** : la carte de partage (trois styles), l'image de la vidéo et le profil d'élévation étaient restés dans l'ancien style (tracé néon en dégradé rose et violet, flou, halos, contours,
+libellés espacés, lueur rose). Ils sont en aplats : un trait net d'accent, Archivo, libellés gris en casse de phrase ; le style « Haizo » est un noir franc opaque ; une seule ombre est gardée (style Blanc, DESIGN.md).
+~Vingt jetons `HZJournee` retirés, `check_degrade` sans plus aucune exception. La feuille « Comment tu te sens ? » (`DebriefSheet`) n'avait rien à corriger : elle utilisait déjà les composants de la refonte ; elle est
+maintenant photographiée (`feuille-debrief`, `feuille-debrief-bas`). **« Donner mon ressenti » reste en accent** : la première reprise l'avait passé au noir, ce qui allait à contre-courant de la demande ; annulé.
+Vérifié sur les captures CI (résumé, carte de partage, feuille du débrief). **Pas vérifié** : l'ombre du style Blanc sur une vraie photo claire ; la vidéo exportée.
+
+**Restes** : les clés « KM » et « M D+ » du catalogue n'ont plus d'usage (aucun contrôle ne les signale) ; `test_model_defaults` échoue (20 cas sur 21) sans rapport avec ces fichiers, à regarder ;
+`AccentColor` de l'app vaut `#FF0F5B`, un autre rose, non touché.

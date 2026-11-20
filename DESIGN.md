@@ -426,8 +426,10 @@ dit qui parle), `HZSaisie` (une capsule claire de 54, le bouton d'envoi noir à 
 - `HZCourseEnCours` : la pastille qui ramène à une course commencée quand on a quitté son écran — accent plein, encre sur l'accent,
   chrono tabulaire pour qu'elle ne tremble pas. Elle se pose au-dessus de la barre flottante.
 - `HZToast` (avec `ToastCenter`) : le message qui passe, une pilule noire au-dessus de la barre, 2,2 s à l'écran. Avec les repères
-  posés sur une carte et le cœur du double-tape, c'est l'un des trois endroits où une ombre légère existe : ce qui flotte sur un
-  contenu qui bouge.
+  posés sur une carte et le cœur du double-tape, c'est l'un des endroits où une ombre légère existe : ce qui flotte sur un
+  contenu qui bouge. Le quatrième est la carte de partage au style « Blanc » : elle est transparente, on la pose sur la photo de
+  son choix, et du blanc sans ombre ne se lit pas sur une photo claire (`HZJournee.ombreDuTexte`, noir à 35 %, flou 3, sur le bloc
+  entier). Les styles « Noir » et « Haizo » n'en ont pas.
 - `HZLancement` : la tuile de la marque (72, rayon égal à 0,26 de son côté), son tracé, puis le mot qui se dévoile (§ 7).
 - `HZEntree` : l'entrée dans l'app, cinq écrans, une question chacun — le nom, l'objectif, les jours, le niveau, le compte.
   `HZPaywall` : noir plein écran, « Haizo Plus » en grand, tout ce que l'App Store exige visible sans défiler. `HZRecap` : le bilan
