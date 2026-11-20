@@ -8837,14 +8837,14 @@ Neuf tests (`ProgrammePourUneCourseTests`), dont les fuseaux de Pacific/Auckland
 ## La montre suit la nouvelle DA (20 novembre) : décision de Charlotte, « le rose reste, mais la DA s'adapte »
 
 Les trois écrans de la montre (départ, course, bilan) passent aux aplats de l'iPhone : départ en disque blanc de 60 points portant le triangle noir, chiffres gras et
-serrés, libellés en casse de phrase, plus aucune majuscule espacée. Le rose reste `#FF0A78` (décision de Charlotte), en touches : allure, durée, barre de progression.
+serrés, libellés en casse de phrase, plus aucune majuscule espacée. Le rose, d'abord laissé à `#FF0A78`, a été aligné sur celui de l'app (`#FF2E6E`) à sa demande le 20 novembre : en touches seulement (allure, durée, barre de progression).
 Symboles SF conservés, boutons de course de 40 points (plancher 30). Police : voir « La montre passe en Archivo » ci-dessous.
 
 **Vérifié sur CI** : la montre se compile, et la capture a été refaite (`montre.yml`, trois langues). Une première image avait la phrase du bas collée à l'arête de l'écran
 en anglais : `check_captures_montre.py` l'a refusée, le disque est passé de 72 à 60 points, la seconde passe est propre. Le premier relevé de cette seconde passe a échoué
 sur un simulateur occupé (« Busy »), sans rapport avec le code ; relancé, il est passé. L'image de l'App Store (`appstore/requis/montre`) est celle de la nouvelle DA.
 
-**Décisions de Charlotte** : aucune teinte d'alerte dans le système (on laisse comme ça) ; le rose du widget et de la montre reste l'ancien.
+**Décisions de Charlotte** : aucune teinte d'alerte dans le système (on laisse comme ça).
 **Pas vérifié** : l'écran de course et le bilan sur une vraie montre (seul l'écran de départ est photographié) ; une montre de 40 mm.
 
 ## La montre passe en Archivo (20 novembre) : « oui » de Charlotte
@@ -8858,3 +8858,19 @@ n'y sont plus embarquées). UIKit n'existe pas sur le poignet : `WT.gras/semi/mo
 comparée, lettre à lettre, à un rendu d'Archivo et à un rendu d'Instrument Sans : c'est Archivo. Cette comparaison est la seule preuve de chargement : une famille introuvable ne lève
 rien, CoreText rend la police système. **Pas vérifié** : l'écran de course et le bilan, sur une vraie montre. **Resté en Instrument Sans** : le widget et la Live Activity (`DisplayFont`),
 parce que la demande portait sur la montre.
+
+## Le widget et la Live Activity passent à la nouvelle DA (20 novembre) : « on met tout sur la même DA »
+
+`HaizoWidgets` (widget d'écran d'accueil, Live Activity, Dynamic Island) suit l'app : Archivo (`WG.police`, CoreText sur `Archivo-Variable.ttf`, seul fichier enregistré par la cible),
+des gris opaques pour les textes secondaires (plus de blanc à 42 ou 55 %), des libellés en casse de phrase (« En direct », « En pause » ; plus de `textCase(.uppercase)` ni d'interlettrage
+positif), des rails en jetons (`filetSombre`, `filetGroupe`), une pastille de série en surface neutre, et, pendant une course, un fond noir franc à la place du rose plein : l'accent n'est plus
+qu'un point d'état et une barre. Les jetons recopiés vivent dans `HaizoWidgets/WidgetStyle.swift` (`WG`).
+
+**Les accents suivent l'app.** `WidgetAccentPalette` reprend `HZAccent` (rose, violet, bleu, vert) et son repli : « cyan », « lime » et « vert » donnent le vert, le reste revient au rose. Avant, un téléphone
+réglé sur « lime » affichait un anneau lime sous une app verte. **Le rose du widget et de la montre est `#FF2E6E`, comme l'app** (aligné le 20 novembre à la demande de Charlotte, après avoir été laissé à `#FF0A78`).
+
+**Vérifié** : compilation de l'extension et du build complet (TestFlight n° 660 et suivants), `check_fonts`, `check_spec`, `check_strings`, `check_majuscules` (les deux dernières entrées de dette, montre et widget, sont levées).
+**Pas vérifié** : le rendu. Aucune capture CI ne photographie un widget ni la Live Activity ; il faut les regarder sur le téléphone (accueil, écran verrouillé, Dynamic Island, une course en cours).
+
+**Restes** : (1) `AccentColor.colorset` de l'app vaut `#FF0F5B`, un troisième rose, non demandé et non touché ; (2) `DisplayFont` (Instrument Sans) ne sert plus qu'à `WatchRunMetrics.displayLine`, avec un facteur 1,0 : à retirer le jour où ce calcul
+n'en dépend plus ; (3) les nombres de mise en page des widgets (marges, espacements) sont encore littéraux dans les vues, hors du contrôle `check_valeurs` qui ne couvre que `Haizo/Views`.
