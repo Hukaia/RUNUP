@@ -184,6 +184,7 @@ struct AccueilView: View {
             }
             Text(texte(du: hero.nombre))
                 .hzAffichage(.seance)
+                .hzVedette()
                 .minimumScaleFactor(HZAccueil.reductionDuNombre)
                 .padding(.leading, -HZAccueil.debordDuNombre)
             Text(hero.titre)

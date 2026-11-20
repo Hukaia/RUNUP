@@ -102,6 +102,7 @@ struct StatsView: View {
                     .foregroundStyle(HZCouleur.secondaireSurSombre)
                 Text(verbatim: kilometresDeLaPeriode)
                     .hzAffichage(.total)
+                    .hzVedette()
                     .padding(.leading, -HZStats.debordDuTotal)
                     .minimumScaleFactor(HZStats.reductionDuTotal)
                 Text(Pluriel.choisir(Int(totalDeLaPeriodeKm.rounded()),

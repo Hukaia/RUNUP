@@ -68,7 +68,7 @@ struct WeeklyRecapView: View {
                     .foregroundStyle(HZCouleur.secondaireSurSombre)
                 Text(verbatim: String(format: "%.1f", locale: Locale.current, kilometres))
                     .hzAffichage(.total)
-                    .foregroundStyle(HZCouleur.blanc)
+                    .hzVedette()
                     .lineLimit(1)
                     .padding(.leading, -HZStats.debordDuTotal)
                     .minimumScaleFactor(HZStats.reductionDuTotal)

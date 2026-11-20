@@ -25,6 +25,9 @@ struct HZCarteAffiche: View {
     var mesures: [HZMesure] = []
     var fond: Color = HZCouleur.accent
     var encreSecondaire: Color = HZCouleur.blanc
+    /// Le grand nombre dans l'accent : sur une carte NEUTRE (repos, séance sans teinte). Sur une teinte
+    /// d'intensité il reste blanc — du rose sur du vert ou du bleu serait une collision.
+    var nombreEnVedette: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -43,6 +46,7 @@ struct HZCarteAffiche: View {
                 .hzAffichage(.prefixeDeCarte)
             Text(nombre)
                 .hzAffichage(style)
+                .foregroundStyle(nombreEnVedette ? HZCouleur.accent : HZCouleur.blanc)
                 .padding(.leading, HZCarteAffiche.rattrapageOptique)
             Text(titre)
                 .hzTexte(.c20, .gras)

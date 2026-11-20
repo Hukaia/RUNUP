@@ -30,6 +30,9 @@ struct PlanSemaineView: View {
     /// Le jour regardé. `nil` tant qu'on n'a rien touché : c'est alors aujourd'hui.
     @State private var choix: Int?
     @State private var planCompletOuvert = false
+    /// Le déplacement de la rangée de cartes pendant que le doigt la tient. Remis à zéro, avec
+    /// l'animation du carrousel, quand le doigt se lève.
+    @State private var decalage: CGFloat = 0
 
     private var profile: UserProfile { appState.profile }
     private var planDebloque: Bool { subscriptions.unlocks(.adaptivePlan) }
@@ -186,6 +189,9 @@ struct PlanSemaineView: View {
         var fond: Color
         var point: Color
         var encre: Color
+        /// Le grand nombre prend l'accent sur les cartes neutres (le noir doux) ; sur une teinte
+        /// d'intensité il reste blanc.
+        var nombreEnVedette = false
     }
 
     /// Une couleur par jour, comme le canvas : le noir doux d'un repos, aujourd'hui avec la couleur de sa
@@ -195,15 +201,18 @@ struct PlanSemaineView: View {
     private func couleurs(de jour: PlanSemaineModele.Jour) -> Couleurs {
         let base: Couleurs
         if jour.estUnRepos {
-            base = Couleurs(fond: HZCouleur.surfaceSombre, point: HZCouleur.pointEteint, encre: HZCouleur.blanc)
+            base = Couleurs(fond: HZCouleur.surfaceSombre, point: HZCouleur.pointEteint, encre: HZCouleur.blanc,
+                            nombreEnVedette: true)
         } else if let intensite = AccueilModele.intensite(de: jour.famille) {
             base = Couleurs(fond: intensite.couleur, point: intensite.point, encre: HZCouleur.blanc)
         } else {
-            base = Couleurs(fond: HZCouleur.surfaceSombre, point: HZCouleur.secondaireSurSombre, encre: HZCouleur.blanc)
+            base = Couleurs(fond: HZCouleur.surfaceSombre, point: HZCouleur.secondaireSurSombre, encre: HZCouleur.blanc,
+                            nombreEnVedette: true)
         }
         // Aujourd'hui garde la couleur de sa séance ; seul son point passe au blanc.
         guard jour.etat == .aujourdhui else { return base }
-        return Couleurs(fond: base.fond, point: HZCouleur.blanc, encre: base.encre)
+        return Couleurs(fond: base.fond, point: HZCouleur.blanc, encre: base.encre,
+                        nombreEnVedette: base.nombreEnVedette)
     }
 
     /// Les appelants ont déjà tenu compte du verrou : la rangée est éteinte quand le plan l'est, et
@@ -234,12 +243,15 @@ struct PlanSemaineView: View {
                     }
                 }
                 .fixedSize()
-                .offset(x: HZPlan.departDeLaCarte - CGFloat(position) * HZPlan.pasDuCarrousel)
+                .offset(x: HZPlan.departDeLaCarte - CGFloat(position) * HZPlan.pasDuCarrousel + decalage)
             }
             .clipped()
+            // La carte SUIT le doigt (`suivre`), puis se pose sur la carte que le geste vise
+            // (`glisser`). C'était un saut d'un cran à la fin du geste, quelle que soit sa vitesse.
             .simultaneousGesture(
-                DragGesture(minimumDistance: HZCarrousel.seuilDeGlissement)
-                    .onEnded { geste in glisser(geste.translation) })
+                DragGesture(minimumDistance: HZCarrousel.seuilDeDebut)
+                    .onChanged { geste in suivre(geste.translation) }
+                    .onEnded { geste in glisser(geste) })
     }
 
     private func toucher(_ jour: PlanSemaineModele.Jour) {
@@ -251,13 +263,34 @@ struct PlanSemaineView: View {
         }
     }
 
-    private func glisser(_ deplacement: CGSize) {
-        // Un geste surtout vertical est un défilement de la page, pas un changement de jour.
-        guard planDebloque, abs(deplacement.width) > abs(deplacement.height) else { return }
-        let sens = deplacement.width < 0 ? 1 : -1
-        let cible = position + sens
-        guard visibles.indices.contains(cible) else { return }
-        selectionner(visibles[cible].id)
+    /// Un geste surtout vertical est un défilement de la page, pas un changement de jour : la carte
+    /// ne bouge que si le doigt va plus à l'horizontale qu'à la verticale.
+    private func suivre(_ deplacement: CGSize) {
+        guard planDebloque, abs(deplacement.width) > abs(deplacement.height) else {
+            decalage = 0
+            return
+        }
+        let auBout = (deplacement.width > 0 && position == 0)
+            || (deplacement.width < 0 && position == visibles.count - 1)
+        decalage = HZCarrousel.decalage(deplacement.width, auBout: auBout)
+    }
+
+    private func glisser(_ geste: DragGesture.Value) {
+        let deplacement = geste.translation
+        guard planDebloque, abs(deplacement.width) > abs(deplacement.height) else {
+            withAnimation(HZCarrousel.animation) { decalage = 0 }
+            return
+        }
+        let cartes = HZCarrousel.pas(deplacement: deplacement.width,
+                                     prevu: geste.predictedEndTranslation.width,
+                                     pasDeCarte: HZPlan.pasDuCarrousel)
+        let cible = min(max(position + cartes, 0), visibles.count - 1)
+        let change = cible != position
+        withAnimation(HZCarrousel.animation) {
+            decalage = 0
+            if change { choix = visibles[cible].id }
+        }
+        if change { Haptics.selection() }
     }
 
     private func carte(_ jour: PlanSemaineModele.Jour) -> some View {
@@ -266,7 +299,8 @@ struct PlanSemaineView: View {
         return HZCarteAffiche(jour: AccueilModele.dateDuJour(jour.date), etiquette: etiquette(de: jour),
                               prefixe: jour.prefixe ?? "", nombre: nombre, style: style(de: nombre),
                               titre: jour.titre, mesures: jour.mesures.map(colonne(de:)),
-                              fond: couleur.fond, encreSecondaire: couleur.encre)
+                              fond: couleur.fond, encreSecondaire: couleur.encre,
+                              nombreEnVedette: couleur.nombreEnVedette)
     }
 
     private func etiquette(de jour: PlanSemaineModele.Jour) -> String {

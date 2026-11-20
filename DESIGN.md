@@ -88,6 +88,14 @@ n'ont **qu'une valeur** : le canvas ne dessine qu'un rendu de chaque écran. Des
 grands chiffres et aux titres. Ce n'est pas un oubli à corriger sur le violet, le bleu et le vert : le rose est le seul des quatre
 assez clair pour qu'un petit texte blanc y devienne illisible.
 
+**Le très grand chiffre est dans l'accent (20 novembre).** Un par écran, au corps de 100 points et plus : la distance de la sortie
+(`resume`), le total de la période (`total`), le nombre de la séance du jour (`seance`), l'allure en direct (`direct`), et le grand nombre d'une
+carte du plan quand sa carte est neutre. Il se pose avec `hzVedette()`. C'est la réponse à « le noir et blanc fait trop fade » après
+« le rose est trop présent » : le rose reste une touche — un seul chiffre par écran, rien d'autre à cette taille — mais chaque écran a
+son point d'accroche. Sur une teinte d'intensité (vert, bleu…), le grand nombre reste blanc : du rose sur ces teintes serait une
+collision. Un chiffre de cette taille passe le seuil de contraste des grands textes (3:1) sur blanc et sur noir pour les quatre accents.
+Pour revenir en arrière : une ligne, `hzVedette()` dans `HZPolice.swift`.
+
 **Le voile.** Un petit texte blanc qui doit vivre sur l'accent ou sur une teinte d'intensité (pastille, bouton rond, champ de
 recherche) vit sur `HZCouleur.voile`, un noir à 26 %.
 

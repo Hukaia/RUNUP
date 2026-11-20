@@ -300,6 +300,18 @@ private struct HZAffichageModifier: ViewModifier {
 }
 
 extension View {
+    /// LE TRÈS GRAND CHIFFRE PORTE L'ACCENT. Un par écran : la distance de la sortie, le total de la
+    /// semaine, le nombre de la séance du jour, l'allure en direct. Rien d'autre n'est à cette
+    /// taille, et rien d'autre n'est dans l'accent à cette taille — c'est ce qui garde le rose
+    /// « en touche » (voir DESIGN.md) tout en donnant à chaque écran son point d'accroche, là où le
+    /// noir et le blanc seuls le laissaient fade.
+    ///
+    /// Un chiffre de cette taille passe le seuil de contraste des grands textes (3:1) sur le blanc
+    /// comme sur le noir, pour les quatre accents.
+    func hzVedette() -> some View {
+        foregroundStyle(HZCouleur.accent)
+    }
+
     /// Compose un texte dans un style d'affichage : fonte, interlettrage, et hauteur de ligne
     /// quand le style en fixe une. Voir `HZAffichage`.
     func hzAffichage(_ style: HZAffichage) -> some View {

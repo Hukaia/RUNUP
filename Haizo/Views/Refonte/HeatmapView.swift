@@ -108,9 +108,16 @@ struct HeatmapView: View {
         .padding(.top, HZEspace.marge)
         .padding(.bottom, HZHub.basDePage)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(HZCouleur.blanc, in: UnevenRoundedRectangle(topLeadingRadius: HZRayon.feuille,
-                                                                topTrailingRadius: HZRayon.feuille,
-                                                                style: .circular))
+        // Le fond blanc descend JUSQU'AU BORD de l'écran. La carte, elle, ignore la zone sûre : si la
+        // feuille s'arrête à celle-ci, la carte reparaît sous la barre flottante — avec son
+        // attribution (« Plans », « Mentions légales ») visible au pied de l'écran.
+        .background {
+            UnevenRoundedRectangle(topLeadingRadius: HZRayon.feuille,
+                                   topTrailingRadius: HZRayon.feuille,
+                                   style: .circular)
+                .fill(HZCouleur.blanc)
+                .ignoresSafeArea(edges: .bottom)
+        }
     }
 
     private func preparer() {

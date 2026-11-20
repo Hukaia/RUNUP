@@ -218,6 +218,7 @@ struct RecapView: View {
             HStack(alignment: .firstTextBaseline, spacing: HZEspace.entreCommandes) {
                 Text(verbatim: String(format: "%.2f", locale: Locale.current, run.distanceKm))
                     .hzAffichage(.resume)
+                    .hzVedette()
                     .lineLimit(1)
                     .minimumScaleFactor(HZResume.reductionDeLaDistance)
                     .padding(.leading, -HZResume.debordDeLaDistance)

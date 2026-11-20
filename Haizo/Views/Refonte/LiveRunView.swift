@@ -76,7 +76,7 @@ struct LiveRunView: View {
                 VStack(spacing: HZLive.sousLeDecompte) {
                     Text("\(reste)")
                         .hzAffichage(.direct)
-                        .foregroundStyle(HZCouleur.blanc)
+                        .hzVedette()
                         // Chaque chiffre entre en grandissant et sort en s'effaçant : un décompte, et
                         // non un texte qui se remplace.
                         .transition(reduceMotion ? .opacity
@@ -488,7 +488,7 @@ struct LiveRunView: View {
                     .hzAffichage(.direct)
                     // Pas encore de lecture (« --:-- ») : les traits à cette taille sont de gros blocs, qui
                     // attirent l'œil vers ce qui n'est pas une mesure. Ils s'éteignent jusqu'au premier chiffre.
-                    .foregroundStyle(valeur.contains(where: \.isNumber) ? HZCouleur.blanc : HZCouleur.pointEteint)
+                    .foregroundStyle(valeur.contains(where: \.isNumber) ? HZCouleur.accent : HZCouleur.pointEteint)
                     .lineLimit(1)
                     .minimumScaleFactor(HZLive.reductionDeLAllure)
                     .padding(.leading, -HZLive.debordDeLAllure)
