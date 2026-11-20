@@ -1,68 +1,146 @@
 import SwiftUI
 
-// Watch-local design tokens — the iOS app's RUColor/RUFont live in Haizo/DesignSystem (not a
-// shared target source), and the watch only needs this handful of values. Same Midnight Rose
-// palette as the phone, via the shared Color(hex:).
-private enum WTheme {
-    // True flat black, not the near-black `0x0E0E14` this used to be — matches the flat, no-
-    // gradient "scoreboard" treatment the widgets and Live Activity moved to.
-    static let bg = Color.black
-    static let card = Color(hex: 0x191922)
-    // Alignés sur `AccentTheme` côté app (rose #FF0A78, violet #7C5CFF, lime #C8FF3D). La montre
-    // portait #FF3D7F, #8A5CFF et #C8F542 — un écart faible, réel, et justifié nulle part : le
-    // même rose n'était pas le même d'un écran à l'autre.
+// Les jetons de la montre. Le système HZ de l'iPhone (`HZCouleur`, `HZPolice`, `HZForme`) vit dans
+// `Haizo/DesignSystem`, que cette cible ne compile pas : elle n'a besoin que de cette poignée de
+// valeurs, recopiées d'après lui, par rôle. Même règle que sur l'iPhone : des aplats, aucun
+// dégradé, aucune ombre, aucun verre ; des pilules et des disques noirs ou blancs ; l'accent n'est
+// qu'une touche — un anneau, une barre, un chiffre — jamais une surface.
+//
+// UNE VUE DE CE FICHIER NE PORTE PAS DE NOMBRE : toute taille, tout espace, tout rayon se
+// déclare ici. Les tailles de l'écran de course, elles, viennent de `WatchRunMetrics`
+// (Haizo/Shared), calculées sur la hauteur que le système donne.
+private enum WT {
+
+    // MARK: Les couleurs
+
+    /// `HZCouleur.noirFranc` : le noir franc, qui sur un écran OLED éteint les pixels. C'est le
+    /// fond de la montre, comme celui du panneau de la course en direct de l'iPhone.
+    static let fond = Color(hex: 0x000000)
+    /// `HZCouleur.surfaceSombre` : une pilule ou un bouton posé sur le fond.
+    static let surface = Color(hex: 0x1C1C1E)
+    /// `HZCouleur.filetSombre` : un filet, ou le rail d'une barre.
+    static let filet = Color(hex: 0x2C2C2E)
+    /// `HZCouleur.pointEteint` : le point d'un état éteint.
+    static let pointEteint = Color(hex: 0x3A3A3C)
+    /// `HZCouleur.secondaireSurSombre` : un texte secondaire est un jeton opaque, jamais une
+    /// opacité.
+    static let secondaire = Color(hex: 0xA1A1A6)
+    static let blanc = Color(hex: 0xFFFFFF)
+    /// LE ROSE DE LA MONTRE RESTE `#FF0A78` — décision de Charlotte, qui ne le rapproche pas du
+    /// `#FF2E6E` de l'iPhone. Mais il ne couvre plus de surface : il reste sur la barre de
+    /// progression, l'anneau du bilan et les chiffres clés (l'allure).
     static let rose = Color(hex: 0xFF0A78)
-    static let violet = Color(hex: 0x7C5CFF)
-    static let lime = Color(hex: 0xC8FF3D)
-    static let text2 = Color.white.opacity(0.62)
-    static let text3 = Color.white.opacity(0.38)
 
-    // `roseVioletGradient` VIVAIT ICI, et il peignait le bouton de départ, l'anneau pointillé
-    // qui l'entoure, et les deux anneaux de progression. C'était le dégradé le plus visible du
-    // produit : le seul objet de l'écran de poignet.
-    //
-    // Son propre code disait déjà qu'il aurait dû partir — « matches the flat, no-gradient
-    // scoreboard treatment the widgets and Live Activity moved to » — et la montre ne l'avait
-    // pas suivi. Règle 7 : aucun dégradé dans l'interface, et le rose → violet n'appartient qu'à
-    // l'icône, au splash et au logo.
+    // MARK: Les polices
 
-    /// Passe par `DisplayFont` (Haizo/Shared) : même police et même facteur de taille que
-    /// l'app et le widget, décidés à un seul endroit.
-    static func display(_ size: CGFloat) -> Font { DisplayFont.font(size) }
-    static func sansBold(_ size: CGFloat) -> Font { .custom("\(DisplayFont.family)-Bold", size: size) }
-    static func sansSemibold(_ size: CGFloat) -> Font { .custom("\(DisplayFont.family)-SemiBold", size: size) }
+    /// Passe par `DisplayFont` (Haizo/Shared) : même famille que l'app et le widget, décidée à un
+    /// seul endroit. Les grands chiffres et les titres sont en 700, serrés (`serre`) ; le texte
+    /// courant en 600 ou 500.
+    static func gras(_ taille: CGFloat) -> Font { .custom("\(DisplayFont.family)-Bold", size: taille) }
+    static func semi(_ taille: CGFloat) -> Font { .custom("\(DisplayFont.family)-SemiBold", size: taille) }
+    static func moyen(_ taille: CGFloat) -> Font { DisplayFont.font(taille) }
+
+    /// L'interlettrage d'un chiffre ou d'un titre : quatre centièmes du corps, dans la mesure de
+    /// l'iPhone (−6 sur 100, −1,2 sur 28). Jamais positif : il n'y a plus de capitales à espacer.
+    static let serrage: CGFloat = 0.04
+    static func serre(_ taille: CGFloat) -> CGFloat { -taille * serrage }
 
     /// Anciennement figé sur `fr_FR`, ce qui imposait la virgule décimale à TOUT le monde : une
     /// utilisatrice anglophone ou hispanophone voyait « 3,25 km » là où son système écrit
     /// « 3.25 km ». Le séparateur décimal suit maintenant les réglages de la montre.
     static var locale: Locale { .current }
+
+    // MARK: Les corps (hors écran de course, dont `WatchRunMetrics` donne les tailles)
+
+    enum Corps {
+        static let titre: CGFloat = 22
+        static let etiquette: CGFloat = 12
+        static let precision: CGFloat = 12
+        static let chiffresDeSeance: CGFloat = 13
+        static let erreur: CGFloat = 11
+        static let bouton: CGFloat = 16
+        static let distance: CGFloat = 34
+        static let uniteDeDistance: CGFloat = 11
+        static let chiffreDeBilan: CGFloat = 18
+        static let uniteDeBilan: CGFloat = 10
+    }
+
+    // MARK: Les espaces
+
+    enum Espace {
+        static let entre: CGFloat = 6
+        static let margeDePage: CGFloat = 4
+        static let margeDePilule: CGFloat = 10
+        static let hauteurDePilule: CGFloat = 4
+        static let sousLeDisque: CGFloat = 4
+        static let entreBoutons: CGFloat = 6
+        static let entreMesures: CGFloat = 14
+        static let sousLeFilet: CGFloat = 6
+        static let dansLAnneau: CGFloat = 14
+        static let entreLEtatEtLePoint: CGFloat = 6
+        static let entreValeurEtUnite: CGFloat = 2
+    }
+
+    // MARK: Les formes
+
+    enum Forme {
+        /// Le bouton de départ : un disque blanc. Bien au-dessus des 44 points de cible minimale.
+        static let disque: CGFloat = 72
+        /// Le triangle de lecture dans ce disque : le corps du symbole. Noir sur le blanc.
+        static let lectureDuDepart: CGFloat = 28
+        /// Le filet au-dessus des mesures. Les glyphes des boutons de la course, eux, suivent
+        /// `m.buttonIcon`, que `WatchRunMetrics` met à l'échelle de l'écran.
+        static let filet: CGFloat = 1
+        static let anneau: CGFloat = 108
+        static let traitDeLAnneau: CGFloat = 5
+        static let hauteurDeBouton: CGFloat = 44
+    }
+
+    /// Un nombre qui rétrécit avant de se couper : une durée tronquée est une durée fausse.
+    enum Reduction {
+        static let titre: CGFloat = 0.7
+        static let chiffre: CGFloat = 0.5
+        static let mesure: CGFloat = 0.6
+        static let libelle: CGFloat = 0.8
+    }
+
+    /// Le bouton qu'on touche s'enfonce un peu — la mesure de `HZStyleDAppui` sur l'iPhone.
+    enum Appui {
+        static let echelle: CGFloat = 0.96
+        static let opacite: Double = 0.88
+    }
+}
+
+/// L'enfoncement d'un bouton plein. Sans lui, `.plain` ne montre rien au doigt qui touche.
+private struct WTAppui: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? WT.Appui.echelle : 1)
+            .opacity(configuration.isPressed ? WT.Appui.opacite : 1)
+    }
 }
 
 // MARK: - Start
 
-/// Idle screen: today's session as pushed by the phone (title + target pace + duration), or a
-/// "course libre" framing when the phone hasn't synced anything yet — never a fake placeholder
-/// session. Le bouton COURIR est un cercle plein, entouré d'un anneau pointillé qui reprend le
-/// langage d'anneau des écrans de course et de bilan — ici purement décoratif, puisqu'il n'y a
-/// encore rien à suivre.
+/// L'écran d'attente : la séance du jour telle que l'iPhone l'a poussée (titre, allure cible,
+/// durée), ou le cadre « course libre » quand il n'a rien synchronisé — jamais une fausse séance.
 ///
-/// (Le commentaire disait « dashed gradient ring » : le dégradé est parti avec le chantier 24,
-/// l'anneau est d'un rose plat depuis. Un commentaire qui décrit ce qui n'est plus là est la
-/// moitié d'un mensonge.)
+/// Un titre, un grand disque BLANC portant le triangle de lecture noir, et sous lui le mot
+/// « Courir ». Le rose n'y couvre plus rien : il ne reste que sur les chiffres de la séance
+/// (allure, durée). L'anneau pointillé qui entourait l'ancien bouton est parti avec lui : il ne
+/// suivait rien, il n'était que décoration.
 ///
-/// # L'ANNEAU PRENAIT LA MOITIÉ DE L'ÉCRAN, ET LA PHRASE DU BAS TOMBAIT DEHORS
+/// # LA PHRASE DU BAS DOIT TENIR À L'ÉCRAN
 ///
-/// Mesuré sur la capture requise par l'App Store, dans les trois langues : les ONZE dernières
-/// lignes de pixels portaient de l'encre, jusqu'à la toute dernière. « Cours à ta sensation — ta
-/// séance arrive de l'iPhone. » était tranchée en deux par le bord bas.
-///
-/// L'écran est dans un `ScrollView`, donc la phrase était atteignable — en faisant défiler, sur
-/// une montre, une phrase d'explication posée sous un bouton géant. Autant dire jamais. Et c'est
-/// cette image-là qu'Apple et les clientes voient sur la fiche.
-///
-/// L'anneau décoratif faisait 118 points sur les 248 de l'écran. Il en fait 96, le bouton 76 —
-/// très au-dessus des 44 points de cible tactile minimale d'Apple — et les écarts passent de 8 à
-/// 6. Vingt-huit points rendus à la seule phrase de l'écran.
+/// Mesuré sur la capture requise par l'App Store, dans les trois langues : un ancien dessin (un
+/// anneau de 118 points sur les 248 de l'écran) coupait « Cours à ta sensation — ta séance arrive
+/// de l'iPhone. » en deux par le bord bas. L'écran est dans un `ScrollView`, donc la phrase était
+/// atteignable — en faisant défiler une montre, c'est-à-dire jamais, et c'est cette image-là
+/// qu'Apple et les clientes voient sur la fiche. Le disque fait 72 points : la pile entière —
+/// étiquette, titre sur une ligne, disque, mot, phrase sur deux lignes — mesure environ 185
+/// points (estimés, pas mesurés : aucune montre ici), sous les 214 d'un 45 mm. Sur un 40 mm elle
+/// défile un peu, et la phrase prend la hauteur qu'il lui faut (`fixedSize`) au lieu de celle
+/// qu'on lui laisse.
 struct WatchStartView: View {
     @Environment(WatchWorkoutManager.self) private var workout
 
@@ -79,53 +157,63 @@ struct WatchStartView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 6) {
+            VStack(spacing: WT.Espace.entre) {
                 Text("Aujourd'hui")
-                    .font(WTheme.sansBold(11))
-                    .tracking(0.2)
-                    .foregroundStyle(WTheme.rose)
+                    .font(WT.semi(WT.Corps.etiquette))
+                    .foregroundStyle(WT.blanc)
+                    .lineLimit(1)
+                    .minimumScaleFactor(WT.Reduction.libelle)
+                    .padding(.horizontal, WT.Espace.margeDePilule)
+                    .padding(.vertical, WT.Espace.hauteurDePilule)
+                    .background(WT.surface, in: Capsule())
 
                 // `Text(String)` ne traduit PAS (contrairement à `Text("littéral")`), d'où le
                 // `String(localized:)` explicite sur le repli.
                 Text(connectivity.sessionTitle ?? String(localized: "Course libre"))
-                    .font(WTheme.display(21))
-                    .foregroundStyle(.white)
+                    .font(WT.gras(WT.Corps.titre))
+                    .tracking(WT.serre(WT.Corps.titre))
+                    .foregroundStyle(WT.blanc)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
-                    .minimumScaleFactor(0.7)
+                    .minimumScaleFactor(WT.Reduction.titre)
 
-                ZStack {
-                    Circle()
-                        .strokeBorder(WTheme.rose, style: StrokeStyle(lineWidth: 2, dash: [4, 5]))
-                        .opacity(0.55)
-                        .frame(width: 96, height: 96)
-
-                    Button(action: { workout.start() }) {
-                        Group {
+                Button(action: { workout.start() }) {
+                    VStack(spacing: WT.Espace.sousLeDisque) {
+                        ZStack {
+                            Circle().fill(WT.blanc)
                             if workout.state == .starting {
-                                ProgressView().tint(.white)
+                                ProgressView().tint(WT.fond)
                             } else {
-                                Text("Courir").font(WTheme.display(16)).foregroundStyle(.white)
+                                Image(systemName: "play.fill")
+                                    .font(.system(size: WT.Forme.lectureDuDepart, weight: .bold))
+                                    .foregroundStyle(WT.fond)
                             }
                         }
-                        // 76 points, pas 92 : la cible tactile minimale d'Apple est 44, et les
-                        // seize points rendus ici sont ceux qui manquaient à la phrase du bas.
-                        .frame(width: 76, height: 76)
-                        .background(WTheme.rose, in: Circle())
+                        .frame(width: WT.Forme.disque, height: WT.Forme.disque)
+
+                        Text("Courir")
+                            .font(WT.gras(WT.Corps.bouton))
+                            .foregroundStyle(WT.blanc)
+                            .lineLimit(1)
+                            .minimumScaleFactor(WT.Reduction.libelle)
                     }
-                    .buttonStyle(.plain)
-                    .disabled(workout.state == .starting)
+                    .contentShape(Rectangle())
                 }
-                .padding(.vertical, 2)
+                .buttonStyle(WTAppui())
+                .disabled(workout.state == .starting)
 
                 if !subtitleText.isEmpty {
+                    // Les chiffres de la séance : la touche de rose de cet écran.
                     Text(subtitleText)
-                        .font(WTheme.sansBold(11))
-                        .foregroundStyle(.white.opacity(0.45))
+                        .font(WT.gras(WT.Corps.chiffresDeSeance))
+                        .monospacedDigit()
+                        .foregroundStyle(WT.rose)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                 } else {
                     Text("Cours à ta sensation — ta séance arrive de l'iPhone.")
-                        .font(WTheme.sansSemibold(11))
-                        .foregroundStyle(WTheme.text2)
+                        .font(WT.moyen(WT.Corps.precision))
+                        .foregroundStyle(WT.secondaire)
                         .multilineTextAlignment(.center)
                         // La phrase prend la hauteur qu'il lui faut, au lieu de celle qu'on lui
                         // laisse. Sans ça, une langue plus longue que les trois d'aujourd'hui
@@ -135,29 +223,39 @@ struct WatchStartView: View {
 
                 if let message = workout.errorMessage {
                     Text(message)
-                        .font(WTheme.sansSemibold(10.5))
-                        .foregroundStyle(WTheme.rose)
+                        .font(WT.semi(WT.Corps.erreur))
+                        .foregroundStyle(WT.rose)
                         .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
-            .padding(.horizontal, 6)
+            .padding(.horizontal, WT.Espace.margeDePage)
             .frame(maxWidth: .infinity)
         }
-        .background(WTheme.bg)
+        .background(WT.fond)
     }
 }
 
 // MARK: - Live run
 
-/// L'écran de course : UN chiffre, énorme, et trois petits sous lui.
+/// L'écran de course : UN chiffre, énorme, gras et serré, et trois petits sous lui — l'écran de
+/// course de l'iPhone, à l'échelle du poignet.
 ///
-/// La version précédente mettait le chrono dans un anneau et alignait quatre métriques en 2 × 2.
-/// Six chiffres se disputaient l'écran : en courant, on cherche le sien et on ne le trouve pas du
+/// La version d'avant mettait le chrono dans un anneau et alignait quatre métriques en 2 × 2. Six
+/// chiffres se disputaient l'écran : en courant, on cherche le sien et on ne le trouve pas du
 /// premier coup d'œil. C'est le seul écran de l'app qu'on lit le bras qui balance, à trois
 /// secondes près — il n'a de valeur que s'il se lit sans s'arrêter.
 ///
 /// Ce qui est affiché vient de `WatchConnectivityManager.runLayout`, choisi dans les réglages du
 /// téléphone : le héros et les trois secondaires. La montre ne décide de rien, elle rend.
+///
+/// # CE QUI EST BLANC, CE QUI EST ROSE
+///
+/// Tous les chiffres sont blancs, sauf l'allure, qui est le chiffre clé et garde le rose. La barre
+/// de progression est rose sur un rail gris sombre : c'est la touche d'accent de l'écran. En
+/// pause, le héros et la barre passent au gris secondaire — le rose s'éteint avec le chrono.
+/// Les boutons sont des capsules : la pause est BLANCHE (c'est l'action), l'arrêt est une surface
+/// sombre — comme sur l'iPhone, jamais dans la couleur d'accent.
 struct WatchRunView: View {
     @Environment(WatchWorkoutManager.self) private var workout
 
@@ -176,22 +274,21 @@ struct WatchRunView: View {
         return max(0, min(1, workout.elapsedSeconds / Double(minutes * 60)))
     }
 
+    private var enPause: Bool { workout.state == .paused }
+
     private func value(_ metric: RunMetric) -> String {
         switch metric {
         case .time: return workout.elapsedLabel
-        case .distance: return String(format: "%.2f", locale: WTheme.locale, workout.distanceMeters / 1000)
+        case .distance: return String(format: "%.2f", locale: WT.locale, workout.distanceMeters / 1000)
         case .pace: return workout.paceLabel
         case .heartRate: return workout.heartRate.map(String.init) ?? "--"
         case .calories: return "\(Int(workout.activeCalories.rounded()))"
         }
     }
 
+    /// Blanc partout, sauf l'allure : le chiffre clé garde le rose.
     private func tint(_ metric: RunMetric) -> Color {
-        switch metric {
-        case .pace: return WTheme.rose
-        case .heartRate: return WTheme.violet
-        default: return .white
-        }
+        metric == .pace ? WT.rose : WT.blanc
     }
 
     var body: some View {
@@ -202,191 +299,265 @@ struct WatchRunView: View {
         GeometryReader { screen in
             stack(WatchRunMetrics(availableHeight: screen.size.height))
         }
-        .background(WTheme.bg)
+        .background(WT.fond)
     }
 
+    /// L'empilement est construit pour que son encombrement soit exactement celui que calcule
+    /// `WatchRunMetrics.height` : cinq blocs, un espacement entre chaque paire. Les deux `Spacer`
+    /// portent EUX-MÊMES cet espacement comme minimum, et le `VStack` extérieur n'en met pas : un
+    /// `VStack(spacing:)` en ajoute aussi de chaque côté d'un `Spacer`, et l'écran aurait compté
+    /// quatre espacements de plus que le test.
     private func stack(_ m: WatchRunMetrics) -> some View {
-        VStack(spacing: m.spacing) {
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(workout.state == .paused ? WTheme.text3 : WTheme.lime)
-                    .frame(width: m.statusDot, height: m.statusDot)
-                Text(workout.state == .paused ? "EN PAUSE" : "EN COURS")
-                    .font(WTheme.sansBold(m.statusText))
-                    .tracking(0.2)
-                    .foregroundStyle(workout.state == .paused ? WTheme.text3 : WTheme.lime)
-            }
+        VStack(spacing: 0) {
+            etat(m)
 
-            Spacer(minLength: 0)
+            Spacer(minLength: m.spacing)
 
-            VStack(spacing: m.heroGap) {
-                Text(value(layout.hero))
-                    .font(WTheme.display(m.hero))
-                    .foregroundStyle(workout.state == .paused ? tint(layout.hero).opacity(0.5) : tint(layout.hero))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
-                    .contentTransition(.numericText())
-                Text(LocalizedStringKey(layout.hero.nameKey))
-                    .font(WTheme.sansBold(m.heroLabel))
-                    .tracking(0.24)
-                    .textCase(.uppercase)
-                    .foregroundStyle(WTheme.text3)
-            }
-
-            if let fraction = progressFraction {
-                VStack(spacing: m.progressGap) {
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(Color.white.opacity(0.12))
-                            Capsule()
-                                .fill(workout.state == .paused ? AnyShapeStyle(Color.white.opacity(0.3)) : AnyShapeStyle(WTheme.rose))
-                                .frame(width: geo.size.width * fraction)
-                        }
-                    }
-                    .frame(height: m.progressBar)
-                    // Sacrifiée quand la place manque, et seule à l'être : la barre au-dessus dit
-                    // déjà la même chose, en moins précis.
-                    if m.showsProgressCaption {
-                        Text("Séance · \(Int((fraction * 100).rounded())) %")
-                            .font(WTheme.sansBold(m.progressCaption))
-                            .tracking(0.2)
-                            .textCase(.uppercase)
-                            .foregroundStyle(WTheme.text3)
-                    }
-                }
-                .padding(.horizontal, 8)
-                .padding(.top, m.progressTop)
-            }
-
-            Spacer(minLength: 0)
-
-            HStack(spacing: 4) {
-                ForEach(layout.secondary, id: \.self) { metric in
-                    VStack(spacing: m.secondaryGap) {
-                        Text(value(metric))
-                            .font(WTheme.display(m.secondaryValue))
-                            .foregroundStyle(tint(metric))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.6)
-                        // `Text(String)` ne consulte PAS le catalogue — seul `Text(LocalizedStringKey)`
-                        // le fait. Sans ça, « Temps » restait français même catalogue chargé.
-                        Text(LocalizedStringKey(metric.unitKey))
-                            .font(WTheme.sansBold(m.secondaryUnit))
-                            .tracking(0.2)
-                            .foregroundStyle(WTheme.text3)
-                    }
-                    .frame(maxWidth: .infinity)
+            VStack(spacing: m.spacing) {
+                heros(m)
+                if let fraction = progressFraction {
+                    progression(fraction, m)
                 }
             }
 
-            HStack(spacing: 6) {
-                Button(action: { workout.togglePause() }) {
-                    Image(systemName: workout.state == .paused ? "play.fill" : "pause.fill")
-                        .font(.system(size: m.buttonIcon, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: m.buttonHeight)
-                        .background(WTheme.card, in: Capsule())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(workout.state == .paused ? "Reprendre" : "Mettre en pause")
+            Spacer(minLength: m.spacing)
 
-                Button(action: { workout.end() }) {
-                    Image(systemName: "stop.fill")
-                        .font(.system(size: m.buttonIcon, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: m.buttonHeight)
-                        .background(WTheme.rose, in: Capsule())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Terminer la course")
+            VStack(spacing: m.spacing) {
+                mesures(m)
+                commandes(m)
             }
-            .padding(.top, m.buttonTop)
         }
         .padding(.horizontal, m.horizontalPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    // MARK: L'état
+
+    /// Un point et un mot, à gauche. « EN COURS » et « EN PAUSE » restent écrits en capitales et
+    /// ne sont pas au catalogue : c'est la dette nommée de `check_majuscules.py`, que cette
+    /// refonte n'a pas le droit de lever seule. Elle ne les espace plus.
+    private func etat(_ m: WatchRunMetrics) -> some View {
+        HStack(spacing: WT.Espace.entreLEtatEtLePoint) {
+            Circle()
+                .fill(enPause ? WT.pointEteint : WT.blanc)
+                .frame(width: m.statusDot, height: m.statusDot)
+            Text(enPause ? "EN PAUSE" : "EN COURS")
+                .font(WT.semi(m.statusText))
+                .foregroundStyle(enPause ? WT.secondaire : WT.blanc)
+                .lineLimit(1)
+            Spacer(minLength: 0)
+        }
+    }
+
+    // MARK: Le héros
+
+    private func heros(_ m: WatchRunMetrics) -> some View {
+        VStack(alignment: .leading, spacing: m.heroGap) {
+            Text(value(layout.hero))
+                .font(WT.gras(m.hero))
+                .tracking(WT.serre(m.hero))
+                .monospacedDigit()
+                .foregroundStyle(enPause ? WT.secondaire : tint(layout.hero))
+                .lineLimit(1)
+                .minimumScaleFactor(WT.Reduction.chiffre)
+                .contentTransition(.numericText())
+            Text(LocalizedStringKey(layout.hero.nameKey))
+                .font(WT.semi(m.heroLabel))
+                .foregroundStyle(WT.secondaire)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        // Le nom et le chiffre se lisent d'un trait.
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.updatesFrequently)
+    }
+
+    // MARK: La progression
+
+    private func progression(_ fraction: Double, _ m: WatchRunMetrics) -> some View {
+        VStack(alignment: .leading, spacing: m.progressGap) {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(WT.filet)
+                    Capsule()
+                        .fill(enPause ? WT.secondaire : WT.rose)
+                        .frame(width: geo.size.width * fraction)
+                }
+            }
+            .frame(height: m.progressBar)
+            // Sacrifiée quand la place manque, et seule à l'être : la barre au-dessus dit
+            // déjà la même chose, en moins précis.
+            if m.showsProgressCaption {
+                Text("Séance · \(Int((fraction * 100).rounded())) %")
+                    .font(WT.semi(m.progressCaption))
+                    .foregroundStyle(WT.secondaire)
+                    .lineLimit(1)
+            }
+        }
+        .padding(.top, m.progressTop)
+    }
+
+    // MARK: Les trois mesures
+
+    /// Sous un filet, comme les mesures de l'écran de course de l'iPhone : le chiffre, puis son
+    /// libellé en gris.
+    private func mesures(_ m: WatchRunMetrics) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            ForEach(layout.secondary, id: \.self) { metric in
+                VStack(alignment: .leading, spacing: m.secondaryGap) {
+                    Text(value(metric))
+                        .font(WT.gras(m.secondaryValue))
+                        .tracking(WT.serre(m.secondaryValue))
+                        .monospacedDigit()
+                        .foregroundStyle(tint(metric))
+                        .lineLimit(1)
+                        .minimumScaleFactor(WT.Reduction.mesure)
+                    // `Text(String)` ne consulte PAS le catalogue — seul `Text(LocalizedStringKey)`
+                    // le fait. Sans ça, « Temps » restait français même catalogue chargé.
+                    Text(LocalizedStringKey(metric.unitKey))
+                        .font(WT.semi(m.secondaryUnit))
+                        .foregroundStyle(WT.secondaire)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(.top, m.secondaryTop)
+        .overlay(alignment: .top) {
+            Rectangle().fill(WT.filet).frame(height: WT.Forme.filet)
+        }
+    }
+
+    // MARK: Les commandes
+
+    private func commandes(_ m: WatchRunMetrics) -> some View {
+        HStack(spacing: WT.Espace.entreBoutons) {
+            // La pause est l'action : une capsule blanche, le glyphe noir.
+            Button(action: { workout.togglePause() }) {
+                Image(systemName: enPause ? "play.fill" : "pause.fill")
+                    .font(.system(size: m.buttonIcon, weight: .bold))
+                    .foregroundStyle(WT.fond)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: m.buttonHeight)
+                    .background(WT.blanc, in: Capsule())
+                    .contentShape(Capsule())
+            }
+            .buttonStyle(WTAppui())
+            .accessibilityLabel(enPause ? "Reprendre" : "Mettre en pause")
+
+            // Terminer : une surface sombre et un carré blanc, comme sur l'iPhone.
+            Button(action: { workout.end() }) {
+                Image(systemName: "stop.fill")
+                    .font(.system(size: m.buttonIcon, weight: .bold))
+                    .foregroundStyle(WT.blanc)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: m.buttonHeight)
+                    .background(WT.surface, in: Capsule())
+                    .contentShape(Capsule())
+            }
+            .buttonStyle(WTAppui())
+            .accessibilityLabel("Terminer la course")
+        }
+        .padding(.top, m.buttonTop)
     }
 }
 
 // MARK: - Summary
 
-/// Post-run screen: one hero number (distance) inside a completed gradient ring, then the
-/// secondary numbers as a compact row — and where the story continues, since the phone received
-/// the run (queued transfer, arrives even if the iPhone is out of reach right now) and builds the
-/// debrief.
+/// L'écran d'après la course : un seul grand chiffre, la distance, dans un anneau rose achevé,
+/// puis les autres chiffres sous un filet — et où l'histoire continue, puisque l'iPhone a reçu la
+/// course (transfert en file, il arrive même si le téléphone est hors de portée) et en fait le
+/// bilan.
+///
+/// Le rose est sur l'anneau et sur l'allure ; le reste est blanc ou gris. Le bouton « OK » est
+/// une capsule blanche, comme les boutons de l'iPhone : noir ou blanc, jamais l'accent.
 struct WatchSummaryView: View {
     @Environment(WatchWorkoutManager.self) private var workout
 
     private var distanceLabel: String {
-        String(format: "%.2f", locale: WTheme.locale, workout.distanceMeters / 1000)
+        String(format: "%.2f", locale: WT.locale, workout.distanceMeters / 1000)
     }
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 8) {
+            VStack(spacing: WT.Espace.entre) {
                 Text("✓ Terminé")
-                    .font(WTheme.sansBold(10.5))
-                    .tracking(0.2)
-                    .foregroundStyle(WTheme.lime)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(WTheme.lime.opacity(0.12), in: Capsule())
+                    .font(WT.semi(WT.Corps.etiquette))
+                    .foregroundStyle(WT.blanc)
+                    .lineLimit(1)
+                    .minimumScaleFactor(WT.Reduction.libelle)
+                    .padding(.horizontal, WT.Espace.margeDePilule)
+                    .padding(.vertical, WT.Espace.hauteurDePilule)
+                    .background(WT.surface, in: Capsule())
 
                 ZStack {
                     Circle()
-                        .stroke(WTheme.rose, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                        .stroke(WT.rose, style: StrokeStyle(lineWidth: WT.Forme.traitDeLAnneau, lineCap: .round))
 
                     VStack(spacing: 0) {
                         Text(distanceLabel)
-                            .font(WTheme.display(34))
-                            .foregroundStyle(.white)
+                            .font(WT.gras(WT.Corps.distance))
+                            .tracking(WT.serre(WT.Corps.distance))
+                            .monospacedDigit()
+                            .foregroundStyle(WT.blanc)
+                            .lineLimit(1)
+                            .minimumScaleFactor(WT.Reduction.chiffre)
                         Text(verbatim: "km")
-                            .font(WTheme.sansBold(9.5))
-                            .tracking(0.2)
-                            .foregroundStyle(.white.opacity(0.4))
+                            .font(WT.semi(WT.Corps.uniteDeDistance))
+                            .foregroundStyle(WT.secondaire)
                     }
+                    .padding(.horizontal, WT.Espace.dansLAnneau)
                 }
-                .frame(width: 108, height: 108)
-                .padding(.vertical, 2)
+                .frame(width: WT.Forme.anneau, height: WT.Forme.anneau)
+                .accessibilityElement(children: .combine)
 
-                HStack(spacing: 14) {
+                HStack(alignment: .top, spacing: WT.Espace.entreMesures) {
                     metric(value: workout.elapsedLabel, unit: "Temps")
-                    metric(value: workout.paceLabel, unit: "/km", accent: WTheme.rose)
-                    metric(value: workout.avgHeartRate.map(String.init) ?? "--", unit: "bpm moy", accent: WTheme.violet)
+                    metric(value: workout.paceLabel, unit: "/km", accent: WT.rose)
+                    metric(value: workout.avgHeartRate.map(String.init) ?? "--", unit: "bpm moy")
+                }
+                .padding(.top, WT.Espace.sousLeFilet)
+                .frame(maxWidth: .infinity)
+                .overlay(alignment: .top) {
+                    Rectangle().fill(WT.filet).frame(height: WT.Forme.filet)
                 }
 
                 Text("Ton bilan t'attend sur l'iPhone")
-                    .font(WTheme.sansSemibold(11))
-                    .foregroundStyle(WTheme.text2)
+                    .font(WT.moyen(WT.Corps.precision))
+                    .foregroundStyle(WT.secondaire)
                     .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Button(action: { workout.reset() }) {
                     Text("OK")
-                        .font(WTheme.display(18))
-                        .foregroundStyle(.white)
+                        .font(WT.gras(WT.Corps.bouton))
+                        .foregroundStyle(WT.fond)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 38)
-                        .background(WTheme.card, in: Capsule())
+                        .frame(height: WT.Forme.hauteurDeBouton)
+                        .background(WT.blanc, in: Capsule())
+                        .contentShape(Capsule())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(WTAppui())
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, WT.Espace.margeDePage)
         }
-        .background(WTheme.bg)
+        .background(WT.fond)
     }
 
-    private func metric(value: String, unit: String, accent: Color = .white) -> some View {
-        VStack(spacing: 2) {
+    private func metric(value: String, unit: String, accent: Color = WT.blanc) -> some View {
+        VStack(spacing: WT.Espace.entreValeurEtUnite) {
             Text(value)
-                .font(WTheme.display(18))
+                .font(WT.gras(WT.Corps.chiffreDeBilan))
+                .tracking(WT.serre(WT.Corps.chiffreDeBilan))
+                .monospacedDigit()
                 .foregroundStyle(accent)
                 .lineLimit(1)
-                .minimumScaleFactor(0.6)
+                .minimumScaleFactor(WT.Reduction.mesure)
             Text(LocalizedStringKey(unit))
-                .font(WTheme.sansBold(7.5))
-                .tracking(0.2)
-                .foregroundStyle(WTheme.text3)
+                .font(WT.semi(WT.Corps.uniteDeBilan))
+                .foregroundStyle(WT.secondaire)
+                .lineLimit(1)
+                .minimumScaleFactor(WT.Reduction.libelle)
         }
     }
 }
