@@ -45,46 +45,53 @@ struct WatchRunMetrics {
 
     // MARK: Les tailles
     //
-    // Le dessin d'origine — héros 50, espacement 6, bouton 36, secondaire 17 — occupait 212,9
-    // points sur les 214 d'un 45 mm. Il tenait à un point près, et seulement si les marges
-    // système de watchOS valent bien ce qu'on leur suppose. Quatre valeurs ont donc été reprises,
-    // à l'endroit où quelques points ne se voient pas : le héros perd 4 points sur 50, les
-    // espacements 1 sur 6, les boutons 2 sur 36, les chiffres du bas 1 sur 17. L'écran garde
-    // douze points de libre sur un 45 mm et sept sur un 40 mm — et la légende de progression,
-    // qui autrement disparaissait partout sauf sur un Ultra.
+    // La refonte (aplats, chiffres gras et serrés, libellés en casse de phrase) a changé ce que
+    // l'empilement contient, et le budget a été refait avec lui. Ce qui entre : un filet au-dessus
+    // des trois mesures (5 points, le dessin de l'écran de course de l'iPhone), des libellés d'un
+    // demi-point de plus que les petites capitales qu'ils remplacent, des boutons de 40 au lieu de
+    // 34. Ce qui sort : le héros passe de 46 à 42 — il est maintenant en graisse 700, plus large
+    // à corps égal, et c'est sur lui que la place se reprend.
+    //
+    // Mesuré avec le même calcul que `WatchRunMetricsTests` (balayage de 140 à 240 points) : sur
+    // un 45 mm l'écran garde quatorze points de libre, sur un 40 mm dix, la légende de progression
+    // survit partout.
     //
     // Les planchers ne protègent pas les mêmes choses que l'échelle. Un grand chiffre peut
-    // rétrécir beaucoup et rester lisible — c'est le plus gros objet de l'écran. Une capitale de
-    // 8 points, non : sous ce seuil elle cesse d'être un mot pour devenir une texture grise.
+    // rétrécir beaucoup et rester lisible — c'est le plus gros objet de l'écran. Un libellé de
+    // 8 points, non : sous ce seuil il cesse d'être un mot pour devenir une texture grise.
 
     var spacing: CGFloat { 5 * scale }
     var horizontalPadding: CGFloat { 4 }
 
     var statusDot: CGFloat { max(5, 6 * scale) }
-    var statusText: CGFloat { max(8, 10 * scale) }
+    var statusText: CGFloat { max(8, 10.5 * scale) }
 
-    var hero: CGFloat { 46 * scale }
+    var hero: CGFloat { 42 * scale }
     var heroGap: CGFloat { 2 * scale }
-    var heroLabel: CGFloat { max(8, 10 * scale) }
+    var heroLabel: CGFloat { max(8, 10.5 * scale) }
 
-    var progressTop: CGFloat { 6 * scale }
+    var progressTop: CGFloat { 5 * scale }
     /// Non mise à l'échelle : quatre points est déjà l'épaisseur minimale d'une barre visible.
     var progressBar: CGFloat { 4 }
-    var progressGap: CGFloat { 4 * scale }
-    var progressCaption: CGFloat { max(7.5, 9 * scale) }
+    var progressGap: CGFloat { 3 * scale }
+    var progressCaption: CGFloat { max(7.5, 9.5 * scale) }
 
     var secondaryValue: CGFloat { 16 * scale }
     var secondaryGap: CGFloat { 1 * scale }
-    var secondaryUnit: CGFloat { max(7, 8.5 * scale) }
+    var secondaryUnit: CGFloat { max(7, 9 * scale) }
+    /// Ce qui sépare le filet des trois mesures de leurs chiffres.
+    var secondaryTop: CGFloat { 5 * scale }
 
     var buttonTop: CGFloat { 2 }
-    /// Plancher à 28 : c'est une cible tactile qu'on vise en courant, pas une décoration.
-    var buttonHeight: CGFloat { max(28, 34 * scale) }
+    /// Plancher à 30 : c'est une cible tactile qu'on vise en courant, pas une décoration. 44 n'est
+    /// atteignable sur aucun boîtier sans reprendre le héros, qui est ce qu'on vient lire ; la
+    /// capsule fait en revanche la moitié de la largeur de l'écran, ce qui compense en surface.
+    var buttonHeight: CGFloat { max(30, 40 * scale) }
     var buttonIcon: CGFloat { max(13, 16 * scale) }
 
     // MARK: L'arbitrage
 
-    /// La légende sous la barre — « SÉANCE · 85 % » — est le premier élément sacrifié quand la
+    /// La légende sous la barre — « Séance · 85 % » — est le premier élément sacrifié quand la
     /// place manque, et le seul.
     ///
     /// La barre porte déjà l'information ; le pourcentage n'en est que la version chiffrée. Tout
@@ -122,7 +129,7 @@ struct WatchRunMetrics {
             if showsCaption { progress += progressGap + Self.sansLine(progressCaption) }
             blocks.append(progress)
         }
-        blocks.append(Self.displayLine(secondaryValue) + secondaryGap + Self.sansLine(secondaryUnit))
+        blocks.append(secondaryTop + Self.displayLine(secondaryValue) + secondaryGap + Self.sansLine(secondaryUnit))
         blocks.append(buttonTop + buttonHeight)
         return blocks.reduce(0, +) + spacing * CGFloat(blocks.count - 1)
     }
