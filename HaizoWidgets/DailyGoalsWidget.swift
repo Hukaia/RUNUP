@@ -105,8 +105,6 @@ struct WidgetRingView: View {
     /// au lieu de 96-180. Le même POURCENTAGE donnerait un trait visuellement plus grêle, la
     /// surface du disque croissant au carré du rayon là où le trait ne croît que linéairement.
     private static let stroke: CGFloat = 17
-    private static let lightTrack = 0.10
-    private static let darkTrack = 0.12
 
     var body: some View {
         ZStack {
@@ -121,9 +119,11 @@ struct WidgetRingView: View {
                 // d'un remplissage de la même couleur ne se distingue pas de lui : à 0/3, l'anneau
                 // se lisait plein. Sur un widget vu à bout de bras, c'est encore plus vrai que
                 // dans l'app, et il n'y a même pas de légende à côté pour rattraper.
+                // Un rail en jeton opaque (`filetGroupe` sur blanc, `filetSombre` sur noir) : un texte
+                // ou un rail ne se fait plus par une opacité posée sur le fond.
                 Circle()
                     .trim(from: seg.trimStart, to: seg.trimEnd)
-                    .stroke((isLight ? Color.black : Color.white).opacity(isLight ? Self.lightTrack : Self.darkTrack),
+                    .stroke(isLight ? WG.filetClair : WG.filetSombre,
                             style: StrokeStyle(lineWidth: Self.stroke, lineCap: .round))
 
                 // UN APLAT, COMME DANS L'APP. Le balayage dégradé et son dernier arrêt pris
@@ -181,18 +181,16 @@ struct DailyGoalsWidgetView: View {
     /// L'accent qu'elle a réellement choisi dans l'app, jamais une couleur fixe — et trois fois
     /// le même depuis que l'anneau est mono-accent, comme `DailyGoalsBarsView.fillColors`.
     private var colors: [Color] { WidgetAccentPalette.ringColors(themeID: snapshot.accentThemeID, isLight: isLight) }
-    private var bg: Color { isLight ? .white : .black }
-    /// L'encre de l'app, RECOPIÉE et pas lue : la cible du widget ne compile pas
-    /// `Haizo/DesignSystem`, pour la raison écrite en tête de `WidgetAccentPalette`. La copie est
-    /// donc inévitable ; ce qui ne l'était pas, c'est qu'aucune barrière ne la tienne d'accord
-    /// avec l'originale. Elle est restée à `#15151C` quand l'app est passée au chaud le
-    /// 12 novembre, et le widget aurait porté l'ancienne encre sur l'écran d'accueil du téléphone.
-    /// `check_encres.py` compare les deux à chaque construction.
-    private var textPrimary: Color { isLight ? Color(hex: 0x181511) : .white }
-    private var text2: Color { isLight ? .black.opacity(0.45) : .white.opacity(0.42) }
-    /// Allumée ou éteinte, dans l'accent et le gris — le miroir de l'écran des stats depuis le
-    /// 16 novembre. C'était un ambre écrit en dur, c'est-à-dire une troisième couleur, dans la
-    /// seule surface de l'app qu'on voit sans l'ouvrir.
+    private var bg: Color { isLight ? WG.blanc : WG.noirFranc }
+    /// Les jetons de l'app, RECOPIÉS et pas lus (`WG`) : la cible du widget ne compile pas
+    /// `Haizo/DesignSystem`, pour la raison écrite en tête de `WidgetAccentPalette`.
+    private var textPrimary: Color { isLight ? WG.encre : WG.blanc }
+    private var text2: Color { isLight ? WG.secondaireSurClair : WG.secondaireSurSombre }
+    /// Le point d'un jour sans séance : un jeton, pas le gris du texte à 40 %.
+    private var pointEteint: Color { isLight ? WG.pointEteintClair : WG.pointEteintSombre }
+    /// La pastille de la série : une surface posée sur le fond, comme les pilules de l'app.
+    private var surfacePastille: Color { isLight ? WG.surfaceClaire : WG.surfaceSombre }
+    /// Allumée ou éteinte, dans l'accent et le gris — le miroir de l'écran des stats.
     private var flameColor: Color { snapshot.streak > 0 ? colors[0] : text2 }
 
     /// Les objectifs réellement en jeu : deux un jour de repos, trois sinon. L'anneau se partage
@@ -248,10 +246,10 @@ struct DailyGoalsWidgetView: View {
 
     // MARK: Une course en cours
 
-    /// Le fond passe à l'accent : c'est ce qui fait qu'on reconnaît l'état de l'écran d'accueil
-    /// sans lire un mot. Un widget d'app de course qui garde son fond ordinaire pendant qu'on
-    /// court ne ressemble à rien de ce que font les autres.
-    private var runBackground: Color { colors.count > 1 ? colors[1] : colors.first ?? .black }
+    /// Le fond passe au noir franc — celui du panneau de la séance en direct de l'app, qui se lit
+    /// au soleil et en courant. Il passait à l'accent plein : c'est exactement ce que la refonte
+    /// a retiré partout, où l'accent n'est plus une surface mais une touche (ici le point d'état).
+    private var runBackground: Color { WG.noirFranc }
 
     @ViewBuilder private func runBody(_ course: LiveRunWidgetSnapshot) -> some View {
         switch family {
@@ -272,36 +270,39 @@ struct DailyGoalsWidgetView: View {
             // ne viendrait le démentir avant la republication suivante — quatre-vingt-dix
             // secondes de mensonge, sur le chiffre le plus regardé de l'écran.
             Text(TimeFormat.horloge(course.elapsedSeconds))
-                .font(.custom("\(DisplayFont.family)-Bold", size: size))
+                .font(WG.police(size))
+                .tracking(WG.serre(size))
                 .monospacedDigit()
         } else {
             Text(timerInterval: course.startedAt...Date.distantFuture, countsDown: false)
-                .font(.custom("\(DisplayFont.family)-Bold", size: size))
+                .font(WG.police(size))
+                .tracking(WG.serre(size))
                 .monospacedDigit()
         }
     }
 
+    /// L'état de la course : un point d'accent allumé (éteint en pause) et un mot en casse de
+    /// phrase. C'est la touche d'accent de l'écran ; le reste est blanc sur noir.
     private func runEyebrow(_ course: LiveRunWidgetSnapshot) -> some View {
         HStack(spacing: 6) {
             Circle()
-                .fill(Color.white.opacity(course.isPaused ? 0.45 : 1))
+                .fill(course.isPaused ? WG.pointEteintSombre : colors[0])
                 .frame(width: 6, height: 6)
-            Text(course.isPaused ? "EN PAUSE" : "EN COURS")
-                .font(.custom("\(DisplayFont.family)-Bold", size: 9.5))
-                .tracking(1.2)
+            Text(course.isPaused ? String(localized: "En pause") : String(localized: "En direct"))
+                .font(WG.police(WG.Corps.etiquette, .semi))
         }
-        .foregroundColor(.white.opacity(0.85))
+        .foregroundColor(WG.secondaireSurSombre)
     }
 
     private func runMetric(_ valeur: String, _ unite: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 4) {
             Text(valeur)
-                .font(.custom("\(DisplayFont.family)-Bold", size: 17))
+                .font(WG.police(WG.Corps.chiffre))
                 .monospacedDigit()
-                .foregroundColor(.white)
+                .foregroundColor(WG.blanc)
             Text(verbatim: unite)
-                .font(.custom("\(DisplayFont.family)-SemiBold", size: 9.5))
-                .foregroundColor(.white.opacity(0.6))
+                .font(WG.police(WG.Corps.etiquette, .semi))
+                .foregroundColor(WG.secondaireSurSombre)
         }
     }
 
@@ -309,7 +310,7 @@ struct DailyGoalsWidgetView: View {
         VStack(alignment: .leading, spacing: 6) {
             runEyebrow(course)
             Spacer(minLength: 0)
-            chrono(course, size: 30).foregroundColor(.white)
+            chrono(course, size: WG.Corps.chronoPetit).foregroundColor(WG.blanc)
             runMetric(TimeFormat.distance(km: course.distanceKm), "km")
             Spacer(minLength: 0)
         }
@@ -325,13 +326,13 @@ struct DailyGoalsWidgetView: View {
                 runEyebrow(course)
                 Spacer(minLength: 6)
                 Text(course.sessionTitle)
-                    .font(.custom("\(DisplayFont.family)-SemiBold", size: 10.5))
-                    .foregroundColor(.white.opacity(0.7))
+                    .font(WG.police(WG.Corps.etiquette, .semi))
+                    .foregroundColor(WG.secondaireSurSombre)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
             Spacer(minLength: 4)
-            chrono(course, size: 40).foregroundColor(.white)
+            chrono(course, size: WG.Corps.chronoMoyen).foregroundColor(WG.blanc)
             Spacer(minLength: 4)
             HStack(spacing: 18) {
                 runMetric(TimeFormat.distance(km: course.distanceKm), "km")
@@ -361,10 +362,11 @@ struct DailyGoalsWidgetView: View {
             WidgetRingView(goals: goals, size: 74, colors: colors, isLight: isLight)
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text("\(snapshot.dailyGoalsDone)/\(snapshot.dailyGoalsTotal)")
-                    .font(.custom("\(DisplayFont.family)-Bold", size: 17))
+                    .font(WG.police(WG.Corps.chiffre))
+                    .tracking(WG.serre(WG.Corps.chiffre))
                     .foregroundColor(textPrimary)
                 Text("bouclés")
-                    .font(.custom("\(DisplayFont.family)-SemiBold", size: 10.5))
+                    .font(WG.police(WG.Corps.etiquette, .semi))
                     .foregroundColor(text2)
             }
             Spacer(minLength: 0)
@@ -390,7 +392,8 @@ struct DailyGoalsWidgetView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     Text(Self.weekdayFormatter.string(from: entryDate).capitalized)
-                        .font(.custom("\(DisplayFont.family)-Bold", size: 15))
+                        .font(WG.police(WG.Corps.titre))
+                        .tracking(WG.serre(WG.Corps.titre))
                         .foregroundColor(textPrimary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
@@ -420,15 +423,15 @@ struct DailyGoalsWidgetView: View {
     private func legendRow(slot: Int, value: String, label: String, muted: Bool = false) -> some View {
         HStack(spacing: 6) {
             Circle()
-                .fill(colors[min(max(0, slot), colors.count - 1)].opacity(muted ? 0.35 : 1))
+                .fill(muted ? pointEteint : colors[min(max(0, slot), colors.count - 1)])
                 .frame(width: 7, height: 7)
             Text(LocalizedStringKey(label))
-                .font(.custom("\(DisplayFont.family)-SemiBold", size: 11))
+                .font(WG.police(WG.Corps.legende, .semi))
                 .foregroundColor(text2)
                 .lineLimit(1)
             Spacer(minLength: 6)
             Text(value)
-                .font(.custom("\(DisplayFont.family)-Bold", size: 13))
+                .font(WG.police(WG.Corps.valeur))
                 .foregroundColor(muted ? text2 : textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -460,7 +463,7 @@ struct DailyGoalsWidgetView: View {
                     Circle().stroke(colors[0], lineWidth: 1.3).frame(width: 6, height: 6)
                 } else {
                     Circle()
-                        .fill(jour.isDone ? colors[0] : text2.opacity(0.4))
+                        .fill(jour.isDone ? colors[0] : pointEteint)
                         .frame(width: 6, height: 6)
                 }
             }
@@ -469,13 +472,12 @@ struct DailyGoalsWidgetView: View {
 
     private var streakBadge: some View {
         HStack(spacing: 2) {
-            Image(systemName: "flame.fill").font(.system(size: 9))
-            Text("\(snapshot.streak)").font(.custom("\(DisplayFont.family)-Bold", size: 11))
+            Image(systemName: "flame.fill").font(.system(size: 9)).foregroundColor(flameColor)
+            Text("\(snapshot.streak)").font(WG.police(WG.Corps.legende)).foregroundColor(textPrimary)
         }
-        .foregroundColor(flameColor)
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
-        .background(flameColor.opacity(isLight ? 0.12 : 0.16), in: Capsule())
+        .background(surfacePastille, in: Capsule())
     }
 }
 

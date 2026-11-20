@@ -1,49 +1,42 @@
 import SwiftUI
 
-/// Mirrors just the hex triples of the eight accent themes the app used to offer (a table retired on
-/// 19 November with the old design system) — kept by hand rather
-/// than shared across the app/widget target boundary, since the live `ThemeStore` is an in-process
-/// `@Observable` singleton the widget's separate process could never actually receive live updates
-/// from anyway. The app now offers four accents (`HZAccent`); aligning this table on them is an open item.
+/// Les quatre accents de l'app (`HZAccent`), recopiés à la main : l'`@Observable` `ThemeStore` de
+/// l'app vit dans son processus, le widget ne pourrait jamais en recevoir les mises à jour, et sa
+/// cible ne compile pas `Haizo/DesignSystem`. Ce qui voyage de l'app au widget, c'est l'identifiant
+/// du thème (`DailyGoalsSnapshot.accentThemeID`) ; ce fichier le traduit en couleur.
+///
+/// # LE MÊME REPLI QUE L'APP
+///
+/// L'app a retiré quatre de ses huit anciens thèmes le 19 novembre. Un identifiant enregistré peut
+/// donc être l'un des anciens, et `HZAccent.depuis(ancienTheme:)` décide ce qu'il devient :
+/// « cyan », « lime » et « vert » deviennent le vert, « violet » et « bleu » se retrouvent, et
+/// tout le reste — ambre, corail, magenta, un identifiant inconnu — revient au rose. Ce widget
+/// faisait autrement : il dessinait encore les huit teintes, donc un téléphone réglé sur « lime »
+/// affichait un anneau lime sous une app verte.
+///
+/// # UNE VALEUR PAR ACCENT, SUR CLAIR COMME SUR SOMBRE
+///
+/// L'app n'a plus de variante « sur clair » : un accent n'a qu'une valeur. La table claire qui
+/// assombrissait le rose de 10 % pour tomber sur `#F0225F` a disparu avec elle.
+///
+/// # LE ROSE
+///
+/// Le rose de la montre et du widget reste `#FF0A78` (`WG.rose`), décision de Charlotte, contre
+/// `#FF2E6E` dans l'app. Les trois autres sont ceux de l'app, au bit près.
 enum WidgetAccentPalette {
-    private static let swatches: [String: (primary: UInt32, light: UInt32, tail: UInt32)] = [
-        "rose": (0xFF0A78, 0xFF4D9E, 0x7C5CFF),
-        "violet": (0x7C5CFF, 0xA78BFF, 0xFF0A78),
-        "bleu": (0x3D8BFF, 0x8AB8FF, 0x7C5CFF),
-        "cyan": (0x2FD9C4, 0x7CF0E4, 0x3D8BFF),
-        "lime": (0x9FE83D, 0xDFFF8C, 0x2FD9C4),
-        "amber": (0xFFB03D, 0xFFD08A, 0xFF4D9E),
-        "corail": (0xFF5A3D, 0xFF9478, 0xFFB03D),
-        "magenta": (0xD633B8, 0xF07ADB, 0x7C5CFF)
-    ]
-
-    /// LE CLAIR N'EST PAS LA TABLE BRUTE, ET C'EST CE QUI A DÉRIVÉ.
-    ///
-    /// `swatches` ci-dessus recopie l'ancienne table des huit thèmes. Mais l'app n'affichait
-    /// PAS cette table en thème clair : elle affichait sa variante « sur clair »,
-    /// qui remplace le rose par la valeur de la maquette — `#F0225F` depuis le 15 novembre — et
-    /// descend les autres nuanciers au seuil de contraste. Le miroir était donc exact sur la
-    /// table qu'il copiait, et faux sur ce qui est dessiné : le widget rendait un rose
-    /// `#FF0A78` assombri de 10 %, l'app `#F0225F`. Deux roses voisins, sur deux écrans qu'on
-    /// voit l'un après l'autre.
-    ///
-    /// Les valeurs claires de la maquette sont donc recopiées ici aussi, et le repli — un
-    /// assombrissement de 10 % — reste ce qu'il était pour les nuanciers que la maquette ne
-    /// fixe pas. Ce n'est pas la dichotomie de contraste de l'app, et c'est volontaire : ce
-    /// fichier existe parce que la cible du widget ne compile pas `Haizo/DesignSystem`.
-    private static let mockupLight: [String: UInt32] = ["rose": 0xF0225F]
-
-    /// La couleur de l'anneau, trois fois — l'anneau est mono-accent depuis le 16 novembre, et
-    /// `DailyGoalsBarsView.fillColors` rend le même tableau de trois valeurs identiques.
-    static func ringColors(themeID: String, isLight: Bool) -> [Color] {
-        let swatch = swatches[themeID] ?? swatches["rose"]!
-        let accent: Color
-        if isLight {
-            accent = mockupLight[themeID].map { Color(hex: $0) }
-                ?? Color(hex: swatch.primary).darkened(0.10)
-        } else {
-            accent = Color(hex: swatch.primary)
+    /// La couleur de l'accent. Un seul tableau de trois valeurs identiques est rendu par
+    /// `ringColors` : l'anneau est mono-accent, comme celui de l'accueil.
+    static func accent(themeID: String) -> Color {
+        switch themeID {
+        case "violet": return Color(hex: 0x7B3FE4)
+        case "bleu": return Color(hex: 0x2F6BFF)
+        case "cyan", "lime", "vert": return Color(hex: 0x12A56B)
+        default: return WG.rose
         }
-        return Array(repeating: accent, count: 3)
+    }
+
+    /// La couleur de l'anneau, trois fois — `DailyGoalsBarsView.fillColors` rend le même tableau.
+    static func ringColors(themeID: String, isLight: Bool) -> [Color] {
+        Array(repeating: accent(themeID: themeID), count: 3)
     }
 }

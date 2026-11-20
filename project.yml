@@ -265,13 +265,16 @@ targets:
           # Cette cible ne déclare que 3 fichiers dans son UIAppFonts, et ce que l'UIAppFonts
           # n'enregistre pas ne peut pas se charger : embarquer les 5 autres n'ajouterait que
           # ~750 Ko de poids mort dans une extension.
+          # Le widget est en Archivo (Archivo-Variable.ttf, déclarée ci-dessous), comme l'app : il
+          # n'enregistre plus aucune Instrument Sans, et ce que l'UIAppFonts n'enregistre pas ne peut
+          # pas se charger. Les embarquer n'ajouterait que du poids mort dans une extension.
           - "InstrumentSans-Regular.ttf"
           - "InstrumentSans-Italic.ttf"
+          - "InstrumentSans-Medium.ttf"
+          - "InstrumentSans-SemiBold.ttf"
+          - "InstrumentSans-Bold.ttf"
           - "DMMono-Regular.ttf"
           - "DMMono-Medium.ttf"
-          # La fonte de la refonte n'est pas déclarée par cette cible : 660 Ko de poids mort tant
-          # que cette surface n'est pas redessinée avec elle.
-          - "Archivo-Variable.ttf"
       - path: Haizo/Resources/Localizable.xcstrings
         buildPhase: resources
     info:
@@ -284,13 +287,11 @@ targets:
         CFBundleVersion: "14"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
-        # Only the 3 weights this widget actually draws with — no need to ship the whole main-app
-        # font set into a second bundle. Same family as the app (DisplayFont.family): a widget in a
-        # different typeface than the app is the one mismatch a user sees side by side.
+        # La fonte de l'app, variable : un seul fichier, la graisse se règle par axe (`WG.police`).
+        # Même famille que l'app : un widget dans une autre typographie que l'app est le seul
+        # décalage qu'on voit côte à côte.
         UIAppFonts:
-          - InstrumentSans-Medium.ttf
-          - InstrumentSans-Bold.ttf
-          - InstrumentSans-SemiBold.ttf
+          - Archivo-Variable.ttf
     entitlements:
       path: HaizoWidgets/HaizoWidgets.entitlements
       properties:

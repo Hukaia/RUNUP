@@ -135,26 +135,6 @@ PERMIS = {
 
     # ── 2. UNE IMAGE PRODUITE, PAS UN ÉCRAN ───────────────────────────────────────────────────
 
-    # ── 3. UNE DETTE NOMMÉE, QUI ATTEND UNE MACHINE ──────────────────────────────────────────
-    #
-    # « EN PAUSE » et « EN COURS » sur la montre et sur le widget. Les deux sont des LABELS, et
-    # la règle devrait les prendre. Ils restent pour une raison qui n'a rien d'esthétique :
-    #
-    # `check_requis.py` empreinte la capture montre livrée à Apple contre TOUT le code de la
-    # cible `HaizoWatch`. Changer un mot là-dedans rend l'image périmée — et elle ne se recompose
-    # pas ici : elle se prend sur un simulateur watchOS, donc sur une machine macOS. Deux mots en
-    # casse normale contre une capture App Store qui montrerait autre chose que l'app : le
-    # marché est mauvais.
-    #
-    # Le widget les garde par symétrie. Il n'est sous aucune empreinte, mais le même état écrit
-    # de deux façons sur deux surfaces est pire que les deux en capitales.
-    #
-    # CE QUI LÈVE LA DETTE : refaire la capture montre sur un Mac, puis ces deux entrées
-    # disparaissent d'ici. Le compte à zéro fera parler le garde tout seul.
-    "HaizoWidgets/DailyGoalsWidget.swift": (
-        2, "« EN PAUSE » et « EN COURS » : le widget garde ses capitales jusqu'à sa propre refonte ; "
-           "la montre, elle, a quitté les siennes le 20 novembre."),
-
     # ── 4. UN MOT QUI EST SUR UN BOUTON DEPUIS LE PREMIER JOUR ────────────────────────────────
     "Haizo/Shared/Discipline.swift": (
         4, "`tabLabel` — « RUN » sur l'onglet du milieu, et ses trois jumeaux. Son propre "
@@ -275,7 +255,7 @@ def main() -> int:
     total = sum(n for n, _ in PERMIS.values())
     volee = sum(n for n, _ in PERMIS_A_LA_VOLEE.values())
     print(f"Libellés en capitales : {total} déclarés dans {len(PERMIS)} fichiers — "
-          f"des boutons, deux affiches, un onglet, et une dette nommée sur la montre.\n"
+          f"des boutons, deux affiches, un onglet — plus aucune dette sur la montre ni sur le widget.\n"
           f"Capitales posées à l'exécution : {volee} dans {len(PERMIS_A_LA_VOLEE)} fichiers — "
           f"des initiales, qui sont des lettres et non des mots.")
     return 0

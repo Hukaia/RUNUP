@@ -5,17 +5,17 @@ import SwiftUI
 /// Lock Screen + Dynamic Island UI for an in-progress run (`RunActivityAttributes`, updated live
 /// from `LiveRunViewModel`). Same reasoning as `DailyGoalsWidget` for not reusing
 /// `Haizo/DesignSystem`: this runs in the widget extension's own process, so it can't read the
-/// live `ThemeStore`/accent color anyway — fixed dark + the app's rose brand color, same as
-/// `RunShareCardView`'s deliberately-fixed palette for a similar reason (a system surface outside
-/// her in-app theme choice).
+/// live `ThemeStore`/accent color anyway — fixed dark + the brand rose (`WG.rose`), a system
+/// surface outside her in-app theme choice.
 ///
-/// Lock Screen redone flat and high-contrast to match `DailyGoalsWidget`'s pass: true black, no
-/// gradient, the real brand fonts instead of the system rounded design, and a progress bar toward
-/// the session's *planned duration* — the one real "how far in am I" number a `WorkoutSession`
-/// actually tracks (there's no distance target to show honestly; sessions are duration-based).
+/// Dans la DA de l'app (`WG`, voir `WidgetStyle.swift`) : noir franc, Archivo, des gris opaques
+/// pour les textes secondaires, des libellés en casse de phrase, l'accent en touches (le titre,
+/// l'état, la barre) — comme le panneau de la séance en direct. La barre avance vers la *durée
+/// prévue* de la séance : le seul vrai « où j'en suis » qu'une `WorkoutSession` suive (il n'y a
+/// pas d'objectif de distance à montrer honnêtement ; les séances sont à durée).
 struct RunActivityWidget: Widget {
-    private static let accent = Color(hex: 0xFF0A78)
-    private static let bg = Color.black
+    private static let accent = WG.rose
+    private static let bg = WG.noirFranc
 
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: RunActivityAttributes.self) { context in
@@ -25,35 +25,39 @@ struct RunActivityWidget: Widget {
                 DynamicIslandExpandedRegion(.leading) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(TimeFormat.distance(km: context.state.distanceKm))
-                            .font(DisplayFont.font(24))
-                            .foregroundColor(.white)
-                        Text(verbatim: "km").font(.custom("\(DisplayFont.family)-Bold", size: 10.5)).tracking(0.2).foregroundColor(.white.opacity(0.55))
+                            .font(WG.police(WG.Corps.grandChiffre))
+                            .tracking(WG.serre(WG.Corps.grandChiffre))
+                            .foregroundColor(WG.blanc)
+                        Text(verbatim: "km").font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
                     }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text(context.state.paceLabel).font(DisplayFont.font(18)).foregroundColor(.white)
-                        Text(verbatim: context.attributes.discipline.rythmeUnite).font(.custom("\(DisplayFont.family)-Bold", size: 10.5)).tracking(0.2).foregroundColor(.white.opacity(0.55))
+                        Text(context.state.paceLabel)
+                            .font(WG.police(WG.Corps.chiffreDeCourse))
+                            .tracking(WG.serre(WG.Corps.chiffreDeCourse))
+                            .foregroundColor(WG.blanc)
+                        Text(verbatim: context.attributes.discipline.rythmeUnite).font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
                     }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     HStack(spacing: 6) {
                         Image(systemName: statusIcon(context.state))
-                        Text(context.attributes.sessionTitle).font(.custom("\(DisplayFont.family)-SemiBold", size: 12)).lineLimit(1).minimumScaleFactor(0.7)
+                        Text(context.attributes.sessionTitle).font(WG.police(WG.Corps.texte, .semi)).lineLimit(1).minimumScaleFactor(0.7)
                         Spacer()
                         elapsedText(context.state)
-                            .font(.custom("\(DisplayFont.family)-Bold", size: 13))
+                            .font(WG.police(WG.Corps.valeur))
                             .monospacedDigit()
                     }
-                    .foregroundColor(.white.opacity(0.85))
+                    .foregroundColor(WG.blanc)
                 }
             } compactLeading: {
                 Image(systemName: "figure.run").foregroundColor(Self.accent)
             } compactTrailing: {
                 elapsedText(context.state)
-                    .font(.custom("\(DisplayFont.family)-Bold", size: 13))
+                    .font(WG.police(WG.Corps.valeur))
                     .monospacedDigit()
-                    .foregroundColor(.white)
+                    .foregroundColor(WG.blanc)
                     .frame(maxWidth: 52)
             } minimal: {
                 Image(systemName: "figure.run").foregroundColor(Self.accent)
@@ -66,14 +70,14 @@ struct RunActivityWidget: Widget {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("Run")
-                    .font(DisplayFont.font(17))
-                    .tracking(0.2)
+                    .font(WG.police(WG.Corps.chiffre))
+                    .tracking(WG.serre(WG.Corps.chiffre))
                     .foregroundColor(Self.accent)
                 Spacer()
                 HStack(spacing: 6) {
                     Text(context.attributes.sessionTitle)
-                        .font(.custom("\(DisplayFont.family)-SemiBold", size: 12))
-                        .foregroundColor(.white.opacity(0.55))
+                        .font(WG.police(WG.Corps.texte, .semi))
+                        .foregroundColor(WG.secondaireSurSombre)
                         .lineLimit(1)
                     statusBadge(context.state)
                 }
@@ -89,9 +93,10 @@ struct RunActivityWidget: Widget {
                 Spacer(minLength: 8)
                 VStack(alignment: .trailing, spacing: 2) {
                     elapsedText(context.state)
-                        .font(DisplayFont.font(26))
-                        .foregroundColor(.white)
-                    Text("Temps").font(.custom("\(DisplayFont.family)-Bold", size: 10)).tracking(0.2).foregroundColor(.white.opacity(0.45))
+                        .font(WG.police(WG.Corps.chronoLive))
+                        .tracking(WG.serre(WG.Corps.chronoLive))
+                        .foregroundColor(WG.blanc)
+                    Text("Temps").font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
                 }
             }
 
@@ -100,18 +105,14 @@ struct RunActivityWidget: Widget {
                 let fraction = max(0, min(1, context.state.elapsedSeconds / plannedSeconds))
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text("Séance").font(.custom("\(DisplayFont.family)-Bold", size: 10)).tracking(0.2).foregroundColor(.white.opacity(0.45))
+                        Text("Séance").font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
                         Spacer()
-                        // La clé est en minuscules et la capitalisation est un style, pas du
-                        // texte : « MIN PRÉVUES » en dur donnait une clé introuvable dans le
-                        // catalogue, donc du français affiché à tout le monde.
                         Text("\(context.attributes.plannedDurationMinutes) min prévues")
-                            .textCase(.uppercase)
-                            .font(.custom("\(DisplayFont.family)-Bold", size: 10)).tracking(0.2).foregroundColor(.white.opacity(0.45))
+                            .font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
                     }
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Capsule().fill(Color.white.opacity(0.12))
+                            Capsule().fill(WG.filetSombre)
                             Capsule().fill(Self.accent).frame(width: geo.size.width * fraction)
                         }
                     }
@@ -121,23 +122,24 @@ struct RunActivityWidget: Widget {
         }
         .padding(18)
         .activityBackgroundTint(Self.bg)
-        .activitySystemActionForegroundColor(.white)
+        .activitySystemActionForegroundColor(WG.blanc)
     }
 
     private func metric(value: String, label: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(value)
-                .font(DisplayFont.font(26))
-                .foregroundColor(.white)
-            // Idem : sans `LocalizedStringKey`, ces libellés restent français pour tout le monde.
-            Text(LocalizedStringKey(label)).font(.custom("\(DisplayFont.family)-Bold", size: 10)).tracking(0.2).foregroundColor(.white.opacity(0.45))
+                .font(WG.police(WG.Corps.chronoLive))
+                .tracking(WG.serre(WG.Corps.chronoLive))
+                .foregroundColor(WG.blanc)
+            // Sans `LocalizedStringKey`, ces libellés restent français pour tout le monde.
+            Text(LocalizedStringKey(label)).font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
         }
     }
 
     private func statusBadge(_ state: RunActivityAttributes.ContentState) -> some View {
         Image(systemName: statusIcon(state))
             .font(.system(size: 11, weight: .semibold))
-            .foregroundColor(state.isPaused ? .white.opacity(0.5) : Self.accent)
+            .foregroundColor(state.isPaused ? WG.secondaireSurSombre : Self.accent)
     }
 
     private func statusIcon(_ state: RunActivityAttributes.ContentState) -> String {
