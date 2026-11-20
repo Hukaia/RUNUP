@@ -8814,3 +8814,22 @@ Réglages. Nouveaux paramètres des composants pour porter ces deux fonds : `HZA
 **Reste à confirmer** (rien de tout cela n'est de Charlotte) : veut-on une teinte d'alerte dans le système ? Relier « Préparer une course » à la date de la course
 (le programme ne s'y cale pas aujourd'hui). Le rose du widget et de la montre est encore l'ancien (`#FF0A78`, contre `#FF2E6E` dans l'app) : leurs palettes
 recopiées n'ont plus de garde depuis la suppression de `check_accent` et `check_encres`. Les rouges et le « Serveur » ci-dessus.
+
+## « Préparer une course » donne enfin sa date au programme (20 novembre) : décision de Charlotte, « oui obligatoire »
+
+Le défaut : l'inscription posait un objectif « progresser » sans date, ouvrait la liste des courses, et « Je prépare cette course » n'écrivait qu'un drapeau social.
+Le programme restait ouvert (ni bloc spécifique ni affûtage) pendant que l'écran promettait le contraire.
+
+**Ce qui change.** Une course du calendrier devient un objectif de programme (`ProgrammePourUneCourse`, `Haizo/Models/`) : la discipline et la distance choisissent
+l'objectif (route : 5 km, 10 km, semi, marathon, sinon « 15 km » en distance libre ; trail : en dessous de 50 km une course, au-dessus un ultra, avec son dénivelé), la
+date de la course ancre le plan (`AdaptivePlanEngine.startNewProgram`, qui sait déjà construire base, spécifique et affûtage vers une date). Le jour du calendrier
+(« AAAA-MM-JJ », sans fuseau) est ramené à midi, heure locale, du même jour : lu tel quel à l'ouest de Greenwich il tomberait la veille et le programme finirait un jour trop tôt.
+
+**Quand.** Juste après l'inscription où la personne a dit « Préparer une course », le programme d'attente se recale tout seul au moment de « Je prépare cette course »
+(rien à perdre, le programme a quelques minutes). Partout ailleurs, remplacer un programme qu'elle suit déjà se demande : « Caler ton programme sur cette course ? »,
+et le refus ne coûte rien. Rien n'est proposé quand le profil est déjà calé sur cette date.
+
+**Ce qui ne cale rien, volontairement.** Le triathlon, le duathlon et le HYROX : le calendrier n'a ni leur format ni leur division, et le moteur construirait un plan sans
+natation, sans transitions, sans division. Une course sans distance, passée, ou à la date illisible non plus. On ne devine pas ; la course reste suivie, le programme garde sa forme.
+
+Neuf tests (`ProgrammePourUneCourseTests`), dont les fuseaux de Pacific/Auckland à Pacific/Honolulu et le programme qui reçoit sa date. **Non vérifié à cet instant** : compilation et tests.

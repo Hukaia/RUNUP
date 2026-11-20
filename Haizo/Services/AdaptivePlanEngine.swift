@@ -1762,7 +1762,7 @@ enum AdaptivePlanEngine {
     /// correction serait de recalculer à l'affichage depuis l'objectif stocké — mais ce champ
     /// est aussi LIBREMENT MODIFIABLE dans les réglages du programme, donc il ne peut pas être
     /// purement dérivé. C'est un chantier à part, écrit ici plutôt que passé sous silence.
-    private static func goalDisplay(goal: GoalType, distance: RaceDistance?, custom: String?, chrono: String?, hyroxDivision: String? = nil, denivele: Int? = nil, triathlonFormat: String? = nil, duathlonFormat: String? = nil) -> String {
+    static func goalDisplay(goal: GoalType, distance: RaceDistance?, custom: String?, chrono: String?, hyroxDivision: String? = nil, denivele: Int? = nil, triathlonFormat: String? = nil, duathlonFormat: String? = nil) -> String {
         switch goal {
         case .race:
             let defaut = String(localized: "Ta course")

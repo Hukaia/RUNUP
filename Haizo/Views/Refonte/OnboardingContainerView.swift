@@ -291,6 +291,7 @@ struct OnboardingContainerView: View {
         Haptics.success()
         appState.toast(message)
         if objectif == .course {
+            appState.calerLeProgrammeSurLaCourseChoisie = true
             appState.openRacesTabOnNextVisit = true
             appState.go(.club)
         }

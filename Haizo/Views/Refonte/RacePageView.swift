@@ -51,6 +51,9 @@ struct RacePageView: View {
     @State private var formulairePresente = false
     /// Le retrait de la page demande confirmation — voir le bouton « RETIRER ».
     @State private var retraitAConfirmer = false
+    /// Le calage proposé après « Je prépare cette course », en attente de la réponse.
+    @State private var calageAConfirmer: ProgrammePourUneCourse.Calage?
+    @State private var calageEstPropose = false
 
     // Le mur
     @State private var genreDuMessage = "message"
@@ -198,6 +201,15 @@ struct RacePageView: View {
             Button("Annuler", role: .cancel) { }
         } message: {
             Text("Tu disparaîtras de la page et des groupes d'allure. Tu pourras te redéclarer quand tu veux.")
+        }
+        // Le programme actuel est REMPLACÉ : la confirmation le dit, et le refus ne coûte rien.
+        .alert("Caler ton programme sur cette course ?", isPresented: $calageEstPropose) {
+            Button("Caler mon programme") {
+                if let calage = calageAConfirmer { appliquerLeCalage(calage) }
+            }
+            Button("Pas maintenant", role: .cancel) { calageAConfirmer = nil }
+        } message: {
+            Text("Ton programme actuel sera remplacé par un programme qui se termine à la date de la course.")
         }
     }
 
@@ -848,10 +860,38 @@ struct RacePageView: View {
             formulairePresente = false
             await charger()
             onParticipationChanged()
+            caler(chrono: propre)
         } catch {
             appState.toast(String(localized: "Impossible d'enregistrer — \(PanneReseau.motif(pour: error))."))
         }
         enCours = false
+    }
+
+    /// « Je prépare cette course » donne au programme sa date. Juste après l'inscription, quand la
+    /// personne a dit qu'elle prépare une course, le programme d'attente se recale tout seul ; ailleurs,
+    /// remplacer un programme qu'elle suit déjà se demande.
+    private func caler(chrono: String) {
+        let profil = appState.profile
+        guard let calage = ProgrammePourUneCourse.calage(pour: courante, chrono: chrono,
+                                                         joursDeCourse: profil.runningDays),
+              !ProgrammePourUneCourse.estDejaCale(profil, sur: calage)
+        else { return }
+        if appState.calerLeProgrammeSurLaCourseChoisie {
+            appliquerLeCalage(calage)
+        } else {
+            calageAConfirmer = calage
+            calageEstPropose = true
+        }
+    }
+
+    private func appliquerLeCalage(_ calage: ProgrammePourUneCourse.Calage) {
+        let profil = appState.profile
+        ProgrammePourUneCourse.appliquer(calage, a: profil)
+        NotificationService.shared.rescheduleDailyReminder(for: profil)
+        appState.calerLeProgrammeSurLaCourseChoisie = false
+        calageAConfirmer = nil
+        Haptics.success()
+        appState.toast(String(localized: "Ton programme est calé sur \(calage.nomDeLaCourse)"))
     }
 
     private func nePlusPreparer() async {

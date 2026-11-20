@@ -6606,6 +6606,40 @@
         }
       }
     },
+    "Caler mon programme": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Build my program"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustar mi programa"
+          }
+        }
+      }
+    },
+    "Caler ton programme sur cette course ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Build your program around this race?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Ajustar tu programa a esta carrera?"
+          }
+        }
+      }
+    },
     "Cardio · %@": {
       "extractionState": "manual",
       "localizations": {
@@ -15338,6 +15372,23 @@
         }
       }
     },
+    "Pas maintenant": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora no"
+          }
+        }
+      }
+    },
     "Passer la récupération": {
       "extractionState": "manual",
       "localizations": {
@@ -15504,6 +15555,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tu apellido"
+          }
+        }
+      }
+    },
+    "Ton programme actuel sera remplacé par un programme qui se termine à la date de la course.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your current program will be replaced by one that ends on race day."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu programa actual se sustituirá por uno que termina el día de la carrera."
+          }
+        }
+      }
+    },
+    "Ton programme est calé sur %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your program is built around %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu programa está ajustado a %@"
           }
         }
       }

@@ -92,6 +92,11 @@ final class AppState {
     /// Et pour les pages de course — ouvert aussi bien par la carte « Courses » du Profil que par
     /// l'écran de l'objectif, qui propose d'aller voir qui prépare la même.
     var openRacesTabOnNextVisit = false
+    /// Posé à la fin de l'inscription quand la personne a répondu « Préparer une course » : le
+    /// programme qu'on vient de lui construire est un programme d'attente, sans date. Dès qu'elle
+    /// déclare une course qu'elle prépare, il se recale dessus sans rien lui demander (il n'y a pas
+    /// de programme à perdre). Sans ce drapeau, le même geste passe par une confirmation.
+    var calerLeProgrammeSurLaCourseChoisie = false
 
     /// LA PAGE DE QUELQU'UN, OUVRABLE DE PARTOUT.
     ///
