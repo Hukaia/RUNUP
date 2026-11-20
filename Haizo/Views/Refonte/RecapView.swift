@@ -8,9 +8,9 @@ import CoreLocation
 /// tuiles, la phrase du record, puis « Partager » et « Détail ».
 ///
 /// C'est aussi l'entrée de la mécanique du plan adaptatif : donner son ressenti recalcule la séance
-/// suivante. Le canvas n'a pas ce bouton ; il reste, en noir et pleine largeur comme toute action
-/// d'un écran (`HZBoutonPilule` n'est jamais à l'accent), au-dessus de « Partager », qui passe alors
-/// au gris clair pour qu'une seule pilule noire porte l'écran. Tout ce que l'écran faisait reste :
+/// suivante. Le canvas n'a pas ce bouton ; il reste, en accent et pleine largeur, au-dessus de
+/// « Partager » : c'est l'action qui compte de l'écran, et sa seule grande surface d'accent. Tout ce
+/// que l'écran faisait reste :
 /// les splits, le profil d'élévation, la carte à partager et ses styles, la vidéo, l'export GPX, la
 /// publication de l'itinéraire. Ce qui change est ce qu'on voit, pas ce qu'on calcule.
 struct RecapView: View {
@@ -346,7 +346,7 @@ struct RecapView: View {
         VStack(spacing: HZEspace.entreCommandes) {
             if !isHistorical {
                 HZBoutonPilule(libelle: String(localized: "Donner mon ressenti"), hauteur: .grande,
-                               etendu: true) {
+                               fond: HZCouleur.accent, couleur: HZCouleur.encreSurAccent, etendu: true) {
                     Haptics.selection()
                     showDebrief = true
                 }
@@ -377,17 +377,14 @@ struct RecapView: View {
         }
     }
 
-    /// Noire quand « Partager » est la seule action de l'écran (une sortie de l'historique), grise
-    /// quand « Donner mon ressenti » porte déjà la pilule noire au-dessus.
     private var libelleDePartage: some View {
-        let encre = isHistorical ? HZCouleur.blanc : HZCouleur.encre
-        return HStack(spacing: HZEspace.entrePilules) {
-            HZIcone(dessin: .partager, cote: HZResume.cotePartage, couleur: encre)
-            Text("Partager").hzTexte(.c16, .gras).foregroundStyle(encre)
+        HStack(spacing: HZEspace.entrePilules) {
+            HZIcone(dessin: .partager, cote: HZResume.cotePartage, couleur: HZCouleur.blanc)
+            Text("Partager").hzTexte(.c16, .gras).foregroundStyle(HZCouleur.blanc)
         }
         .frame(maxWidth: .infinity)
         .frame(height: HZHauteurDeBouton.grande.rawValue)
-        .background(isHistorical ? HZCouleur.encre : HZCouleur.surfaceClaire, in: Capsule())
+        .background(HZCouleur.encre, in: Capsule())
         .contentShape(Capsule())
     }
 
