@@ -8,10 +8,11 @@ import CoreLocation
 /// tuiles, la phrase du record, puis « Partager » et « Détail ».
 ///
 /// C'est aussi l'entrée de la mécanique du plan adaptatif : donner son ressenti recalcule la séance
-/// suivante. Le canvas n'a pas ce bouton ; il reste, en accent et pleine largeur, au-dessus de
-/// « Partager ». Tout ce que l'écran faisait reste : les splits, le profil d'élévation, la carte à
-/// partager et ses couleurs, la vidéo, l'export GPX, la publication de l'itinéraire. Ce qui change est
-/// ce qu'on voit, pas ce qu'on calcule.
+/// suivante. Le canvas n'a pas ce bouton ; il reste, en noir et pleine largeur comme toute action
+/// d'un écran (`HZBoutonPilule` n'est jamais à l'accent), au-dessus de « Partager », qui passe alors
+/// au gris clair pour qu'une seule pilule noire porte l'écran. Tout ce que l'écran faisait reste :
+/// les splits, le profil d'élévation, la carte à partager et ses styles, la vidéo, l'export GPX, la
+/// publication de l'itinéraire. Ce qui change est ce qu'on voit, pas ce qu'on calcule.
 struct RecapView: View {
     @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
@@ -324,7 +325,8 @@ struct RecapView: View {
             HZIcone(dessin: .trophee, cote: HZResume.coteDuTrophee, couleur: HZCouleur.blanc)
                 .frame(width: HZResume.disqueDuTrophee, height: HZResume.disqueDuTrophee)
                 .background(HZCouleur.encre, in: Circle())
-            Text(kind == .overall ? "Nouveau record personnel !" : "Meilleur temps sur ce parcours !")
+            Text(kind == .overall ? String(localized: "Nouveau record personnel !")
+                                  : String(localized: "Meilleur temps sur ce parcours !"))
                 .hzParagraphe(.c14, .medium, interligne: HZLive.interligne)
                 .foregroundStyle(HZCouleur.encre)
                 .fixedSize(horizontal: false, vertical: true)
@@ -344,10 +346,11 @@ struct RecapView: View {
         VStack(spacing: HZEspace.entreCommandes) {
             if !isHistorical {
                 HZBoutonPilule(libelle: String(localized: "Donner mon ressenti"), hauteur: .grande,
-                               fond: HZCouleur.accent, couleur: HZCouleur.encreSurAccent, etendu: true) {
+                               etendu: true) {
                     Haptics.selection()
                     showDebrief = true
                 }
+                .accessibilityIdentifier("recap-ressenti")
             }
             HStack(spacing: HZEspace.entreCommandes) {
                 partager
@@ -374,14 +377,17 @@ struct RecapView: View {
         }
     }
 
+    /// Noire quand « Partager » est la seule action de l'écran (une sortie de l'historique), grise
+    /// quand « Donner mon ressenti » porte déjà la pilule noire au-dessus.
     private var libelleDePartage: some View {
-        HStack(spacing: HZEspace.entrePilules) {
-            HZIcone(dessin: .partager, cote: HZResume.cotePartage, couleur: HZCouleur.blanc)
-            Text("Partager").hzTexte(.c16, .gras).foregroundStyle(HZCouleur.blanc)
+        let encre = isHistorical ? HZCouleur.blanc : HZCouleur.encre
+        return HStack(spacing: HZEspace.entrePilules) {
+            HZIcone(dessin: .partager, cote: HZResume.cotePartage, couleur: encre)
+            Text("Partager").hzTexte(.c16, .gras).foregroundStyle(encre)
         }
         .frame(maxWidth: .infinity)
         .frame(height: HZHauteurDeBouton.grande.rawValue)
-        .background(HZCouleur.encre, in: Capsule())
+        .background(isHistorical ? HZCouleur.encre : HZCouleur.surfaceClaire, in: Capsule())
         .contentShape(Capsule())
     }
 
@@ -416,8 +422,9 @@ struct RecapView: View {
 
     // MARK: La carte à partager
 
-    /// L'aperçu est la carte telle qu'on la partagera : au format story, sur un fond sombre (elle est
-    /// transparente, et son texte blanc disparaîtrait sur du blanc). Les couleurs la rendent à nouveau.
+    /// L'aperçu est la carte telle qu'on la partagera : au format story, sur un fond qui la fait lire
+    /// (elle est transparente : sombre pour le texte blanc, gris clair pour le noir). Les styles la
+    /// rendent à nouveau.
     private func partage(_ run: RunRecord) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HZTitreDeSection(titre: String(localized: "Partage ta course"))
@@ -434,16 +441,17 @@ struct RecapView: View {
                             .font(HZPolice.texte(.c20, .semi))
                             .accessibilityHidden(true)
                         HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .petite,
-                                       fond: HZCouleur.blanc, couleur: HZCouleur.encre) { renderShareCard(for: run) }
+                                       fond: shareTextColor.encreSurApercu,
+                                       couleur: shareTextColor.fondDeLApercu) { renderShareCard(for: run) }
                     }
-                    .foregroundStyle(HZCouleur.blanc)
+                    .foregroundStyle(shareTextColor.encreSurApercu)
                 } else {
-                    ProgressView().tint(HZCouleur.blanc)
+                    ProgressView().tint(shareTextColor.encreSurApercu)
                 }
             }
             .frame(maxWidth: .infinity)
             .frame(height: HZResume.hauteurDeLApercu)
-            .background(HZCouleur.noir, in: RoundedRectangle(cornerRadius: HZRayon.carteDuFil, style: .circular))
+            .background(shareTextColor.fondDeLApercu, in: RoundedRectangle(cornerRadius: HZRayon.carteDuFil, style: .circular))
             .padding(.top, HZEspace.sousUnTitre)
 
             HStack(spacing: HZEspace.entrePilules) {
@@ -470,7 +478,7 @@ struct RecapView: View {
             HStack(spacing: HZEspace.entreCommandes) {
                 if let gpxURL = GPXExporter.fileURL(for: run) {
                     ShareLink(item: gpxURL) {
-                        actionDiscrete(icon: Image(systemName: "arrow.down.doc"), titre: String(localized: "Exporter en GPX"))
+                        actionDiscrete(dessin: .partager, titre: String(localized: "Exporter en GPX"))
                     }
                     .buttonStyle(.plain)
                 }
@@ -479,7 +487,7 @@ struct RecapView: View {
                         Haptics.selection()
                         showPublishRoute = true
                     } label: {
-                        actionDiscrete(icon: Image(systemName: "map"), titre: String(localized: "Publier l'itinéraire"))
+                        actionDiscrete(dessin: .itineraire, titre: String(localized: "Publier l'itinéraire"))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(String(localized: "Publier l'itinéraire"))
@@ -489,9 +497,9 @@ struct RecapView: View {
         }
     }
 
-    private func actionDiscrete(icon: Image, titre: String) -> some View {
+    private func actionDiscrete(dessin: HZDessin, titre: String) -> some View {
         HStack(spacing: HZEspace.entrePilules) {
-            icon.font(HZPolice.texte(.c14, .semi))
+            HZIcone(dessin: dessin, cote: HZResume.cotePartage, couleur: HZCouleur.encre)
             Text(titre).hzTexte(.c14, .semi)
         }
         .foregroundStyle(HZCouleur.encre)
@@ -506,12 +514,13 @@ struct RecapView: View {
     private func boutonVideo(for run: RunRecord) -> some View {
         if let videoURL {
             ShareLink(item: videoURL) {
-                pilulePleine(String(localized: "Partager la vidéo"), icon: Image(systemName: "play.rectangle.fill"))
+                pilulePleine(String(localized: "Partager la vidéo"), dessin: .partager)
             }
             .buttonStyle(.plain)
         } else if videoEnCours != nil {
             VStack(spacing: HZEspace.entrePilules) {
-                pilulePleine(String(localized: "Je fabrique ta vidéo…"), icon: Image(systemName: "film"))
+                pilulePleine(String(localized: "Je fabrique ta vidéo…"), dessin: .lecture,
+                             cote: HZBoutonPilule.coteDeLecture, ecart: HZBoutonPilule.ecartDeLecture)
                     .opacity(HZResume.opaciteEteinte)
                 // L'avancement est réel, image par image : c'est la seule chose qui dise que l'app
                 // travaille plutôt qu'elle ne bloque.
@@ -526,20 +535,19 @@ struct RecapView: View {
                     }
             }
         } else {
-            Button {
+            HZBoutonPilule(libelle: String(localized: "Faire ma vidéo"), dessin: .lecture,
+                           fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre, etendu: true,
+                           cote: HZBoutonPilule.coteDeLecture, ecart: HZBoutonPilule.ecartDeLecture) {
                 Haptics.selection()
                 lanceLaVideo(for: run)
-            } label: {
-                pilulePleine(String(localized: "Faire ma vidéo"), icon: Image(systemName: "film"))
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel(String(localized: "Faire ma vidéo"))
         }
     }
 
-    private func pilulePleine(_ titre: String, icon: Image) -> some View {
-        HStack(spacing: HZEspace.entrePilules) {
-            icon.font(HZPolice.texte(.c16, .gras))
+    private func pilulePleine(_ titre: String, dessin: HZDessin, cote: CGFloat = HZResume.cotePartage,
+                              ecart: CGFloat = HZEspace.entrePilules) -> some View {
+        HStack(spacing: ecart) {
+            HZIcone(dessin: dessin, cote: cote, couleur: HZCouleur.encre)
             Text(titre).hzTexte(.c16, .gras)
         }
         .foregroundStyle(HZCouleur.encre)

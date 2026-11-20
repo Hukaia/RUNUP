@@ -40,7 +40,7 @@ enum HZMarque {
     static let pasDeTangente: Double = 0.001
     // Le profil d'altitude.
     static let pointsMinimaux: Int = 2
-    static let opaciteDeLAire: Double = 0.28
+    static let opaciteDeLAire: Double = 0.12
     static let traitDuProfil: CGFloat = 2
     // La carte d'un tracé : la boîte du parcours, agrandie de 40 %, d'au moins 0,003 degré.
     static let margeDeCarte: Double = 1.4

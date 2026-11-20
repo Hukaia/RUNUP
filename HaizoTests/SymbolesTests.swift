@@ -25,7 +25,6 @@ final class SymbolesTests: XCTestCase {
     /// Tenue à jour par `ci_scripts/check_symboles.py`, qui refuse la construction si elle
     /// s'écarte des `systemName:` du code — dans un sens comme dans l'autre.
     static let tous: [String] = [
-        "arrow.down.doc",
         "arrow.triangle.2.circlepath",
         "arrow.triangle.swap",
         "arrow.up.left.and.arrow.down.right",
@@ -35,18 +34,15 @@ final class SymbolesTests: XCTestCase {
         "exclamationmark.triangle.fill",
         "figure.pool.swim",
         "figure.run",
-        "film",
         "flame.fill",
         "location.magnifyingglass",
         "location.slash.fill",
         "lock.fill",
         "lock.slash",
-        "map",
         "pause.fill",
         "pencil",
         "photo",
         "play.fill",
-        "play.rectangle.fill",
         "speaker.wave.2.fill",
         "stop.fill",
         "waveform",

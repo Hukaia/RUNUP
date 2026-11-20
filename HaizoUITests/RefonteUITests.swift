@@ -303,6 +303,28 @@ final class RefonteUITests: XCTestCase {
         reglages.terminate()
     }
 
+    /// LA FEUILLE DU DÉBRIEF : « Donner mon ressenti », sur le résumé de la dernière sortie (la graine
+    /// en pose une). Elle s'ouvre à mi-hauteur ; un glissement la tire à sa hauteur pleine, pour voir
+    /// l'effort ressenti en entier puis ce que ça change. L'image doit changer au toucher.
+    func test16FeuilleDuDebrief() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let app = lancer(arguments: ["--ecran=recap", "--resume"])
+        let ressenti = app.buttons["recap-ressenti"]
+        XCTAssertTrue(ressenti.waitForExistence(timeout: 5), "« Donner mon ressenti » doit exister")
+        let avant = app.screenshot().pngRepresentation
+        ressenti.tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("feuille-debrief", app: app)
+        XCTAssertNotEqual(avant, app.screenshot().pngRepresentation, "« Donner mon ressenti » doit ouvrir la feuille")
+        let depart = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.7))
+        let arrivee = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
+        depart.press(forDuration: 0.1, thenDragTo: arrivee)
+        Thread.sleep(forTimeInterval: 1.0)
+        photographier("feuille-debrief-bas", app: app)
+        app.terminate()
+    }
+
     /// LES BOUTONS RÉPONDENT-ILS ? Un lancement par geste, et pour chacun : l'image change-t-elle ?
     ///
     /// C'est le test de non-régression d'un défaut qui a coûté une journée : sur l'Accueil et le

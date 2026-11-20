@@ -46,10 +46,8 @@ struct ElevationProfileView: View {
             fill.addLine(to: CGPoint(x: first.x, y: size.height))
             fill.closeSubpath()
 
-            context.fill(fill, with: .linearGradient(
-                Gradient(colors: [lineColor.opacity(HZMarque.opaciteDeLAire), .clear]),
-                startPoint: CGPoint(x: 0, y: 0), endPoint: CGPoint(x: 0, y: size.height)
-            ))
+            // Un aplat d'accent léger sous la courbe, pas un fondu : la DA n'a pas de dégradé.
+            context.fill(fill, with: .color(lineColor.opacity(HZMarque.opaciteDeLAire)))
             context.stroke(line, with: .color(lineColor), style: StrokeStyle(lineWidth: HZMarque.traitDuProfil, lineCap: .round, lineJoin: .round))
         }
     }

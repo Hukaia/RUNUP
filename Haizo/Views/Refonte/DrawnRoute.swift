@@ -28,14 +28,9 @@ import SwiftUI
 struct DrawnRoute: View, Animatable {
     var route: [RunRecord.RoutePoint]
     var lineWidth: CGFloat = HZMarque.traitDuTrace
-    /// Le tracé est peint d'un dégradé d'accent : il part discret et arrive à pleine valeur, donc
-    /// l'arrivée est le point le plus lumineux de la forme.
-    ///
-    /// `accentsDeLaNuit` et non `[rose2, rose, violet]` : ces trois-là rendent les variantes
-    /// descendues pour le fond blanc dès que le thème est clair, et ce tracé n'est jamais sur du
-    /// blanc. Trois nuanciers sur huit y perdaient la moitié de leur éclat — la mesure est dans
-    /// `HZCouleur.blanc`.
-    var colors: [Color] = [HZAccent.rose.couleur, HZAccent.violet.couleur]
+    /// Le tracé est un aplat : une seule couleur, un trait net. Il a eu un dégradé d'accent ; la
+    /// refonte l'a retiré avec le halo.
+    var couleur: Color = HZCouleur.accent
     /// Plus de sommets qu'une vignette : à pleine largeur, 60 points donnent une ligne brisée.
     var targetPoints: Int = HZMarque.pointsDuTrace
     /// Marque le départ d'un anneau creux une fois le tracé fini.
@@ -77,11 +72,7 @@ struct DrawnRoute: View, Animatable {
             for p in pts.dropFirst() { full.addLine(to: place(p)) }
 
             let t = min(max(progress, 0), 1)
-            let shading = GraphicsContext.Shading.linearGradient(
-                Gradient(colors: colors),
-                startPoint: CGPoint(x: originX, y: originY + side),
-                endPoint: CGPoint(x: originX + side, y: originY)
-            )
+            let shading = GraphicsContext.Shading.color(couleur)
 
             // Le chemin déjà parcouru. `trimmedPath` coupe à la longueur, pas au nombre de
             // segments : la tête avance donc à vitesse constante, quelle que soit la densité des
@@ -147,7 +138,7 @@ struct DrawnRoute: View, Animatable {
 struct SelfDrawingRoute: View {
     var route: [RunRecord.RoutePoint]
     var lineWidth: CGFloat = HZMarque.traitDuTrace
-    var colors: [Color] = [HZAccent.rose.couleur, HZAccent.violet.couleur]
+    var couleur: Color = HZCouleur.accent
     var targetPoints: Int = HZMarque.pointsDuTrace
     var showsStart = true
 
@@ -155,7 +146,7 @@ struct SelfDrawingRoute: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        DrawnRoute(route: route, lineWidth: lineWidth, colors: colors,
+        DrawnRoute(route: route, lineWidth: lineWidth, couleur: couleur,
                    targetPoints: targetPoints, showsStart: showsStart, progress: progress)
             .onAppear {
                 guard progress == 0 else { return }

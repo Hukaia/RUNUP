@@ -103,10 +103,9 @@ struct AppMarkView: View, Animatable {
 ///
 /// # POURQUOI UNE IMAGE *TEMPLATE*
 ///
-/// Le mot paraît sur quatre fonds et en trois habillages : l'encre de marque sur le lancement,
-/// du blanc sur une image de course, et — sur une carte de partage — un DÉGRADÉ. Un aplat
-/// n'aurait pas su faire le troisième. Une image template ne porte que la forme et prend le
-/// style qu'on lui donne, `foregroundStyle` compris, donc un dégradé.
+/// Le mot paraît sur plusieurs fonds et en plusieurs encres : l'encre de marque sur le
+/// lancement, du blanc sur une image de course, de l'encre sur une carte de partage claire. Une
+/// image template ne porte que la forme et prend la couleur qu'on lui donne par `foregroundStyle`.
 ///
 /// Ce n'est pas une licence : le kit lui-même livre la même forme en deux encres. La forme est
 /// la marque, la couleur est le contexte.

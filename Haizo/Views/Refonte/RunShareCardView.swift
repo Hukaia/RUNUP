@@ -1,9 +1,9 @@
 import Foundation
 import SwiftUI
 
-/// Text-color styles for the share card, picked on the recap screen before sharing — the photo
-/// underneath decides which one works (white over a dark evening run, black over snow/sky, the
-/// brand gradient when she wants the Haizo identity front and center).
+/// Les trois styles de la carte de partage, choisis sur l'écran du résumé avant de partager. La
+/// photo dessous décide lequel marche : blanc sur une soirée sombre, noir sur la neige ou le ciel,
+/// et « Haizo » quand elle veut une carte qui se suffit — un fond noir franc, sans photo dessous.
 enum ShareCardTextColor: String, CaseIterable, Identifiable {
     case blanc, noir, haizo
     var id: String { rawValue }
@@ -14,16 +14,28 @@ enum ShareCardTextColor: String, CaseIterable, Identifiable {
         case .haizo: return "Haizo" // nom de marque
         }
     }
+
+    /// Ce qu'on met derrière l'aperçu, à l'écran. La carte blanche et la carte Haizo (texte blanc)
+    /// se lisent sur le noir ; la carte noire disparaîtrait dessus, elle se pose sur le gris clair.
+    var fondDeLApercu: Color {
+        self == .noir ? HZCouleur.surfaceClaire : HZCouleur.noir
+    }
+
+    /// Ce qui s'écrit par-dessus l'aperçu : un chargement, un message d'échec.
+    var encreSurApercu: Color {
+        self == .noir ? HZCouleur.encre : HZCouleur.blanc
+    }
 }
 
-/// The share card — Strava-style stacked stats (label over big value, centered) floating on a
-/// fully transparent background, with the real route trace as a glowing neon signature above and
-/// Haizo branding below. Rendered off-screen (via `ImageRenderer` in `RecapView`) into a `UIImage`
-/// with alpha preserved, so the exported PNG layers cleanly over any photo (Instagram Stories,
-/// Snapchat, any editor). There used to be two variants (an opaque dark card + this transparent
-/// one, two separate share buttons) — one transparent card covers both uses: it reads fine shared
-/// as-is on a dark story background, and it's the only version that works over a photo. Every
-/// element carries a strong drop shadow so legibility doesn't depend on what ends up underneath.
+/// La carte de partage : trois mesures empilées (le libellé en gris, la valeur dessous), centrées,
+/// avec le tracé réel de la course au-dessus en un trait net d'accent, et la signature de Haizo en
+/// dessous. Rendue hors écran (`ImageRenderer`, dans `RecapView`) en une `UIImage` qui garde son
+/// alpha : sur les styles Blanc et Noir, le PNG se pose proprement sur n'importe quelle photo
+/// (story Instagram, Snapchat, un éditeur). Le style Haizo porte son propre fond noir franc.
+///
+/// Des aplats, comme partout dans l'app : pas de dégradé, pas de lueur, pas de contour. La seule
+/// ombre est celle du texte blanc (`HZJournee.ombreDuTexte`), parce que la carte est transparente et
+/// que du blanc sur une photo claire ne se lit pas sans elle.
 struct RunShareCardView: View {
     var run: RunRecord
     var textColor: ShareCardTextColor = .blanc
@@ -31,35 +43,19 @@ struct RunShareCardView: View {
     /// distance) — never a guess made just for the card.
     var isPersonalRecord: Bool = false
 
-    /// The big stat values — a flat color, or the brand rose→violet sweep for the `haizo` style
-    /// (`HZAccent` fixed colors, same stops as the route trace, deliberately not the in-app theme
-    /// token: the exported image shouldn't change with an unrelated app setting).
-    private var valueStyle: AnyShapeStyle {
-        switch textColor {
-        case .blanc: return AnyShapeStyle(HZCouleur.blanc)
-        case .noir: return AnyShapeStyle(HZCouleur.encre)
-        case .haizo: return AnyShapeStyle(LinearGradient(colors: [HZJournee.rose, HZJournee.violet], startPoint: .leading, endPoint: .trailing))
-        }
+    /// Les valeurs, le mot de la marque et le nom du record.
+    private var valueColor: Color {
+        textColor == .noir ? HZCouleur.encre : HZCouleur.blanc
     }
 
-    /// Labels, wordmark and date — a quieter companion to `valueStyle`.
+    /// Les libellés et la signature : un gris opaque, jamais une opacité.
     private var secondaryColor: Color {
-        switch textColor {
-        case .blanc: return HZCouleur.blanc.opacity(HZJournee.opaciteDuSecondaire)
-        case .noir: return HZCouleur.encre.opacity(HZJournee.opaciteDuSecondaire)
-        case .haizo: return HZJournee.rose
-        }
+        textColor == .noir ? HZCouleur.secondaireSurClair : HZCouleur.secondaireSurSombre
     }
 
-    /// Dark text needs a LIGHT halo to hold up over dark photos, and vice versa.
-    private var outlineIsLight: Bool { textColor == .noir }
-
-    private var roseGlowOpacity: Double {
-        switch textColor {
-        case .blanc: return HZJournee.lueurSurBlanc
-        case .noir: return 0
-        case .haizo: return HZJournee.lueurSurMarque
-        }
+    /// L'ombre du texte blanc, et seulement elle.
+    private var ombre: Color {
+        textColor == .blanc ? HZJournee.ombreDuTexte : .clear
     }
 
     private static let dateFormatter: DateFormatter = {
@@ -91,21 +87,18 @@ struct RunShareCardView: View {
     }
 
     var body: some View {
-        // One compact, centered block with generous transparent margins around it — the previous
-        // pass spread the content across the full canvas, which covered the whole photo once
-        // layered on a story. A tight sticker-like block over an untouched photo is the
-        // instagramable shape.
+        // One compact, centered block with generous transparent margins around it — spread across
+        // the full canvas it would cover the whole photo once layered on a story. A tight
+        // sticker-like block over an untouched photo is the instagramable shape.
         VStack(spacing: 0) {
             if isPersonalRecord {
                 Text("Nouveau record")
                     .font(HZJournee.police(HZJournee.tailleDuLibelle, .gras))
-                    .tracking(HZJournee.interlettrageDuRecord)
-                    .foregroundStyle(secondaryColor)
-                    .modifier(OutlinedTextShadow(light: outlineIsLight))
+                    .foregroundStyle(valueColor)
                     .padding(.bottom, HZJournee.sousLeRecord)
             }
             if normalizedRoutePoints.count > 1 {
-                neonRouteTrace
+                routeTrace
                     // Carré : le tracé ne peut occuper qu'un carré sans se déformer, donc réserver
                     // un bandeau large laissait de toute façon deux marges vides de part et d'autre.
                     .frame(width: HZJournee.coteDuTrace, height: HZJournee.coteDuTrace)
@@ -121,7 +114,10 @@ struct RunShareCardView: View {
 
             signature
         }
+        .shadow(color: ombre, radius: HZJournee.flouDeLOmbre, x: 0, y: HZJournee.decalageDeLOmbre)
         .frame(width: HZJournee.largeurDeLImage, height: HZJournee.hauteurDeLImage)
+        // Le style Haizo est la seule carte opaque : un noir franc, pour la poster telle quelle.
+        .background(textColor == .haizo ? HZCouleur.noirFranc : Color.clear)
     }
 
     /// La marque, la date et l'adresse, en pied de carte.
@@ -129,67 +125,40 @@ struct RunShareCardView: View {
         VStack(spacing: HZJournee.entreLesLignesDeLaSignature) {
             HStack(spacing: HZJournee.entreLaMarqueEtLeMot) {
                 AppMarkView(size: HZJournee.coteDeLaMarque, radius: HZJournee.rayonDeLaMarque)
-                MotDeMarque(tuile: HZJournee.coteDeLaMarque).foregroundStyle(valueStyle)
+                MotDeMarque(tuile: HZJournee.coteDeLaMarque).foregroundStyle(valueColor)
             }
             Text(Self.dateFormatter.string(from: run.date))
                 .font(HZJournee.police(HZJournee.tailleDeLaDate, .medium, tabulaire: true))
-                .tracking(HZJournee.interlettrageDeLaDate)
-                .foregroundStyle(secondaryColor.opacity(HZJournee.opaciteDeLaDate))
-            // L'adresse, sans code. Plus petite et plus discrète que la date : sur une
-            // story, c'est une mention qu'on lit si on a envie de savoir, pas une bannière.
-            // Une carte qui crie son adresse ne se partage pas — et une carte qu'on ne
-            // partage pas ne recrute personne, quelle que soit la taille du lien.
+                .foregroundStyle(secondaryColor)
+            // L'adresse, sans code. Plus petite que la date : sur une story, c'est une mention
+            // qu'on lit si on a envie de savoir, pas une bannière. Une carte qui crie son adresse
+            // ne se partage pas — et une carte qu'on ne partage pas ne recrute personne.
             Text(verbatim: Self.hoteDuLien)
                 .font(HZJournee.police(HZJournee.tailleDeLAdresse, .medium, tabulaire: true))
-                .tracking(HZJournee.interlettrageDeLAdresse)
-                .foregroundStyle(secondaryColor.opacity(HZJournee.opaciteDeLAdresse))
+                .foregroundStyle(secondaryColor)
         }
-        .modifier(OutlinedTextShadow(light: outlineIsLight))
         .padding(.top, HZJournee.auDessusDeLaSignature)
     }
 
-    /// One Strava-style stacked stat — small tracked label over a big display-face value, centered.
+    /// Une mesure : le libellé en gris au-dessus, la valeur en Archivo large dessous, centrées.
     private func statBlock(_ label: String, _ value: String, style: HZAffichage) -> some View {
         VStack(spacing: HZJournee.entreLibelleEtValeur) {
             Text(label)
-                .font(HZJournee.police(HZJournee.tailleDuLibelle, .gras))
-                .tracking(HZJournee.interlettrageDuLibelle)
+                .font(HZJournee.police(HZJournee.tailleDuLibelle, .semi))
                 .foregroundStyle(secondaryColor)
-                .modifier(OutlinedTextShadow(light: outlineIsLight))
             Text(value)
                 .hzAffichage(style)
-                .foregroundStyle(valueStyle)
-                .modifier(OutlinedTextShadow(light: outlineIsLight))
-                // A whisper of rose around white, a restrained one on the gradient style, none on
-                // black — tuned down twice from the original, which read as too much.
-                .shadow(color: HZJournee.rose.opacity(roseGlowOpacity), radius: HZJournee.rayonDeLaLueur)
+                .foregroundStyle(valueColor)
+                // Un nombre ne se tronque pas : il rétrécit avant de se couper.
+                .lineLimit(1)
+                .minimumScaleFactor(HZJournee.reductionDeLaMesure)
         }
         .frame(maxWidth: .infinity)
     }
 
-    /// Legibility over ANY photo without a background veil: a tight, near-opaque shadow hugging
-    /// the glyphs (reads as an outline, the trick text-over-video apps use) plus a wider soft
-    /// halo. `light` flips the halo to white for the black-text style — a dark outline under dark
-    /// text would vanish over a dark photo.
-    private struct OutlinedTextShadow: ViewModifier {
-        var light: Bool = false
-
-        func body(content: Content) -> some View {
-            // Enough presence for legibility over a photo, without the grey-black smudge the
-            // heavier version drew around every glyph.
-            content
-                .shadow(color: light ? HZJournee.halo : HZJournee.ombreDuContour,
-                        radius: HZJournee.rayonDuContour, x: 0, y: light ? 0 : HZJournee.decalageDuContour)
-                .shadow(color: light ? HZJournee.haloLarge : HZJournee.ombreLarge,
-                        radius: HZJournee.rayonDuHalo, x: 0, y: light ? 0 : HZJournee.decalageDuHalo)
-        }
-    }
-
-    /// A wide, blurred pass underneath a crisp pass — the same brand gradient (rose → violet) as
-    /// the app mark, drawn thick enough to read as the card's real hero visual, not a thin line
-    /// tucked in a box. `drawLayer` isolates the blur filter to just that pass, so it doesn't also
-    /// smear the crisp stroke drawn after it.
-    private var neonRouteTrace: some View {
+    /// Le tracé de la course : un seul trait net, en aplat d'accent, avec un disque au départ et à
+    /// l'arrivée. Pas de dégradé, pas de flou, pas de second passage dessous.
+    private var routeTrace: some View {
         Canvas { context, size in
             // `normalizedRoutePoints` rend un CARRÉ unité : le parcours y est déjà centré et à
             // son vrai rapport de forme. On dessine dans le plus grand carré centré disponible :
@@ -205,22 +174,11 @@ struct RunShareCardView: View {
             path.move(to: first)
             for p in points.dropFirst() { path.addLine(to: p) }
 
-            let gradient = GraphicsContext.Shading.linearGradient(
-                Gradient(colors: [HZJournee.rose, HZJournee.violet]),
-                startPoint: first,
-                endPoint: last
-            )
-            let style = StrokeStyle(lineWidth: HZJournee.traitDuTrace, lineCap: .round, lineJoin: .round)
+            context.stroke(path, with: .color(HZCouleur.accent),
+                           style: StrokeStyle(lineWidth: HZJournee.traitDuTrace, lineCap: .round, lineJoin: .round))
 
-            context.drawLayer { glow in
-                glow.addFilter(.blur(radius: HZJournee.flouDuTrace))
-                glow.opacity = HZJournee.opaciteDuFlou
-                glow.stroke(path, with: gradient, style: StrokeStyle(lineWidth: HZJournee.traitDuFlou, lineCap: .round, lineJoin: .round))
-            }
-            context.stroke(path, with: gradient, style: style)
-
-            context.fill(Path(ellipseIn: HZJournee.pastille(en: first, rayon: HZJournee.rayonDuDepart)), with: .color(HZCouleur.blanc))
-            context.fill(Path(ellipseIn: HZJournee.pastille(en: last, rayon: HZJournee.rayonDeLArrivee)), with: .color(HZCouleur.blanc))
+            context.fill(Path(ellipseIn: HZJournee.pastille(en: first, rayon: HZJournee.rayonDuDepart)), with: .color(valueColor))
+            context.fill(Path(ellipseIn: HZJournee.pastille(en: last, rayon: HZJournee.rayonDeLArrivee)), with: .color(valueColor))
         }
     }
 }

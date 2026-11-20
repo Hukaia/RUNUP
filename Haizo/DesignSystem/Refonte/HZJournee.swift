@@ -62,9 +62,6 @@ enum HZJournee {
 
     static let largeurDeLImage: CGFloat = 360
     static let hauteurDeLImage: CGFloat = 640
-    /// Les couleurs de la marque, épinglées : une image qu'on poste ne change pas avec l'accent.
-    static let rose = HZAccent.rose.couleur
-    static let violet = HZAccent.violet.couleur
     static let deuxCotes: CGFloat = 2
     static let metresParKilometre: Double = 1000
 
@@ -93,38 +90,25 @@ enum HZJournee {
     static let coteDeLaMarque: CGFloat = 22
     static let rayonDeLaMarque: CGFloat = 6
     static let tailleDuLibelle: CGFloat = 16
-    static let interlettrageDuLibelle: CGFloat = 2.5
-    static let interlettrageDuRecord: CGFloat = 2
     static let tailleDeLaDate: CGFloat = 9.5
-    static let interlettrageDeLaDate: CGFloat = 1
-    static let opaciteDeLaDate: Double = 0.85
     static let tailleDeLAdresse: CGFloat = 8
-    static let interlettrageDeLAdresse: CGFloat = 0.5
-    static let opaciteDeLAdresse: Double = 0.6
-    static let opaciteDuSecondaire: Double = 0.9
-    static let lueurSurBlanc: Double = 0.12
-    static let lueurSurMarque: Double = 0.16
-    static let rayonDeLaLueur: CGFloat = 20
+    /// Une mesure qui ne tient pas sur sa ligne rétrécit avant de se couper.
+    static let reductionDeLaMesure: CGFloat = 0.6
     /// La distance, en grand ; le temps et l'allure, en chiffres de tuile.
     static let distanceDeLaCarte = HZAffichage(58, -2.5)
     static let mesureDeLaCarte = HZAffichage.chiffre
 
-    // Le contour qui garde le texte lisible sur n'importe quelle photo.
-    static let halo = HZCouleur.blanc.opacity(0.7)
-    static let haloLarge = HZCouleur.blanc.opacity(0.3)
-    static let ombreDuContour = HZCouleur.noirFranc.opacity(0.55)
-    static let ombreLarge = HZCouleur.noirFranc.opacity(0.25)
-    static let rayonDuContour: CGFloat = 1.5
-    static let decalageDuContour: CGFloat = 1
-    static let rayonDuHalo: CGFloat = 8
-    static let decalageDuHalo: CGFloat = 2
+    /// L'UNIQUE OMBRE de la carte : une seule, douce, posée sur le texte blanc. La carte est
+    /// transparente et se pose sur la photo de la coureuse : du blanc sur un ciel clair ne se lit
+    /// pas sans elle. Les deux autres styles n'en ont pas : le noir est écrit pour les photos
+    /// claires, le style Haizo porte son propre fond.
+    static let ombreDuTexte = HZCouleur.noirFranc.opacity(0.35)
+    static let flouDeLOmbre: CGFloat = 3
+    static let decalageDeLOmbre: CGFloat = 1
 
-    // Le tracé lumineux.
+    // Le tracé : un seul trait net, en aplat d'accent.
     static let margeDuTrace: CGFloat = 20
-    static let traitDuTrace: CGFloat = 4.5
-    static let flouDuTrace: CGFloat = 14
-    static let opaciteDuFlou: Double = 0.65
-    static let traitDuFlou: CGFloat = 10
+    static let traitDuTrace: CGFloat = 4
     static let rayonDuDepart: CGFloat = 4
     static let rayonDeLArrivee: CGFloat = 5
 
@@ -136,23 +120,13 @@ enum HZJournee {
     static let basDeLaVideo: CGFloat = 44
     static let coteDuTraceDeLaVideo: CGFloat = 300
     static let autourDuTraceDeLaVideo: CGFloat = 14
-    static let traitDuTraceDeLaVideo: CGFloat = 3.6
+    static let traitDuTraceDeLaVideo: CGFloat = 4
     static let pointsDuTrace = 320
-    static let opaciteDuHaloRose: Double = 0.38
-    static let opaciteDuHaloViolet: Double = 0.32
-    static let centreDuHaloRose = UnitPoint(x: 0.12, y: 0.10)
-    static let centreDuHaloViolet = UnitPoint(x: 0.92, y: 0.88)
-    static let rayonDuHaloRose: CGFloat = 420
-    static let rayonDuHaloViolet: CGFloat = 390
     static let entreTitreEtDate: CGFloat = 6
     static let margeDuTitreDeLaVideo: CGFloat = 30
     static let lignesDuTitreDeLaVideo = 2
     static let tailleDuLibelleDeLaVideo: CGFloat = 14
-    static let opaciteDeLaDateDeLaVideo: Double = 0.62
-    static let opaciteDuLibelleDeLaVideo: Double = 0.6
     static let margeDesCompteurs: CGFloat = 18
     static let reductionDuCompteur: CGFloat = 0.5
-    static let opaciteDeLaLueurDuCompteur: Double = 0.35
-    static let rayonDeLaLueurDuCompteur: CGFloat = 10
     static let coteDeLaSignature: CGFloat = 24
 }

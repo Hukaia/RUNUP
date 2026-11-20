@@ -15,10 +15,10 @@ applique :
 
     Un dégradé est interdit comme DÉCORATION d'un écran.
     Il reste permis quand il porte une information, quand il rend lisible,
-    ou quand il appartient à une image produite — la marque, un avatar, une carte de partage.
+    ou quand il appartient à une image produite — la marque, un avatar.
 
-Trois exceptions, nommées, comptées, et chacune avec sa raison écrite ci-dessous. Tout le reste
-est refusé. Une liste d'exceptions sans raisons devient une liste de passe-droits ; celle-ci se
+Les exceptions sont nommées, comptées, et chacune porte sa raison écrite ci-dessous. Tout le
+reste est refusé. Une liste d'exceptions sans raisons devient une liste de passe-droits ; celle-ci se
 relit.
 
 # POURQUOI UN COMPTE EXACT PAR FICHIER
@@ -56,10 +56,11 @@ DEGRADE = re.compile(
 #: fichier → (nombre de dégradés autorisés, pourquoi)
 PERMIS = {
     # ── 2. UNE IMAGE PRODUITE, PAS UN ÉCRAN ───────────────────────────────────────────────────
-    "Haizo/Views/Refonte/RunShareCardView.swift": (
-        1, "La carte qu'on partage après une course, style « Haizo ». Même raison."),
-    "Haizo/Views/Refonte/RunVideoFrameView.swift": (
-        3, "Les images d'une vidéo de course, destinées à être publiées. Deux halos et un titre."),
+    #
+    # Elle a tenu deux entrées : la carte de partage (style « Haizo ») et les images de la vidéo
+    # (deux halos et un titre). Les deux sont passées en aplats le 20 novembre — trace d'accent d'un
+    # seul trait, fond noir franc, chiffres blancs — et sont sorties de la liste avec les dégradés
+    # qu'elles couvraient. Une image qu'on poste porte la DA comme un écran.
 
     # ── 3. UN VOILE QUI SERT À LIRE ───────────────────────────────────────────────────────────
 
