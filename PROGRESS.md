@@ -8838,7 +8838,7 @@ Neuf tests (`ProgrammePourUneCourseTests`), dont les fuseaux de Pacific/Auckland
 
 Les trois écrans de la montre (départ, course, bilan) passent aux aplats de l'iPhone : départ en disque blanc de 60 points portant le triangle noir, chiffres gras et
 serrés, libellés en casse de phrase, plus aucune majuscule espacée. Le rose reste `#FF0A78` (décision de Charlotte), en touches : allure, durée, barre de progression.
-Police inchangée (Instrument Sans), symboles SF conservés, boutons de course de 40 points (plancher 30).
+Symboles SF conservés, boutons de course de 40 points (plancher 30). Police : voir « La montre passe en Archivo » ci-dessous.
 
 **Vérifié sur CI** : la montre se compile, et la capture a été refaite (`montre.yml`, trois langues). Une première image avait la phrase du bas collée à l'arête de l'écran
 en anglais : `check_captures_montre.py` l'a refusée, le disque est passé de 72 à 60 points, la seconde passe est propre. Le premier relevé de cette seconde passe a échoué
@@ -8846,3 +8846,15 @@ sur un simulateur occupé (« Busy »), sans rapport avec le code ; relancé, il
 
 **Décisions de Charlotte** : aucune teinte d'alerte dans le système (on laisse comme ça) ; le rose du widget et de la montre reste l'ancien.
 **Pas vérifié** : l'écran de course et le bilan sur une vraie montre (seul l'écran de départ est photographié) ; une montre de 40 mm.
+
+## La montre passe en Archivo (20 novembre) : « oui » de Charlotte
+
+La montre écrit maintenant dans la fonte de l'iPhone, Archivo (`Archivo-Variable.ttf`, embarquée et déclarée dans l'`UIAppFonts` de la cible montre ; les cinq Instrument Sans
+n'y sont plus embarquées). UIKit n'existe pas sur le poignet : `WT.gras/semi/moyen` règlent l'axe de graisse (700, 600, 500) par un descripteur CoreText, largeur 100.
+**Pas reprise : la largeur d'affichage de l'iPhone (125 %)**, qui ferait perdre un quart de place au chrono de 42 points sur un écran de 184 de large.
+`WatchRunMetrics` garde son facteur de ligne 1,211 (celui d'Inter) comme borne haute : la ligne naturelle d'Archivo fait 1,088, donc l'écran de course occupe moins que ce que le calcul annonce.
+
+**Vérifié** : compilation de la cible montre sur CI (run n° 64), `check_fonts` et `check_spec` (une police enregistrée, livrée). La capture de l'écran de départ a été refaite et
+comparée, lettre à lettre, à un rendu d'Archivo et à un rendu d'Instrument Sans : c'est Archivo. Cette comparaison est la seule preuve de chargement : une famille introuvable ne lève
+rien, CoreText rend la police système. **Pas vérifié** : l'écran de course et le bilan, sur une vraie montre. **Resté en Instrument Sans** : le widget et la Live Activity (`DisplayFont`),
+parce que la demande portait sur la montre.
