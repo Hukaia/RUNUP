@@ -8832,4 +8832,17 @@ et le refus ne coûte rien. Rien n'est proposé quand le profil est déjà calé
 **Ce qui ne cale rien, volontairement.** Le triathlon, le duathlon et le HYROX : le calendrier n'a ni leur format ni leur division, et le moteur construirait un plan sans
 natation, sans transitions, sans division. Une course sans distance, passée, ou à la date illisible non plus. On ne devine pas ; la course reste suivie, le programme garde sa forme.
 
-Neuf tests (`ProgrammePourUneCourseTests`), dont les fuseaux de Pacific/Auckland à Pacific/Honolulu et le programme qui reçoit sa date. **Non vérifié à cet instant** : compilation et tests.
+Neuf tests (`ProgrammePourUneCourseTests`), dont les fuseaux de Pacific/Auckland à Pacific/Honolulu et le programme qui reçoit sa date. **Vérifié** : compilation et 933 tests verts (TestFlight n° 654).
+
+## La montre suit la nouvelle DA (20 novembre) : décision de Charlotte, « le rose reste, mais la DA s'adapte »
+
+Les trois écrans de la montre (départ, course, bilan) passent aux aplats de l'iPhone : départ en disque blanc de 60 points portant le triangle noir, chiffres gras et
+serrés, libellés en casse de phrase, plus aucune majuscule espacée. Le rose reste `#FF0A78` (décision de Charlotte), en touches : allure, durée, barre de progression.
+Police inchangée (Instrument Sans), symboles SF conservés, boutons de course de 40 points (plancher 30).
+
+**Vérifié sur CI** : la montre se compile, et la capture a été refaite (`montre.yml`, trois langues). Une première image avait la phrase du bas collée à l'arête de l'écran
+en anglais : `check_captures_montre.py` l'a refusée, le disque est passé de 72 à 60 points, la seconde passe est propre. Le premier relevé de cette seconde passe a échoué
+sur un simulateur occupé (« Busy »), sans rapport avec le code ; relancé, il est passé. L'image de l'App Store (`appstore/requis/montre`) est celle de la nouvelle DA.
+
+**Décisions de Charlotte** : aucune teinte d'alerte dans le système (on laisse comme ça) ; le rose du widget et de la montre reste l'ancien.
+**Pas vérifié** : l'écran de course et le bilan sur une vraie montre (seul l'écran de départ est photographié) ; une montre de 40 mm.
