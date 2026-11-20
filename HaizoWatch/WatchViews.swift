@@ -68,7 +68,7 @@ private enum WT {
     // MARK: Les espaces
 
     enum Espace {
-        static let entre: CGFloat = 6
+        static let entre: CGFloat = 4
         static let margeDePage: CGFloat = 4
         static let margeDePilule: CGFloat = 10
         static let hauteurDePilule: CGFloat = 4
@@ -85,9 +85,9 @@ private enum WT {
 
     enum Forme {
         /// Le bouton de départ : un disque blanc. Bien au-dessus des 44 points de cible minimale.
-        static let disque: CGFloat = 72
+        static let disque: CGFloat = 60
         /// Le triangle de lecture dans ce disque : le corps du symbole. Noir sur le blanc.
-        static let lectureDuDepart: CGFloat = 28
+        static let lectureDuDepart: CGFloat = 24
         /// Le filet au-dessus des mesures. Les glyphes des boutons de la course, eux, suivent
         /// `m.buttonIcon`, que `WatchRunMetrics` met à l'échelle de l'écran.
         static let filet: CGFloat = 1
@@ -136,11 +136,11 @@ private struct WTAppui: ButtonStyle {
 /// anneau de 118 points sur les 248 de l'écran) coupait « Cours à ta sensation — ta séance arrive
 /// de l'iPhone. » en deux par le bord bas. L'écran est dans un `ScrollView`, donc la phrase était
 /// atteignable — en faisant défiler une montre, c'est-à-dire jamais, et c'est cette image-là
-/// qu'Apple et les clientes voient sur la fiche. Le disque fait 72 points : la pile entière —
-/// étiquette, titre sur une ligne, disque, mot, phrase sur deux lignes — mesure environ 185
-/// points (estimés, pas mesurés : aucune montre ici), sous les 214 d'un 45 mm. Sur un 40 mm elle
-/// défile un peu, et la phrase prend la hauteur qu'il lui faut (`fixedSize`) au lieu de celle
-/// qu'on lui laisse.
+/// qu'Apple et les clientes voient sur la fiche. Le disque fait 60 points. Il en faisait 72 à la
+/// première capture de la refonte (CI du 20 novembre) : la phrase anglaise, plus longue, touchait
+/// encore le bord bas, et c'est `check_captures_montre.py` qui l'a vu, pas un œil. Sur un 40 mm
+/// la pile défile un peu, et la phrase prend la hauteur qu'il lui faut (`fixedSize`) au lieu de
+/// celle qu'on lui laisse.
 struct WatchStartView: View {
     @Environment(WatchWorkoutManager.self) private var workout
 
