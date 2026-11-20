@@ -92,5 +92,28 @@ enum WG {
         static let chronoLive: CGFloat = 26
         static let chronoPetit: CGFloat = 30
         static let chronoMoyen: CGFloat = 40
+        /// Le chrono de la Live Activity : un seul chiffre qui domine l'écran verrouillé.
+        static let chronoHero: CGFloat = 52
+        /// Le chiffre d'une tuile (distance, allure) de la Live Activity.
+        static let valeurDeTuile: CGFloat = 22
+    }
+
+    // MARK: Les formes de la Live Activity
+
+    /// Mesurées sur une maquette rendue avec le vrai fichier Archivo, à la taille d'une carte
+    /// d'écran verrouillé (359 points de large) : la carte fait 138 points de haut, sous les 160
+    /// que le système accorde avant de couper.
+    enum Forme {
+        static let rayonDeTuile: CGFloat = 14
+        static let largeurDesTuiles: CGFloat = 116
+        static let ecart: CGFloat = 8
+        static let ecartDeColonnes: CGFloat = 14
+        static let margeHorizontale: CGFloat = 18
+        static let margeVerticale: CGFloat = 16
+        static let tuileHorizontale: CGFloat = 12
+        static let tuileVerticale: CGFloat = 7
+        static let hauteurDeBarre: CGFloat = 6
+        static let pointDEtat: CGFloat = 6
+        static let reductionDuChrono: CGFloat = 0.6
     }
 }

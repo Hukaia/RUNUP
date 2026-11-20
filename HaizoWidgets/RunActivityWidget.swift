@@ -8,11 +8,26 @@ import SwiftUI
 /// live `ThemeStore`/accent color anyway — fixed dark + the brand rose (`WG.rose`), a system
 /// surface outside her in-app theme choice.
 ///
-/// Dans la DA de l'app (`WG`, voir `WidgetStyle.swift`) : noir franc, Archivo, des gris opaques
-/// pour les textes secondaires, des libellés en casse de phrase, l'accent en touches (le titre,
-/// l'état, la barre) — comme le panneau de la séance en direct. La barre avance vers la *durée
-/// prévue* de la séance : le seul vrai « où j'en suis » qu'une `WorkoutSession` suive (il n'y a
-/// pas d'objectif de distance à montrer honnêtement ; les séances sont à durée).
+/// # L'ÉCRAN VERROUILLÉ : UN CHIFFRE, DEUX TUILES, UNE BARRE
+///
+/// C'est l'écran de course de l'app, à l'échelle d'une carte : le chrono domine (52 points, gras,
+/// serré), la distance et l'allure sont posées dans deux tuiles `surfaceSombre`, une barre avance
+/// vers la durée prévue, et l'accent n'est qu'une touche — le point d'état et le remplissage de la
+/// barre. Noir franc, Archivo, des gris opaques, aucun dégradé, aucune ombre.
+///
+/// Deux colonnes plutôt qu'une pile : le chrono et sa barre à gauche, les deux tuiles à droite. La
+/// pile verticale (chrono pleine largeur, puis les tuiles) mesurait 172 points, sous le plafond
+/// de ~160 que le système accorde à une carte d'écran verrouillé — elle aurait été coupée. Celle-ci
+/// en mesure 138, mesurée sur une maquette rendue avec le vrai fichier Archivo.
+///
+/// La barre vient de `elapsedSeconds`, que l'app republie toutes les ~5 secondes : sur 40 minutes
+/// et 300 points, elle avance d'un huitième de point par seconde, ce qui ne se voit pas. Un
+/// `ProgressView(timerInterval:)` la ferait avancer seul, mais en gris système et sans jeton de
+/// rail ; le gain n'existe pas à l'œil, la perte est la cohérence.
+///
+/// Trois états : en direct (point d'accent), en pause (point éteint, chrono et barre en gris),
+/// terminée (coche d'accent, « Sortie terminée »). La barre se masque quand la séance n'a pas de
+/// durée prévue : il n'y a alors rien d'honnête à mesurer.
 struct RunActivityWidget: Widget {
     private static let accent = WG.rose
     private static let bg = WG.noirFranc
@@ -22,34 +37,36 @@ struct RunActivityWidget: Widget {
             lockScreenView(context: context)
         } dynamicIsland: { context in
             DynamicIsland {
+                // Le chrono et l'état à gauche, les deux mesures à droite — la même répartition
+                // que l'écran verrouillé, repliée pour tenir de part et d'autre de la caméra.
                 DynamicIslandExpandedRegion(.leading) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(TimeFormat.distance(km: context.state.distanceKm))
-                            .font(WG.police(WG.Corps.grandChiffre))
-                            .tracking(WG.serre(WG.Corps.grandChiffre))
-                            .foregroundColor(WG.blanc)
-                        Text(verbatim: "km").font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
+                        elapsedText(context.state)
+                            .font(WG.police(WG.Corps.chronoPetit))
+                            .tracking(WG.serre(WG.Corps.chronoPetit))
+                            .monospacedDigit()
+                            .foregroundColor(chronoColor(context.state))
+                            .lineLimit(1)
+                            .minimumScaleFactor(WG.Forme.reductionDuChrono)
+                        statut(context.state)
                     }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text(context.state.paceLabel)
-                            .font(WG.police(WG.Corps.chiffreDeCourse))
-                            .tracking(WG.serre(WG.Corps.chiffreDeCourse))
-                            .foregroundColor(WG.blanc)
-                        Text(verbatim: context.attributes.discipline.rythmeUnite).font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
+                        mesure(TimeFormat.distance(km: context.state.distanceKm), "km",
+                               taille: WG.Corps.chiffre)
+                        mesure(context.state.paceLabel, context.attributes.discipline.rythmeUnite,
+                               taille: WG.Corps.chiffre)
                     }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    HStack(spacing: 6) {
-                        Image(systemName: statusIcon(context.state))
-                        Text(context.attributes.sessionTitle).font(WG.police(WG.Corps.texte, .semi)).lineLimit(1).minimumScaleFactor(0.7)
-                        Spacer()
-                        elapsedText(context.state)
-                            .font(WG.police(WG.Corps.valeur))
-                            .monospacedDigit()
+                    VStack(alignment: .leading, spacing: WG.Forme.ecart - 2) {
+                        barre(context)
+                        Text(context.attributes.sessionTitle)
+                            .font(WG.police(WG.Corps.legende, .semi))
+                            .foregroundColor(WG.secondaireSurSombre)
+                            .lineLimit(1)
                     }
-                    .foregroundColor(WG.blanc)
                 }
             } compactLeading: {
                 Image(systemName: "figure.run").foregroundColor(Self.accent)
@@ -66,80 +83,129 @@ struct RunActivityWidget: Widget {
         }
     }
 
+    // MARK: L'écran verrouillé
+
     private func lockScreenView(context: ActivityViewContext<RunActivityAttributes>) -> some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: WG.Forme.ecart + 2) {
             HStack {
-                Text("Run")
-                    .font(WG.police(WG.Corps.chiffre))
-                    .tracking(WG.serre(WG.Corps.chiffre))
-                    .foregroundColor(Self.accent)
-                Spacer()
-                HStack(spacing: 6) {
-                    Text(context.attributes.sessionTitle)
-                        .font(WG.police(WG.Corps.texte, .semi))
-                        .foregroundColor(WG.secondaireSurSombre)
-                        .lineLimit(1)
-                    statusBadge(context.state)
-                }
+                statut(context.state)
+                Spacer(minLength: WG.Forme.ecart)
+                Text(context.attributes.sessionTitle)
+                    .font(WG.police(WG.Corps.legende, .semi))
+                    .foregroundColor(WG.secondaireSurSombre)
+                    .lineLimit(1)
             }
 
-            HStack {
-                metric(value: TimeFormat.distance(km: context.state.distanceKm), label: "km")
-                Spacer(minLength: 8)
-                // « Allure » était écrit en dur, sous un chiffre qui est des kilomètres-heure dès
-                // qu'on roule. `Discipline` décide, et c'est la même décision que l'écran de
-                // course prend — elle vit dans `Shared`, que cette extension compile aussi.
-                metric(value: context.state.paceLabel, label: context.attributes.discipline.rythmeLabel)
-                Spacer(minLength: 8)
-                VStack(alignment: .trailing, spacing: 2) {
+            HStack(alignment: .center, spacing: WG.Forme.ecartDeColonnes) {
+                VStack(alignment: .leading, spacing: WG.Forme.ecart) {
                     elapsedText(context.state)
-                        .font(WG.police(WG.Corps.chronoLive))
-                        .tracking(WG.serre(WG.Corps.chronoLive))
-                        .foregroundColor(WG.blanc)
-                    Text("Temps").font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
+                        .font(WG.police(WG.Corps.chronoHero))
+                        .tracking(WG.serre(WG.Corps.chronoHero))
+                        .monospacedDigit()
+                        .foregroundColor(chronoColor(context.state))
+                        .lineLimit(1)
+                        .minimumScaleFactor(WG.Forme.reductionDuChrono)
+                    barre(context)
                 }
-            }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            if context.attributes.plannedDurationMinutes > 0 {
-                let plannedSeconds = Double(context.attributes.plannedDurationMinutes * 60)
-                let fraction = max(0, min(1, context.state.elapsedSeconds / plannedSeconds))
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text("Séance").font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
-                        Spacer()
-                        Text("\(context.attributes.plannedDurationMinutes) min prévues")
-                            .font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
-                    }
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(WG.filetSombre)
-                            Capsule().fill(Self.accent).frame(width: geo.size.width * fraction)
-                        }
-                    }
-                    .frame(height: 5)
+                VStack(spacing: WG.Forme.ecart) {
+                    tuile(TimeFormat.distance(km: context.state.distanceKm), "km")
+                    // « Allure » était écrit en dur, sous un chiffre qui est des kilomètres-heure
+                    // dès qu'on roule. `Discipline` décide — la même décision que l'écran de
+                    // course prend, dans `Shared`, que cette extension compile aussi.
+                    tuile(context.state.paceLabel, context.attributes.discipline.rythmeUnite)
                 }
+                .frame(width: WG.Forme.largeurDesTuiles)
             }
         }
-        .padding(18)
+        .padding(.horizontal, WG.Forme.margeHorizontale)
+        .padding(.vertical, WG.Forme.margeVerticale)
         .activityBackgroundTint(Self.bg)
         .activitySystemActionForegroundColor(WG.blanc)
     }
 
-    private func metric(value: String, label: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(value)
-                .font(WG.police(WG.Corps.chronoLive))
-                .tracking(WG.serre(WG.Corps.chronoLive))
+    /// Une mesure dans sa tuile : le chiffre, et l'unité à côté, en gris. Une surface posée sur le
+    /// noir, comme les tuiles de l'app.
+    private func tuile(_ valeur: String, _ unite: String) -> some View {
+        mesure(valeur, unite, taille: WG.Corps.valeurDeTuile)
+            .padding(.horizontal, WG.Forme.tuileHorizontale)
+            .padding(.vertical, WG.Forme.tuileVerticale)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(WG.surfaceSombre, in: RoundedRectangle(cornerRadius: WG.Forme.rayonDeTuile,
+                                                                style: .continuous))
+    }
+
+    private func mesure(_ valeur: String, _ unite: String, taille: CGFloat) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 3) {
+            Text(valeur)
+                .font(WG.police(taille))
+                .tracking(WG.serre(taille))
+                .monospacedDigit()
                 .foregroundColor(WG.blanc)
-            // Sans `LocalizedStringKey`, ces libellés restent français pour tout le monde.
-            Text(LocalizedStringKey(label)).font(WG.police(WG.Corps.etiquette, .semi)).foregroundColor(WG.secondaireSurSombre)
+                .lineLimit(1)
+                .minimumScaleFactor(WG.Forme.reductionDuChrono)
+            Text(verbatim: unite)
+                .font(WG.police(WG.Corps.legende, .semi))
+                .foregroundColor(WG.secondaireSurSombre)
+                .lineLimit(1)
         }
     }
 
-    private func statusBadge(_ state: RunActivityAttributes.ContentState) -> some View {
-        Image(systemName: statusIcon(state))
-            .font(.system(size: 11, weight: .semibold))
-            .foregroundColor(state.isPaused ? WG.secondaireSurSombre : Self.accent)
+    /// L'état : un point d'accent allumé, éteint en pause, ou la coche de la fin, et un mot en
+    /// casse de phrase.
+    private func statut(_ state: RunActivityAttributes.ContentState) -> some View {
+        HStack(spacing: 6) {
+            if state.isEnded {
+                Image(systemName: statusIcon(state))
+                    .font(.system(size: WG.Corps.legende, weight: .semibold))
+                    .foregroundColor(Self.accent)
+            } else {
+                Circle()
+                    .fill(state.isPaused ? WG.pointEteintSombre : Self.accent)
+                    .frame(width: WG.Forme.pointDEtat, height: WG.Forme.pointDEtat)
+            }
+            Text(libelle(state))
+                .font(WG.police(WG.Corps.legende, .semi))
+                .foregroundColor(WG.secondaireSurSombre)
+        }
+    }
+
+    private func libelle(_ state: RunActivityAttributes.ContentState) -> String {
+        if state.isEnded { return String(localized: "Sortie terminée") }
+        return state.isPaused ? String(localized: "En pause") : String(localized: "En direct")
+    }
+
+    /// Le chrono s'éteint en pause : il est figé, et un chiffre blanc qui ne bouge pas se lirait
+    /// comme un chiffre vivant.
+    private func chronoColor(_ state: RunActivityAttributes.ContentState) -> Color {
+        state.isPaused ? WG.secondaireSurSombre : WG.blanc
+    }
+
+    /// La barre vers la durée prévue, et cette durée à droite. Absente quand la séance n'en a pas.
+    @ViewBuilder
+    private func barre(_ context: ActivityViewContext<RunActivityAttributes>) -> some View {
+        let prevues = context.attributes.plannedDurationMinutes
+        if prevues > 0 {
+            let fraction = max(0, min(1, context.state.elapsedSeconds / Double(prevues * 60)))
+            HStack(spacing: WG.Forme.ecart) {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(WG.filetSombre)
+                        Capsule()
+                            .fill(context.state.isPaused ? WG.secondaireSurSombre : Self.accent)
+                            .frame(width: geo.size.width * fraction)
+                    }
+                }
+                .frame(height: WG.Forme.hauteurDeBarre)
+                Text("\(prevues) min")
+                    .font(WG.police(WG.Corps.legende, .semi))
+                    .foregroundColor(WG.secondaireSurSombre)
+                    .lineLimit(1)
+            }
+        } else {
+            EmptyView()
+        }
     }
 
     private func statusIcon(_ state: RunActivityAttributes.ContentState) -> String {
