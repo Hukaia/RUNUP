@@ -341,7 +341,7 @@ struct WatchRunView: View {
             Circle()
                 .fill(enPause ? WT.pointEteint : WT.blanc)
                 .frame(width: m.statusDot, height: m.statusDot)
-            Text(enPause ? "EN PAUSE" : "EN COURS")
+            Text(enPause ? String(localized: "En pause") : String(localized: "En direct"))
                 .font(WT.semi(m.statusText))
                 .foregroundStyle(enPause ? WT.secondaire : WT.blanc)
                 .lineLimit(1)

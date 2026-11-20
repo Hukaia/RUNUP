@@ -151,13 +151,9 @@ PERMIS = {
     #
     # CE QUI LÈVE LA DETTE : refaire la capture montre sur un Mac, puis ces deux entrées
     # disparaissent d'ici. Le compte à zéro fera parler le garde tout seul.
-    "HaizoWatch/WatchViews.swift": (
-        2, "« EN PAUSE » et « EN COURS » sont une dette nommée — voir "
-           "le bloc ci-dessus, la capture montre livrée à Apple est empreintée contre toute la "
-           "cible et ne se refait pas sans machine macOS."),
     "HaizoWidgets/DailyGoalsWidget.swift": (
-        2, "« EN PAUSE » et « EN COURS », par symétrie avec la montre : le même état écrit de "
-           "deux façons sur deux surfaces est pire que les deux en capitales."),
+        2, "« EN PAUSE » et « EN COURS » : le widget garde ses capitales jusqu'à sa propre refonte ; "
+           "la montre, elle, a quitté les siennes le 20 novembre."),
 
     # ── 4. UN MOT QUI EST SUR UN BOUTON DEPUIS LE PREMIER JOUR ────────────────────────────────
     "Haizo/Shared/Discipline.swift": (
