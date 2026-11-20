@@ -8911,5 +8911,7 @@ libellés espacés, lueur rose). Ils sont en aplats : un trait net d'accent, Arc
 maintenant photographiée (`feuille-debrief`, `feuille-debrief-bas`). **« Donner mon ressenti » reste en accent** : la première reprise l'avait passé au noir, ce qui allait à contre-courant de la demande ; annulé.
 Vérifié sur les captures CI (résumé, carte de partage, feuille du débrief). **Pas vérifié** : l'ombre du style Blanc sur une vraie photo claire ; la vidéo exportée.
 
-**Restes** : les clés « KM » et « M D+ » du catalogue n'ont plus d'usage (aucun contrôle ne les signale) ; `test_model_defaults` échoue (20 cas sur 21) sans rapport avec ces fichiers, à regarder ;
-`AccentColor` de l'app vaut `#FF0F5B`, un autre rose, non touché.
+**Restes** : les clés « KM » et « M D+ » du catalogue n'ont plus d'usage (aucun contrôle ne les signale). Corrections du même jour : `test_model_defaults.py` passe 21 cas sur 21 — j'avais écrit qu'il
+échouait parce que je l'avais lancé depuis la racine du dépôt ; il se lance depuis `ci_scripts`, comme `testflight.yml`. Et `AccentColor` (la couleur d'accent par défaut de l'app, celle que iOS utilise pour ce qu'il
+dessine lui-même : boutons d'alerte, feuille de partage, curseur de saisie, interrupteurs ; ce n'est pas l'icône de l'app) valait `#FF0F5B`, un troisième rose : elle vaut maintenant `#FF2E6E`, celui de
+`HZAccent.rose`. Elle ne suit pas le choix de la personne (violet, bleu, vert) : une ressource ne se règle pas à l'exécution ; ces éléments système restent roses pour elle.
