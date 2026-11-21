@@ -8939,3 +8939,27 @@ l'usage.
 **Un garde** : `check_tirets.py` (et `test_tirets.py`, 8 cas) lit le catalogue, clés et traductions, et refuse tout tiret cadratin ; étape `testflight.yml`. Le « — » SEUL (espace réservé d'une valeur absente) est permis.
 **Restes volontaires** : les commentaires de code, les messages d'assertion des tests, les textes de développement (`Sauvegarde`), le « — » seul. **Pas vérifié** : le rendu de chaque phrase à l'écran ; certaines sont un peu plus
 longues et pourraient serrer dans un gabarit étroit. La capture montre, dont la phrase du bas a changé (« Cours à ta sensation. Ta séance arrive de l'iPhone. »), a été refaite et regardée dans les trois langues.
+
+## Le widget d'accueil devient l'accueil en miniature (21 novembre) : « le widget est vraiment naze comparé à l'app »
+
+**Le constat.** Le widget avait pris la nouvelle DA (Archivo, jetons, aplats) le 20 novembre, mais gardait sa
+mise en page d'avant : un anneau et des libellés gris. L'accueil de l'app est une affiche, avec un grand chiffre
+dans l'accent. Même fonte, deux objets sans rapport.
+
+**Ce qui change.** Fond noir `0B0B0C` dans les deux modes (comme l'en-tête de l'accueil). Semaine en points, aujourd'hui
+cerclé, série en pastille. Le grand chiffre de la séance du jour dans l'accent (Archivo 800, largeur 125, jusqu'à
+rétrécir de moitié plutôt que d'être coupé), son préfixe (« 5 × »), son titre, ses mesures. Le moyen ajoute l'anneau des
+objectifs (« 2/3 », « bouclés ») et la date. Jour de repos : « Off ». Séance faite : « Fait ».
+
+**La séance voyage dans l'instantané** (`heroPrefixe/Nombre/Titre/Mesures/Faite`), composée par `AccueilModele.hero`,
+la même fonction que l'accueil : le widget ne recompose rien. Champs optionnels, décodés avec `decodeIfPresent` : un
+instantané ancien n'a pas de séance et le widget retombe sur l'anneau seul, sans inventer de chiffre
+(`WidgetWeekStripTests`).
+
+**Ce que le widget perd, dit sans détour.** Le moyen n'affiche plus les lignes calories et pas (« 110 kcal restantes »,
+« 2400 pas ») : l'anneau reste, mais plus leurs légendes. Description de la galerie : « La séance du jour et tes
+objectifs, d'un coup d'œil. » (en/es traduits).
+
+**Non vérifié ici.** Aucune capture de widget en CI et pas de simulateur : le rendu réel (surtout la largeur du grand chiffre
+en petit, et les titres longs) reste à regarder sur l'iPhone. Le chiffre rétrécit (`minimumScaleFactor` 0,5) plutôt que d'être
+coupé ; mesuré sur une maquette avec le vrai fichier Archivo, pas sur WidgetKit.
