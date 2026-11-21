@@ -330,6 +330,8 @@ struct DailyGoalsWidgetView: View {
                 Spacer(minLength: 0)
                 if snapshot.streak > 0 { serie }
             }
+            // Un Spacer de chaque côté : la séance est centrée dans la hauteur qui reste sous la
+            // semaine, et ne colle plus au bord bas du widget.
             Spacer(minLength: 0)
             if aUneSeance {
                 affiche(avecMesures: true)
@@ -339,8 +341,8 @@ struct DailyGoalsWidgetView: View {
                     anneau(taille: WG.Forme.anneauDuPetit)
                     Spacer(minLength: 0)
                 }
-                Spacer(minLength: 0)
             }
+            Spacer(minLength: 0)
         }
         .padding(WG.Forme.margeDuWidget)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
