@@ -140,7 +140,7 @@ enum WG {
         static let reductionDuGrandNombre: CGFloat = 0.5
         static let margeDuWidget: CGFloat = 14
         static let margeDuWidgetMoyen: CGFloat = 16
-        static let ecartDesPoints: CGFloat = 7
+        static let ecartDesPoints: CGFloat = 5
         static let pointDeLaSemaine: CGFloat = 7
         static let traitDuJour: CGFloat = 2
         static let anneauDuMoyen: CGFloat = 84

@@ -408,9 +408,10 @@ struct DailyGoalsWidgetView: View {
                 // Mesuré contre la largeur qu'on lui laisse, et collé au bord gauche : sans cadre,
                 // un nombre plus large que la colonne était centré sur elle et sortait des deux côtés.
                 .frame(maxWidth: .infinity, alignment: .leading)
+            // Pas d'interlettrage négatif sur le titre : à 15 points, il mangeait les espaces
+            // (« Jourde repos »). Il ne sert qu'aux grands chiffres.
             Text(snapshot.heroTitre ?? "")
                 .font(WG.police(WG.Corps.titre))
-                .tracking(WG.serre(WG.Corps.titre))
                 .foregroundColor(WG.blanc)
                 .lineLimit(1)
                 .minimumScaleFactor(WG.Forme.reductionDuChrono)
@@ -474,6 +475,10 @@ struct DailyGoalsWidgetView: View {
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
         .background(WG.surfaceSombre, in: Capsule())
+        // Jamais comprimée : dans le petit widget, la semaine et la pastille se disputent 130
+        // points, et la pastille perdait son chiffre (vu sur le rendu du 21 novembre).
+        .fixedSize()
+        .layoutPriority(1)
     }
 
     private var accessibiliteDeLaSeance: Text {

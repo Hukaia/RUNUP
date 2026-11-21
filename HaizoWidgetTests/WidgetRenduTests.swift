@@ -30,7 +30,7 @@ final class WidgetRenduTests: XCTestCase {
     // MARK: Les cas
 
     /// Un jeudi, parce que la pastille du jour se calcule depuis la date.
-    private let jeudi = Date(timeIntervalSince1970: 1_763_553_600) // 2025-11-19 12:00 UTC
+    private let jeudi = Date(timeIntervalSince1970: 1795089600) // 2026-11-19 12:00 UTC
 
     private let semaine: [WidgetWeekDay] = [
         WidgetWeekDay(letter: "L", isDone: true, isToday: false),
@@ -91,11 +91,11 @@ final class WidgetRenduTests: XCTestCase {
                 ecrites += 1
             }
             // Et la course en cours, qui remplace la séance sur le même emplacement.
-            let course = LiveRunWidgetSnapshot(startedAt: jeudi.addingTimeInterval(-1_425),
+            let course = LiveRunWidgetSnapshot(startedAt: Date().addingTimeInterval(-1_425),
                                                elapsedSeconds: 1_425, isPaused: false,
                                                distanceKm: 4.62, rythmeValeur: "5:09",
                                                sessionTitle: "Footing endurance",
-                                               disciplineRaw: nil, publishedAt: jeudi)
+                                               disciplineRaw: nil, publishedAt: Date())
             let vue = DailyGoalsWidgetView(snapshot: instantane(), entryDate: jeudi, course: course,
                                            familleImposee: t.famille)
             try ecrire(vue, t, "course-\(t.nom)", dans: dossier, fond: WG.noirFranc)
