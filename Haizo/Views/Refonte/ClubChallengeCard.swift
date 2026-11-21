@@ -36,7 +36,7 @@ struct ClubChallengeCard: View {
                 HZTitreDeSection(titre: String(localized: "Défi du club"), lien: String(localized: "Créer")) {
                     showManagement = true
                 }
-                HZPhrase(texte: String(localized: "Aucun défi en cours — un objectif de kilomètres à se partager, avec une date de fin."))
+                HZPhrase(texte: String(localized: "Aucun défi en cours : un objectif de kilomètres à se partager, avec une date de fin."))
             }
         }
     }
@@ -49,6 +49,6 @@ struct ClubChallengeCard: View {
         let base = "\(Int(defi.progressKm)) / \(Int(defi.targetKm)) km"
         guard defi.targetKm > 0 else { return base }
         let pourcent = Int((defi.progressKm / defi.targetKm * HZHub.centPourcent).rounded())
-        return "\(base) — \(pourcent) %"
+        return "\(base) · \(pourcent) %"
     }
 }

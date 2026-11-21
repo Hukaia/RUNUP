@@ -74,11 +74,11 @@ enum PanneReseau {
     static func phrase(pour erreur: Error) -> String {
         switch cause(de: erreur) {
         case .sessionExpiree:
-            return String(localized: "Ta session a expiré — reconnecte-toi.")
+            return String(localized: "Ta session a expiré. Reconnecte-toi.")
         case .serveur:
-            return String(localized: "Haizo ne répond pas pour l'instant — réessaie dans un moment.")
+            return String(localized: "Haizo ne répond pas pour l'instant. Réessaie dans un moment.")
         case .reseau:
-            return String(localized: "Pas de connexion — réessaie quand tu auras du réseau.")
+            return String(localized: "Pas de connexion. Réessaie quand tu auras du réseau.")
         }
     }
 

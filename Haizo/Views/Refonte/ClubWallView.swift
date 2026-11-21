@@ -34,8 +34,8 @@ struct ClubWallView: View {
                     ClubAloneCard(magasin: magasin)
                 } else {
                     HZPhrase(texte: Accord.selon(
-                        f: String(localized: "Personne n'a encore rien posté — sois la première !"),
-                        m: String(localized: "Personne n'a encore rien posté — sois le premier !")))
+                        f: String(localized: "Personne n'a encore rien posté. Sois la première !"),
+                        m: String(localized: "Personne n'a encore rien posté. Sois le premier !")))
                 }
             }
             ForEach(MurDuClub.entrees(sorties: magasin.feed, messages: magasin.posts), id: \.id) { entree in

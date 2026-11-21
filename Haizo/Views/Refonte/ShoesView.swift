@@ -83,7 +83,7 @@ struct ShoesView: View {
     private var feuille: some View {
         VStack(alignment: .leading, spacing: HZEspace.entreSections) {
             if shoes.isEmpty {
-                HZPhrase(texte: String(localized: "Ajoute une paire pour suivre son usure — chaque course lui est attribuée automatiquement une fois que c'est ta paire par défaut."),
+                HZPhrase(texte: String(localized: "Ajoute une paire pour suivre son usure. Chaque course lui est attribuée automatiquement une fois que c'est ta paire par défaut."),
                          titre: String(localized: "Aucune paire"))
             } else {
                 LazyVStack(spacing: HZEspace.entreTuiles) {

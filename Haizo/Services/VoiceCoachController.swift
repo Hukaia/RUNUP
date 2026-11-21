@@ -54,7 +54,7 @@ final class VoiceCoachController: NSObject {
     /// Called by the mic button when the system permission request comes back denied — the
     /// controller can't know that itself (the view owns the request flow).
     func reportAuthorizationDenied() {
-        reportError(String(localized: "Micro non autorisé — active-le dans Réglages > Haizo."))
+        reportError(String(localized: "Micro non autorisé : active-le dans Réglages > Haizo."))
     }
 
     private let profile: UserProfile
@@ -105,7 +105,7 @@ final class VoiceCoachController: NSObject {
             return
         }
         guard let recognitionRequest = try? configureAudioSession() else {
-            reportError(String(localized: "Micro indisponible — vérifie l'autorisation dans Réglages > Haizo."))
+            reportError(String(localized: "Micro indisponible : vérifie l'autorisation dans Réglages > Haizo."))
             return
         }
 
@@ -180,10 +180,10 @@ final class VoiceCoachController: NSObject {
                 // c'est le coach à qui on parle de douleurs et de poids. L'écrit le distinguait
                 // déjà (voir `CoachViewModel`) ; la voix, non.
                 self.state = .idle
-                self.reportError(String(localized: "Le coach n'a pas pu répondre à ça — reformule autrement."))
+                self.reportError(String(localized: "Le coach n'a pas pu répondre à ça. Reformule autrement."))
             } catch {
                 self.state = .idle
-                self.reportError(String(localized: "Le coach n'a pas pu répondre — \(PanneReseau.motif(pour: error))."))
+                self.reportError(String(localized: "Le coach n'a pas pu répondre : \(PanneReseau.motif(pour: error))."))
             }
         }
     }

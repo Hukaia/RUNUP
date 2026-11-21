@@ -189,7 +189,7 @@ final class WatchSessionService: NSObject {
 
         appState.pendingDebriefs.append(record)
         let distance = String(format: "%.1f", locale: Locale.current, record.distanceKm)
-        appState.notify(icon: "applewatch", colorHex: AppNotification.accent, title: String(localized: "Course reçue de ta montre"), text: String(localized: "\(record.title) · \(distance) km — valide ton ressenti pour mettre à jour le programme."))
+        appState.notify(icon: "applewatch", colorHex: AppNotification.accent, title: String(localized: "Course reçue de ta montre"), text: String(localized: "\(record.title) · \(distance) km. Valide ton ressenti pour mettre à jour le programme."))
         // Sans emoji : la règle 7 les interdit, et celui-ci ne disait rien que la notification
         // juste au-dessus ne dise déjà — elle porte le symbole `applewatch`. `check_emoji.py`
         // l'a trouvé à sa première exécution, dans les trois langues.

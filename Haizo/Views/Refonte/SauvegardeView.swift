@@ -41,7 +41,7 @@ struct CarteDeSauvegarde: View {
             Button(action: preparerLExport) {
                 HZLigneDeReglage(
                     titre: String(localized: "Exporter mes données"),
-                    precision: String(localized: "Un fichier à ranger où tu veux. Il contient tout — ton historique, ta conversation avec le coach, tes chaussures, ta série. Il ne part sur aucun serveur.")) {
+                    precision: String(localized: "Un fichier à ranger où tu veux. Il contient tout : ton historique, ta conversation avec le coach, tes chaussures, ta série. Il ne part sur aucun serveur.")) {
                     HZChevron()
                 }
                 .contentShape(Rectangle())
@@ -133,7 +133,7 @@ struct BoutonDeRestauration<Label: View>: View {
                 case .fichierIllisible:
                     message = String(localized: "Ce fichier n'est pas une sauvegarde Haizo, ou il est abîmé.")
                 case .enregistrementImpossible:
-                    message = String(localized: "Ta sauvegarde a bien été lue, mais rien n'a pu être écrit — il n'y a sans doute plus de place sur ton téléphone. Fais de la place et recommence : le fichier est intact.")
+                    message = String(localized: "Ta sauvegarde a bien été lue, mais rien n'a pu être écrit. Il n'y a sans doute plus de place sur ton téléphone. Fais de la place et recommence : le fichier est intact.")
                 case .baseNonVide:
                     message = String(localized: "Tes données sont déjà là. Une restauration ne s'applique qu'à une app qui repart de zéro : elle ne sait pas fusionner deux historiques sans risquer d'en perdre.")
                 }

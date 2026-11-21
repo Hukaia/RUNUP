@@ -76,7 +76,7 @@ struct DuathlonRaceDaySheet: View {
     /// pris d'avance avant compte contre soi.
     private var phraseDeLaJournee: LocalizedStringKey {
         DuathlonRaceDay.secondeCourseAuMoinsAussiLongue(format)
-            ? "Le vélo prend plus de la moitié de la journée, mais la seconde course est aussi longue que la première — parfois bien plus. Tout ce que tu auras pris d'avance avant comptera contre toi là."
+            ? "Le vélo prend plus de la moitié de la journée, mais la seconde course est aussi longue que la première. Parfois bien plus. Tout ce que tu auras pris d'avance avant comptera contre toi là."
             : "Le vélo prend près de la moitié de la journée, et la seconde course à peine un sixième. Elle est courte : c'est ce qui donne envie de partir vite sur la première, et c'est l'erreur."
     }
 
@@ -103,7 +103,7 @@ struct DuathlonRaceDaySheet: View {
         VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
             HZTitreDeSection(titre: String(localized: "Le vélo est la seule fenêtre"))
 
-            HZParagrapheDeCourse(Text("Rien avant : la première course se fait à vide, et c'est sans conséquence, elle est courte. Rien après non plus — à pied, sur un estomac déjà secoué, presque tout est refusé."))
+            HZParagrapheDeCourse(Text("Rien avant : la première course se fait à vide, et c'est sans conséquence, elle est courte. Rien après non plus : à pied, sur un estomac déjà secoué, presque tout est refusé."))
 
             if connu {
                 HZChiffresDeCourse(chiffres: [
@@ -112,7 +112,7 @@ struct DuathlonRaceDaySheet: View {
                 ])
             }
 
-            HZParagrapheDeCourse(Text("Tout ce dont la seconde course aura besoin se prend sur la selle. Pas idéalement : c'est la règle. Et ça se teste à l'entraînement, sur les enchaînements — jamais le jour J."))
+            HZParagrapheDeCourse(Text("Tout ce dont la seconde course aura besoin se prend sur la selle. Pas idéalement : c'est la règle. Et ça se teste à l'entraînement, sur les enchaînements, jamais le jour J."))
         }
     }
 
@@ -152,7 +152,7 @@ struct DuathlonRaceDaySheet: View {
 
     private var phraseDeT1: LocalizedStringKey {
         LocalizedStringKey(Accord.selon(
-            f: String(localized: "Elles méritent quand même d'être répétées une fois — non pour le chrono, mais pour ne pas découvrir en pleine course qu'on a oublié quelque chose. T1 surtout : on y arrive déjà essoufflée, et c'est là qu'on enfile un casque à l'envers."),
-            m: String(localized: "Elles méritent quand même d'être répétées une fois — non pour le chrono, mais pour ne pas découvrir en pleine course qu'on a oublié quelque chose. T1 surtout : on y arrive déjà essoufflé, et c'est là qu'on enfile un casque à l'envers.")))
+            f: String(localized: "Elles méritent quand même d'être répétées une fois, non pour le chrono, mais pour ne pas découvrir en pleine course qu'on a oublié quelque chose. T1 surtout : on y arrive déjà essoufflée, et c'est là qu'on enfile un casque à l'envers."),
+            m: String(localized: "Elles méritent quand même d'être répétées une fois, non pour le chrono, mais pour ne pas découvrir en pleine course qu'on a oublié quelque chose. T1 surtout : on y arrive déjà essoufflé, et c'est là qu'on enfile un casque à l'envers.")))
     }
 }

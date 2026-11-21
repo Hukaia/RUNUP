@@ -218,7 +218,7 @@ struct PublicProfileView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, HZFil.enAttente)
         } else if let loadError {
-            HZPhrase(texte: String(localized: "Impossible d'ouvrir ce profil — \(loadError)."))
+            HZPhrase(texte: String(localized: "Impossible d'ouvrir ce profil : \(loadError)."))
         } else if let profil {
             VStack(alignment: .leading, spacing: HZProfil.entreSections) {
                 badges(profil)
@@ -319,7 +319,7 @@ struct PublicProfileView: View {
             Haptics.impact(.light)
             await charger()
         } catch {
-            appState.toast(String(localized: "Impossible de mettre à jour — réessaie."))
+            appState.toast(String(localized: "Impossible de mettre à jour. Réessaie."))
         }
         enCours = false
     }
@@ -332,7 +332,7 @@ struct PublicProfileView: View {
             page?.items[index].kudos += maintenant ? 1 : -1
             Haptics.impact(.light)
         } catch {
-            appState.toast(String(localized: "Impossible d'applaudir — réessaie."))
+            appState.toast(String(localized: "Impossible d'applaudir. Réessaie."))
         }
     }
 

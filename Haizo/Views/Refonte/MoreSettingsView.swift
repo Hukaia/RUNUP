@@ -249,7 +249,7 @@ struct MoreSettingsView: View {
             ForEach(Array(layout.secondary.enumerated()), id: \.offset) { index, metric in
                 emplacement(index, metric: metric, layout: layout)
             }
-            Text("La barre de progression suit toujours la durée de la séance, quel que soit le grand chiffre — c'est le seul objectif qu'une séance porte.")
+            Text("La barre de progression suit toujours la durée de la séance, quel que soit le grand chiffre : c'est le seul objectif qu'une séance porte.")
                 .hzParagraphe(.c13, .medium, interligne: HZReglages.interligne)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
                 .fixedSize(horizontal: false, vertical: true)
@@ -341,7 +341,7 @@ struct MoreSettingsView: View {
                 // puisse courir librement.
                 plusDestination(String(localized: "Passer en mode course libre"), filet: terminer) {
                     AdaptivePlanEngine.chooseFreeRun(profile)
-                    appState.toast(String(localized: "Mode course libre activé — suggestions sans objectif de perf"))
+                    appState.toast(String(localized: "Mode course libre activé : suggestions sans objectif de perf"))
                     dismiss()
                 }
             }
@@ -448,7 +448,7 @@ struct MoreSettingsView: View {
         // première. Le destinataire est NOMMÉ : une phrase qui dit « partager avec le coach » sans
         // dire que le coach est un service extérieur ne demande pas grand-chose.
         MoreSettingsLigne(titre: String(localized: "Partager ma phase avec le coach"),
-                          precision: String(localized: "Ta phase estimée est alors envoyée au service qui fait tourner le coach, pour qu'il adapte son ton. Sans ça, ton programme continue de s'adapter exactement pareil — le calcul se fait sur ton téléphone.")) {
+                          precision: String(localized: "Ta phase estimée est alors envoyée au service qui fait tourner le coach, pour qu'il adapte son ton. Sans ça, ton programme continue de s'adapter exactement pareil. Le calcul se fait sur ton téléphone.")) {
             interrupteur(Binding(get: { profile.shareCyclePhaseWithCoach },
                                  set: { profile.shareCyclePhaseWithCoach = $0 }))
                 .accessibilityLabel("Partager ma phase de cycle avec le coach")
@@ -525,7 +525,7 @@ struct MoreSettingsView: View {
     private var confidentialite: some View {
         HZGroupeDeReglages(titre: String(localized: "Confidentialité")) {
             MoreSettingsLigne(titre: String(localized: "Statistiques d'usage"),
-                              precision: String(localized: "Douze moments du parcours — l'app s'ouvre, une étape est franchie, une course démarre. Jamais ce que tu écris, jamais ta position, jamais rien d'Apple Santé. Si tu refuses, aucune statistique n'est envoyée et ce qui était gardé est effacé."),
+                              precision: String(localized: "Douze moments du parcours. L'app s'ouvre, une étape est franchie, une course démarre. Jamais ce que tu écris, jamais ta position, jamais rien d'Apple Santé. Si tu refuses, aucune statistique n'est envoyée et ce qui était gardé est effacé."),
                               filet: false) {
                 interrupteur(Binding(
                     get: { Analytics.shared.consentement == .accepte },
@@ -700,7 +700,7 @@ struct MoreSettingsView: View {
         HZGroupeDeReglages(titre: String(localized: "Aide et retours")) {
             Link(destination: feedbackMailURL) {
                 plusLigneDeDestination(String(localized: "Nous écrire"),
-                                       precision: String(localized: "Un bug, une idée, un truc qui t'a gênée — ça part par mail."),
+                                       precision: String(localized: "Un bug, une idée, un truc qui t'a gênée : ça part par mail."),
                                        filet: false)
             }
             .buttonStyle(.plain)
@@ -716,7 +716,7 @@ struct MoreSettingsView: View {
         components.queryItems = [
             // Le sujet portait « bêta » lui aussi. Il sert à trier les messages reçus : la
             // version et le build sont déjà dans le corps, ils suffisent à savoir d'où ça vient.
-            URLQueryItem(name: "subject", value: "Haizo — retour utilisateur"),
+            URLQueryItem(name: "subject", value: "Haizo · retour utilisateur"),
             URLQueryItem(name: "body", value: body)
         ]
         return components.url!
@@ -746,9 +746,9 @@ struct MoreSettingsView: View {
         } catch ClubServiceError.badResponse(HZCompte.pseudoPris, _) {
             identityError = String(localized: "Ce pseudo est déjà pris.")
         } catch ClubServiceError.badResponse(HZCompte.pseudoInvalide, _) {
-            identityError = String(localized: "Pseudo invalide — lettres minuscules, chiffres, underscore, 3 à 20 caractères.")
+            identityError = String(localized: "Pseudo invalide : lettres minuscules, chiffres, underscore, 3 à 20 caractères.")
         } catch ClubServiceError.badResponse(HZCompte.nomRefuse, _) {
-            identityError = String(localized: "Ce nom n'est pas autorisé — choisis-en un autre.")
+            identityError = String(localized: "Ce nom n'est pas autorisé. Choisis-en un autre.")
         } catch {
             identityError = PanneReseau.phrase(pour: error)
         }
@@ -762,7 +762,7 @@ struct MoreSettingsView: View {
             appState.toast(String(localized: "Compte supprimé"))
             dismiss()
         } catch {
-            appState.toast(String(localized: "Impossible de supprimer le compte — réessaie."))
+            appState.toast(String(localized: "Impossible de supprimer le compte. Réessaie."))
         }
         isDeletingAccount = false
     }

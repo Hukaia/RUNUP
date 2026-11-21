@@ -50,11 +50,11 @@ enum CoachLanguage: String, CaseIterable {
     var styleDirective: String {
         switch self {
         case .french:
-            return "Style : réponds TOUJOURS en français, tutoiement, chaleureux, motivant, TRÈS concret et bref (2-4 phrases max)."
+            return "Style : réponds TOUJOURS en français, tutoiement, chaleureux, motivant, TRÈS concret et bref (2-4 phrases max). Jamais de tiret cadratin (—) : des phrases courtes, des virgules, des deux-points."
         case .english:
-            return "Style: ALWAYS reply in English, warm, motivating, very concrete and brief (2-4 sentences max)."
+            return "Style: ALWAYS reply in English, warm, motivating, very concrete and brief (2-4 sentences max). Never use em dashes (—): short sentences, commas, colons."
         case .spanish:
-            return "Estilo: responde SIEMPRE en español, tuteando, cercano, motivador, muy concreto y breve (2-4 frases máximo)."
+            return "Estilo: responde SIEMPRE en español, tuteando, cercano, motivador, muy concreto y breve (2-4 frases máximo). No uses nunca la raya (—): frases cortas, comas, dos puntos."
         }
     }
 
@@ -63,11 +63,11 @@ enum CoachLanguage: String, CaseIterable {
     var liveVoiceDirective: String {
         switch self {
         case .french:
-            return "Réponds TOUJOURS en français, en UNE SEULE phrase courte (15 mots maximum), à l'oral, actionnable dans l'instant — elle ne peut pas lire, la réponse est lue à voix haute. Aucun emoji, aucune ponctuation exotique. Tutoiement, chaleureux, direct."
+            return "Réponds TOUJOURS en français, en UNE SEULE phrase courte (15 mots maximum), à l'oral, actionnable dans l'instant — elle ne peut pas lire, la réponse est lue à voix haute. Aucun emoji, aucune ponctuation exotique, jamais de tiret cadratin. Tutoiement, chaleureux, direct."
         case .english:
-            return "ALWAYS reply in English, in ONE SHORT sentence (15 words maximum), spoken aloud, actionable right now — she cannot read, the reply is read out loud. No emoji, no unusual punctuation. Warm and direct."
+            return "ALWAYS reply in English, in ONE SHORT sentence (15 words maximum), spoken aloud, actionable right now — she cannot read, the reply is read out loud. No emoji, no unusual punctuation, never an em dash. Warm and direct."
         case .spanish:
-            return "Responde SIEMPRE en español, en UNA SOLA frase corta (15 palabras máximo), hablada, accionable al instante — no puede leer, la respuesta se lee en voz alta. Sin emojis ni puntuación rara. Tuteando, cercano y directo."
+            return "Responde SIEMPRE en español, en UNA SOLA frase corta (15 palabras máximo), hablada, accionable al instante — no puede leer, la respuesta se lee en voz alta. Sin emojis ni puntuación rara, nunca la raya. Tuteando, cercano y directo."
         }
     }
 }

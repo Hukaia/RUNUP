@@ -327,7 +327,7 @@ def _():
     trouves = [cle for _, cle in ck.litteraux_des_methodes_localisees(source)]
     # Les trois du GPS sortaient en français chez tout le monde : `bannerBody` prenait un
     # `String`, donc `Text(text)` ne consultait jamais le catalogue où elles étaient traduites.
-    assert "Localisation refusée — ouvrir les Réglages" in trouves, trouves
+    assert "Localisation refusée : ouvrir les Réglages" in trouves, trouves
     assert len(trouves) >= 5, trouves
 
 

@@ -48,8 +48,8 @@ struct ActivityCommentsSheet: View {
                     if comments.isEmpty {
                         // La feuille s'intitule déjà « Commentaires » : la phrase seule suffit.
                         HZPhrase(texte: Accord.selon(
-                            f: String(localized: "Aucun commentaire pour l'instant — sois la première !"),
-                            m: String(localized: "Aucun commentaire pour l'instant — sois le premier !")))
+                            f: String(localized: "Aucun commentaire pour l'instant. Sois la première !"),
+                            m: String(localized: "Aucun commentaire pour l'instant. Sois le premier !")))
                     }
                     ForEach(comments) { comment in
                         ligne(comment)
@@ -121,7 +121,7 @@ struct ActivityCommentsSheet: View {
             Haptics.impact(.light)
             onCommentPosted()
         } catch ClubServiceError.badResponse(let code, _) where code == HZHub.refuse {
-            errorMessage = String(localized: "Ce message n'est pas autorisé — reformule-le.")
+            errorMessage = String(localized: "Ce message n'est pas autorisé. Reformule-le.")
         } catch {
             errorMessage = String(localized: "Impossible d'envoyer, réessaie.")
         }

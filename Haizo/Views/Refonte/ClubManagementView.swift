@@ -635,7 +635,7 @@ struct ClubMemberProfileView: View {
             isEditingBio = false
             Haptics.success()
         } catch ClubServiceError.badResponse(let code, _) where code == HZHub.refuse {
-            bioError = String(localized: "Ce texte n'est pas autorisé — reformule-le.")
+            bioError = String(localized: "Ce texte n'est pas autorisé. Reformule-le.")
         } catch {
             bioError = String(localized: "Impossible d'enregistrer, réessaie.")
         }
@@ -711,7 +711,7 @@ struct CreateChallengeSheet: View {
             Haptics.success()
             dismiss()
         } catch ClubServiceError.badResponse(let code, _) where code == HZHub.refuse {
-            errorMessage = String(localized: "Ce nom n'est pas autorisé — choisis-en un autre.")
+            errorMessage = String(localized: "Ce nom n'est pas autorisé. Choisis-en un autre.")
         } catch {
             errorMessage = String(localized: "Impossible de créer le défi, réessaie.")
         }
@@ -827,7 +827,7 @@ struct CreateEventSheet: View {
             VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
                 HZChampDeTexte(titre: String(localized: "Groupes d'allure (facultatif)"),
                                invite: String(localized: "Ex. 4:30, 5:15, 6:00"), texte: $groupes)
-                Text("Séparés par des virgules. Chacun choisit le sien en disant « J'y serai » — c'est ce qui dit combien de meneurs prévoir.")
+                Text("Séparés par des virgules. Chacun choisit le sien en disant « J'y serai ». C'est ce qui dit combien de meneurs prévoir.")
                     .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
                     .foregroundStyle(HZCouleur.secondaireSurClair)
                     .fixedSize(horizontal: false, vertical: true)
@@ -849,7 +849,7 @@ struct CreateEventSheet: View {
             Haptics.success()
             dismiss()
         } catch ClubServiceError.badResponse(let code, _) where code == HZHub.refuse {
-            errorMessage = String(localized: "Ce texte n'est pas autorisé — reformule.")
+            errorMessage = String(localized: "Ce texte n'est pas autorisé. Reformule.")
         } catch {
             errorMessage = existant == nil
                 ? String(localized: "Impossible de proposer la sortie, réessaie.")

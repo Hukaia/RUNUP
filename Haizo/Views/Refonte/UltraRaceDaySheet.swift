@@ -63,7 +63,7 @@ struct UltraRaceDaySheet: View {
                     m: String(localized: "Une prise toutes les \(UltraRaceDay.minutesEntreDeuxPrises) minutes, à la montre. « Manger régulièrement » ne se fait pas : une consigne sans horloge ne tient pas quand on est fatigué.")),
                 String(localized: "Du salé dès la première heure. Six heures de sucré, personne ne les tient, et c'est le dégoût, pas la faim, qui fait arrêter de manger."),
                 String(localized: "Bois par petites gorgées, souvent. Un demi-litre avalé d'un coup au ravitaillement ressort au premier raidillon."),
-                String(localized: "Rien de nouveau le jour J. Ce que tu mangeras en course, tu l'as déjà mangé en sortie longue — c'est aussi à ça qu'elles servent.")
+                String(localized: "Rien de nouveau le jour J. Ce que tu mangeras en course, tu l'as déjà mangé en sortie longue. C'est aussi à ça qu'elles servent.")
             ])
         }
     }
@@ -77,15 +77,15 @@ struct UltraRaceDaySheet: View {
             // L'AVERTISSEMENT EN PREMIER, ET PAS EN NOTE DE BAS DE CARTE. Un sac non conforme est
             // un refus au départ : si une seule phrase de cette section doit être lue, c'est
             // celle-là, et elle dit que cette liste n'est pas celle qui sera contrôlée.
-            HZParagrapheDeCourse(Text("La liste qui compte est celle de **ta** course : l'organisation la publie, et la contrôle au départ. Celle-ci est le socle commun des grands trails — pars de là, puis relis la leur."))
+            HZParagrapheDeCourse(Text("La liste qui compte est celle de **ta** course : l'organisation la publie, et la contrôle au départ. Celle-ci est le socle commun des grands trails. Pars de là, puis relis la leur."))
 
             HZPucesDeCourse(lignes: [
-                String(localized: "Une veste imperméable à capuche — une membrane, pas un coupe-vent. C'est le point le plus souvent recalé au contrôle."),
+                String(localized: "Une veste imperméable à capuche : une membrane, pas un coupe-vent. C'est le point le plus souvent recalé au contrôle."),
                 String(localized: "Deux frontales, et des piles de rechange pour chacune."),
                 String(localized: "Un litre d'eau au minimum, en contenance embarquée."),
                 String(localized: "Un gobelet pliable : il n'y en a plus sur les ravitaillements."),
                 String(localized: "Couverture de survie et sifflet."),
-                String(localized: "Une bande adhésive élastique — elle répare une cheville, une chaussure et un bâton."),
+                String(localized: "Une bande adhésive élastique : elle répare une cheville, une chaussure et un bâton."),
                 String(localized: "Téléphone chargé, en mode économie d'énergie, avec les numéros de l'organisation."),
                 String(localized: "Une réserve alimentaire que tu ne touches pas : elle est là pour l'heure où tout le reste est fini."),
                 String(localized: "Bonnet et gants dès que la nuit est possible. On a froid à l'arrêt, pas en mouvement."),
@@ -123,7 +123,7 @@ struct UltraRaceDaySheet: View {
         case .possible:
             return Text("Selon l'heure du départ, **tu peux finir de nuit**. Et une frontale qu'on n'a jamais sortie est exactement le matériel qui manque.")
         case .aucune:
-            return Text("Ta course devrait tenir dans le jour — emporte une frontale quand même : un départ matinal, un sous-bois ou deux heures de plus que prévu suffisent.")
+            return Text("Ta course devrait tenir dans le jour. Emporte une frontale quand même : un départ matinal, un sous-bois ou deux heures de plus que prévu suffisent.")
         }
     }
 

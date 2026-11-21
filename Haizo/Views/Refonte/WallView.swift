@@ -268,7 +268,7 @@ struct WallView: View {
             } else if isLoading {
                 ProgressView().frame(maxWidth: .infinity).padding(.vertical, HZFil.enAttente)
             } else if let loadError {
-                phrase(String(localized: "Impossible de charger le fil — \(loadError)."))
+                phrase(String(localized: "Impossible de charger le fil : \(loadError)."))
             } else if entrees.isEmpty {
                 phrase(messageDuVide, titre: filtre == .tout
                        ? String(localized: "Rien pour l'instant")
@@ -475,7 +475,7 @@ struct WallView: View {
         case .club: return String(localized: "Personne de ton club n'a encore publié.")
         case .amis: return String(localized: "Suis des coureurs et leurs sorties arriveront ici.")
         case .courses: return String(localized: "Prépare une course et ce qui s'y dit arrivera ici.")
-        case .tout: return String(localized: "Rejoins un club, suis des coureurs, prépare une course — tout atterrira ici.")
+        case .tout: return String(localized: "Rejoins un club, suis des coureurs, prépare une course : tout atterrira ici.")
         }
     }
 
@@ -490,7 +490,7 @@ struct WallView: View {
             }
             Haptics.impact(.light)
         } catch {
-            appState.toast(String(localized: "Impossible de répondre — réessaie."))
+            appState.toast(String(localized: "Impossible de répondre. Réessaie."))
         }
     }
 
@@ -566,7 +566,7 @@ struct WallView: View {
             page?.items[index].kudos += maintenant ? 1 : -1
             Haptics.impact(.light)
         } catch {
-            appState.toast(String(localized: "Impossible d'applaudir — réessaie."))
+            appState.toast(String(localized: "Impossible d'applaudir. Réessaie."))
         }
     }
 
@@ -578,7 +578,7 @@ struct WallView: View {
             page?.racePosts[index].kudos = reponse.kudos
             Haptics.impact(.light)
         } catch {
-            appState.toast(String(localized: "Impossible d'applaudir — réessaie."))
+            appState.toast(String(localized: "Impossible d'applaudir. Réessaie."))
         }
     }
 
@@ -587,7 +587,7 @@ struct WallView: View {
             try await clubService.deleteActivity(activityId: item.id)
             page?.items.removeAll { $0.id == item.id }
         } catch {
-            appState.toast(String(localized: "Impossible de supprimer — réessaie."))
+            appState.toast(String(localized: "Impossible de supprimer. Réessaie."))
         }
     }
 

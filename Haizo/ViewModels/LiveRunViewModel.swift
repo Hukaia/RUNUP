@@ -360,17 +360,17 @@ final class LiveRunViewModel {
                 (6, String(localized: "C'est parti \(name). Échauffement tranquille, reste en Z2.")),
                 (120, String(localized: "Fin d'échauffement. Première répétition : vise \(targetPace), foulée relâchée.")),
                 (360, String(localized: "Tiens ton allure sur chaque répétition, récupère bien entre les blocs")),
-                (720, String(localized: "Mi-séance. C'est la récupération qui tient la fin — ne la coupe pas.")),
-                (1080, String(localized: "Dernier bloc, c'est le moment — lâche tout dessus"))
+                (720, String(localized: "Mi-séance. C'est la récupération qui tient la fin : ne la coupe pas.")),
+                (1080, String(localized: "Dernier bloc, c'est le moment : lâche tout dessus"))
             ]
         } else {
             cues = [
                 (6, String(localized: "C'est parti \(name). Départ tranquille, laisse le corps se mettre en route.")),
                 (120, String(localized: "Trouve ton rythme de croisière : vise \(targetPace), foulée relâchée.")),
-                (360, Accord.selon(f: String(localized: "Reste régulière — c'est la constance qui paie"),
-                                   m: String(localized: "Reste régulier — c'est la constance qui paie"))),
+                (360, Accord.selon(f: String(localized: "Reste régulière : c'est la constance qui paie"),
+                                   m: String(localized: "Reste régulier : c'est la constance qui paie"))),
                 (720, String(localized: "Mi-séance. La deuxième moitié se court comme la première.")),
-                (1080, String(localized: "Dernière partie — finis proprement, sans t'arracher"))
+                (1080, String(localized: "Dernière partie : finis proprement, sans t'arracher"))
             ]
         }
         // Les consignes vocales ci-dessus viennent d'être construites à partir de cette séance :
@@ -643,9 +643,9 @@ final class LiveRunViewModel {
         case .rep(let n):
             consigne = n == 1
                 ? String(localized: "Échauffement terminé. Première répétition : vise \(targetPace)/km, foulée relâchée.")
-                : String(localized: "Répétition \(n)/\(reps) — vise \(targetPace)/km.")
+                : String(localized: "Répétition \(n)/\(reps) : vise \(targetPace)/km.")
         case .recovery:
-            consigne = String(localized: "Récupération — souffle, foulée relâchée.")
+            consigne = String(localized: "Récupération : souffle, foulée relâchée.")
         case .cooldown:
             consigne = String(localized: "Dernière répétition faite, bien joué. Retour au calme.")
         }
@@ -725,11 +725,11 @@ final class LiveRunViewModel {
         Haptics.impact(.light)
         if autoPauseCyclesWithNoDistance >= 3 {
             runtimeAutoPauseDisabled = true
-            showCue(String(localized: "Pause auto désactivée pour cette course — le GPS ne détecte pas ton déplacement. Utilise le bouton pause toi-même."))
+            showCue(String(localized: "Pause auto désactivée pour cette course : le GPS ne détecte pas ton déplacement. Utilise le bouton pause toi-même."))
         } else {
             showCue(Accord.selon(
-                f: String(localized: "Pause automatique — reprends dès que tu es prête, ou continue à marcher pour repartir."),
-                m: String(localized: "Pause automatique — reprends dès que tu es prêt, ou continue à marcher pour repartir.")))
+                f: String(localized: "Pause automatique : reprends dès que tu es prête, ou continue à marcher pour repartir."),
+                m: String(localized: "Pause automatique : reprends dès que tu es prêt, ou continue à marcher pour repartir.")))
         }
         updateLiveActivity()
         publishWidgetRun()

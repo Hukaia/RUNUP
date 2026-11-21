@@ -194,7 +194,7 @@ enum CourseLibre {
         }
         // Quatre jours d'affilée sans jamais souffler, ou trois quand la forme baisse déjà.
         if reperes.joursConsecutifs >= 4 || (reperes.joursConsecutifs >= 3 && forme < 70) {
-            return (.repos, String(localized: "\(reperes.joursConsecutifs) jours d'affilée. Aujourd'hui, repos — c'est là que ça progresse."))
+            return (.repos, String(localized: "\(reperes.joursConsecutifs) jours d'affilée. Aujourd'hui, repos. C'est là que ça progresse."))
         }
         if joursDepuis <= 1, reperes.laDerniereEtaitDure {
             return (.recuperation, String(localized: "Hier c'était dur. Aujourd'hui on récupère, vraiment."))
@@ -211,7 +211,7 @@ enum CourseLibre {
         }
         if joursDepuis >= 2, forme >= 60,
            (reperes.joursDepuisUneSeanceDure ?? 99) >= joursEntreSeancesDeQualite {
-            return (.qualite, String(localized: "Trois jours sans rien de rapide — on met un peu de vitesse."))
+            return (.qualite, String(localized: "Trois jours sans rien de rapide : on met un peu de vitesse."))
         }
         if joursDepuis <= 1 {
             return (.endurance, String(localized: "Tu as couru hier : footing facile, les jambes travaillent encore."))

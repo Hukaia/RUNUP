@@ -289,7 +289,7 @@ struct SignInView: View {
         } catch AuthServiceError.badResponse(let code, _) where code == HZHub.nonAutorise {
             errorMessage = String(localized: "Email ou mot de passe incorrect.")
         } catch AuthServiceError.badResponse(let code, _) where code == HZHub.refuse {
-            errorMessage = String(localized: "Ce prénom n'est pas autorisé — choisis-en un autre.")
+            errorMessage = String(localized: "Ce prénom n'est pas autorisé. Choisis-en un autre.")
         } catch {
             errorMessage = PanneReseau.phrase(pour: error)
         }
@@ -326,7 +326,7 @@ struct SignInView: View {
         } catch ClubServiceError.badResponse(let code, _) where code == HZHub.conflit {
             usernameError = String(localized: "Ce pseudo est déjà pris.")
         } catch ClubServiceError.badResponse(let code, _) where code == HZHub.malFormee {
-            usernameError = String(localized: "Pseudo invalide — lettres minuscules, chiffres, underscore, 3 à 20 caractères.")
+            usernameError = String(localized: "Pseudo invalide : lettres minuscules, chiffres, underscore, 3 à 20 caractères.")
         } catch {
             usernameError = PanneReseau.phrase(pour: error)
         }

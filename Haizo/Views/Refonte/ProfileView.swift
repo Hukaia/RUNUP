@@ -314,7 +314,7 @@ struct ProfileView: View {
             // Avant le chargement : tant que le jeton est refusé, les lignes ne rendraient rien et
             // tourneraient indéfiniment.
             invitation(titre: String(localized: "Session expirée"),
-                       texte: String(localized: "Ta session de trente jours est arrivée au bout. Tes données sont intactes — reconnecte-toi pour retrouver ton club, tes amis et publier les sorties en attente."),
+                       texte: String(localized: "Ta session de trente jours est arrivée au bout. Tes données sont intactes. Reconnecte-toi pour retrouver ton club, tes amis et publier les sorties en attente."),
                        bouton: String(localized: "Me reconnecter"))
         } else if isLoadingSocial {
             ProgressView()
@@ -501,7 +501,7 @@ struct ProfileView: View {
         } catch {
             // The local photo is already saved (see above) — only the club-visible copy failed to
             // sync, worth telling her since it silently used to just never reach other members.
-            appState.toast(String(localized: "Photo enregistrée, mais pas encore visible du club — \(PanneReseau.motif(pour: error))."))
+            appState.toast(String(localized: "Photo enregistrée, mais pas encore visible du club : \(PanneReseau.motif(pour: error))."))
         }
     }
 
@@ -518,7 +518,7 @@ struct ProfileView: View {
             // the server (and every other club member's leaderboard/feed/comments view) still
             // shows the old one until this actually lands, and without this she'd have no signal
             // that the removal didn't take.
-            appState.toast(String(localized: "Photo supprimée localement, mais toujours visible du club — \(PanneReseau.motif(pour: error))."))
+            appState.toast(String(localized: "Photo supprimée localement, mais toujours visible du club : \(PanneReseau.motif(pour: error))."))
         }
     }
 

@@ -54,7 +54,7 @@ struct ClubBoardSection: View {
 
     @ViewBuilder private var weekBoardContent: some View {
         if (board.weekly ?? []).isEmpty && !isLoading {
-            HZPhrase(texte: String(localized: "Personne n'a encore couru cette semaine — lance-toi !"))
+            HZPhrase(texte: String(localized: "Personne n'a encore couru cette semaine. Lance-toi !"))
         } else {
             HZTitreDeSection(titre: String(localized: "Classement de la semaine"))
             HStack(spacing: HZEspace.entrePilules) {

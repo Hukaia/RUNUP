@@ -67,7 +67,7 @@ enum PlusFeature: String, CaseIterable, Identifiable, Sendable {
         case .coach:
             return String(localized: "Il a lu tes dernières séances. Pose-lui une question avant de partir, demande un conseil, fais-toi rassurer après une sortie difficile.")
         case .voiceCoach:
-            return String(localized: "Appuie, pose ta question à voix haute, il te répond dans les écouteurs — sans sortir le téléphone.")
+            return String(localized: "Appuie, pose ta question à voix haute, il te répond dans les écouteurs, sans sortir le téléphone.")
         case .raceGoal:
             return String(localized: "Base, spécifique, affûtage : un vrai plan calé sur la date de ta course, de 4 à 20 semaines.")
         case .predictions:

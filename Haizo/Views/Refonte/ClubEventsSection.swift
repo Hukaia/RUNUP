@@ -82,7 +82,7 @@ struct ClubEventsSection: View {
                 showCreateEvent = true
             }
             if (magasin.board.events ?? []).isEmpty {
-                HZPhrase(texte: String(localized: "Aucune sortie prévue — propose un créneau, les autres n'ont qu'à dire « J'y serai »."))
+                HZPhrase(texte: String(localized: "Aucune sortie prévue. Propose un créneau, les autres n'ont qu'à dire « J'y serai »."))
             }
             ForEach(magasin.board.events ?? []) { event in
                 HZPlaque {

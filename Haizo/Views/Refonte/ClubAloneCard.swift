@@ -12,7 +12,7 @@ struct ClubAloneCard: View {
                     .hzAffichage(.section)
                     .foregroundStyle(HZCouleur.encre)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("Un club prend vie à plusieurs — classement, défis, sorties de groupe. Envoie son lien aux gens avec qui tu cours.")
+                Text("Un club prend vie à plusieurs : classement, défis, sorties de groupe. Envoie son lien aux gens avec qui tu cours.")
                     .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
                     .foregroundStyle(HZCouleur.secondaireSurClair)
                     .fixedSize(horizontal: false, vertical: true)

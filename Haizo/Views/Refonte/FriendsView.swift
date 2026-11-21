@@ -218,7 +218,7 @@ struct FriendsView: View {
             }
             if following.isEmpty && !isLoading && errorMessage == nil {
                 VStack(alignment: .leading, spacing: HZEspace.groupe) {
-                    HZPhrase(texte: String(localized: "Cherche quelqu'un par son nom ou son pseudo juste au-dessus — ou invite ceux avec qui tu cours déjà."),
+                    HZPhrase(texte: String(localized: "Cherche quelqu'un par son nom ou son pseudo juste au-dessus. Ou invite ceux avec qui tu cours déjà."),
                              titre: String(localized: "Personne à suivre pour l'instant"))
                     ShareLink(item: String(localized: "Rejoins-moi sur Haizo, mon appli de coaching running : https://runup-nu.vercel.app")) {
                         Text("Inviter un ami")
@@ -505,14 +505,14 @@ struct FriendsView: View {
                 let status = try await clubService.followUser(userId: user.id)
                 await MainActor.run { updateSearchStatus(user.id, status: status) }
             } catch {
-                await MainActor.run { appState.toast(String(localized: "Impossible de suivre cette personne — réessaie.")) }
+                await MainActor.run { appState.toast(String(localized: "Impossible de suivre cette personne. Réessaie.")) }
             }
         } else {
             do {
                 try await clubService.unfollowUser(userId: user.id)
                 await MainActor.run { updateSearchStatus(user.id, status: nil) }
             } catch {
-                await MainActor.run { appState.toast(String(localized: "Impossible de mettre à jour — réessaie.")) }
+                await MainActor.run { appState.toast(String(localized: "Impossible de mettre à jour. Réessaie.")) }
             }
         }
     }
@@ -527,7 +527,7 @@ struct FriendsView: View {
             try await clubService.unfollowUser(userId: user.id)
             await MainActor.run { following.removeAll { $0.id == user.id } }
         } catch {
-            await MainActor.run { appState.toast(String(localized: "Impossible de mettre à jour — réessaie.")) }
+            await MainActor.run { appState.toast(String(localized: "Impossible de mettre à jour. Réessaie.")) }
         }
     }
 
@@ -536,7 +536,7 @@ struct FriendsView: View {
             try await clubService.removeFollower(userId: user.id)
             await MainActor.run { followers.removeAll { $0.id == user.id } }
         } catch {
-            await MainActor.run { appState.toast(String(localized: "Impossible de mettre à jour — réessaie.")) }
+            await MainActor.run { appState.toast(String(localized: "Impossible de mettre à jour. Réessaie.")) }
         }
     }
 
@@ -549,7 +549,7 @@ struct FriendsView: View {
                 if accept { followers.append(user) }
             }
         } catch {
-            await MainActor.run { appState.toast(String(localized: "Impossible de répondre — réessaie.")) }
+            await MainActor.run { appState.toast(String(localized: "Impossible de répondre. Réessaie.")) }
         }
     }
 
@@ -563,7 +563,7 @@ struct FriendsView: View {
             } catch {
                 await MainActor.run {
                     isPrivate = !next
-                    appState.toast(String(localized: "Impossible de mettre à jour — réessaie."))
+                    appState.toast(String(localized: "Impossible de mettre à jour. Réessaie."))
                 }
             }
         }
@@ -572,7 +572,7 @@ struct FriendsView: View {
     private func submitReport(_ target: ReportTarget, reason: String) async {
         do {
             try await clubService.report(targetType: target.targetType, targetId: target.targetId, reason: reason)
-            appState.toast(String(localized: "Signalement envoyé — merci"))
+            appState.toast(String(localized: "Signalement envoyé, merci"))
         } catch {
             appState.toast(String(localized: "Impossible d'envoyer le signalement, réessaie."))
         }

@@ -110,7 +110,7 @@ struct RaceDiscoveryView: View {
         if isLoading {
             ProgressView().frame(maxWidth: .infinity).padding(.vertical, HZFil.enAttente)
         } else if let loadError {
-            HZPhrase(texte: String(localized: "Impossible de charger les courses — \(loadError)."))
+            HZPhrase(texte: String(localized: "Impossible de charger les courses : \(loadError)."))
         } else if enRecherche {
             resultats
         } else {

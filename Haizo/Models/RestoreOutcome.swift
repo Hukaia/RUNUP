@@ -32,7 +32,7 @@ enum RestoreOutcome: Equatable {
         switch self {
         case .restored: return String(localized: "Ton abonnement est restauré.")
         case .nothingFound: return String(localized: "Aucun abonnement actif sur ce compte Apple.")
-        case .couldNotCheck: return String(localized: "Impossible de vérifier — réessaie quand tu auras du réseau.")
+        case .couldNotCheck: return String(localized: "Impossible de vérifier. Réessaie quand tu auras du réseau.")
         }
     }
 }

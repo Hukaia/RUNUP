@@ -221,7 +221,7 @@ struct SessionDetailSheet: View {
                             cooldown: (String, String, Color)) -> [(String, String, Color)] {
         let ravitaillement = (
             String(localized: "Ravitaillement"),
-            String(localized: "une prise toutes les \(UltraRaceDay.minutesEntreDeuxPrises) min, à la montre — c'est la séance où tu testes ce que tu mangeras le jour J"),
+            String(localized: "une prise toutes les \(UltraRaceDay.minutesEntreDeuxPrises) min, à la montre : c'est la séance où tu testes ce que tu mangeras le jour J"),
             // GRIS, et pas une intensité : le ravitaillement n'est pas un effort. C'est une
             // consigne de logistique posée au milieu d'étapes qui, elles, se courent.
             HZCouleur.secondaireSurClair
@@ -394,7 +394,7 @@ struct SessionDetailSheet: View {
             // reason (or vice versa) would just be wrong about why this looks different.
             HZPlaque {
                 if adj.hasPrefix("Allégée") {
-                    HZPhrase(texte: String(localized: "Cette séance a été allégée aujourd'hui d'après ta forme du jour — la semaine reprend son cours normal demain."))
+                    HZPhrase(texte: String(localized: "Cette séance a été allégée aujourd'hui d'après ta forme du jour. La semaine reprend son cours normal demain."))
                 } else {
                     HZPhrase(texte: String(localized: "Le coach a ajusté cette semaine à « \(adj) » d'après ta forme la semaine dernière."))
                 }
@@ -441,7 +441,7 @@ struct SessionDetailSheet: View {
             appState.publishWidgetSnapshot()
             appState.toast(String(localized: "Séance déplacée à demain"))
         } else {
-            appState.toast(String(localized: "Impossible de déplacer cette séance — dernier jour de la semaine."))
+            appState.toast(String(localized: "Impossible de déplacer cette séance : dernier jour de la semaine."))
         }
     }
 

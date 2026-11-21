@@ -46,7 +46,7 @@ final class CoachViewModel {
         // La ligne reste, son texte change. La supprimer laisserait le message du coach — « on
         // allège cette semaine » — seul au-dessus d'un programme inchangé, sans rien pour
         // expliquer l'écart. Là, la contradiction est datée et lisible.
-        pending.line.text = String(localized: "Annulé — ton programme n'a pas changé.")
+        pending.line.text = String(localized: "Annulé. Ton programme n'a pas changé.")
         pendingUndo = nil
         Haptics.impact(.light)
     }
@@ -123,7 +123,7 @@ final class CoachViewModel {
                     // « Connexion coupée » affirmait une panne de réseau pour un serveur en
                     // panne comme pour une session expirée — les deux seules autres façons dont
                     // cet appel échoue. Voir `PanneReseau`.
-                    message = String(localized: "Le coach n'a pas pu répondre — \(PanneReseau.motif(pour: error)).")
+                    message = String(localized: "Le coach n'a pas pu répondre : \(PanneReseau.motif(pour: error)).")
                 }
                 modelContext.insert(ChatMessage(role: .error, text: message))
                 isTyping = false

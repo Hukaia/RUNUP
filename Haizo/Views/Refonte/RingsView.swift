@@ -107,7 +107,7 @@ struct RingsView: View {
             return String(localized: "Encore \(remainingActiveCalories) kcal actives pour boucler l'objectif du jour.")
         }
         if p.stepsToday < p.stepsGoal {
-            return String(localized: "Encore \(remainingSteps) pas pour boucler ton objectif — une petite marche ?")
+            return String(localized: "Encore \(remainingSteps) pas pour boucler ton objectif : une petite marche ?")
         }
         return nil
     }

@@ -118,9 +118,9 @@ struct RaceGoalView: View {
     /// Ce qui décide d'un ultra, et aucune de ces quatre lignes n'est une allure.
     private var ultraStrategy: [(String, String)] {
         [
-            (String(localized: "Les deux premières heures"), String(localized: "plus lentement que ton envie — en ultra personne ne gagne au départ, beaucoup y perdent")),
+            (String(localized: "Les deux premières heures"), String(localized: "plus lentement que ton envie : en ultra personne ne gagne au départ, beaucoup y perdent")),
             (String(localized: "Les montées"), String(localized: "marche les raides : au-delà d'une certaine pente, marcher coûte moins et va aussi vite. Ce n'est pas un renoncement, c'est la technique")),
-            (String(localized: "Les descentes"), String(localized: "elles décident de l'état de tes quadriceps à mi-course — se retenir tôt est ce qui rend la fin possible")),
+            (String(localized: "Les descentes"), String(localized: "elles décident de l'état de tes quadriceps à mi-course : se retenir tôt est ce qui rend la fin possible")),
             (String(localized: "Manger et boire"), String(localized: "à chaque ravitaillement, pas quand le corps réclame : quand il réclame, il est déjà trop tard"))
         ]
     }
@@ -130,8 +130,8 @@ struct RaceGoalView: View {
     /// result: running under accumulated station fatigue, not raw running speed alone.
     private var hyroxStrategy: [(String, String)] {
         [
-            (String(localized: "Segments course (8 × 1 km)"), String(localized: "vise \(targetPaceLabel) /km sur chaque segment, même sous fatigue — pas l'allure d'un 8 km isolé")),
-            (String(localized: "Stations"), String(localized: "technique avant vitesse — un geste propre coûte moins cher qu'un geste rapide et cassé")),
+            (String(localized: "Segments course (8 × 1 km)"), String(localized: "vise \(targetPaceLabel) /km sur chaque segment, même sous fatigue : pas l'allure d'un 8 km isolé")),
+            (String(localized: "Stations"), String(localized: "technique avant vitesse : un geste propre coûte moins cher qu'un geste rapide et cassé")),
             (String(localized: "Gestion globale"), String(localized: "les 4 premiers km + stations posent le rythme, les 4 derniers décident du chrono"))
         ]
     }
@@ -463,10 +463,10 @@ struct RaceGoalView: View {
 
     private var progressSummary: String {
         switch profile.goalId {
-        case .weight: return "Pas de date fixe pour ce genre d'objectif — le programme ajuste ton volume semaine après semaine pour que la charge reste tenable dans la durée."
-        case .health: return "Pas de course à préparer ici — le coach cale un rythme régulier, adapté à ta forme du jour, pour construire l'habitude sur la durée."
+        case .weight: return "Pas de date fixe pour ce genre d'objectif : le programme ajuste ton volume semaine après semaine pour que la charge reste tenable dans la durée."
+        case .health: return "Pas de course à préparer ici : le coach cale un rythme régulier, adapté à ta forme du jour, pour construire l'habitude sur la durée."
         case .restart: return "Reprise en douceur : le programme remonte le volume progressivement pour éviter la blessure, avant de repartir sur un rythme plus soutenu."
-        default: return "Objectif ouvert, sans date de fin fixe — le programme continue de progresser semaine après semaine selon ta forme."
+        default: return "Objectif ouvert, sans date de fin fixe : le programme continue de progresser semaine après semaine selon ta forme."
         }
     }
 

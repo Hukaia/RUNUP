@@ -114,7 +114,7 @@ final class WatchWorkoutManager: NSObject {
                 self.startTicker()
             } catch {
                 self.state = .idle
-                self.errorMessage = String(localized: "Impossible de démarrer — vérifie l'accès Santé dans Réglages.")
+                self.errorMessage = String(localized: "Impossible de démarrer. Vérifie l'accès Santé dans Réglages.")
             }
         }
     }
@@ -220,7 +220,7 @@ extension WatchWorkoutManager: HKWorkoutSessionDelegate {
 
     nonisolated func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
         Task { @MainActor in
-            self.errorMessage = String(localized: "La séance s'est interrompue — réessaie.")
+            self.errorMessage = String(localized: "La séance s'est interrompue. Réessaie.")
             self.state = .idle
         }
     }

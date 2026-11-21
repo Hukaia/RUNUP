@@ -515,12 +515,12 @@ struct PlanView: View {
     /// les semaines, et le graphique en haut la montre désormais mieux qu'elle ne la dit.
     @ViewBuilder private var planShapeNote: some View {
         if let total = shape.totalWeeks {
-            Text(String(localized: "\(total) semaines en 3 phases, calées sur ta date de course. Le plan s'ajuste chaque semaine selon ta forme — pas séance par séance."))
+            Text(String(localized: "\(total) semaines en 3 phases, calées sur ta date de course. Le plan s'ajuste chaque semaine selon ta forme, pas séance par séance."))
                 .hzParagraphe(.c13, .medium, interligne: HZPlanComplet.interligne)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
                 .fixedSize(horizontal: false, vertical: true)
         } else {
-            Text(String(localized: "Programme ouvert, sans date de fin — une semaine plus légère toutes les 4 semaines. Il s'ajuste chaque semaine selon ta forme."))
+            Text(String(localized: "Programme ouvert, sans date de fin : une semaine plus légère toutes les 4 semaines. Il s'ajuste chaque semaine selon ta forme."))
                 .hzParagraphe(.c13, .medium, interligne: HZPlanComplet.interligne)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
                 .fixedSize(horizontal: false, vertical: true)

@@ -1024,17 +1024,17 @@ enum CaptureSeed {
         case "en":
             return (
                 "Tuesday's intervals felt brutal, I finished in bits. Should I worry about the 10K?",
-                "You held all six reps at 4:38, faster than your target pace — finishing a session like that hard is a sign it was pitched right, not that it was too hard. Your last three long runs have gained twenty seconds per kilometre. Keep Thursday in Z2, and we'll find the speed again on Saturday."
+                "You held all six reps at 4:38, faster than your target pace: finishing a session like that hard is a sign it was pitched right, not that it was too hard. Your last three long runs have gained twenty seconds per kilometre. Keep Thursday in Z2, and we'll find the speed again on Saturday."
             )
         case "es":
             return (
                 "Las series del martes se me hicieron durísimas, acabé hecha polvo. ¿Me preocupo por el 10K?",
-                "Aguantaste las seis repeticiones a 4:38, más rápido que tu ritmo objetivo — acabar así de dura una sesión como esa es señal de que estaba bien calibrada, no de que fuera excesiva. Tus tres últimas tiradas largas han ganado veinte segundos por kilómetro. Deja el jueves en Z2, y el sábado recuperamos velocidad."
+                "Aguantaste las seis repeticiones a 4:38, más rápido que tu ritmo objetivo: acabar así de dura una sesión como esa es señal de que estaba bien calibrada, no de que fuera excesiva. Tus tres últimas tiradas largas han ganado veinte segundos por kilómetro. Deja el jueves en Z2, y el sábado recuperamos velocidad."
             )
         default:
             return (
                 "Le fractionné de mardi m'a paru très dur, j'ai fini à l'agonie. Je m'inquiète pour le 10 km ?",
-                "Tu as tenu les six répétitions à 4:38, soit plus vite que l'allure cible — finir dur sur une séance comme celle-là est le signe qu'elle était bien calibrée, pas qu'elle était trop dure. Tes trois dernières sorties longues ont gagné vingt secondes au kilomètre. Garde la séance de jeudi en Z2, et on retrouve de la vitesse samedi."
+                "Tu as tenu les six répétitions à 4:38, soit plus vite que l'allure cible : finir dur sur une séance comme celle-là est le signe qu'elle était bien calibrée, pas qu'elle était trop dure. Tes trois dernières sorties longues ont gagné vingt secondes au kilomètre. Garde la séance de jeudi en Z2, et on retrouve de la vitesse samedi."
             )
         }
     }

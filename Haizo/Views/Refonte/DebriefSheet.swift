@@ -30,7 +30,7 @@ struct DebriefSheet: View {
             return String(localized: "Séance enregistrée. Bien joué.")
         }
         if paces.last == minPace {
-            return String(localized: "Séance solide. Ton dernier kilomètre était ton plus rapide — tu avais encore du jus.")
+            return String(localized: "Séance solide. Ton dernier kilomètre était ton plus rapide : tu avais encore du jus.")
         }
         if paces.first == minPace {
             return Accord.selon(f: String(localized: "Séance solide. Tu es partie fort et tu as tenu jusqu'au bout."),
@@ -180,7 +180,7 @@ struct DebriefSheet: View {
             let kmBefore = shoe.totalKm(runs: runs.filter { $0 !== run })
             let kmAfter = kmBefore + run.distanceKm
             if kmBefore < shoe.alertThresholdKm, kmAfter >= shoe.alertThresholdKm {
-                appState.notify(icon: "shoe.fill", colorHex: AppNotification.avertissement, title: String(localized: "\(shoe.name) en fin de vie"), text: String(localized: "Cette paire dépasse \(Int(shoe.alertThresholdKm)) km — pense à la changer bientôt."))
+                appState.notify(icon: "shoe.fill", colorHex: AppNotification.avertissement, title: String(localized: "\(shoe.name) en fin de vie"), text: String(localized: "Cette paire dépasse \(Int(shoe.alertThresholdKm)) km. Pense à la changer bientôt."))
             }
         }
         AdaptivePlanEngine.applyDebrief(rpe: rpe, run: run, profile: appState.profile)
@@ -251,8 +251,8 @@ struct DebriefSheet: View {
         }
         if AdaptivePlanEngine.checkDailyGoalsBonus(appState.profile) {
             appState.postClubActivity(type: "badge", text: String(localized: "a bouclé ses 3 objectifs du jour"), xpEarned: HZJournee.xpDUneSeance, contentKey: "daily_goals")
-            appState.notify(icon: "sparkles", colorHex: AppNotification.accent, title: String(localized: "Journée bouclée"), text: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
-            NotificationService.shared.postImmediateNotification(title: String(localized: "Journée bouclée"), body: String(localized: "Tes 3 objectifs du jour sont faits — +120 XP."))
+            appState.notify(icon: "sparkles", colorHex: AppNotification.accent, title: String(localized: "Journée bouclée"), text: String(localized: "Tes 3 objectifs du jour sont faits : +120 XP."))
+            NotificationService.shared.postImmediateNotification(title: String(localized: "Journée bouclée"), body: String(localized: "Tes 3 objectifs du jour sont faits : +120 XP."))
             Haptics.impact(.heavy)
         }
         // Today's session is done — an evening reminder for it would be stale now.

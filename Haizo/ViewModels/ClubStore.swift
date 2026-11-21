@@ -277,7 +277,7 @@ final class ClubStore {
             reussi = true
             board = try await clubService.fetchBoard()
         } catch ClubServiceError.badResponse(422, _) {
-            errorMessage = String(localized: "Ce nom n'est pas autorisé — choisis-en un autre.")
+            errorMessage = String(localized: "Ce nom n'est pas autorisé. Choisis-en un autre.")
         } catch {
             errorMessage = String(localized: "Impossible de créer le club.")
         }
@@ -489,7 +489,7 @@ final class ClubStore {
     func submitReport(_ target: ReportTarget, reason: String) async {
         do {
             try await clubService.report(targetType: target.targetType, targetId: target.targetId, reason: reason)
-            appState.toast(String(localized: "Signalement envoyé — merci"))
+            appState.toast(String(localized: "Signalement envoyé, merci"))
         } catch {
             appState.toast(String(localized: "Impossible d'envoyer le signalement, réessaie."))
         }
@@ -600,7 +600,7 @@ final class ClubStore {
             feed.removeAll { $0.id == item.id }
             appState.toast(String(localized: "Activité supprimée du fil."))
         } catch {
-            appState.toast(String(localized: "Suppression impossible — réessaie."))
+            appState.toast(String(localized: "Suppression impossible. Réessaie."))
         }
     }
 
@@ -633,7 +633,7 @@ final class ClubStore {
                 // list would just let her tap it again and fail identically every time.
                 board.events?.removeAll { $0.id == event.id }
             } catch {
-                appState.toast(String(localized: "Impossible de répondre — réessaie."))
+                appState.toast(String(localized: "Impossible de répondre. Réessaie."))
             }
         }
     }
@@ -649,7 +649,7 @@ final class ClubStore {
             } catch {
                 // A real failure (network, 403 not-the-creator, ...) — keep it in the list rather
                 // than silently pretending the cancel worked when it didn't.
-                appState.toast(String(localized: "Impossible d'annuler la sortie — réessaie."))
+                appState.toast(String(localized: "Impossible d'annuler la sortie. Réessaie."))
             }
         }
     }

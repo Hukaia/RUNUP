@@ -171,7 +171,7 @@ struct StatsView: View {
     private var feuille: some View {
         HZFeuille {
             if runs.isEmpty {
-                HZBandeauDuCoach(texte: String(localized: "Dès ta première sortie, cet écran affichera ton allure moyenne, ta charge d'entraînement et tes records — calculés sur tes courses, pas sur des moyennes."))
+                HZBandeauDuCoach(texte: String(localized: "Dès ta première sortie, cet écran affichera ton allure moyenne, ta charge d'entraînement et tes records, calculés sur tes courses, pas sur des moyennes."))
             } else {
                 chiffres
                 if !bikeRuns.isEmpty { velo }
@@ -260,7 +260,7 @@ struct StatsView: View {
                 // parce qu'il regarde les 7 derniers jours, donne tort à l'app.
                 Text(recentAvgPace == nil && runs.isEmpty
                      ? String(localized: "Termine quelques courses pour voir ton allure évoluer ici.")
-                     : String(localized: "Pas assez de courses sur cette période — essaie une fenêtre plus large."))
+                     : String(localized: "Pas assez de courses sur cette période : essaie une fenêtre plus large."))
                     .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
                     .foregroundStyle(HZCouleur.secondaireSurClair)
                     .fixedSize(horizontal: false, vertical: true)
@@ -355,7 +355,7 @@ struct StatsView: View {
             }
             .padding(.top, HZStats.sousLaSection)
             if bestRecentPerformance == nil {
-                Text(String(localized: "Estimation basée sur ton profil — termine une course pour une prédiction plus précise."))
+                Text(String(localized: "Estimation basée sur ton profil. Termine une course pour une prédiction plus précise."))
                     .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
                     .foregroundStyle(HZCouleur.secondaireSurClair)
                     .fixedSize(horizontal: false, vertical: true)

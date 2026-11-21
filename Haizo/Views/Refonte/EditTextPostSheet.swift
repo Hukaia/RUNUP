@@ -93,7 +93,7 @@ struct EditTextPostSheet: View {
             Haptics.success()
             dismiss()
         } catch ClubServiceError.badResponse(let code, _) where code == HZHub.refuse {
-            errorMessage = String(localized: "Ce texte n'est pas autorisé — reformule.")
+            errorMessage = String(localized: "Ce texte n'est pas autorisé. Reformule.")
         } catch {
             errorMessage = String(localized: "Impossible d'enregistrer, réessaie.")
         }

@@ -160,7 +160,7 @@ struct CreateRaceSheet: View {
         } catch ClubServiceError.badResponse(let code, _) where code == HZCourse.tropDeRequetes {
             erreur = String(localized: "Trop de courses créées aujourd'hui. Réessaie demain.")
         } catch {
-            erreur = String(localized: "Impossible de créer la course — \(PanneReseau.motif(pour: error)).")
+            erreur = String(localized: "Impossible de créer la course : \(PanneReseau.motif(pour: error)).")
         }
         enCours = false
     }

@@ -122,7 +122,7 @@ struct CoachView: View {
                     }
                     Button("Annuler", role: .cancel) {}
                 } message: {
-                    Text("Le coach garde ton programme et ta forme en tête — seul l'historique des messages est effacé.")
+                    Text("Le coach garde ton programme et ta forme en tête. Seul l'historique des messages est effacé.")
                 }
             }
         }
@@ -321,7 +321,7 @@ struct CoachView: View {
     private var lockedReplyBubble: some View {
         HZBulle(auteur: .coach) {
             VStack(alignment: .leading, spacing: HZCoach.ecartDansUneBulle) {
-                HZTexteDeBulle(texte: String(localized: "Je peux te répondre vraiment, mais il me faut Haizo Plus. Le coach lit ton programme, ta forme et tes dernières sorties avant de te répondre — c'est ce qui fait la différence avec une réponse générique."),
+                HZTexteDeBulle(texte: String(localized: "Je peux te répondre vraiment, mais il me faut Haizo Plus. Le coach lit ton programme, ta forme et tes dernières sorties avant de te répondre. C'est ce qui fait la différence avec une réponse générique."),
                                auteur: .coach)
                 HZBoutonPilule(libelle: String(localized: "Découvrir Haizo Plus"), hauteur: .reponse,
                                etendu: true) { appState.plusPrompt = .coach }

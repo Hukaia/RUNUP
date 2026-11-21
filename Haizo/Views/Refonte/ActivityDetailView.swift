@@ -114,7 +114,7 @@ struct ActivityDetailView: View {
             if enChargement {
                 ProgressView().frame(maxWidth: .infinity).padding(.vertical, HZFil.enAttente)
             } else if let erreur {
-                HZPhrase(texte: String(localized: "Impossible d'ouvrir cette sortie — \(erreur)."))
+                HZPhrase(texte: String(localized: "Impossible d'ouvrir cette sortie : \(erreur)."))
             } else if let sortie {
                 contenu(sortie)
             }

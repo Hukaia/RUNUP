@@ -189,9 +189,9 @@ struct HistoryView: View {
         case .session:
             return String(localized: "Elles restent sur ton téléphone, rien n'est perdu, mais ta session a expiré : reconnecte-toi pour les publier.")
         case .serveur:
-            return String(localized: "Elles restent sur ton téléphone, rien n'est perdu — Haizo ne répond pas, nouvelle tentative plus tard.")
+            return String(localized: "Elles restent sur ton téléphone, rien n'est perdu. Haizo ne répond pas, nouvelle tentative plus tard.")
         case .reseau, .none:
-            return String(localized: "Elles restent sur ton téléphone, rien n'est perdu — nouvelle tentative automatique bientôt.")
+            return String(localized: "Elles restent sur ton téléphone, rien n'est perdu. Nouvelle tentative automatique bientôt.")
         }
     }
 

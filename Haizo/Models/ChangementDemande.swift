@@ -187,7 +187,7 @@ struct AllegementDuJour: Codable, Equatable, Sendable {
         if qualite {
             allegee.zone = "Z2"
             allegee.intervals = nil
-            allegee.adaptationNote = "séance allégée aujourd'hui — allure confort, écoute-toi"
+            allegee.adaptationNote = "séance allégée aujourd'hui : allure confort, écoute-toi"
         }
         allegee.adjustment = raison
         return allegee

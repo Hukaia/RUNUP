@@ -388,18 +388,18 @@
         }
       }
     },
-    "%@ t'attend — %lld′ à %@/km.": {
+    "%@ t'attend : %lld′ à %@/km.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ is waiting for you — %lld′ at %@/km."
+            "value": "%@ is waiting for you: %lld′ at %@/km."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ te espera — %lld′ a %@/km."
+            "value": "%@ te espera: %lld′ a %@/km."
           }
         }
       }
@@ -420,19 +420,19 @@
         }
       }
     },
-    "%@ · %@ km — valide ton ressenti pour mettre à jour le programme.": {
+    "%@ · %@ km. Valide ton ressenti pour mettre à jour le programme.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · %@ km — rate how it felt to update your plan."
+            "value": "%@ · %@ km. Rate how it felt to update your plan."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · %@ km — valida cómo te sentiste para actualizar el plan."
+            "value": "%@ · %@ km. Valida cómo te sentiste para actualizar el plan."
           }
         }
       }
@@ -1648,29 +1648,29 @@
         }
       }
     },
-    "%lld jours / semaine — bon rythme": {
+    "%lld jours / semaine, bon rythme": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld days / week — good rhythm"
+            "value": "%lld days / week, good rhythm"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld días / semana — buen ritmo"
+            "value": "%lld días / semana, buen ritmo"
           }
         }
       }
     },
-    "%lld jours d'affilée. Aujourd'hui, repos — c'est là que ça progresse.": {
+    "%lld jours d'affilée. Aujourd'hui, repos. C'est là que ça progresse.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld days in a row. Today, rest — that's where the progress happens."
+            "value": "%lld days in a row. Today, rest. That's where the progress happens."
           }
         },
         "es": {
@@ -2314,19 +2314,19 @@
         }
       }
     },
-    "%lld semaines en 3 phases, calées sur ta date de course. Le plan s'ajuste chaque semaine selon ta forme — pas séance par séance.": {
+    "%lld semaines en 3 phases, calées sur ta date de course. Le plan s'ajuste chaque semaine selon ta forme, pas séance par séance.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld weeks in 3 phases, built around your race date. The plan adapts each week to how you're feeling — not session by session."
+            "value": "%lld weeks in 3 phases, built around your race date. The plan adapts each week to how you're feeling, not session by session."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld semanas en 3 fases, ajustadas a la fecha de tu carrera. El plan se adapta cada semana a tu forma — no sesión por sesión."
+            "value": "%lld semanas en 3 fases, ajustadas a la fecha de tu carrera. El plan se adapta cada semana a tu forma, no sesión por sesión."
           }
         }
       }
@@ -2365,19 +2365,19 @@
         }
       }
     },
-    "%lld semaines · 3 phases, calées sur ta date de course. Il s'ajuste chaque semaine selon ta forme de la semaine passée — pas séance par séance.": {
+    "%lld semaines · 3 phases, calées sur ta date de course. Il s'ajuste chaque semaine selon ta forme de la semaine passée, pas séance par séance.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld weeks · 3 phases, built around your race date. It adjusts every week to how last week went — not session by session."
+            "value": "%lld weeks · 3 phases, built around your race date. It adjusts every week to how last week went, not session by session."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld semanas · 3 fases, ajustadas a la fecha de tu carrera. Se adapta cada semana a cómo fue la semana pasada — no sesión a sesión."
+            "value": "%lld semanas · 3 fases, ajustadas a la fecha de tu carrera. Se adapta cada semana a cómo fue la semana pasada, no sesión a sesión."
           }
         }
       }
@@ -3875,35 +3875,35 @@
         }
       }
     },
-    "8 × 1 km de course + stations fonctionnelles — un vrai plan hybride": {
+    "8 × 1 km de course + stations fonctionnelles, un vrai plan hybride": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "8 × 1 km of running + functional stations — a genuine hybrid plan"
+            "value": "8 × 1 km of running + functional stations, a genuine hybrid plan"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "8 × 1 km de carrera + estaciones funcionales — un plan híbrido de verdad"
+            "value": "8 × 1 km de carrera + estaciones funcionales, un plan híbrido de verdad"
           }
         }
       }
     },
-    "8 × 1 km de course, 8 stations fonctionnelles — le format ne change pas, ta préparation si.": {
+    "8 × 1 km de course, 8 stations fonctionnelles : le format ne change pas, ta préparation si.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "8 × 1 km runs, 8 functional stations — the format doesn't change, your preparation does."
+            "value": "8 × 1 km runs, 8 functional stations: the format doesn't change, your preparation does."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "8 × 1 km de carrera, 8 estaciones funcionales — el formato no cambia, tu preparación sí."
+            "value": "8 × 1 km de carrera, 8 estaciones funcionales: el formato no cambia, tu preparación sí."
           }
         }
       }
@@ -4635,18 +4635,18 @@
         }
       }
     },
-    "Ajoute une paire pour suivre son usure — chaque course lui est attribuée automatiquement une fois que c'est ta paire par défaut.": {
+    "Ajoute une paire pour suivre son usure. Chaque course lui est attribuée automatiquement une fois que c'est ta paire par défaut.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Add a pair to track its wear — every run is attributed to it automatically once it's your default pair."
+            "value": "Add a pair to track its wear. Every run is attributed to it automatically once it's your default pair."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Añade un par para seguir su desgaste — cada carrera se le atribuye automáticamente una vez que es tu par por defecto."
+            "value": "Añade un par para seguir su desgaste. Cada carrera se le atribuye automáticamente una vez que es tu par por defecto."
           }
         }
       }
@@ -5157,12 +5157,12 @@
         }
       }
     },
-    "Annulé — ton programme n'a pas changé.": {
+    "Annulé. Ton programme n'a pas changé.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Undone — your training plan is unchanged."
+            "value": "Undone. Your training plan is unchanged."
           }
         },
         "es": {
@@ -5206,19 +5206,19 @@
         }
       }
     },
-    "Aperçu — s'ajustera selon ta forme de la semaine précédente": {
+    "Aperçu : s'ajustera selon ta forme de la semaine précédente": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Preview — it'll adjust to how the week before goes"
+            "value": "Preview: it'll adjust to how the week before goes"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vista previa — se ajustará según cómo vaya la semana anterior"
+            "value": "Vista previa: se ajustará según cómo vaya la semana anterior"
           }
         }
       }
@@ -5354,12 +5354,12 @@
         }
       }
     },
-    "Appuie, pose ta question à voix haute, il te répond dans les écouteurs — sans sortir le téléphone.": {
+    "Appuie, pose ta question à voix haute, il te répond dans les écouteurs, sans sortir le téléphone.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tap, ask out loud, hear the answer in your earbuds — without taking your phone out."
+            "value": "Tap, ask out loud, hear the answer in your earbuds, without taking your phone out."
           }
         },
         "es": {
@@ -5470,35 +5470,35 @@
         }
       }
     },
-    "Aucun commentaire pour l'instant — sois la première !": {
+    "Aucun commentaire pour l'instant. Sois la première !": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No comments yet — be the first!"
+            "value": "No comments yet. Be the first!"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todavía no hay comentarios — ¡sé la primera!"
+            "value": "Todavía no hay comentarios. ¡sé la primera!"
           }
         }
       }
     },
-    "Aucun commentaire pour l'instant — sois le premier !": {
+    "Aucun commentaire pour l'instant. Sois le premier !": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No comments yet — be the first!"
+            "value": "No comments yet. Be the first!"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aún no hay comentarios — ¡sé el primero!"
+            "value": "Aún no hay comentarios. ¡sé el primero!"
           }
         }
       }
@@ -5519,29 +5519,29 @@
         }
       }
     },
-    "Aucun défi en cours — en créer un": {
+    "Aucun défi en cours : en créer un": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No challenge in progress — create one"
+            "value": "No challenge in progress: create one"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ningún desafío en curso — crea uno"
+            "value": "Ningún desafío en curso: crea uno"
           }
         }
       }
     },
-    "Aucun défi en cours — un objectif de kilomètres à se partager, avec une date de fin.": {
+    "Aucun défi en cours : un objectif de kilomètres à se partager, avec une date de fin.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No challenge running — a shared kilometre target, with a deadline."
+            "value": "No challenge running: a shared kilometre target, with a deadline."
           }
         },
         "es": {
@@ -5568,18 +5568,18 @@
         }
       }
     },
-    "Aucun parcours GPS enregistré pour l'instant — la carte se remplit après ta première course trackée.": {
+    "Aucun parcours GPS enregistré pour l'instant. La carte se remplit après ta première course trackée.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No GPS route recorded yet — the map fills in after your first tracked run."
+            "value": "No GPS route recorded yet. The map fills in after your first tracked run."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todavía no hay ninguna ruta GPS registrada — el mapa se rellena después de tu primera carrera con seguimiento."
+            "value": "Todavía no hay ninguna ruta GPS registrada. El mapa se rellena después de tu primera carrera con seguimiento."
           }
         }
       }
@@ -5617,18 +5617,18 @@
         }
       }
     },
-    "Aucune course pour l'instant — termine une sortie ou ajoutes-en une manuellement.": {
+    "Aucune course pour l'instant. Termine une sortie ou ajoutes-en une manuellement.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No runs yet — finish an outing or add one manually."
+            "value": "No runs yet. Finish an outing or add one manually."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todavía no hay carreras — termina una salida o añade una manualmente."
+            "value": "Todavía no hay carreras. Termina una salida o añade una manualmente."
           }
         }
       }
@@ -5700,18 +5700,18 @@
         }
       }
     },
-    "Aucune sortie prévue — propose un créneau, les autres n'ont qu'à dire « J'y serai ».": {
+    "Aucune sortie prévue. Propose un créneau, les autres n'ont qu'à dire « J'y serai ».": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No run planned — suggest a time, others just have to say “I'll be there”."
+            "value": "No run planned. Suggest a time, others just have to say “I'll be there”."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ninguna salida prevista — propón un horario, los demás solo tienen que decir «Allí estaré»."
+            "value": "Ninguna salida prevista. Propón un horario, los demás solo tienen que decir «Allí estaré»."
           }
         }
       }
@@ -7108,18 +7108,18 @@
         }
       }
     },
-    "Ce message n'est pas autorisé — reformule-le.": {
+    "Ce message n'est pas autorisé. Reformule-le.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This message isn't allowed — rephrase it."
+            "value": "This message isn't allowed. Rephrase it."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este mensaje no está permitido — reformúlalo."
+            "value": "Este mensaje no está permitido. Reformúlalo."
           }
         }
       }
@@ -7158,18 +7158,18 @@
         }
       }
     },
-    "Ce nom n'est pas autorisé — choisis-en un autre.": {
+    "Ce nom n'est pas autorisé. Choisis-en un autre.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This name isn't allowed — choose another one."
+            "value": "This name isn't allowed. Choose another one."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este nombre no está permitido — elige otro."
+            "value": "Este nombre no está permitido. Elige otro."
           }
         }
       }
@@ -7191,18 +7191,18 @@
         }
       }
     },
-    "Ce prénom n'est pas autorisé — choisis-en un autre.": {
+    "Ce prénom n'est pas autorisé. Choisis-en un autre.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This first name isn't allowed — choose another one."
+            "value": "This first name isn't allowed. Choose another one."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este nombre no está permitido — elige otro."
+            "value": "Este nombre no está permitido. Elige otro."
           }
         }
       }
@@ -7404,19 +7404,19 @@
         }
       }
     },
-    "Ce qui se prépare, en revanche : nager dedans avant le jour J. Elle serre, elle gêne la respiration, et elle change la position dans l'eau. Et l'enlever vite s'apprend — c'est la moitié de T1.": {
+    "Ce qui se prépare, en revanche : nager dedans avant le jour J. Elle serre, elle gêne la respiration, et elle change la position dans l'eau. Et l'enlever vite s'apprend. C'est la moitié de T1.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "What you can prepare: swimming in it before race day. It's tight, it restricts your breathing, and it changes your position in the water. And taking it off fast is a skill — it's half of T1."
+            "value": "What you can prepare: swimming in it before race day. It's tight, it restricts your breathing, and it changes your position in the water. And taking it off fast is a skill. It's half of T1."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lo que sí se prepara: nadar con él antes del día de la carrera. Aprieta, dificulta la respiración, y cambia la posición en el agua. Y quitárselo rápido se aprende — es la mitad de T1."
+            "value": "Lo que sí se prepara: nadar con él antes del día de la carrera. Aprieta, dificulta la respiración, y cambia la posición en el agua. Y quitárselo rápido se aprende. Es la mitad de T1."
           }
         }
       }
@@ -7470,51 +7470,51 @@
         }
       }
     },
-    "Ce texte n'est pas autorisé — reformule-le.": {
+    "Ce texte n'est pas autorisé. Reformule-le.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This text isn't allowed — rephrase it."
+            "value": "This text isn't allowed. Rephrase it."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este texto no está permitido — reformúlalo."
+            "value": "Este texto no está permitido. Reformúlalo."
           }
         }
       }
     },
-    "Ce texte n'est pas autorisé — reformule.": {
+    "Ce texte n'est pas autorisé. Reformule.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This text isn't allowed — rephrase."
+            "value": "This text isn't allowed. Rephrase."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este texto no está permitido — reformula."
+            "value": "Este texto no está permitido. Reformula."
           }
         }
       }
     },
-    "Ce téléphone contient le profil de %@ — son programme, son historique et ses réglages. Tu viens de te connecter avec un autre compte.": {
+    "Ce téléphone contient le profil de %@ : son programme, son historique et ses réglages. Tu viens de te connecter avec un autre compte.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This phone holds %@'s profile — their plan, their history and their settings. You've just signed in with a different account."
+            "value": "This phone holds %@'s profile: their plan, their history and their settings. You've just signed in with a different account."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este teléfono contiene el perfil de %@ — su plan, su historial y sus ajustes. Acabas de iniciar sesión con otra cuenta."
+            "value": "Este teléfono contiene el perfil de %@: su plan, su historial y sus ajustes. Acabas de iniciar sesión con otra cuenta."
           }
         }
       }
@@ -7585,19 +7585,19 @@
         }
       }
     },
-    "Cette adresse n'est pas dans la liste des comptes de la maison. Ajoute celle affichée ci-dessous à RUNUP_ADMIN_EMAILS sur Vercel — c'est la seule que le serveur reconnaîtra.": {
+    "Cette adresse n'est pas dans la liste des comptes de la maison. Ajoute celle affichée ci-dessous à RUNUP_ADMIN_EMAILS sur Vercel. C'est la seule que le serveur reconnaîtra.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This address isn't in the house-account list. Add the one shown below to RUNUP_ADMIN_EMAILS on Vercel — it's the only one the server will recognise."
+            "value": "This address isn't in the house-account list. Add the one shown below to RUNUP_ADMIN_EMAILS on Vercel. It's the only one the server will recognise."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta dirección no está en la lista de cuentas de la casa. Añade la que se muestra abajo a RUNUP_ADMIN_EMAILS en Vercel — es la única que el servidor reconocerá."
+            "value": "Esta dirección no está en la lista de cuentas de la casa. Añade la que se muestra abajo a RUNUP_ADMIN_EMAILS en Vercel. Es la única que el servidor reconocerá."
           }
         }
       }
@@ -7653,19 +7653,19 @@
         }
       }
     },
-    "Cette paire dépasse %lld km — pense à la changer bientôt.": {
+    "Cette paire dépasse %lld km. Pense à la changer bientôt.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This pair has passed %lld km — think about replacing it soon."
+            "value": "This pair has passed %lld km. Think about replacing it soon."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este par supera los %lld km — piensa en cambiarlo pronto."
+            "value": "Este par supera los %lld km. Piensa en cambiarlo pronto."
           }
         }
       }
@@ -7816,18 +7816,18 @@
         }
       }
     },
-    "Cette séance a été allégée aujourd'hui d'après ta forme du jour — la semaine reprend son cours normal demain.": {
+    "Cette séance a été allégée aujourd'hui d'après ta forme du jour. La semaine reprend son cours normal demain.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This session was lightened today based on how you're doing — the week picks back up as planned tomorrow."
+            "value": "This session was lightened today based on how you're doing. The week picks back up as planned tomorrow."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta sesión se ha aligerado hoy según tu estado — la semana retoma su curso normal mañana."
+            "value": "Esta sesión se ha aligerado hoy según tu estado. La semana retoma su curso normal mañana."
           }
         }
       }
@@ -8029,36 +8029,36 @@
         }
       }
     },
-    "Charges renforcées — pour un niveau confirmé": {
+    "Charges renforcées : pour un niveau confirmé": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Heavier loads — for an advanced level"
+            "value": "Heavier loads: for an advanced level"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cargas reforzadas — para un nivel avanzado"
+            "value": "Cargas reforzadas: para un nivel avanzado"
           }
         }
       }
     },
-    "Charges standard — le format le plus couru": {
+    "Charges standard : le format le plus couru": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Standard loads — the format most people race"
+            "value": "Standard loads: the format most people race"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cargas estándar — el formato más común"
+            "value": "Cargas estándar: el formato más común"
           }
         }
       }
@@ -8097,19 +8097,19 @@
         }
       }
     },
-    "Cherche quelqu'un par son nom ou son pseudo juste au-dessus — ou invite ceux avec qui tu cours déjà.": {
+    "Cherche quelqu'un par son nom ou son pseudo juste au-dessus. Ou invite ceux avec qui tu cours déjà.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Search for someone by name or handle just above — or invite the people you already run with."
+            "value": "Search for someone by name or handle just above. Or invite the people you already run with."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Busca a alguien por su nombre o su usuario justo arriba — o invita a las personas con las que ya corres."
+            "value": "Busca a alguien por su nombre o su usuario justo arriba. O invita a las personas con las que ya corres."
           }
         }
       }
@@ -8245,19 +8245,19 @@
         }
       }
     },
-    "Choisis au moins 3 jours — un triathlon a trois disciplines": {
+    "Choisis au moins 3 jours : un triathlon a trois disciplines": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pick at least 3 days — a triathlon has three disciplines"
+            "value": "Pick at least 3 days: a triathlon has three disciplines"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elige al menos 3 días — un triatlón tiene tres disciplinas"
+            "value": "Elige al menos 3 días: un triatlón tiene tres disciplinas"
           }
         }
       }
@@ -9244,12 +9244,12 @@
         }
       }
     },
-    "Cours à ta sensation — ta séance arrive de l'iPhone.": {
+    "Cours à ta sensation. Ta séance arrive de l'iPhone.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Run by feel — your session is on its way from your iPhone."
+            "value": "Run by feel. Your session is on its way from your iPhone."
           }
         },
         "es": {
@@ -10240,30 +10240,30 @@
         }
       }
     },
-    "Dernier bloc, c'est le moment — lâche tout dessus": {
+    "Dernier bloc, c'est le moment : lâche tout dessus": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Last block, this is the moment — give it everything"
+            "value": "Last block, this is the moment: give it everything"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Último bloque, es el momento — déjalo todo"
+            "value": "Último bloque, es el momento: déjalo todo"
           }
         }
       }
     },
-    "Dernier écran — ton plan arrive juste après.": {
+    "Dernier écran. Ton plan arrive juste après.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Last screen — your plan comes right after."
+            "value": "Last screen. Your plan comes right after."
           }
         },
         "es": {
@@ -10290,19 +10290,19 @@
         }
       }
     },
-    "Dernière partie — finis proprement, sans t'arracher": {
+    "Dernière partie : finis proprement, sans t'arracher": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Final stretch — finish cleanly, without wrecking yourself"
+            "value": "Final stretch: finish cleanly, without wrecking yourself"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Última parte — termina limpio, sin destrozarte"
+            "value": "Última parte: termina limpio, sin destrozarte"
           }
         }
       }
@@ -10606,18 +10606,18 @@
         }
       }
     },
-    "Distance, séances, série — le récap de ta semaine t'attend.": {
+    "Distance, séances, série : le récap de ta semaine t'attend.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Distance, sessions, streak — your weekly recap is waiting."
+            "value": "Distance, sessions, streak: your weekly recap is waiting."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Distancia, sesiones, racha — el resumen de tu semana te espera."
+            "value": "Distancia, sesiones, racha: el resumen de tu semana te espera."
           }
         }
       }
@@ -10655,13 +10655,13 @@
         }
       }
     },
-    "Division d'une version précédente — à rechoisir": {
+    "Division d'une version précédente : à rechoisir": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Division from an earlier version — please pick again"
+            "value": "Division from an earlier version: please pick again"
           }
         },
         "es": {
@@ -10737,12 +10737,12 @@
         }
       }
     },
-    "Douze moments du parcours — l'app s'ouvre, une étape est franchie, une course démarre. Jamais ce que tu écris, jamais ta position, jamais rien d'Apple Santé. Si tu refuses, aucune statistique n'est envoyée et ce qui était gardé est effacé.": {
+    "Douze moments du parcours. L'app s'ouvre, une étape est franchie, une course démarre. Jamais ce que tu écris, jamais ta position, jamais rien d'Apple Santé. Si tu refuses, aucune statistique n'est envoyée et ce qui était gardé est effacé.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Twelve moments along the way — the app opens, a step is completed, a run starts. Never what you write, never your location, never anything from Apple Health. If you say no, no statistics are sent and whatever was held is erased."
+            "value": "Twelve moments along the way. The app opens, a step is completed, a run starts. Never what you write, never your location, never anything from Apple Health. If you say no, no statistics are sent and whatever was held is erased."
           }
         },
         "es": {
@@ -10852,19 +10852,19 @@
         }
       }
     },
-    "Dès ta première sortie, cet écran affichera ton allure moyenne, ta charge d'entraînement et tes records — calculés sur tes courses, pas sur des moyennes.": {
+    "Dès ta première sortie, cet écran affichera ton allure moyenne, ta charge d'entraînement et tes records, calculés sur tes courses, pas sur des moyennes.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "From your first run on, this screen will show your average pace, your training load and your records — computed from your own runs, not from averages."
+            "value": "From your first run on, this screen will show your average pace, your training load and your records, computed from your own runs, not from averages."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Desde tu primera salida, esta pantalla mostrará tu ritmo medio, tu carga de entrenamiento y tus récords — calculados con tus carreras, no con promedios."
+            "value": "Desde tu primera salida, esta pantalla mostrará tu ritmo medio, tu carga de entrenamiento y tus récords, calculados con tus carreras, no con promedios."
           }
         }
       }
@@ -11132,19 +11132,19 @@
         }
       }
     },
-    "Dénivelé, descente technique et sorties enchaînées — un plan qui compte en heures": {
+    "Dénivelé, descente technique et sorties enchaînées : un plan qui compte en heures": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elevation, technical descent and back-to-back runs — a plan measured in hours"
+            "value": "Elevation, technical descent and back-to-back runs: a plan measured in hours"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Desnivel, bajada técnica y salidas encadenadas — un plan que se cuenta en horas"
+            "value": "Desnivel, bajada técnica y salidas encadenadas: un plan que se cuenta en horas"
           }
         }
       }
@@ -11544,36 +11544,36 @@
         }
       }
     },
-    "Elles méritent quand même d'être répétées une fois — non pour le chrono, mais pour ne pas découvrir en pleine course qu'on a oublié quelque chose. T1 surtout : on y arrive déjà essoufflé, et c'est là qu'on enfile un casque à l'envers.": {
+    "Elles méritent quand même d'être répétées une fois, non pour le chrono, mais pour ne pas découvrir en pleine course qu'on a oublié quelque chose. T1 surtout : on y arrive déjà essoufflé, et c'est là qu'on enfile un casque à l'envers.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "They're still worth rehearsing once — not for the clock, but so you don't find out mid-race that you forgot something. T1 especially: you arrive already out of breath, and that's where helmets go on backwards."
+            "value": "They're still worth rehearsing once, not for the clock, but so you don't find out mid-race that you forgot something. T1 especially: you arrive already out of breath, and that's where helmets go on backwards."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aun así merece la pena ensayarlas una vez — no por el crono, sino para no descubrir en plena carrera que te has olvidado algo. Sobre todo T1: llegas ya sin aliento, y ahí es donde el casco se pone al revés."
+            "value": "Aun así merece la pena ensayarlas una vez, no por el crono, sino para no descubrir en plena carrera que te has olvidado algo. Sobre todo T1: llegas ya sin aliento, y ahí es donde el casco se pone al revés."
           }
         }
       }
     },
-    "Elles méritent quand même d'être répétées une fois — non pour le chrono, mais pour ne pas découvrir en pleine course qu'on a oublié quelque chose. T1 surtout : on y arrive déjà essoufflée, et c'est là qu'on enfile un casque à l'envers.": {
+    "Elles méritent quand même d'être répétées une fois, non pour le chrono, mais pour ne pas découvrir en pleine course qu'on a oublié quelque chose. T1 surtout : on y arrive déjà essoufflée, et c'est là qu'on enfile un casque à l'envers.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "They're still worth rehearsing once — not for the clock, but so you don't find out mid-race that you forgot something. T1 especially: you arrive already out of breath, and that's where helmets go on backwards."
+            "value": "They're still worth rehearsing once, not for the clock, but so you don't find out mid-race that you forgot something. T1 especially: you arrive already out of breath, and that's where helmets go on backwards."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aun así merece la pena ensayarlas una vez — no por el crono, sino para no descubrir en plena carrera que te has olvidado algo. Sobre todo T1: llegas ya sin aliento, y ahí es donde el casco se pone al revés."
+            "value": "Aun así merece la pena ensayarlas una vez, no por el crono, sino para no descubrir en plena carrera que te has olvidado algo. Sobre todo T1: llegas ya sin aliento, y ahí es donde el casco se pone al revés."
           }
         }
       }
@@ -11594,13 +11594,13 @@
         }
       }
     },
-    "Elles restent sur ton téléphone, rien n'est perdu — Haizo ne répond pas, nouvelle tentative plus tard.": {
+    "Elles restent sur ton téléphone, rien n'est perdu. Haizo ne répond pas, nouvelle tentative plus tard.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "They're safe on your phone — Haizo isn't responding, we'll try again later."
+            "value": "They're safe on your phone. Haizo isn't responding, we'll try again later."
           }
         },
         "es": {
@@ -11611,19 +11611,19 @@
         }
       }
     },
-    "Elles restent sur ton téléphone, rien n'est perdu — nouvelle tentative automatique bientôt.": {
+    "Elles restent sur ton téléphone, rien n'est perdu. Nouvelle tentative automatique bientôt.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "They stay on your phone, nothing is lost — we'll try again automatically soon."
+            "value": "They stay on your phone, nothing is lost. We'll try again automatically soon."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se quedan en tu teléfono, no se pierde nada — lo intentaremos de nuevo automáticamente pronto."
+            "value": "Se quedan en tu teléfono, no se pierde nada. Lo intentaremos de nuevo automáticamente pronto."
           }
         }
       }
@@ -11715,7 +11715,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Grey weeks are recovery weeks: the volume drops on purpose — that is when the gains take hold."
+            "value": "Grey weeks are recovery weeks: the volume drops on purpose. That is when the gains take hold."
           }
         },
         "es": {
@@ -11827,18 +11827,18 @@
         }
       }
     },
-    "Encore %lld pas pour boucler ton objectif — une petite marche ?": {
+    "Encore %lld pas pour boucler ton objectif : une petite marche ?": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld more steps to close out your goal — how about a little walk?"
+            "value": "%lld more steps to close out your goal: how about a little walk?"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aún %lld pasos para completar tu objetivo — ¿un pequeño paseo?"
+            "value": "Aún %lld pasos para completar tu objetivo: ¿un pequeño paseo?"
           }
         }
       }
@@ -12009,18 +12009,18 @@
         }
       }
     },
-    "Estimation basée sur ton profil — termine une course pour une prédiction plus précise.": {
+    "Estimation basée sur ton profil. Termine une course pour une prédiction plus précise.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Estimate based on your profile — finish a run for a more accurate prediction."
+            "value": "Estimate based on your profile. Finish a run for a more accurate prediction."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Estimación basada en tu perfil — termina una carrera para una predicción más precisa."
+            "value": "Estimación basada en tu perfil. Termina una carrera para una predicción más precisa."
           }
         }
       }
@@ -13573,35 +13573,35 @@
         }
       }
     },
-    "Impossible d'annuler la sortie — réessaie.": {
+    "Impossible d'annuler la sortie. Réessaie.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't cancel the run — try again."
+            "value": "Couldn't cancel the run. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo cancelar la salida — inténtalo de nuevo."
+            "value": "No se pudo cancelar la salida. Inténtalo de nuevo."
           }
         }
       }
     },
-    "Impossible d'applaudir — réessaie.": {
+    "Impossible d'applaudir. Réessaie.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't give kudos — try again."
+            "value": "Couldn't give kudos. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo aplaudir — inténtalo de nuevo."
+            "value": "No se pudo aplaudir. Inténtalo de nuevo."
           }
         }
       }
@@ -13639,19 +13639,19 @@
         }
       }
     },
-    "Impossible d'enregistrer — %@.": {
+    "Impossible d'enregistrer : %@.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't save — %@."
+            "value": "Couldn't save: %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo guardar — %@."
+            "value": "No se pudo guardar: %@."
           }
         }
       }
@@ -13704,36 +13704,36 @@
         }
       }
     },
-    "Impossible d'ouvrir ce profil — %@.": {
+    "Impossible d'ouvrir ce profil : %@.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't open this profile — %@."
+            "value": "Couldn't open this profile: %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo abrir este perfil — %@."
+            "value": "No se pudo abrir este perfil: %@."
           }
         }
       }
     },
-    "Impossible d'ouvrir cette sortie — %@.": {
+    "Impossible d'ouvrir cette sortie : %@.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't open this activity — %@."
+            "value": "Couldn't open this activity: %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se ha podido abrir esta actividad — %@."
+            "value": "No se ha podido abrir esta actividad: %@."
           }
         }
       }
@@ -13754,36 +13754,36 @@
         }
       }
     },
-    "Impossible de charger cette page — %@.": {
+    "Impossible de charger cette page : %@.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't load this page — %@."
+            "value": "Couldn't load this page: %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo cargar esta página — %@."
+            "value": "No se pudo cargar esta página: %@."
           }
         }
       }
     },
-    "Impossible de charger le fil — %@.": {
+    "Impossible de charger le fil : %@.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't load the feed — %@."
+            "value": "Couldn't load the feed: %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo cargar el muro — %@."
+            "value": "No se pudo cargar el muro: %@."
           }
         }
       }
@@ -13804,29 +13804,29 @@
         }
       }
     },
-    "Impossible de charger les courses — %@.": {
+    "Impossible de charger les courses : %@.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't load the races — %@."
+            "value": "Couldn't load the races: %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudieron cargar las carreras — %@."
+            "value": "No se pudieron cargar las carreras: %@."
           }
         }
       }
     },
-    "Impossible de charger les itinéraires — %@.": {
+    "Impossible de charger les itinéraires : %@.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't load the routes — %@."
+            "value": "Couldn't load the routes: %@."
           }
         },
         "es": {
@@ -13837,35 +13837,35 @@
         }
       }
     },
-    "Impossible de charger tes amis — vérifie ta connexion.": {
+    "Impossible de charger tes amis. Vérifie ta connexion.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't load your friends — check your connection."
+            "value": "Couldn't load your friends. Check your connection."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudieron cargar tus amigos — comprueba tu conexión."
+            "value": "No se pudieron cargar tus amigos. Comprueba tu conexión."
           }
         }
       }
     },
-    "Impossible de créer la course — %@.": {
+    "Impossible de créer la course : %@.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't create the race — %@."
+            "value": "Couldn't create the race: %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo crear la carrera — %@."
+            "value": "No se pudo crear la carrera: %@."
           }
         }
       }
@@ -13918,12 +13918,12 @@
         }
       }
     },
-    "Impossible de démarrer — vérifie l'accès Santé dans Réglages.": {
+    "Impossible de démarrer. Vérifie l'accès Santé dans Réglages.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't start — check Health access in Settings."
+            "value": "Couldn't start. Check Health access in Settings."
           }
         },
         "es": {
@@ -13934,18 +13934,18 @@
         }
       }
     },
-    "Impossible de déplacer cette séance — dernier jour de la semaine.": {
+    "Impossible de déplacer cette séance : dernier jour de la semaine.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Can't move this session — it's the last day of the week."
+            "value": "Can't move this session: it's the last day of the week."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se puede mover esta sesión — es el último día de la semana."
+            "value": "No se puede mover esta sesión: es el último día de la semana."
           }
         }
       }
@@ -13967,35 +13967,35 @@
         }
       }
     },
-    "Impossible de marquer ce message — réessaie.": {
+    "Impossible de marquer ce message. Réessaie.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't mark this message — try again."
+            "value": "Couldn't mark this message. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo marcar este mensaje — inténtalo de nuevo."
+            "value": "No se pudo marcar este mensaje. Inténtalo de nuevo."
           }
         }
       }
     },
-    "Impossible de mettre à jour — réessaie.": {
+    "Impossible de mettre à jour. Réessaie.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't update — try again."
+            "value": "Couldn't update. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo actualizar — inténtalo de nuevo."
+            "value": "No se pudo actualizar. Inténtalo de nuevo."
           }
         }
       }
@@ -14033,19 +14033,19 @@
         }
       }
     },
-    "Impossible de publier — %@.": {
+    "Impossible de publier : %@.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't post — %@."
+            "value": "Couldn't post: %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo publicar — %@."
+            "value": "No se pudo publicar: %@."
           }
         }
       }
@@ -14082,94 +14082,94 @@
         }
       }
     },
-    "Impossible de répondre — réessaie.": {
+    "Impossible de répondre. Réessaie.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't respond — try again."
+            "value": "Couldn't respond. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo responder — inténtalo de nuevo."
+            "value": "No se pudo responder. Inténtalo de nuevo."
           }
         }
       }
     },
-    "Impossible de suivre cette personne — réessaie.": {
+    "Impossible de suivre cette personne. Réessaie.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't follow this person — try again."
+            "value": "Couldn't follow this person. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo seguir a esta persona — inténtalo de nuevo."
+            "value": "No se pudo seguir a esta persona. Inténtalo de nuevo."
           }
         }
       }
     },
-    "Impossible de supprimer le compte — réessaie.": {
+    "Impossible de supprimer le compte. Réessaie.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't delete the account — try again."
+            "value": "Couldn't delete the account. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo eliminar la cuenta — inténtalo de nuevo."
+            "value": "No se pudo eliminar la cuenta. Inténtalo de nuevo."
           }
         }
       }
     },
-    "Impossible de supprimer — réessaie.": {
+    "Impossible de supprimer. Réessaie.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't delete — try again."
+            "value": "Couldn't delete. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo eliminar — inténtalo de nuevo."
+            "value": "No se pudo eliminar. Inténtalo de nuevo."
           }
         }
       }
     },
-    "Impossible de te retirer — réessaie.": {
+    "Impossible de te retirer. Réessaie.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't remove you — try again."
+            "value": "Couldn't remove you. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo quitarte — inténtalo de nuevo."
+            "value": "No se pudo quitarte. Inténtalo de nuevo."
           }
         }
       }
     },
-    "Impossible de vérifier — réessaie quand tu auras du réseau.": {
+    "Impossible de vérifier. Réessaie quand tu auras du réseau.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Could not check — try again when you have a connection."
+            "value": "Could not check. Try again when you have a connection."
           }
         },
         "es": {
@@ -14247,18 +14247,18 @@
         }
       }
     },
-    "Invite un ami avec ton code — vous gagnez tous les deux +100 XP dès sa première séance.": {
+    "Invite un ami avec ton code. Vous gagnez tous les deux +100 XP dès sa première séance.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Invite a friend with your code — you both earn +100 XP as soon as they log their first session."
+            "value": "Invite a friend with your code. You both earn +100 XP as soon as they log their first session."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Invita a un amigo con tu código — ambos ganáis +100 XP en cuanto complete su primera sesión."
+            "value": "Invita a un amigo con tu código. Ambos ganáis +100 XP en cuanto complete su primera sesión."
           }
         }
       }
@@ -14794,12 +14794,12 @@
         }
       }
     },
-    "Je peux te répondre vraiment, mais il me faut Haizo Plus. Le coach lit ton programme, ta forme et tes dernières sorties avant de te répondre — c'est ce qui fait la différence avec une réponse générique.": {
+    "Je peux te répondre vraiment, mais il me faut Haizo Plus. Le coach lit ton programme, ta forme et tes dernières sorties avant de te répondre. C'est ce qui fait la différence avec une réponse générique.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "I can give you a real answer, but I need Haizo Plus. The coach reads your plan, your form and your recent runs before replying — that's what makes it different from a generic answer."
+            "value": "I can give you a real answer, but I need Haizo Plus. The coach reads your plan, your form and your recent runs before replying. That's what makes it different from a generic answer."
           }
         },
         "es": {
@@ -14976,18 +14976,18 @@
         }
       }
     },
-    "Jour %lld sur %lld — la suite se débloque demain.": {
+    "Jour %lld sur %lld. La suite se débloque demain.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Day %lld of %lld — the rest unlocks tomorrow."
+            "value": "Day %lld of %lld. The rest unlocks tomorrow."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Día %lld de %lld — el resto se desbloquea mañana."
+            "value": "Día %lld de %lld. El resto se desbloquea mañana."
           }
         }
       }
@@ -15865,18 +15865,18 @@
         }
       }
     },
-    "Kudos non envoyé — vérifie ta connexion.": {
+    "Kudos non envoyé. Vérifie ta connexion.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kudos not sent — check your connection."
+            "value": "Kudos not sent. Check your connection."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aplauso no enviado — comprueba tu conexión."
+            "value": "Aplauso no enviado. Comprueba tu conexión."
           }
         }
       }
@@ -15898,19 +15898,19 @@
         }
       }
     },
-    "L'app s'est fermée pendant ta sortie — %@ km avaient été enregistrés. Valide ton ressenti pour les garder.": {
+    "L'app s'est fermée pendant ta sortie. %@ km avaient été enregistrés. Valide ton ressenti pour les garder.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The app closed during your run — %@ km had been recorded. Rate how it felt to keep them."
+            "value": "The app closed during your run. %@ km had been recorded. Rate how it felt to keep them."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La app se cerró durante tu salida — se habían registrado %@ km. Valida cómo te sentiste para conservarlos."
+            "value": "La app se cerró durante tu salida. Se habían registrado %@ km. Valida cómo te sentiste para conservarlos."
           }
         }
       }
@@ -16065,12 +16065,12 @@
         }
       }
     },
-    "La barre de progression suit toujours la durée de la séance, quel que soit le grand chiffre — c'est le seul objectif qu'une séance porte.": {
+    "La barre de progression suit toujours la durée de la séance, quel que soit le grand chiffre : c'est le seul objectif qu'une séance porte.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The progress bar always tracks the session's duration, whatever the big number is — it's the only target a session carries."
+            "value": "The progress bar always tracks the session's duration, whatever the big number is: it's the only target a session carries."
           }
         },
         "es": {
@@ -16148,36 +16148,36 @@
         }
       }
     },
-    "La distance ET le dénivelé — c'est le second qui décide du plan.": {
+    "La distance ET le dénivelé : c'est le second qui décide du plan.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The distance AND the elevation — the second one is what shapes the plan."
+            "value": "The distance AND the elevation: the second one is what shapes the plan."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La distancia Y el desnivel — es el segundo el que decide el plan."
+            "value": "La distancia Y el desnivel: es el segundo el que decide el plan."
           }
         }
       }
     },
-    "La distance est facultative — laisse-la vide pour une séance de renforcement ou un tapis sans compteur.": {
+    "La distance est facultative : laisse-la vide pour une séance de renforcement ou un tapis sans compteur.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Distance is optional — leave it empty for a strength session or a treadmill with no readout."
+            "value": "Distance is optional: leave it empty for a strength session or a treadmill with no readout."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La distancia es opcional — déjala vacía para una sesión de fuerza o una cinta sin contador."
+            "value": "La distancia es opcional: déjala vacía para una sesión de fuerza o una cinta sin contador."
           }
         }
       }
@@ -16249,12 +16249,12 @@
         }
       }
     },
-    "La liste qui compte est celle de **ta** course : l'organisation la publie, et la contrôle au départ. Celle-ci est le socle commun des grands trails — pars de là, puis relis la leur.": {
+    "La liste qui compte est celle de **ta** course : l'organisation la publie, et la contrôle au départ. Celle-ci est le socle commun des grands trails. Pars de là, puis relis la leur.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The list that counts is **your** race's: the organisers publish it, and check it at the start. This one is what the big trail races have in common — start here, then read theirs."
+            "value": "The list that counts is **your** race's: the organisers publish it, and check it at the start. This one is what the big trail races have in common. Start here, then read theirs."
           }
         },
         "es": {
@@ -16398,12 +16398,12 @@
         }
       }
     },
-    "La publication a échoué — vérifie ta connexion et réessaie.": {
+    "La publication a échoué. Vérifie ta connexion et réessaie.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Publishing failed — check your connection and try again."
+            "value": "Publishing failed. Check your connection and try again."
           }
         },
         "es": {
@@ -16430,12 +16430,12 @@
         }
       }
     },
-    "La séance s'est interrompue — réessaie.": {
+    "La séance s'est interrompue. Réessaie.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The workout was interrupted — try again."
+            "value": "The workout was interrupted. Try again."
           }
         },
         "es": {
@@ -16496,12 +16496,12 @@
         }
       }
     },
-    "La vidéo n'a pas pu être fabriquée — réessaie.": {
+    "La vidéo n'a pas pu être fabriquée. Réessaie.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The video couldn't be made — try again."
+            "value": "The video couldn't be made. Try again."
           }
         },
         "es": {
@@ -16642,28 +16642,28 @@
         }
       }
     },
-    "Le coach garde ton programme et ta forme en tête — seul l'historique des messages est effacé.": {
+    "Le coach garde ton programme et ta forme en tête. Seul l'historique des messages est effacé.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The coach keeps your program and form in mind — only the message history is cleared."
+            "value": "The coach keeps your program and form in mind. Only the message history is cleared."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El coach recuerda tu programa y tu forma — solo se borra el historial de mensajes."
+            "value": "El coach recuerda tu programa y tu forma. Solo se borra el historial de mensajes."
           }
         }
       }
     },
-    "Le coach n'a pas pu répondre à ça — reformule autrement.": {
+    "Le coach n'a pas pu répondre à ça. Reformule autrement.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The coach couldn't answer that — try rephrasing."
+            "value": "The coach couldn't answer that. Try rephrasing."
           }
         },
         "es": {
@@ -16674,12 +16674,12 @@
         }
       }
     },
-    "Le coach n'a pas pu répondre — %@.": {
+    "Le coach n'a pas pu répondre : %@.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The coach couldn't answer — %@."
+            "value": "The coach couldn't answer: %@."
           }
         },
         "es": {
@@ -16954,19 +16954,19 @@
         }
       }
     },
-    "Le jour J, tu reprendras à pied pour %@ après %@ de vélo. C'est cette seconde course que le plan prépare — c'est elle qui décide de la journée, et elle ne ressemble pas au même nombre de kilomètres à froid.": {
+    "Le jour J, tu reprendras à pied pour %@ après %@ de vélo. C'est cette seconde course que le plan prépare. C'est elle qui décide de la journée, et elle ne ressemble pas au même nombre de kilomètres à froid.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "On race day you'll set off running again for %@ after %@ on the bike. That second run is what the plan is built for — it decides your day, and it feels nothing like the same distance on fresh legs."
+            "value": "On race day you'll set off running again for %@ after %@ on the bike. That second run is what the plan is built for. It decides your day, and it feels nothing like the same distance on fresh legs."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El día de la prueba volverás a correr %@ después de %@ en bici. Esa segunda carrera es la que prepara el plan — es la que decide tu día, y no se parece en nada a los mismos kilómetros en frío."
+            "value": "El día de la prueba volverás a correr %@ después de %@ en bici. Esa segunda carrera es la que prepara el plan. Es la que decide tu día, y no se parece en nada a los mismos kilómetros en frío."
           }
         }
       }
@@ -17056,18 +17056,18 @@
         }
       }
     },
-    "Le plan prévoyait du repos — ta sortie compte quand même.": {
+    "Le plan prévoyait du repos. Ta sortie compte quand même.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your plan called for rest — your run still counts."
+            "value": "Your plan called for rest. Your run still counts."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tu plan preveía descanso — tu salida cuenta igualmente."
+            "value": "Tu plan preveía descanso. Tu salida cuenta igualmente."
           }
         }
       }
@@ -17153,18 +17153,18 @@
         }
       }
     },
-    "Le programme se cale dessus — tu pourras toujours bouger une séance.": {
+    "Le programme se cale dessus. Tu pourras toujours bouger une séance.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The program is built around this — you can always move a session later."
+            "value": "The program is built around this. You can always move a session later."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El programa se basa en esto — siempre podrás mover una sesión."
+            "value": "El programa se basa en esto. Siempre podrás mover una sesión."
           }
         }
       }
@@ -17236,19 +17236,19 @@
         }
       }
     },
-    "Le vélo prend plus de la moitié de la journée, mais la seconde course est aussi longue que la première — parfois bien plus. Tout ce que tu auras pris d'avance avant comptera contre toi là.": {
+    "Le vélo prend plus de la moitié de la journée, mais la seconde course est aussi longue que la première. Parfois bien plus. Tout ce que tu auras pris d'avance avant comptera contre toi là.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The bike takes more than half the day, but the second run is as long as the first — sometimes much longer. Any time you banked earlier will be charged back to you there."
+            "value": "The bike takes more than half the day, but the second run is as long as the first. Sometimes much longer. Any time you banked earlier will be charged back to you there."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La bici ocupa más de la mitad del día, pero la segunda carrera es tan larga como la primera — a veces mucho más. Todo lo que hayas ganado antes te lo cobrarán ahí."
+            "value": "La bici ocupa más de la mitad del día, pero la segunda carrera es tan larga como la primera. A veces mucho más. Todo lo que hayas ganado antes te lo cobrarán ahí."
           }
         }
       }
@@ -17259,7 +17259,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The bike takes nearly half the day, and the second run barely a sixth. It's short — which is what makes you want to go out fast on the first one, and that's the mistake."
+            "value": "The bike takes nearly half the day, and the second run barely a sixth. It's short, which is what makes you want to go out fast on the first one, and that's the mistake."
           }
         },
         "es": {
@@ -17270,19 +17270,19 @@
         }
       }
     },
-    "Le vélo prend à peu près la moitié de la journée — plus que les deux autres réunies sur un format long. C'est lui qui décide de ce que tu auras dans les jambes en descendant de selle.": {
+    "Le vélo prend à peu près la moitié de la journée. Plus que les deux autres réunies sur un format long. C'est lui qui décide de ce que tu auras dans les jambes en descendant de selle.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The bike takes roughly half the day — more than the other two combined on a long format. It decides what your legs will have left when you step off the saddle."
+            "value": "The bike takes roughly half the day. More than the other two combined on a long format. It decides what your legs will have left when you step off the saddle."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La bici ocupa aproximadamente la mitad del día — más que las otras dos juntas en un formato largo. Ella decide lo que te quedará en las piernas al bajarte del sillín."
+            "value": "La bici ocupa aproximadamente la mitad del día. Más que las otras dos juntas en un formato largo. Ella decide lo que te quedará en las piernas al bajarte del sillín."
           }
         }
       }
@@ -17603,12 +17603,12 @@
         }
       }
     },
-    "Localisation refusée — ouvrir les Réglages": {
+    "Localisation refusée : ouvrir les Réglages": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Location denied — open Settings"
+            "value": "Location denied: open Settings"
           }
         },
         "es": {
@@ -18331,19 +18331,19 @@
         }
       }
     },
-    "Mi-séance. C'est la récupération qui tient la fin — ne la coupe pas.": {
+    "Mi-séance. C'est la récupération qui tient la fin : ne la coupe pas.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Halfway. Recovery is what carries the last reps — don't cut it short."
+            "value": "Halfway. Recovery is what carries the last reps: don't cut it short."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mitad de sesión. La recuperación sostiene el final — no la acortes."
+            "value": "Mitad de sesión. La recuperación sostiene el final: no la acortes."
           }
         }
       }
@@ -18365,12 +18365,12 @@
         }
       }
     },
-    "Micro indisponible — vérifie l'autorisation dans Réglages > Haizo.": {
+    "Micro indisponible : vérifie l'autorisation dans Réglages > Haizo.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Microphone unavailable — check the permission in Settings > Haizo."
+            "value": "Microphone unavailable: check the permission in Settings > Haizo."
           }
         },
         "es": {
@@ -18381,12 +18381,12 @@
         }
       }
     },
-    "Micro non autorisé — active-le dans Réglages > Haizo.": {
+    "Micro non autorisé : active-le dans Réglages > Haizo.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Microphone access denied — turn it on in Settings > Haizo."
+            "value": "Microphone access denied: turn it on in Settings > Haizo."
           }
         },
         "es": {
@@ -18445,18 +18445,18 @@
         }
       }
     },
-    "Mode course libre activé — suggestions sans objectif de perf": {
+    "Mode course libre activé : suggestions sans objectif de perf": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Free-run mode enabled — suggestions with no performance goal"
+            "value": "Free-run mode enabled: suggestions with no performance goal"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Modo carrera libre activado — sugerencias sin objetivo de rendimiento"
+            "value": "Modo carrera libre activado: sugerencias sin objetivo de rendimiento"
           }
         }
       }
@@ -19069,36 +19069,36 @@
         }
       }
     },
-    "Nager, rouler, courir — dans cet ordre, et fatigué de la précédente à chaque fois.": {
+    "Nager, rouler, courir : dans cet ordre, et fatigué de la précédente à chaque fois.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Swim, bike, run — in that order, and tired from the last one every time."
+            "value": "Swim, bike, run: in that order, and tired from the last one every time."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nadar, pedalear, correr — en ese orden, y cansado de la anterior cada vez."
+            "value": "Nadar, pedalear, correr: en ese orden, y cansado de la anterior cada vez."
           }
         }
       }
     },
-    "Nager, rouler, courir — dans cet ordre, et fatiguée de la précédente à chaque fois.": {
+    "Nager, rouler, courir : dans cet ordre, et fatiguée de la précédente à chaque fois.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Swim, bike, run — in that order, and tired from the last one every time."
+            "value": "Swim, bike, run: in that order, and tired from the last one every time."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nadar, pedalear, correr — en ese orden, y cansada de la anterior cada vez."
+            "value": "Nadar, pedalear, correr: en ese orden, y cansada de la anterior cada vez."
           }
         }
       }
@@ -19480,18 +19480,18 @@
         }
       }
     },
-    "Notifications refusées côté iPhone — active-les dans Réglages > Haizo.": {
+    "Notifications refusées côté iPhone : active-les dans Réglages > Haizo.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Notifications denied on iPhone — enable them in Settings > Haizo."
+            "value": "Notifications denied on iPhone: enable them in Settings > Haizo."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Notificaciones rechazadas en el iPhone — actívalas en Ajustes > Haizo."
+            "value": "Notificaciones rechazadas en el iPhone: actívalas en Ajustes > Haizo."
           }
         }
       }
@@ -19838,18 +19838,18 @@
         }
       }
     },
-    "Objectif ouvert, sans date de fin fixe — le programme continue de progresser semaine après semaine selon ta forme.": {
+    "Objectif ouvert, sans date de fin fixe : le programme continue de progresser semaine après semaine selon ta forme.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open-ended goal, no fixed end date — the program keeps progressing week after week based on how you're feeling."
+            "value": "Open-ended goal, no fixed end date: the program keeps progressing week after week based on how you're feeling."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Objetivo abierto, sin fecha de fin fija — el programa sigue progresando semana tras semana según tu forma."
+            "value": "Objetivo abierto, sin fecha de fin fija: el programa sigue progresando semana tras semana según tu forma."
           }
         }
       }
@@ -19987,19 +19987,19 @@
         }
       }
     },
-    "On lève un peu le pied sur « %@ » — le programme s'ajuste à ta forme du jour.": {
+    "On lève un peu le pied sur « %@ ». Le programme s'ajuste à ta forme du jour.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Easing off on “%@” — your plan is adapting to how you feel today."
+            "value": "Easing off on “%@”. Your plan is adapting to how you feel today."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bajamos un poco el ritmo en «%@» — el plan se adapta a tu forma de hoy."
+            "value": "Bajamos un poco el ritmo en «%@». El plan se adapta a tu forma de hoy."
           }
         }
       }
@@ -20982,34 +20982,34 @@
         }
       }
     },
-    "Pas assez de courses sur cette période — essaie une fenêtre plus large.": {
+    "Pas assez de courses sur cette période : essaie une fenêtre plus large.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Not enough runs in this period — try a wider window."
+            "value": "Not enough runs in this period: try a wider window."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No hay suficientes carreras en este período — prueba una ventana más amplia."
+            "value": "No hay suficientes carreras en este período: prueba una ventana más amplia."
           }
         }
       }
     },
-    "Pas d'objectif précis — on te propose juste de quoi garder la forme.": {
+    "Pas d'objectif précis : on te propose juste de quoi garder la forme.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No specific goal — we'll just help you stay in shape."
+            "value": "No specific goal: we'll just help you stay in shape."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sin objetivo concreto — solo te proponemos lo necesario para mantenerte en forma."
+            "value": "Sin objetivo concreto: solo te proponemos lo necesario para mantenerte en forma."
           }
         }
       }
@@ -21048,13 +21048,13 @@
         }
       }
     },
-    "Pas de connexion — réessaie quand tu auras du réseau.": {
+    "Pas de connexion. Réessaie quand tu auras du réseau.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No connection — try again when you're back online."
+            "value": "No connection. Try again when you're back online."
           }
         },
         "es": {
@@ -21065,50 +21065,50 @@
         }
       }
     },
-    "Pas de course prévue — hydrate-toi bien et dors un peu plus si tu peux.": {
+    "Pas de course prévue. Hydrate-toi bien et dors un peu plus si tu peux.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No run planned — stay hydrated and sleep a bit more if you can."
+            "value": "No run planned. Stay hydrated and sleep a bit more if you can."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No hay carrera prevista — hidrátate bien y duerme un poco más si puedes."
+            "value": "No hay carrera prevista. Hidrátate bien y duerme un poco más si puedes."
           }
         }
       }
     },
-    "Pas de course à préparer ici — le coach cale un rythme régulier, adapté à ta forme du jour, pour construire l'habitude sur la durée.": {
+    "Pas de course à préparer ici : le coach cale un rythme régulier, adapté à ta forme du jour, pour construire l'habitude sur la durée.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No race to prep for here — the coach sets a steady rhythm, adapted to how you're feeling each day, to build the habit over time."
+            "value": "No race to prep for here: the coach sets a steady rhythm, adapted to how you're feeling each day, to build the habit over time."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No hay carrera que preparar aquí — el coach fija un ritmo regular, adaptado a tu forma del día, para construir el hábito con el tiempo."
+            "value": "No hay carrera que preparar aquí: el coach fija un ritmo regular, adaptado a tu forma del día, para construir el hábito con el tiempo."
           }
         }
       }
     },
-    "Pas de date fixe pour ce genre d'objectif — le programme ajuste ton volume semaine après semaine pour que la charge reste tenable dans la durée.": {
+    "Pas de date fixe pour ce genre d'objectif : le programme ajuste ton volume semaine après semaine pour que la charge reste tenable dans la durée.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No fixed date for this kind of goal — the program adjusts your volume week after week to keep the load sustainable over time."
+            "value": "No fixed date for this kind of goal: the program adjusts your volume week after week to keep the load sustainable over time."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sin fecha fija para este tipo de objetivo — el programa ajusta tu volumen semana tras semana para que la carga siga siendo sostenible en el tiempo."
+            "value": "Sin fecha fija para este tipo de objetivo: el programa ajusta tu volumen semana tras semana para que la carga siga siendo sostenible en el tiempo."
           }
         }
       }
@@ -21130,18 +21130,18 @@
         }
       }
     },
-    "Pas de plan fixe — le coach te propose de quoi garder la forme, jour après jour.": {
+    "Pas de plan fixe : le coach te propose de quoi garder la forme, jour après jour.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No fixed plan — your coach suggests what keeps you fit, day after day."
+            "value": "No fixed plan: your coach suggests what keeps you fit, day after day."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sin plan fijo — el coach te propone qué hacer para mantenerte en forma, día tras día."
+            "value": "Sin plan fijo: el coach te propone qué hacer para mantenerte en forma, día tras día."
           }
         }
       }
@@ -21163,18 +21163,18 @@
         }
       }
     },
-    "Pas de séance prévue — profite-en pour récupérer.": {
+    "Pas de séance prévue. Profite-en pour récupérer.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No session planned — take the chance to recover."
+            "value": "No session planned. Take the chance to recover."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sin sesión prevista — aprovecha para recuperarte."
+            "value": "Sin sesión prevista. Aprovecha para recuperarte."
           }
         }
       }
@@ -21212,18 +21212,18 @@
         }
       }
     },
-    "Pas encore de course cette semaine — tu as le temps.": {
+    "Pas encore de course cette semaine. Tu as le temps.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No runs yet this week — you've got time."
+            "value": "No runs yet this week. You've got time."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todavía no hay carreras esta semana — tienes tiempo."
+            "value": "Todavía no hay carreras esta semana. Tienes tiempo."
           }
         }
       }
@@ -21244,34 +21244,34 @@
         }
       }
     },
-    "Pas tes pas de course — ceux que tu fais dans l'app. Savoir à quel écran les gens s'arrêtent est la seule façon de réparer ce qui coince.": {
+    "Pas tes pas de course : ceux que tu fais dans l'app. Savoir à quel écran les gens s'arrêtent est la seule façon de réparer ce qui coince.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Not your running steps — the ones you take inside the app. Knowing which screen people stop on is the only way to fix what gets in the way."
+            "value": "Not your running steps: the ones you take inside the app. Knowing which screen people stop on is the only way to fix what gets in the way."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No tus pasos corriendo — los que das dentro de la app. Saber en qué pantalla se detiene la gente es la única forma de arreglar lo que falla."
+            "value": "No tus pasos corriendo: los que das dentro de la app. Saber en qué pantalla se detiene la gente es la única forma de arreglar lo que falla."
           }
         }
       }
     },
-    "Pas un PDF figé — il s'ajuste chaque semaine selon ta forme et ton ressenti, jamais séance par séance : tu peux toujours anticiper ce qui t'attend.": {
+    "Pas un PDF figé. Il s'ajuste chaque semaine selon ta forme et ton ressenti, jamais séance par séance : tu peux toujours anticiper ce qui t'attend.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Not a frozen PDF — it adjusts every week based on how you're feeling, never session by session, so you can always see what's coming."
+            "value": "Not a frozen PDF. It adjusts every week based on how you're feeling, never session by session, so you can always see what's coming."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No es un PDF fijo — se ajusta cada semana según tu forma y sensaciones, nunca sesión a sesión: siempre puedes anticipar lo que te espera."
+            "value": "No es un PDF fijo. Se ajusta cada semana según tu forma y sensaciones, nunca sesión a sesión: siempre puedes anticipar lo que te espera."
           }
         }
       }
@@ -21375,13 +21375,13 @@
         }
       }
     },
-    "Pause auto désactivée pour cette course — le GPS ne détecte pas ton déplacement. Utilise le bouton pause toi-même.": {
+    "Pause auto désactivée pour cette course : le GPS ne détecte pas ton déplacement. Utilise le bouton pause toi-même.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Auto-pause off for this run — GPS isn't picking up your movement. Use the pause button yourself."
+            "value": "Auto-pause off for this run: GPS isn't picking up your movement. Use the pause button yourself."
           }
         },
         "es": {
@@ -21408,35 +21408,35 @@
         }
       }
     },
-    "Pause automatique — reprends dès que tu es prêt, ou continue à marcher pour repartir.": {
+    "Pause automatique : reprends dès que tu es prêt, ou continue à marcher pour repartir.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Auto pause — resume whenever you're ready, or keep walking to start again."
+            "value": "Auto pause: resume whenever you're ready, or keep walking to start again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pausa automática — reanuda cuando estés listo, o sigue caminando para continuar."
+            "value": "Pausa automática: reanuda cuando estés listo, o sigue caminando para continuar."
           }
         }
       }
     },
-    "Pause automatique — reprends dès que tu es prête, ou continue à marcher pour repartir.": {
+    "Pause automatique : reprends dès que tu es prête, ou continue à marcher pour repartir.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Auto pause — resume whenever you're ready, or keep walking to start again."
+            "value": "Auto pause: resume whenever you're ready, or keep walking to start again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pausa automática — reanuda cuando estés lista, o sigue caminando para retomar."
+            "value": "Pausa automática: reanuda cuando estés lista, o sigue caminando para retomar."
           }
         }
       }
@@ -21509,51 +21509,51 @@
         }
       }
     },
-    "Personne n'a encore couru cette semaine — lance-toi !": {
+    "Personne n'a encore couru cette semaine. Lance-toi !": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No one has run this week yet — go for it!"
+            "value": "No one has run this week yet. Go for it!"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nadie ha corrido esta semana todavía — ¡lánzate!"
+            "value": "Nadie ha corrido esta semana todavía. ¡lánzate!"
           }
         }
       }
     },
-    "Personne n'a encore couru cette semaine — sois la première !": {
+    "Personne n'a encore couru cette semaine. Sois la première !": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No one has run this week yet — be the first!"
+            "value": "No one has run this week yet. Be the first!"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nadie ha corrido esta semana todavía — ¡sé la primera!"
+            "value": "Nadie ha corrido esta semana todavía. ¡sé la primera!"
           }
         }
       }
     },
-    "Personne n'a encore couru cette semaine — sois le premier !": {
+    "Personne n'a encore couru cette semaine. Sois le premier !": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No one has run this week yet — be the first!"
+            "value": "No one has run this week yet. Be the first!"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nadie ha corrido aún esta semana — ¡sé el primero!"
+            "value": "Nadie ha corrido aún esta semana. ¡sé el primero!"
           }
         }
       }
@@ -21625,51 +21625,51 @@
         }
       }
     },
-    "Personne n'a encore rien posté — reviens plus tard.": {
+    "Personne n'a encore rien posté. Reviens plus tard.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No one has posted anything yet — check back later."
+            "value": "No one has posted anything yet. Check back later."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nadie ha publicado nada todavía — vuelve más tarde."
+            "value": "Nadie ha publicado nada todavía. Vuelve más tarde."
           }
         }
       }
     },
-    "Personne n'a encore rien posté — sois la première !": {
+    "Personne n'a encore rien posté. Sois la première !": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No one has posted anything yet — be the first!"
+            "value": "No one has posted anything yet. Be the first!"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todavía nadie ha publicado nada — ¡sé la primera!"
+            "value": "Todavía nadie ha publicado nada. ¡sé la primera!"
           }
         }
       }
     },
-    "Personne n'a encore rien posté — sois le premier !": {
+    "Personne n'a encore rien posté. Sois le premier !": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No one has posted anything yet — be the first!"
+            "value": "No one has posted anything yet. Be the first!"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nadie ha publicado nada aún — ¡sé el primero!"
+            "value": "Nadie ha publicado nada aún. ¡sé el primero!"
           }
         }
       }
@@ -21823,12 +21823,12 @@
         }
       }
     },
-    "Photo enregistrée, mais pas encore visible du club — %@.": {
+    "Photo enregistrée, mais pas encore visible du club : %@.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Photo saved, but not visible to the club yet — %@."
+            "value": "Photo saved, but not visible to the club yet: %@."
           }
         },
         "es": {
@@ -21839,12 +21839,12 @@
         }
       }
     },
-    "Photo supprimée localement, mais toujours visible du club — %@.": {
+    "Photo supprimée localement, mais toujours visible du club : %@.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Photo removed locally, but the club can still see it — %@."
+            "value": "Photo removed locally, but the club can still see it: %@."
           }
         },
         "es": {
@@ -22314,18 +22314,18 @@
         }
       }
     },
-    "Pour une forme du jour plus précise — FC, sommeil, sorties passées. Facultatif, tu peux le faire plus tard.": {
+    "Pour une forme du jour plus précise : FC, sommeil, sorties passées. Facultatif, tu peux le faire plus tard.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "For a more accurate daily form score — heart rate, sleep, past runs. Optional, you can do this later."
+            "value": "For a more accurate daily form score: heart rate, sleep, past runs. Optional, you can do this later."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Para una forma del día más precisa — FC, sueño, salidas pasadas. Opcional, puedes hacerlo más tarde."
+            "value": "Para una forma del día más precisa: FC, sueño, salidas pasadas. Opcional, puedes hacerlo más tarde."
           }
         }
       }
@@ -22591,34 +22591,34 @@
         }
       }
     },
-    "Programme allégé — %lld min max jusqu'au %@": {
+    "Programme allégé : %lld min max jusqu'au %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Training eased — %lld min max until %@"
+            "value": "Training eased: %lld min max until %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Entrenamiento aligerado — %lld min máx. hasta el %@"
+            "value": "Entrenamiento aligerado: %lld min máx. hasta el %@"
           }
         }
       }
     },
-    "Programme allégé — %lld min max, sans fractionné, jusqu'au %@": {
+    "Programme allégé : %lld min max, sans fractionné, jusqu'au %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Training eased — %lld min max, no speed work, until %@"
+            "value": "Training eased: %lld min max, no speed work, until %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Entrenamiento aligerado — %lld min máx., sin series, hasta el %@"
+            "value": "Entrenamiento aligerado: %lld min máx., sin series, hasta el %@"
           }
         }
       }
@@ -22672,19 +22672,19 @@
         }
       }
     },
-    "Programme ouvert, sans date de fin fixe — une semaine plus légère toutes les 4 semaines pour récupérer. Il s'ajuste chaque semaine selon ta forme de la semaine passée.": {
+    "Programme ouvert, sans date de fin fixe : une semaine plus légère toutes les 4 semaines pour récupérer. Il s'ajuste chaque semaine selon ta forme de la semaine passée.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open-ended program, no fixed end date — a lighter week every 4 weeks to recover. It adjusts every week to how last week went."
+            "value": "Open-ended program, no fixed end date: a lighter week every 4 weeks to recover. It adjusts every week to how last week went."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Programa abierto, sin fecha de fin — una semana más suave cada 4 semanas para recuperar. Se adapta cada semana a cómo fue la semana pasada."
+            "value": "Programa abierto, sin fecha de fin: una semana más suave cada 4 semanas para recuperar. Se adapta cada semana a cómo fue la semana pasada."
           }
         }
       }
@@ -22705,19 +22705,19 @@
         }
       }
     },
-    "Programme ouvert, sans date de fin — une semaine plus légère toutes les 4 semaines. Il s'ajuste chaque semaine selon ta forme.": {
+    "Programme ouvert, sans date de fin : une semaine plus légère toutes les 4 semaines. Il s'ajuste chaque semaine selon ta forme.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open-ended program, no end date — a lighter week every 4 weeks. It adapts each week to how you're feeling."
+            "value": "Open-ended program, no end date: a lighter week every 4 weeks. It adapts each week to how you're feeling."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Programa abierto, sin fecha de fin — una semana más ligera cada 4 semanas. Se adapta cada semana a tu forma."
+            "value": "Programa abierto, sin fecha de fin: una semana más ligera cada 4 semanas. Se adapta cada semana a tu forma."
           }
         }
       }
@@ -23149,18 +23149,18 @@
         }
       }
     },
-    "Pseudo invalide — lettres minuscules, chiffres, underscore, 3 à 20 caractères.": {
+    "Pseudo invalide : lettres minuscules, chiffres, underscore, 3 à 20 caractères.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Invalid username — lowercase letters, digits, underscore, 3 to 20 characters."
+            "value": "Invalid username: lowercase letters, digits, underscore, 3 to 20 characters."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nombre de usuario no válido — letras minúsculas, números, guion bajo, de 3 a 20 caracteres."
+            "value": "Nombre de usuario no válido: letras minúsculas, números, guion bajo, de 3 a 20 caracteres."
           }
         }
       }
@@ -23657,18 +23657,18 @@
         }
       }
     },
-    "Haizo construit ton programme, l'ajuste chaque semaine selon ta forme, et te pousse juste ce qu'il faut — jamais plus, jamais moins.": {
+    "Haizo construit ton programme, l'ajuste chaque semaine selon ta forme, et te pousse juste ce qu'il faut : jamais plus, jamais moins.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Haizo builds your program, adjusts it every week based on how you're doing, and pushes you just the right amount — never more, never less."
+            "value": "Haizo builds your program, adjusts it every week based on how you're doing, and pushes you just the right amount: never more, never less."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Haizo construye tu programa, lo ajusta cada semana según tu forma, y te exige justo lo necesario — nunca más, nunca menos."
+            "value": "Haizo construye tu programa, lo ajusta cada semana según tu forma, y te exige justo lo necesario: nunca más, nunca menos."
           }
         }
       }
@@ -23689,13 +23689,13 @@
         }
       }
     },
-    "Haizo ne répond pas pour l'instant — réessaie dans un moment.": {
+    "Haizo ne répond pas pour l'instant. Réessaie dans un moment.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Haizo isn't responding right now — try again in a moment."
+            "value": "Haizo isn't responding right now. Try again in a moment."
           }
         },
         "es": {
@@ -23706,19 +23706,19 @@
         }
       }
     },
-    "Haizo ne vend rien et ne garantit rien : vous vous arrangez entre vous. La plupart des organisateurs interdisent le transfert de dossard — vérifie leur règlement. Courir sous le nom d'un autre, c'est la disqualification, et des secours qui liraient le mauvais dossier médical.": {
+    "Haizo ne vend rien et ne garantit rien : vous vous arrangez entre vous. La plupart des organisateurs interdisent le transfert de dossard. Vérifie leur règlement. Courir sous le nom d'un autre, c'est la disqualification, et des secours qui liraient le mauvais dossier médical.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Haizo sells nothing and guarantees nothing: you sort it out between yourselves. Most organisers forbid transferring a bib — check their rules. Running under someone else's name means disqualification, and medics reading the wrong medical file."
+            "value": "Haizo sells nothing and guarantees nothing: you sort it out between yourselves. Most organisers forbid transferring a bib. Check their rules. Running under someone else's name means disqualification, and medics reading the wrong medical file."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Haizo no vende nada ni garantiza nada: lo arregláis entre vosotros. La mayoría de los organizadores prohíben el traspaso de dorsal — consulta su reglamento. Correr con el nombre de otro es la descalificación, y servicios médicos leyendo la ficha equivocada."
+            "value": "Haizo no vende nada ni garantiza nada: lo arregláis entre vosotros. La mayoría de los organizadores prohíben el traspaso de dorsal. Consulta su reglamento. Correr con el nombre de otro es la descalificación, y servicios médicos leyendo la ficha equivocada."
           }
         }
       }
@@ -23869,18 +23869,18 @@
         }
       }
     },
-    "Recherche impossible — vérifie ta connexion.": {
+    "Recherche impossible. Vérifie ta connexion.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Search failed — check your connection."
+            "value": "Search failed. Check your connection."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Búsqueda fallida — comprueba tu conexión."
+            "value": "Búsqueda fallida. Comprueba tu conexión."
           }
         }
       }
@@ -24098,19 +24098,19 @@
         }
       }
     },
-    "Rejoins un club, suis des coureurs, prépare une course — tout atterrira ici.": {
+    "Rejoins un club, suis des coureurs, prépare une course : tout atterrira ici.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Join a club, follow runners, train for a race — it all lands here."
+            "value": "Join a club, follow runners, train for a race: it all lands here."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Únete a un club, sigue a corredores, prepara una carrera — todo aterriza aquí."
+            "value": "Únete a un club, sigue a corredores, prepara una carrera: todo aterriza aquí."
           }
         }
       }
@@ -24199,19 +24199,19 @@
         }
       }
     },
-    "Repartir à neuf efface le programme, l'historique des courses et la conversation avec le coach enregistrés sur cet appareil. Ce qui appartient au Club — les sorties publiées, les kilomètres du club — reste sur le compte de chacune.": {
+    "Repartir à neuf efface le programme, l'historique des courses et la conversation avec le coach enregistrés sur cet appareil. Ce qui appartient au Club (les sorties publiées, les kilomètres du club) reste sur le compte de chacune.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Starting fresh erases the plan, the run history and the coach conversation stored on this device. What belongs to the Club — published runs, club kilometres — stays on each person's account."
+            "value": "Starting fresh erases the plan, the run history and the coach conversation stored on this device. What belongs to the Club (published runs, club kilometres) stays on each person's account."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Empezar de cero borra el plan, el historial de carreras y la conversación con el coach guardados en este dispositivo. Lo que pertenece al Club — las carreras publicadas, los kilómetros del club — permanece en la cuenta de cada persona."
+            "value": "Empezar de cero borra el plan, el historial de carreras y la conversación con el coach guardados en este dispositivo. Lo que pertenece al Club (las carreras publicadas, los kilómetros del club) permanece en la cuenta de cada persona."
           }
         }
       }
@@ -24364,36 +24364,36 @@
         }
       }
     },
-    "Reste régulier — c'est la constance qui paie": {
+    "Reste régulier : c'est la constance qui paie": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stay steady — consistency is what pays"
+            "value": "Stay steady: consistency is what pays"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mantén el ritmo — la constancia es lo que paga"
+            "value": "Mantén el ritmo: la constancia es lo que paga"
           }
         }
       }
     },
-    "Reste régulière — c'est la constance qui paie": {
+    "Reste régulière : c'est la constance qui paie": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stay steady — consistency is what pays"
+            "value": "Stay steady: consistency is what pays"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mantén el ritmo — la constancia es lo que paga"
+            "value": "Mantén el ritmo: la constancia es lo que paga"
           }
         }
       }
@@ -24628,36 +24628,36 @@
         }
       }
     },
-    "Rien avant : la première course se fait à vide, et c'est sans conséquence, elle est courte. Rien après non plus — à pied, sur un estomac déjà secoué, presque tout est refusé.": {
+    "Rien avant : la première course se fait à vide, et c'est sans conséquence, elle est courte. Rien après non plus : à pied, sur un estomac déjà secoué, presque tout est refusé.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nothing before: the first run is done on empty, and that's fine, it's short. Nothing after either — on foot, on a stomach already shaken up, almost everything gets refused."
+            "value": "Nothing before: the first run is done on empty, and that's fine, it's short. Nothing after either: on foot, on a stomach already shaken up, almost everything gets refused."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nada antes: la primera carrera se hace en vacío, y no pasa nada, es corta. Nada después tampoco — corriendo, con el estómago ya revuelto, casi todo se rechaza."
+            "value": "Nada antes: la primera carrera se hace en vacío, y no pasa nada, es corta. Nada después tampoco: corriendo, con el estómago ya revuelto, casi todo se rechaza."
           }
         }
       }
     },
-    "Rien d'écrit encore. Une question sur le parcours, le ravitaillement, l'hébergement — c'est ici.": {
+    "Rien d'écrit encore. Une question sur le parcours, le ravitaillement, l'hébergement : c'est ici.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nothing written yet. A question about the course, the aid stations, where to stay — this is the place."
+            "value": "Nothing written yet. A question about the course, the aid stations, where to stay: this is the place."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nada escrito todavía. Una duda sobre el recorrido, los avituallamientos, el alojamiento — es aquí."
+            "value": "Nada escrito todavía. Una duda sobre el recorrido, los avituallamientos, el alojamiento: es aquí."
           }
         }
       }
@@ -24679,12 +24679,12 @@
         }
       }
     },
-    "Rien de nouveau le jour J. Ce que tu mangeras en course, tu l'as déjà mangé en sortie longue — c'est aussi à ça qu'elles servent.": {
+    "Rien de nouveau le jour J. Ce que tu mangeras en course, tu l'as déjà mangé en sortie longue. C'est aussi à ça qu'elles servent.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nothing new on race day. Whatever you'll eat in the race, you've already eaten on a long run — that's part of what they're for."
+            "value": "Nothing new on race day. Whatever you'll eat in the race, you've already eaten on a long run. That's part of what they're for."
           }
         },
         "es": {
@@ -24794,19 +24794,19 @@
         }
       }
     },
-    "Rien sur l'écran verrouillé — ouvrir les Réglages": {
+    "Rien sur l'écran verrouillé : ouvrir les Réglages": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nothing on the Lock Screen — open Settings"
+            "value": "Nothing on the Lock Screen: open Settings"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nada en la pantalla de bloqueo — abrir Ajustes"
+            "value": "Nada en la pantalla de bloqueo: abrir Ajustes"
           }
         }
       }
@@ -24993,18 +24993,18 @@
         }
       }
     },
-    "Récupération — souffle, foulée relâchée.": {
+    "Récupération : souffle, foulée relâchée.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Recovery — breathe, relaxed stride."
+            "value": "Recovery: breathe, relaxed stride."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Recuperación — respira, zancada relajada."
+            "value": "Recuperación: respira, zancada relajada."
           }
         }
       }
@@ -25143,18 +25143,18 @@
         }
       }
     },
-    "Répétition %lld/%lld — vise %@/km.": {
+    "Répétition %lld/%lld : vise %@/km.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rep %lld/%lld — aim for %@/km."
+            "value": "Rep %lld/%lld: aim for %@/km."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Repetición %lld/%lld — apunta a %@/km."
+            "value": "Repetición %lld/%lld: apunta a %@/km."
           }
         }
       }
@@ -26034,18 +26034,18 @@
         }
       }
     },
-    "Signal GPS instable — position estimée": {
+    "Signal GPS instable : position estimée": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Unstable GPS signal — estimated position"
+            "value": "Unstable GPS signal: estimated position"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Señal GPS inestable — posición estimada"
+            "value": "Señal GPS inestable: posición estimada"
           }
         }
       }
@@ -26066,18 +26066,18 @@
         }
       }
     },
-    "Signalement envoyé — merci": {
+    "Signalement envoyé, merci": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Report sent — thank you"
+            "value": "Report sent, thank you"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Denuncia enviada — gracias"
+            "value": "Denuncia enviada, gracias"
           }
         }
       }
@@ -27000,18 +27000,18 @@
         }
       }
     },
-    "Suppression impossible — réessaie.": {
+    "Suppression impossible. Réessaie.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't delete — try again."
+            "value": "Couldn't delete. Try again."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo eliminar — inténtalo de nuevo."
+            "value": "No se pudo eliminar. Inténtalo de nuevo."
           }
         }
       }
@@ -27276,36 +27276,36 @@
         }
       }
     },
-    "Sur un format long, les transitions pèsent peu : le temps est ailleurs. Elles méritent quand même d'être répétées une fois — non pour le chrono, mais pour ne pas découvrir fatigué qu'on a oublié quelque chose.": {
+    "Sur un format long, les transitions pèsent peu : le temps est ailleurs. Elles méritent quand même d'être répétées une fois, non pour le chrono, mais pour ne pas découvrir fatigué qu'on a oublié quelque chose.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "On a long format, transitions count for little: the time is elsewhere. They're still worth rehearsing once — not for the clock, but so you don't discover, exhausted, that you forgot something."
+            "value": "On a long format, transitions count for little: the time is elsewhere. They're still worth rehearsing once, not for the clock, but so you don't discover, exhausted, that you forgot something."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "En un formato largo, las transiciones pesan poco: el tiempo está en otra parte. Aun así merecen ensayarse una vez — no por el crono, sino para no descubrir, agotado, que has olvidado algo."
+            "value": "En un formato largo, las transiciones pesan poco: el tiempo está en otra parte. Aun así merecen ensayarse una vez, no por el crono, sino para no descubrir, agotado, que has olvidado algo."
           }
         }
       }
     },
-    "Sur un format long, les transitions pèsent peu : le temps est ailleurs. Elles méritent quand même d'être répétées une fois — non pour le chrono, mais pour ne pas découvrir fatiguée qu'on a oublié quelque chose.": {
+    "Sur un format long, les transitions pèsent peu : le temps est ailleurs. Elles méritent quand même d'être répétées une fois, non pour le chrono, mais pour ne pas découvrir fatiguée qu'on a oublié quelque chose.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "On a long format, transitions count for little: the time is elsewhere. They're still worth rehearsing once — not for the clock, but so you don't discover, exhausted, that you forgot something."
+            "value": "On a long format, transitions count for little: the time is elsewhere. They're still worth rehearsing once, not for the clock, but so you don't discover, exhausted, that you forgot something."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "En un formato largo, las transiciones pesan poco: el tiempo está en otra parte. Aun así merecen ensayarse una vez — no por el crono, sino para no descubrir, agotada, que has olvidado algo."
+            "value": "En un formato largo, las transiciones pesan poco: el tiempo está en otra parte. Aun así merecen ensayarse una vez, no por el crono, sino para no descubrir, agotada, que has olvidado algo."
           }
         }
       }
@@ -27586,18 +27586,18 @@
         }
       }
     },
-    "Séance solide. Ton dernier kilomètre était ton plus rapide — tu avais encore du jus.": {
+    "Séance solide. Ton dernier kilomètre était ton plus rapide : tu avais encore du jus.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Solid session. Your last kilometer was your fastest — you still had gas in the tank."
+            "value": "Solid session. Your last kilometer was your fastest: you still had gas in the tank."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sesión sólida. Tu último kilómetro fue el más rápido — todavía te quedaban fuerzas."
+            "value": "Sesión sólida. Tu último kilómetro fue el más rápido: todavía te quedaban fuerzas."
           }
         }
       }
@@ -27700,13 +27700,13 @@
         }
       }
     },
-    "Séparés par des virgules. Chacun choisit le sien en disant « J'y serai » — c'est ce qui dit combien de meneurs prévoir.": {
+    "Séparés par des virgules. Chacun choisit le sien en disant « J'y serai ». C'est ce qui dit combien de meneurs prévoir.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Comma-separated. Everyone picks theirs when they say “I'll be there” — that's what tells you how many pacers to line up."
+            "value": "Comma-separated. Everyone picks theirs when they say “I'll be there”. That's what tells you how many pacers to line up."
           }
         },
         "es": {
@@ -28115,12 +28115,12 @@
         }
       }
     },
-    "Ta course devrait tenir dans le jour — emporte une frontale quand même : un départ matinal, un sous-bois ou deux heures de plus que prévu suffisent.": {
+    "Ta course devrait tenir dans le jour. Emporte une frontale quand même : un départ matinal, un sous-bois ou deux heures de plus que prévu suffisent.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your race should fit inside daylight — take a headlamp anyway: an early start, dense woodland or two hours more than planned is enough."
+            "value": "Your race should fit inside daylight. Take a headlamp anyway: an early start, dense woodland or two hours more than planned is enough."
           }
         },
         "es": {
@@ -28325,13 +28325,13 @@
         }
       }
     },
-    "Ta phase estimée est alors envoyée au service qui fait tourner le coach, pour qu'il adapte son ton. Sans ça, ton programme continue de s'adapter exactement pareil — le calcul se fait sur ton téléphone.": {
+    "Ta phase estimée est alors envoyée au service qui fait tourner le coach, pour qu'il adapte son ton. Sans ça, ton programme continue de s'adapter exactement pareil. Le calcul se fait sur ton téléphone.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your estimated phase is then sent to the service that powers the coach, so it can adjust its tone. Without this, your plan still adapts exactly the same — the calculation happens on your phone."
+            "value": "Your estimated phase is then sent to the service that powers the coach, so it can adjust its tone. Without this, your plan still adapts exactly the same. The calculation happens on your phone."
           }
         },
         "es": {
@@ -28442,12 +28442,12 @@
         }
       }
     },
-    "Ta sauvegarde a bien été lue, mais rien n'a pu être écrit — il n'y a sans doute plus de place sur ton téléphone. Fais de la place et recommence : le fichier est intact.": {
+    "Ta sauvegarde a bien été lue, mais rien n'a pu être écrit. Il n'y a sans doute plus de place sur ton téléphone. Fais de la place et recommence : le fichier est intact.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your backup was read fine, but nothing could be written — your phone is probably out of space. Free some up and try again: the file is intact."
+            "value": "Your backup was read fine, but nothing could be written. Your phone is probably out of space. Free some up and try again: the file is intact."
           }
         },
         "es": {
@@ -28474,13 +28474,13 @@
         }
       }
     },
-    "Ta session a expiré — reconnecte-toi.": {
+    "Ta session a expiré. Reconnecte-toi.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your session has expired — sign in again."
+            "value": "Your session has expired. Sign in again."
           }
         },
         "es": {
@@ -28491,13 +28491,13 @@
         }
       }
     },
-    "Ta session de trente jours est arrivée au bout. Tes données sont intactes — reconnecte-toi pour retrouver ton club, tes amis et publier les sorties en attente.": {
+    "Ta session de trente jours est arrivée au bout. Tes données sont intactes. Reconnecte-toi pour retrouver ton club, tes amis et publier les sorties en attente.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your thirty-day session has run out. Your data is untouched — sign in again to get your club and friends back, and to publish the runs still waiting."
+            "value": "Your thirty-day session has run out. Your data is untouched. Sign in again to get your club and friends back, and to publish the runs still waiting."
           }
         },
         "es": {
@@ -28591,18 +28591,18 @@
         }
       }
     },
-    "Ta séance, tes calories actives, tes pas — trois objectifs simples à boucler chaque jour.": {
+    "Ta séance, tes calories actives, tes pas : trois objectifs simples à boucler chaque jour.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your session, your active calories, your steps — three simple goals to hit every day."
+            "value": "Your session, your active calories, your steps: three simple goals to hit every day."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tu sesión, tus calorías activas, tus pasos — tres objetivos simples que cumplir cada día."
+            "value": "Tu sesión, tus calorías activas, tus pasos: tres objetivos simples que cumplir cada día."
           }
         }
       }
@@ -29025,7 +29025,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Finish a run, or add one by hand — your history fills in on its own from there."
+            "value": "Finish a run, or add one by hand: your history fills in on its own from there."
           }
         },
         "es": {
@@ -29166,18 +29166,18 @@
         }
       }
     },
-    "Tes 3 objectifs du jour sont faits — +120 XP.": {
+    "Tes 3 objectifs du jour sont faits : +120 XP.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your 3 goals for today are done — +120 XP."
+            "value": "Your 3 goals for today are done: +120 XP."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tus 3 objetivos de hoy están cumplidos — +120 XP."
+            "value": "Tus 3 objetivos de hoy están cumplidos: +120 XP."
           }
         }
       }
@@ -29528,12 +29528,12 @@
         }
       }
     },
-    "Ton coach adapte ses conseils course et nutrition à ton objectif — sans jamais sacrifier ta forme.": {
+    "Ton coach adapte ses conseils course et nutrition à ton objectif, sans jamais sacrifier ta forme.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your coach adapts its running and nutrition advice to your goal — without ever sacrificing your fitness."
+            "value": "Your coach adapts its running and nutrition advice to your goal, without ever sacrificing your fitness."
           }
         },
         "es": {
@@ -29577,18 +29577,18 @@
         }
       }
     },
-    "Ton coach va s'adresser à toi — autant se présenter.": {
+    "Ton coach va s'adresser à toi : autant se présenter.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your coach is going to talk to you — might as well introduce yourself."
+            "value": "Your coach is going to talk to you: might as well introduce yourself."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tu coach se va a dirigir a ti — mejor presentarte."
+            "value": "Tu coach se va a dirigir a ti: mejor presentarte."
           }
         }
       }
@@ -29610,18 +29610,18 @@
         }
       }
     },
-    "Ton corps a fait le plus dur. On souffle %lld jours avant de repartir — c'est ce qui fait tenir les progrès dans la durée.": {
+    "Ton corps a fait le plus dur. On souffle %lld jours avant de repartir : c'est ce qui fait tenir les progrès dans la durée.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your body did the hardest part. We rest for %lld days before starting again — that's what makes progress last."
+            "value": "Your body did the hardest part. We rest for %lld days before starting again: that's what makes progress last."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tu cuerpo ha hecho lo más duro. Descansamos %lld días antes de retomar — eso es lo que hace que el progreso dure."
+            "value": "Tu cuerpo ha hecho lo más duro. Descansamos %lld días antes de retomar: eso es lo que hace que el progreso dure."
           }
         }
       }
@@ -29904,18 +29904,18 @@
         }
       }
     },
-    "Ton programme t'attend toujours — une petite séance aujourd'hui ?": {
+    "Ton programme t'attend toujours : une petite séance aujourd'hui ?": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your program is still waiting — a quick session today?"
+            "value": "Your program is still waiting: a quick session today?"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tu programa sigue esperando — ¿una sesión rápida hoy?"
+            "value": "Tu programa sigue esperando: ¿una sesión rápida hoy?"
           }
         }
       }
@@ -29988,19 +29988,19 @@
         }
       }
     },
-    "Tout ce dont la seconde course aura besoin se prend sur la selle. Pas idéalement : c'est la règle. Et ça se teste à l'entraînement, sur les enchaînements — jamais le jour J.": {
+    "Tout ce dont la seconde course aura besoin se prend sur la selle. Pas idéalement : c'est la règle. Et ça se teste à l'entraînement, sur les enchaînements, jamais le jour J.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Everything the second run will need is taken on the bike. Not ideally: that's the rule. And it gets tested in training, on your brick sessions — never on race day."
+            "value": "Everything the second run will need is taken on the bike. Not ideally: that's the rule. And it gets tested in training, on your brick sessions, never on race day."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todo lo que la segunda carrera vaya a necesitar se toma sobre la bici. No idealmente: es la regla. Y se prueba en los entrenamientos, en las transiciones — nunca el día de la prueba."
+            "value": "Todo lo que la segunda carrera vaya a necesitar se toma sobre la bici. No idealmente: es la regla. Y se prueba en los entrenamientos, en las transiciones, nunca el día de la prueba."
           }
         }
       }
@@ -30222,13 +30222,13 @@
         }
       }
     },
-    "Trois jours sans rien de rapide — on met un peu de vitesse.": {
+    "Trois jours sans rien de rapide : on met un peu de vitesse.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Three days without anything fast — let's add some speed."
+            "value": "Three days without anything fast: let's add some speed."
           }
         },
         "es": {
@@ -30792,29 +30792,29 @@
         }
       }
     },
-    "Un bug, une idée, un truc qui t'a gênée — ça part par mail.": {
+    "Un bug, une idée, un truc qui t'a gênée : ça part par mail.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A bug, an idea, something that bugged you — it goes out by email."
+            "value": "A bug, an idea, something that bugged you: it goes out by email."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un fallo, una idea, algo que te molestó — se envía por correo."
+            "value": "Un fallo, una idea, algo que te molestó: se envía por correo."
           }
         }
       }
     },
-    "Un club prend vie à plusieurs — classement, défis, sorties de groupe. Dis-leur de chercher son nom dans l'onglet Club.": {
+    "Un club prend vie à plusieurs : classement, défis, sorties de groupe. Dis-leur de chercher son nom dans l'onglet Club.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A club comes alive with other people — leaderboard, challenges, group runs. Tell them to search its name in the Club tab."
+            "value": "A club comes alive with other people: leaderboard, challenges, group runs. Tell them to search its name in the Club tab."
           }
         },
         "es": {
@@ -30825,12 +30825,12 @@
         }
       }
     },
-    "Un club prend vie à plusieurs — classement, défis, sorties de groupe. Envoie son lien aux gens avec qui tu cours.": {
+    "Un club prend vie à plusieurs : classement, défis, sorties de groupe. Envoie son lien aux gens avec qui tu cours.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A club comes alive with other people — leaderboard, challenges, group runs. Send its link to the people you run with."
+            "value": "A club comes alive with other people: leaderboard, challenges, group runs. Send its link to the people you run with."
           }
         },
         "es": {
@@ -30874,19 +30874,19 @@
         }
       }
     },
-    "Un dossard en vue — on construit le plan pour le jour J": {
+    "Un dossard en vue : on construit le plan pour le jour J": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A race number in sight — we build the plan for race day"
+            "value": "A race number in sight: we build the plan for race day"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un dorsal a la vista — construimos el plan para el día de la carrera"
+            "value": "Un dorsal a la vista: construimos el plan para el día de la carrera"
           }
         }
       }
@@ -30924,12 +30924,12 @@
         }
       }
     },
-    "Un fichier à ranger où tu veux. Il contient tout — ton historique, ta conversation avec le coach, tes chaussures, ta série. Il ne part sur aucun serveur.": {
+    "Un fichier à ranger où tu veux. Il contient tout : ton historique, ta conversation avec le coach, tes chaussures, ta série. Il ne part sur aucun serveur.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A file to keep wherever you like. It holds everything — your history, your conversation with the coach, your shoes, your streak. It never goes to a server."
+            "value": "A file to keep wherever you like. It holds everything: your history, your conversation with the coach, your shoes, your streak. It never goes to a server."
           }
         },
         "es": {
@@ -31169,12 +31169,12 @@
         }
       }
     },
-    "Une bande adhésive élastique — elle répare une cheville, une chaussure et un bâton.": {
+    "Une bande adhésive élastique : elle répare une cheville, une chaussure et un bâton.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elastic adhesive tape — it fixes an ankle, a shoe and a pole."
+            "value": "Elastic adhesive tape: it fixes an ankle, a shoe and a pole."
           }
         },
         "es": {
@@ -31399,12 +31399,12 @@
         }
       }
     },
-    "Une veste imperméable à capuche — une membrane, pas un coupe-vent. C'est le point le plus souvent recalé au contrôle.": {
+    "Une veste imperméable à capuche : une membrane, pas un coupe-vent. C'est le point le plus souvent recalé au contrôle.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A waterproof jacket with a hood — a membrane, not a windbreaker. It's the item most often turned away at kit check."
+            "value": "A waterproof jacket with a hood: a membrane, not a windbreaker. It's the item most often turned away at kit check."
           }
         },
         "es": {
@@ -32798,12 +32798,12 @@
         }
       }
     },
-    "elles décident de l'état de tes quadriceps à mi-course — se retenir tôt est ce qui rend la fin possible": {
+    "elles décident de l'état de tes quadriceps à mi-course : se retenir tôt est ce qui rend la fin possible": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "they decide the state of your quads at halfway — holding back early is what makes the finish possible"
+            "value": "they decide the state of your quads at halfway: holding back early is what makes the finish possible"
           }
         },
         "es": {
@@ -33801,12 +33801,12 @@
         }
       }
     },
-    "plus lentement que ton envie — en ultra personne ne gagne au départ, beaucoup y perdent": {
+    "plus lentement que ton envie : en ultra personne ne gagne au départ, beaucoup y perdent": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "slower than you want to go — in an ultra nobody wins at the start, plenty lose there"
+            "value": "slower than you want to go: in an ultra nobody wins at the start, plenty lose there"
           }
         },
         "es": {
@@ -33866,19 +33866,19 @@
         }
       }
     },
-    "remplacé — pas de dénivelé près de chez toi": {
+    "remplacé : pas de dénivelé près de chez toi": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "swapped — no hills near you"
+            "value": "swapped: no hills near you"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "cambiada — sin desnivel cerca de ti"
+            "value": "cambiada: sin desnivel cerca de ti"
           }
         }
       }
@@ -34087,19 +34087,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "la répétition générale — pars plus doucement que tu ne crois sur la première"
+            "value": "la répétition générale : pars plus doucement que tu ne crois sur la première"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "the full dress rehearsal — start the first run slower than you think"
+            "value": "the full dress rehearsal: start the first run slower than you think"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "el ensayo general — sal más suave de lo que crees en la primera"
+            "value": "el ensayo general: sal más suave de lo que crees en la primera"
           }
         }
       }
@@ -34225,19 +34225,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "allure facile — le socle aérobie, pas une séance au rabais"
+            "value": "allure facile : le socle aérobie, pas une séance au rabais"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "easy pace — the aerobic base, not a lesser session"
+            "value": "easy pace: the aerobic base, not a lesser session"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "ritmo fácil — la base aeróbica, no una sesión menor"
+            "value": "ritmo fácil: la base aeróbica, no una sesión menor"
           }
         }
       }
@@ -34409,19 +34409,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "endurance de fond — construit le volume de course du format"
+            "value": "endurance de fond : construit le volume de course du format"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "base endurance — builds the format's running volume"
+            "value": "base endurance: builds the format's running volume"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "resistencia de base — construye el volumen de carrera del formato"
+            "value": "resistencia de base: construye el volumen de carrera del formato"
           }
         }
       }
@@ -34455,19 +34455,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "course + bloc fonctionnel entre chaque km — apprivoise la fatigue du format"
+            "value": "course + bloc fonctionnel entre chaque km : apprivoise la fatigue du format"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "run + functional block between each km — get used to the format's fatigue"
+            "value": "run + functional block between each km: get used to the format's fatigue"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "carrera + bloque funcional entre cada km — acostúmbrate a la fatiga del formato"
+            "value": "carrera + bloque funcional entre cada km: acostúmbrate a la fatiga del formato"
           }
         }
       }
@@ -34777,19 +34777,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "format complet à intensité réduite — dernière répétition avant le jour J"
+            "value": "format complet à intensité réduite : dernière répétition avant le jour J"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "full format at reduced intensity — last rehearsal before race day"
+            "value": "full format at reduced intensity: last rehearsal before race day"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "formato completo a intensidad reducida — último ensayo antes del día de la carrera"
+            "value": "formato completo a intensidad reducida: último ensayo antes del día de la carrera"
           }
         }
       }
@@ -35099,19 +35099,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "SkiErg, rameur, farmers carry, wall balls — travaille le geste, charge standard légère"
+            "value": "SkiErg, rameur, farmers carry, wall balls : travaille le geste, charge standard légère"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "SkiErg, rower, farmer's carry, wall balls — work the movement, light standard load"
+            "value": "SkiErg, rower, farmer's carry, wall balls: work the movement, light standard load"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "SkiErg, remo, farmer's carry, wall balls — trabaja el gesto, carga estándar ligera"
+            "value": "SkiErg, remo, farmer's carry, wall balls: trabaja el gesto, carga estándar ligera"
           }
         }
       }
@@ -35145,19 +35145,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "SkiErg, rameur, farmers carry, wall balls — travaille le geste, charge renforcée légère"
+            "value": "SkiErg, rameur, farmers carry, wall balls : travaille le geste, charge renforcée légère"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "SkiErg, rower, farmer's carry, wall balls — work the movement, light pro load"
+            "value": "SkiErg, rower, farmer's carry, wall balls: work the movement, light pro load"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "SkiErg, remo, farmer's carry, wall balls — trabaja el gesto, carga pro ligera"
+            "value": "SkiErg, remo, farmer's carry, wall balls: trabaja el gesto, carga pro ligera"
           }
         }
       }
@@ -35467,19 +35467,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Jour de repos — laisse ton corps récupérer"
+            "value": "Jour de repos : laisse ton corps récupérer"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rest day — let your body recover"
+            "value": "Rest day: let your body recover"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Día de descanso — deja que tu cuerpo se recupere"
+            "value": "Día de descanso: deja que tu cuerpo se recupere"
           }
         }
       }
@@ -35703,7 +35703,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Long, steady, no straining. The bike is by far the longest of the three legs — it should take the most room."
+            "value": "Long, steady, no straining. The bike is by far the longest of the three legs. It should take the most room."
           }
         },
         "es": {
@@ -36065,19 +36065,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Éducatifs et longueurs courtes. En natation, la technique fait plus de différence que la condition physique — c'est la seule des trois où c'est vrai."
+            "value": "Éducatifs et longueurs courtes. En natation, la technique fait plus de différence que la condition physique : c'est la seule des trois où c'est vrai."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Drills and short lengths. In swimming, technique matters more than fitness — the only one of the three where that's true."
+            "value": "Drills and short lengths. In swimming, technique matters more than fitness: the only one of the three where that's true."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ejercicios y largos cortos. En natación, la técnica importa más que la condición física — la única de las tres donde eso es cierto."
+            "value": "Ejercicios y largos cortos. En natación, la técnica importa más que la condición física: la única de las tres donde eso es cierto."
           }
         }
       }
@@ -36157,19 +36157,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "la sortie longue du week-end — demain tu repars dessus"
+            "value": "la sortie longue du week-end : demain tu repars dessus"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "the weekend long run — tomorrow you go again on top of it"
+            "value": "the weekend long run: tomorrow you go again on top of it"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "la salida larga del fin de semana — mañana sales otra vez encima"
+            "value": "la salida larga del fin de semana: mañana sales otra vez encima"
           }
         }
       }
@@ -36295,19 +36295,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "le fond de la préparation — relâché, en terrain varié"
+            "value": "le fond de la préparation : relâché, en terrain varié"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "the backbone of the block — relaxed, on varied ground"
+            "value": "the backbone of the block: relaxed, on varied ground"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "la base del bloque — suelto, en terreno variado"
+            "value": "la base del bloque: suelto, en terreno variado"
           }
         }
       }
@@ -36341,19 +36341,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "montées de 3 à 5 min — marcher dedans n'est pas un échec, c'est la technique"
+            "value": "montées de 3 à 5 min : marcher dedans n'est pas un échec, c'est la technique"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "3-5 min climbs — hiking them isn't failing, it's the technique"
+            "value": "3-5 min climbs: hiking them isn't failing, it's the technique"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "subidas de 3 a 5 min — andar no es fracasar, es la técnica"
+            "value": "subidas de 3 a 5 min: andar no es fracasar, es la técnica"
           }
         }
       }
@@ -36387,19 +36387,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "du temps debout, pas des kilomètres — avec le dénivelé de ta course"
+            "value": "du temps debout, pas des kilomètres, avec le dénivelé de ta course"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "time on feet, not kilometres — with your race's elevation"
+            "value": "time on feet, not kilometres, with your race's elevation"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "tiempo de pie, no kilómetros — con el desnivel de tu carrera"
+            "value": "tiempo de pie, no kilómetros, con el desnivel de tu carrera"
           }
         }
       }
@@ -36433,19 +36433,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "à la frontale, en terrain — découvrir ça le jour J est une mauvaise surprise évitable"
+            "value": "à la frontale, en terrain : découvrir ça le jour J est une mauvaise surprise évitable"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "head torch, real trail — finding this out on race day is an avoidable surprise"
+            "value": "head torch, real trail: finding this out on race day is an avoidable surprise"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "con frontal, en terreno — descubrirlo el día D es una mala sorpresa evitable"
+            "value": "con frontal, en terreno: descubrirlo el día D es una mala sorpresa evitable"
           }
         }
       }
@@ -36479,7 +36479,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "au-delà d'une certaine pente, marcher est plus rapide et moins coûteux — ça s'apprend"
+            "value": "au-delà d'une certaine pente, marcher est plus rapide et moins coûteux : ça s'apprend"
           }
         },
         "en": {
@@ -36571,19 +36571,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "relâché, court — on ne construit plus rien, on garde les jambes"
+            "value": "relâché, court : on ne construit plus rien, on garde les jambes"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "relaxed, short — nothing left to build, just keep the legs"
+            "value": "relaxed, short: nothing left to build, just keep the legs"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "suelto, corto — ya no se construye nada, se mantienen las piernas"
+            "value": "suelto, corto: ya no se construye nada, se mantienen las piernas"
           }
         }
       }
@@ -36835,13 +36835,13 @@
         }
       }
     },
-    "séance allégée aujourd'hui — allure confort, écoute-toi": {
+    "séance allégée aujourd'hui : allure confort, écoute-toi": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "lightened session today — easy pace, listen to your body"
+            "value": "lightened session today: easy pace, listen to your body"
           }
         },
         "es": {
@@ -36917,18 +36917,18 @@
         }
       }
     },
-    "technique avant vitesse — un geste propre coûte moins cher qu'un geste rapide et cassé": {
+    "technique avant vitesse : un geste propre coûte moins cher qu'un geste rapide et cassé": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "technique before speed — a clean movement costs less than a fast, broken one"
+            "value": "technique before speed: a clean movement costs less than a fast, broken one"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "técnica antes que velocidad — un gesto limpio cuesta menos que un gesto rápido y descontrolado"
+            "value": "técnica antes que velocidad: un gesto limpio cuesta menos que un gesto rápido y descontrolado"
           }
         }
       }
@@ -37033,12 +37033,12 @@
         }
       }
     },
-    "une prise toutes les %lld min, à la montre — c'est la séance où tu testes ce que tu mangeras le jour J": {
+    "une prise toutes les %lld min, à la montre : c'est la séance où tu testes ce que tu mangeras le jour J": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "one feed every %lld min, by the watch — this is the session where you test what you'll eat on race day"
+            "value": "one feed every %lld min, by the watch: this is the session where you test what you'll eat on race day"
           }
         },
         "es": {
@@ -37049,18 +37049,18 @@
         }
       }
     },
-    "vise %@ /km sur chaque segment, même sous fatigue — pas l'allure d'un 8 km isolé": {
+    "vise %@ /km sur chaque segment, même sous fatigue : pas l'allure d'un 8 km isolé": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "aim for %@ /km on each segment, even under fatigue — not the pace of a standalone 8 km"
+            "value": "aim for %@ /km on each segment, even under fatigue: not the pace of a standalone 8 km"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "apunta a %@ /km en cada segmento, incluso bajo fatiga — no el ritmo de un 8 km aislado"
+            "value": "apunta a %@ /km en cada segmento, incluso bajo fatiga: no el ritmo de un 8 km aislado"
           }
         }
       }
@@ -38052,40 +38052,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "a tu ritmo"
-          }
-        }
-      }
-    },
-    "— %lld confirmé": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "— %lld going"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "— %lld confirmado"
-          }
-        }
-      }
-    },
-    "— %lld confirmés": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "— %lld going"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "— %lld confirmados"
           }
         }
       }

@@ -235,7 +235,7 @@ struct WatchStartView: View {
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 } else {
-                    Text("Cours à ta sensation — ta séance arrive de l'iPhone.")
+                    Text("Cours à ta sensation. Ta séance arrive de l'iPhone.")
                         .font(WT.moyen(WT.Corps.precision))
                         .foregroundStyle(WT.secondaire)
                         .multilineTextAlignment(.center)

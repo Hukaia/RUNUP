@@ -43,7 +43,7 @@ final class ResteALireTests: XCTestCase {
 
     func testLeDernierEcranSAnnonceCommeTel() {
         let phrase = OnboardingViewModel.resteALire(apres: OnboardingViewModel.dernierEcranDeQuestions)
-        XCTAssertEqual(phrase, String(localized: "Dernier écran — ton plan arrive juste après."))
+        XCTAssertEqual(phrase, String(localized: "Dernier écran. Ton plan arrive juste après."))
     }
 
     func testLAvantDernierParleAuSingulier() {

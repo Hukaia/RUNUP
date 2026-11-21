@@ -169,7 +169,7 @@ struct RacePageView: View {
             if isLoading {
                 ProgressView().frame(maxWidth: .infinity).padding(.vertical, HZFil.enAttente)
             } else if let loadError {
-                HZPhrase(texte: String(localized: "Impossible de charger cette page — \(loadError)."))
+                HZPhrase(texte: String(localized: "Impossible de charger cette page : \(loadError)."))
             } else {
                 maParticipation
                 quiLaPrepare
@@ -552,7 +552,7 @@ struct RacePageView: View {
             redaction
 
             if messagesDeTete.isEmpty {
-                HZPhrase(texte: String(localized: "Rien d'écrit encore. Une question sur le parcours, le ravitaillement, l'hébergement — c'est ici."))
+                HZPhrase(texte: String(localized: "Rien d'écrit encore. Une question sur le parcours, le ravitaillement, l'hébergement : c'est ici."))
             } else {
                 LazyVStack(spacing: 0) {
                     ForEach(Array(messagesDeTete.enumerated()), id: \.element.id) { rang, message in
@@ -646,7 +646,7 @@ struct RacePageView: View {
     /// l'ancien filet ambre est devenu une plaque neutre.)
     private var avertissementDossard: some View {
         HZPlaque {
-            Text("Haizo ne vend rien et ne garantit rien : vous vous arrangez entre vous. La plupart des organisateurs interdisent le transfert de dossard — vérifie leur règlement. Courir sous le nom d'un autre, c'est la disqualification, et des secours qui liraient le mauvais dossier médical.")
+            Text("Haizo ne vend rien et ne garantit rien : vous vous arrangez entre vous. La plupart des organisateurs interdisent le transfert de dossard. Vérifie leur règlement. Courir sous le nom d'un autre, c'est la disqualification, et des secours qui liraient le mauvais dossier médical.")
                 .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
                 .foregroundStyle(HZCouleur.encre)
                 .fixedSize(horizontal: false, vertical: true)
@@ -862,7 +862,7 @@ struct RacePageView: View {
             onParticipationChanged()
             caler(chrono: propre)
         } catch {
-            appState.toast(String(localized: "Impossible d'enregistrer — \(PanneReseau.motif(pour: error))."))
+            appState.toast(String(localized: "Impossible d'enregistrer : \(PanneReseau.motif(pour: error))."))
         }
         enCours = false
     }
@@ -901,7 +901,7 @@ struct RacePageView: View {
             await charger()
             onParticipationChanged()
         } catch {
-            appState.toast(String(localized: "Impossible de te retirer — réessaie."))
+            appState.toast(String(localized: "Impossible de te retirer. Réessaie."))
         }
         enCours = false
     }
@@ -924,7 +924,7 @@ struct RacePageView: View {
         } catch ClubServiceError.badResponse(let code, _) where code == HZCourse.tropDeRequetes {
             appState.toast(String(localized: "Trop de messages aujourd'hui. Réessaie demain."))
         } catch {
-            appState.toast(String(localized: "Impossible de publier — \(PanneReseau.motif(pour: error))."))
+            appState.toast(String(localized: "Impossible de publier : \(PanneReseau.motif(pour: error))."))
         }
         enCours = false
     }
@@ -939,7 +939,7 @@ struct RacePageView: View {
             page?.posts[index].kudos = reponse.kudos
             Haptics.impact(.light)
         } catch {
-            appState.toast(String(localized: "Impossible d'applaudir — réessaie."))
+            appState.toast(String(localized: "Impossible d'applaudir. Réessaie."))
         }
     }
 
@@ -948,7 +948,7 @@ struct RacePageView: View {
             try await clubService.closeRacePost(postId: message.id)
             await charger()
         } catch {
-            appState.toast(String(localized: "Impossible de marquer ce message — réessaie."))
+            appState.toast(String(localized: "Impossible de marquer ce message. Réessaie."))
         }
     }
 }

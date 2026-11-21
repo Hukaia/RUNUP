@@ -62,7 +62,7 @@ struct LogSessionSheet: View {
 
                     // Dit avant de valider : une séance de renfo n'a pas de distance, et laisser
                     // le champ vide doit être un choix visiblement permis plutôt qu'un oubli.
-                    Text("La distance est facultative — laisse-la vide pour une séance de renforcement ou un tapis sans compteur.")
+                    Text("La distance est facultative : laisse-la vide pour une séance de renforcement ou un tapis sans compteur.")
                         .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
                         .foregroundStyle(HZCouleur.secondaireSurClair)
                         .fixedSize(horizontal: false, vertical: true)

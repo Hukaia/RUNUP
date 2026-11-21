@@ -76,7 +76,7 @@ struct AdminSheet: View {
         } else if compte?.adminListConfigured == false {
             encart(String(localized: "Aucune liste de comptes de la maison côté serveur. Crée la variable d'environnement RUNUP_ADMIN_EMAILS sur Vercel, avec l'adresse affichée ci-dessous, puis redéploie."))
         } else {
-            encart(String(localized: "Cette adresse n'est pas dans la liste des comptes de la maison. Ajoute celle affichée ci-dessous à RUNUP_ADMIN_EMAILS sur Vercel — c'est la seule que le serveur reconnaîtra."))
+            encart(String(localized: "Cette adresse n'est pas dans la liste des comptes de la maison. Ajoute celle affichée ci-dessous à RUNUP_ADMIN_EMAILS sur Vercel. C'est la seule que le serveur reconnaîtra."))
         }
     }
 

@@ -243,7 +243,7 @@ struct LiveRunView: View {
                 if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
             } label: {
                 bannerBody(icon: "location.slash.fill",
-                           text: "Localisation refusée — ouvrir les Réglages")
+                           text: "Localisation refusée : ouvrir les Réglages")
             }
             .buttonStyle(.plain)
         case .searching:
@@ -251,7 +251,7 @@ struct LiveRunView: View {
                        text: "Recherche du signal GPS…")
         case .unstable:
             bannerBody(icon: "exclamationmark.triangle.fill",
-                       text: "Signal GPS instable — position estimée")
+                       text: "Signal GPS instable : position estimée")
         case .ok:
             EmptyView()
         }
@@ -276,7 +276,7 @@ struct LiveRunView: View {
                 if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
             } label: {
                 bannerBody(icon: "lock.slash",
-                           text: "Rien sur l'écran verrouillé — ouvrir les Réglages")
+                           text: "Rien sur l'écran verrouillé : ouvrir les Réglages")
             }
             .buttonStyle(.plain)
         case .refuseeParLeSysteme:

@@ -62,7 +62,7 @@ struct TriathlonRaceDaySheet: View {
                 }
             }
 
-            HZParagrapheDeCourse(Text("Le vélo prend à peu près la moitié de la journée — plus que les deux autres réunies sur un format long. C'est lui qui décide de ce que tu auras dans les jambes en descendant de selle."))
+            HZParagrapheDeCourse(Text("Le vélo prend à peu près la moitié de la journée. Plus que les deux autres réunies sur un format long. C'est lui qui décide de ce que tu auras dans les jambes en descendant de selle."))
         }
     }
 
@@ -116,8 +116,8 @@ struct TriathlonRaceDaySheet: View {
         TriathlonRaceDay.transitionsDecisives(format)
             ? "Sur un format court, les transitions pèsent près d'un dixième de la journée. C'est là que ce format se gagne, et c'est la seule partie qui ne coûte aucune condition physique."
             : LocalizedStringKey(Accord.selon(
-                f: String(localized: "Sur un format long, les transitions pèsent peu : le temps est ailleurs. Elles méritent quand même d'être répétées une fois — non pour le chrono, mais pour ne pas découvrir fatiguée qu'on a oublié quelque chose."),
-                m: String(localized: "Sur un format long, les transitions pèsent peu : le temps est ailleurs. Elles méritent quand même d'être répétées une fois — non pour le chrono, mais pour ne pas découvrir fatigué qu'on a oublié quelque chose.")))
+                f: String(localized: "Sur un format long, les transitions pèsent peu : le temps est ailleurs. Elles méritent quand même d'être répétées une fois, non pour le chrono, mais pour ne pas découvrir fatiguée qu'on a oublié quelque chose."),
+                m: String(localized: "Sur un format long, les transitions pèsent peu : le temps est ailleurs. Elles méritent quand même d'être répétées une fois, non pour le chrono, mais pour ne pas découvrir fatigué qu'on a oublié quelque chose.")))
     }
 
     // MARK: La combinaison
@@ -132,7 +132,7 @@ struct TriathlonRaceDaySheet: View {
             // `TriathlonRaceDay.combinaisonEstUneRegleDeCourse`. Un seuil faux ici n'est pas une
             // approximation : c'est quelqu'un qui arrive au départ avec une combinaison qu'on va
             // lui refuser, ou sans celle qu'on va lui réclamer.
-            HZParagrapheDeCourse(Text("Ce qui se prépare, en revanche : nager dedans avant le jour J. Elle serre, elle gêne la respiration, et elle change la position dans l'eau. Et l'enlever vite s'apprend — c'est la moitié de T1."))
+            HZParagrapheDeCourse(Text("Ce qui se prépare, en revanche : nager dedans avant le jour J. Elle serre, elle gêne la respiration, et elle change la position dans l'eau. Et l'enlever vite s'apprend. C'est la moitié de T1."))
         }
     }
 }

@@ -143,7 +143,7 @@ struct ExplorerView: View {
             sectionDesCourses
                 .padding(.top, HZEspace.entreSections - HZExplorer.sousLaCarte)
         } else if let panne {
-            message(String(localized: "Impossible de charger les courses — \(panne)."))
+            message(String(localized: "Impossible de charger les courses : \(panne)."))
                 .padding(.top, HZEspace.entreSections)
         }
     }
@@ -255,7 +255,7 @@ struct ExplorerView: View {
     private func listeDeCourses(_ liste: [RaceEvent], vide: String) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             if liste.isEmpty {
-                message(panne.map { String(localized: "Impossible de charger les courses — \($0).") } ?? vide)
+                message(panne.map { String(localized: "Impossible de charger les courses : \($0).") } ?? vide)
             }
             ForEach(Array(liste.enumerated()), id: \.element.id) { index, course in
                 Button { courseOuverte = course } label: {

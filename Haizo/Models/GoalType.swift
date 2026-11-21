@@ -31,13 +31,13 @@ enum GoalType: String, Codable, CaseIterable, Identifiable {
 
     var subtitle: String {
         switch self {
-        case .race: return String(localized: "Un dossard en vue — on construit le plan pour le jour J")
+        case .race: return String(localized: "Un dossard en vue : on construit le plan pour le jour J")
         case .progress: return String(localized: "Courir plus vite ou plus longtemps, sans course précise")
         case .restart: return String(localized: "Reprendre en douceur, sans se blesser")
         case .weight: return String(localized: "Un programme qui allie course et rééquilibrage alimentaire")
         case .health: return String(localized: "Une routine régulière qui tient dans ta semaine")
-        case .hyrox: return String(localized: "8 × 1 km de course + stations fonctionnelles — un vrai plan hybride")
-        case .ultraTrail: return String(localized: "Dénivelé, descente technique et sorties enchaînées — un plan qui compte en heures")
+        case .hyrox: return String(localized: "8 × 1 km de course + stations fonctionnelles, un vrai plan hybride")
+        case .ultraTrail: return String(localized: "Dénivelé, descente technique et sorties enchaînées : un plan qui compte en heures")
         case .triathlon: return String(localized: "Nager, rouler, courir, et surtout enchaîner les trois")
         case .duathlon: return String(localized: "Courir, rouler, courir, et tenir la seconde course")
         }
@@ -189,13 +189,13 @@ enum GoalType: String, Codable, CaseIterable, Identifiable {
         case .health:
             return String(localized: "Le plan se cale sur ton agenda. Pas l'inverse.")
         case .hyrox:
-            return String(localized: "8 × 1 km de course, 8 stations fonctionnelles — le format ne change pas, ta préparation si.")
+            return String(localized: "8 × 1 km de course, 8 stations fonctionnelles : le format ne change pas, ta préparation si.")
         case .ultraTrail:
-            return String(localized: "La distance ET le dénivelé — c'est le second qui décide du plan.")
+            return String(localized: "La distance ET le dénivelé : c'est le second qui décide du plan.")
         case .triathlon:
             return Accord.selon(
-                f: String(localized: "Nager, rouler, courir — dans cet ordre, et fatiguée de la précédente à chaque fois."),
-                m: String(localized: "Nager, rouler, courir — dans cet ordre, et fatigué de la précédente à chaque fois."))
+                f: String(localized: "Nager, rouler, courir : dans cet ordre, et fatiguée de la précédente à chaque fois."),
+                m: String(localized: "Nager, rouler, courir : dans cet ordre, et fatigué de la précédente à chaque fois."))
         case .duathlon:
             return String(localized: "Courir, rouler, courir : c'est la seconde course qui décide de la journée.")
         }
@@ -359,7 +359,7 @@ enum HyroxDivision: String, Codable, CaseIterable, Identifiable {
     /// format le plus couru », une affirmation sur la participation que rien ne sourçait.
     var subtitle: String {
         guard let c = charges else {
-            return String(localized: "Division d'une version précédente — à rechoisir")
+            return String(localized: "Division d'une version précédente : à rechoisir")
         }
         return String(localized: "Sled \(c.sledPushKg) kg · wall balls \(c.wallBallKg) kg")
     }

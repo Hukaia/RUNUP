@@ -46,7 +46,7 @@ struct AccountSwitchSheet: View {
     /// Le nom du profil local, pas celui du compte qui arrive : c'est lui qui est à l'écran en ce
     /// moment, et c'est de lui qu'on parle.
     private var corps: some View {
-        Text("Ce téléphone contient le profil de \(appState.profile.nomComplet) — son programme, son historique et ses réglages. Tu viens de te connecter avec un autre compte.")
+        Text("Ce téléphone contient le profil de \(appState.profile.nomComplet) : son programme, son historique et ses réglages. Tu viens de te connecter avec un autre compte.")
             .hzParagraphe(.c15, .medium, interligne: HZBandeauDuCoach.interligne)
             .foregroundStyle(HZCouleur.encre)
             .fixedSize(horizontal: false, vertical: true)
@@ -55,7 +55,7 @@ struct AccountSwitchSheet: View {
     /// AVANT LE GESTE, POUR DE BON : la phrase qui nomme ce qu'on détruit est au-dessus des
     /// boutons, pas dessous.
     private var avertissement: some View {
-        Text("Repartir à neuf efface le programme, l'historique des courses et la conversation avec le coach enregistrés sur cet appareil. Ce qui appartient au Club — les sorties publiées, les kilomètres du club — reste sur le compte de chacune.")
+        Text("Repartir à neuf efface le programme, l'historique des courses et la conversation avec le coach enregistrés sur cet appareil. Ce qui appartient au Club (les sorties publiées, les kilomètres du club) reste sur le compte de chacune.")
             .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
             .foregroundStyle(HZCouleur.secondaireSurClair)
             .fixedSize(horizontal: false, vertical: true)

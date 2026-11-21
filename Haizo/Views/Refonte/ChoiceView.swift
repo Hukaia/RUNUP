@@ -67,7 +67,7 @@ struct ChoiceView: View {
                     showNewGoal = true
                 }
                 HZReponse(titre: String(localized: "Mode course libre"),
-                          precision: String(localized: "Pas d'objectif précis — on te propose juste de quoi garder la forme.")) {
+                          precision: String(localized: "Pas d'objectif précis : on te propose juste de quoi garder la forme.")) {
                     AdaptivePlanEngine.chooseFreeRun(profile)
                     appState.toast(String(localized: "Mode course libre activé"))
                     appState.go(.home)

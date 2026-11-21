@@ -608,7 +608,7 @@ struct RecapView: View {
                 // Elle a quitté l'écran : rien à dire, et surtout pas une alerte sur un écran
                 // qu'elle ne regarde plus.
             } catch {
-                appState.toast(String(localized: "La vidéo n'a pas pu être fabriquée — réessaie."))
+                appState.toast(String(localized: "La vidéo n'a pas pu être fabriquée. Réessaie."))
             }
             videoEnCours = nil
         }

@@ -215,7 +215,7 @@ struct RouteDiscoveryView: View {
         if isLoading && routes.isEmpty {
             phrase(String(localized: "Recherche des itinéraires…"))
         } else if let loadError {
-            phrase(String(localized: "Impossible de charger les itinéraires — \(loadError)."))
+            phrase(String(localized: "Impossible de charger les itinéraires : \(loadError)."))
         } else if routes.isEmpty {
             phrase(Accord.selon(
                 f: String(localized: "Personne n'a encore partagé d'itinéraire par ici. Publie le tien après ta prochaine sortie et tu seras la première."),

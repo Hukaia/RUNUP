@@ -47,7 +47,7 @@ struct RecoveryView: View {
 
     private var feuille: some View {
         VStack(alignment: .leading, spacing: HZEspace.entreSections) {
-            HZPhrase(texte: String(localized: "Ton corps a fait le plus dur. On souffle \(total) jours avant de repartir — c'est ce qui fait tenir les progrès dans la durée."),
+            HZPhrase(texte: String(localized: "Ton corps a fait le plus dur. On souffle \(total) jours avant de repartir : c'est ce qui fait tenir les progrès dans la durée."),
                      titre: String(localized: "Place à la récupération"))
             jours
             aujourdhui
@@ -92,7 +92,7 @@ struct RecoveryView: View {
                 .hzParagraphe(.c16, .gras, interligne: HZBandeauDuCoach.interligne)
                 .foregroundStyle(HZCouleur.encre)
                 .fixedSize(horizontal: false, vertical: true)
-            Text("Pas de course prévue — hydrate-toi bien et dors un peu plus si tu peux.")
+            Text("Pas de course prévue. Hydrate-toi bien et dors un peu plus si tu peux.")
                 .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
                 .fixedSize(horizontal: false, vertical: true)
@@ -104,7 +104,7 @@ struct RecoveryView: View {
     @ViewBuilder private var suite: some View {
         if profile.recoveryDaysLeft > 0 {
             VStack(spacing: HZEspace.groupe) {
-                Text("Jour \(done + 1) sur \(total) — la suite se débloque demain.")
+                Text("Jour \(done + 1) sur \(total). La suite se débloque demain.")
                     .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
                     .foregroundStyle(HZCouleur.secondaireSurClair)
                     .multilineTextAlignment(.center)

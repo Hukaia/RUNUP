@@ -41,7 +41,7 @@ final class OnboardingViewModel {
         guard etape >= premierEcranAvecLeReste, etape <= dernierEcranDeQuestions else { return nil }
         let restants = dernierEcranDeQuestions - etape
         if restants == 0 {
-            return String(localized: "Dernier écran — ton plan arrive juste après.")
+            return String(localized: "Dernier écran. Ton plan arrive juste après.")
         }
         return Pluriel.choisir(restants,
                                String(localized: "Plus qu'un écran, et ton plan est prêt."),

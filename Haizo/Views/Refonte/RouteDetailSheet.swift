@@ -228,7 +228,7 @@ struct RouteDetailSheet: View {
         } catch ClubServiceError.badResponse(let code, _) where code == HZHub.refuse {
             appState.toast(String(localized: "Ce texte a été refusé par le filtre de contenu. Reformule-le."))
         } catch {
-            appState.toast(String(localized: "Impossible de publier — \(PanneReseau.motif(pour: error))."))
+            appState.toast(String(localized: "Impossible de publier : \(PanneReseau.motif(pour: error))."))
         }
         envoiEnCours = false
     }
@@ -285,7 +285,7 @@ struct RouteDetailSheet: View {
                 onChanged(updated)
                 Haptics.impact(.light)
             } catch {
-                appState.toast(String(localized: "Impossible de mettre à jour — réessaie."))
+                appState.toast(String(localized: "Impossible de mettre à jour. Réessaie."))
             }
             isSaving = false
         }

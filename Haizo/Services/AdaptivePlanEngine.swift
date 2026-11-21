@@ -13,7 +13,7 @@ enum AdaptivePlanEngine {
     // La séance du jour en course libre se calcule désormais, à partir de l'historique, de la
     // forme et du jour. Voir `CourseLibre`.
 
-    static let restSession = WorkoutSession(title: "Repos", subtitle: "Jour de repos — laisse ton corps récupérer", durationMinutes: 0, pace: "—", zone: "—", adjustment: nil, kind: .rest)
+    static let restSession = WorkoutSession(title: "Repos", subtitle: "Jour de repos : laisse ton corps récupérer", durationMinutes: 0, pace: "—", zone: "—", adjustment: nil, kind: .rest)
 
     // MARK: Onboarding → initial program
 
@@ -756,7 +756,7 @@ enum AdaptivePlanEngine {
                 // hard sessions and not a single easy run, the inverse of the ~80/20 polarized
                 // model every modern endurance periodization is built on. `generateWeekSessions`
                 // additionally caps quality at 2/week, which this archetype absorbs.
-                SessionArchetype(role: .easy, title: "Footing endurance", subtitle: "allure facile — le socle aérobie, pas une séance au rabais", pace: zones.easy, zone: "Z2", baseDuration: 35, kind: .enduranceFooting),
+                SessionArchetype(role: .easy, title: "Footing endurance", subtitle: "allure facile : le socle aérobie, pas une séance au rabais", pace: zones.easy, zone: "Z2", baseDuration: 35, kind: .enduranceFooting),
                 SessionArchetype(role: .longRun, title: "Sortie longue", subtitle: "bloc spécifique, un peu d'allure course", pace: zones.marathon, zone: "Z2-3", baseDuration: longRunDuration(longRunKm), kind: .specificLongRun)
             ]
         case .affutage:
@@ -958,9 +958,9 @@ enum AdaptivePlanEngine {
         case .base:
             let longue = longueMinutes(.base)
             base = [
-                SessionArchetype(role: .easy, title: "Footing d'endurance", subtitle: "le fond de la préparation — relâché, en terrain varié", pace: zones.easy, zone: "Z2", baseDuration: 40, kind: .ultraEnduranceFooting),
-                SessionArchetype(role: .speed, title: "Côtes longues", subtitle: "montées de 3 à 5 min — marcher dedans n'est pas un échec, c'est la technique", pace: zones.threshold, zone: "Z3", baseDuration: 45, kind: .ultraHillRepeats, intervals: IntervalStructure(reps: 5, repMeters: 600, recoveryMeters: 600)),
-                SessionArchetype(role: .easy, title: "Marche rapide en côte", subtitle: "au-delà d'une certaine pente, marcher est plus rapide et moins coûteux — ça s'apprend", pace: "—", zone: "Z2", baseDuration: 50, kind: .ultraPowerHike),
+                SessionArchetype(role: .easy, title: "Footing d'endurance", subtitle: "le fond de la préparation : relâché, en terrain varié", pace: zones.easy, zone: "Z2", baseDuration: 40, kind: .ultraEnduranceFooting),
+                SessionArchetype(role: .speed, title: "Côtes longues", subtitle: "montées de 3 à 5 min : marcher dedans n'est pas un échec, c'est la technique", pace: zones.threshold, zone: "Z3", baseDuration: 45, kind: .ultraHillRepeats, intervals: IntervalStructure(reps: 5, repMeters: 600, recoveryMeters: 600)),
+                SessionArchetype(role: .easy, title: "Marche rapide en côte", subtitle: "au-delà d'une certaine pente, marcher est plus rapide et moins coûteux : ça s'apprend", pace: "—", zone: "Z2", baseDuration: 50, kind: .ultraPowerHike),
                 SessionArchetype(role: .longRun, title: "Sortie longue en terrain", subtitle: sousTitre("du temps debout, pas des kilomètres", minutes: longue), pace: zones.easy, zone: "Z2", baseDuration: longue, kind: .ultraLongRun)
             ]
 
@@ -968,12 +968,12 @@ enum AdaptivePlanEngine {
             let longue = longueMinutes(.specifique)
             var seances: [SessionArchetype] = [
                 SessionArchetype(role: .speed, title: "Descente technique", subtitle: "ce qui détruit les quadriceps le jour J, et la seule qualité qu'un plan de route ignore", pace: zones.easy, zone: "Z2-3", baseDuration: 50, kind: .ultraDescentWork, intervals: IntervalStructure(reps: 4, repMeters: 1200, recoveryMeters: 1200)),
-                SessionArchetype(role: .easy, title: "Footing d'endurance", subtitle: "le socle aérobie — ni une séance au rabais, ni une séance dure", pace: zones.easy, zone: "Z2", baseDuration: 45, kind: .ultraEnduranceFooting),
-                SessionArchetype(role: .easy, title: "Sortie de nuit", subtitle: "à la frontale, en terrain — découvrir ça le jour J est une mauvaise surprise évitable", pace: zones.easy, zone: "Z2", baseDuration: 60, kind: .ultraNightRun)
+                SessionArchetype(role: .easy, title: "Footing d'endurance", subtitle: "le socle aérobie : ni une séance au rabais, ni une séance dure", pace: zones.easy, zone: "Z2", baseDuration: 45, kind: .ultraEnduranceFooting),
+                SessionArchetype(role: .easy, title: "Sortie de nuit", subtitle: "à la frontale, en terrain : découvrir ça le jour J est une mauvaise surprise évitable", pace: zones.easy, zone: "Z2", baseDuration: 60, kind: .ultraNightRun)
             ]
             if enchaine {
                 let second = Int(UltraTrail.secondJourSecondes(premierJourSecondes: Double(longue) * 60) / 60)
-                seances.append(SessionArchetype(role: .longRun, title: "Enchaînement · jour 1", subtitle: sousTitre("la sortie longue du week-end — demain tu repars dessus", minutes: longue), pace: zones.easy, zone: "Z2", baseDuration: longue, kind: .ultraBackToBackDay1))
+                seances.append(SessionArchetype(role: .longRun, title: "Enchaînement · jour 1", subtitle: sousTitre("la sortie longue du week-end : demain tu repars dessus", minutes: longue), pace: zones.easy, zone: "Z2", baseDuration: longue, kind: .ultraBackToBackDay1))
                 seances.append(SessionArchetype(role: .easy, title: "Enchaînement · jour 2", subtitle: "sur des jambes entamées : c'est la seconde moitié de ta course, en répétition", pace: zones.easy, zone: "Z2", baseDuration: max(30, second), kind: .ultraBackToBackDay2, followsLongRun: true))
             } else {
                 seances.append(SessionArchetype(role: .longRun, title: "Sortie longue spécifique", subtitle: sousTitre("la densité de dénivelé de ta course, sur ta distance à toi", minutes: longue), pace: zones.easy, zone: "Z2", baseDuration: longue, kind: .ultraSpecificLongRun))
@@ -983,9 +983,9 @@ enum AdaptivePlanEngine {
         case .affutage:
             let longue = longueMinutes(.affutage)
             base = [
-                SessionArchetype(role: .easy, title: "Footing d'entretien", subtitle: "relâché, court — on ne construit plus rien, on garde les jambes", pace: zones.easy, zone: "Z2", baseDuration: 30, kind: .ultraTaperFooting),
+                SessionArchetype(role: .easy, title: "Footing d'entretien", subtitle: "relâché, court : on ne construit plus rien, on garde les jambes", pace: zones.easy, zone: "Z2", baseDuration: 30, kind: .ultraTaperFooting),
                 SessionArchetype(role: .speed, title: "Rappel de terrain", subtitle: "un peu de dénivelé, aucune fatigue à accumuler", pace: zones.easy, zone: "Z2", baseDuration: 35, kind: .ultraTerrainReminder),
-                SessionArchetype(role: .longRun, title: "Sortie longue en terrain", subtitle: sousTitre("la dernière vraie sortie — courte, pour arriver frais", minutes: longue), pace: zones.easy, zone: "Z2", baseDuration: longue, kind: .ultraLongRun)
+                SessionArchetype(role: .longRun, title: "Sortie longue en terrain", subtitle: sousTitre("la dernière vraie sortie : courte, pour arriver frais", minutes: longue), pace: zones.easy, zone: "Z2", baseDuration: longue, kind: .ultraLongRun)
             ]
 
         case .deload:
@@ -1001,7 +1001,7 @@ enum AdaptivePlanEngine {
             // ce qui laisse le plus de dégâts musculaires de la semaine.
             let allegee = max(40, Int((Double(longuePorteeCetteSemaine()) * 0.65).rounded()))
             base = [
-                SessionArchetype(role: .easy, title: "Footing récup", subtitle: "coupe le volume, écoute tes jambes — pas de dénivelé cette semaine", pace: zones.easy, zone: "Z1-2", baseDuration: 25, kind: .recoveryFooting),
+                SessionArchetype(role: .easy, title: "Footing récup", subtitle: "coupe le volume, écoute tes jambes : pas de dénivelé cette semaine", pace: zones.easy, zone: "Z1-2", baseDuration: 25, kind: .recoveryFooting),
                 SessionArchetype(role: .easy, title: "Marche rapide en côte", subtitle: "la seule séance de terrain de la semaine, et elle ne coûte presque rien aux jambes", pace: "—", zone: "Z2", baseDuration: 35, kind: .ultraPowerHike),
                 SessionArchetype(role: .longRun, title: "Sortie longue allégée", subtitle: sousTitre("aucune pression de durée cette semaine", minutes: allegee), pace: zones.easy, zone: "Z2", baseDuration: allegee, kind: .easedLongRun)
             ]
@@ -1039,7 +1039,7 @@ enum AdaptivePlanEngine {
         )
         let footing = SessionArchetype(
             role: .easy, title: "Footing base HYROX",
-            subtitle: "endurance de fond — construit le volume de course du format",
+            subtitle: "endurance de fond : construit le volume de course du format",
             pace: zones.easy, zone: "Z2", baseDuration: 30, kind: .hyroxBaseFooting
         )
 
@@ -1057,7 +1057,7 @@ enum AdaptivePlanEngine {
                 stationsDeLaSemaine,
                 footing,
                 footing,
-                SessionArchetype(role: .longRun, title: "Course compromise 3 × 1 km", subtitle: "course + bloc fonctionnel entre chaque km — apprivoise la fatigue du format", pace: zones.easy, zone: "Z2-3", baseDuration: 40, kind: .hyroxCompromisedRun3, intervals: IntervalStructure(reps: 3, repMeters: 1000, recoveryMeters: nil))
+                SessionArchetype(role: .longRun, title: "Course compromise 3 × 1 km", subtitle: "course + bloc fonctionnel entre chaque km : apprivoise la fatigue du format", pace: zones.easy, zone: "Z2-3", baseDuration: 40, kind: .hyroxCompromisedRun3, intervals: IntervalStructure(reps: 3, repMeters: 1000, recoveryMeters: nil))
             ]
         // LE FOOTING ENTRE LES DEUX SÉANCES DURES, et pas en fin de liste : même raison d'ordre.
         // En dernier, la famille et le tempo tomberaient sur deux jours de course consécutifs —
@@ -1066,14 +1066,14 @@ enum AdaptivePlanEngine {
             base = [
                 stationsDeLaSemaine,
                 footing,
-                SessionArchetype(role: .speed, title: "Tempo course", subtitle: "allure seuil tenue — la moitié de l'épreuve se court", pace: zones.threshold, zone: "Z3", baseDuration: 35, kind: .tempoRun),
+                SessionArchetype(role: .speed, title: "Tempo course", subtitle: "allure seuil tenue : la moitié de l'épreuve se court", pace: zones.threshold, zone: "Z3", baseDuration: 35, kind: .tempoRun),
                 SessionArchetype(role: .longRun, title: "Course compromise 6 × 1 km", subtitle: "simulation partielle : course + fonctionnel enchaînés, rythme course visé", pace: zones.marathon, zone: "Z3", baseDuration: 55, kind: .hyroxCompromisedRun6, intervals: IntervalStructure(reps: 6, repMeters: 1000, recoveryMeters: nil))
             ]
         case .affutage:
             base = [
                 SessionArchetype(role: .easy, title: "Footing d'entretien", subtitle: "relâché, garde les jambes et les bras frais", pace: zones.easy, zone: "Z2", baseDuration: 25, kind: .hyroxMaintenanceFooting),
                 SessionArchetype(role: .speed, title: "Rappel technique stations", subtitle: "gestes affûtés, charge légère, aucune fatigue à accumuler", pace: "—", zone: "Technique", baseDuration: 25, kind: .hyroxStationsReminder),
-                SessionArchetype(role: .longRun, title: "Simulation HYROX allégée", subtitle: "format complet à intensité réduite — dernière répétition avant le jour J", pace: zones.marathon, zone: "Z2-3", baseDuration: 45, kind: .hyroxLightSimulation)
+                SessionArchetype(role: .longRun, title: "Simulation HYROX allégée", subtitle: "format complet à intensité réduite : dernière répétition avant le jour J", pace: zones.marathon, zone: "Z2-3", baseDuration: 45, kind: .hyroxLightSimulation)
             ]
         case .deload:
             base = [
@@ -1126,28 +1126,28 @@ enum AdaptivePlanEngine {
         switch block {
         case .base:
             base = [
-                SessionArchetype(role: .longRun, title: "Vélo · endurance", subtitle: "longue, régulière, sans forcer — le vélo est la plus longue des trois épreuves", pace: "—", zone: "Z2", baseDuration: 90, kind: .triBikeEndurance),
+                SessionArchetype(role: .longRun, title: "Vélo · endurance", subtitle: "longue, régulière, sans forcer : le vélo est la plus longue des trois épreuves", pace: "—", zone: "Z2", baseDuration: 90, kind: .triBikeEndurance),
                 SessionArchetype(role: .easy, title: "Natation · endurance", subtitle: "nage continue, souffle régulier", pace: "—", zone: "Z2", baseDuration: dureeDeNage, kind: nageDeFond),
-                SessionArchetype(role: .easy, title: "Footing d'endurance", subtitle: "la course reste la course — elle garde sa place dans la semaine", pace: zones.easy, zone: "Z2", baseDuration: 40, kind: .enduranceFooting),
-                SessionArchetype(role: .speed, title: "Vélo · seuil", subtitle: "des blocs soutenus — on gagne du temps là sans en perdre pour la suite", pace: "—", zone: "Z3", baseDuration: 55, kind: .triBikeThreshold)
+                SessionArchetype(role: .easy, title: "Footing d'endurance", subtitle: "la course reste la course : elle garde sa place dans la semaine", pace: zones.easy, zone: "Z2", baseDuration: 40, kind: .enduranceFooting),
+                SessionArchetype(role: .speed, title: "Vélo · seuil", subtitle: "des blocs soutenus : on gagne du temps là sans en perdre pour la suite", pace: "—", zone: "Z3", baseDuration: 55, kind: .triBikeThreshold)
             ]
         case .specifique:
             base = [
                 // L'enchaînement prend la place de la séance longue, et c'est tout le bloc
                 // spécifique : ce qui se répète ici est la JOURNÉE, pas une discipline.
-                SessionArchetype(role: .longRun, title: "Enchaînement vélo → course", subtitle: "descendre du vélo et partir courir tout de suite — les premiers kilomètres ne ressemblent à rien d'autre", pace: zones.marathon, zone: "Z3", baseDuration: 80, kind: .triBrick),
+                SessionArchetype(role: .longRun, title: "Enchaînement vélo → course", subtitle: "descendre du vélo et partir courir tout de suite : les premiers kilomètres ne ressemblent à rien d'autre", pace: zones.marathon, zone: "Z3", baseDuration: 80, kind: .triBrick),
                 SessionArchetype(role: .speed, title: "Natation · fractionné", subtitle: "séries courtes, récupération au mur", pace: "—", zone: "Z3-4", baseDuration: dureeDeNage, kind: nageDeQualite),
                 SessionArchetype(role: .easy, title: "Vélo · endurance", subtitle: "le volume du vélo ne baisse pas pendant le bloc spécifique", pace: "—", zone: "Z2", baseDuration: 75, kind: .triBikeEndurance),
-                SessionArchetype(role: .speed, title: "Tempo run", subtitle: "allure soutenue sur jambes fraîches — l'autre moitié du travail d'allure", pace: zones.threshold, zone: "Z3", baseDuration: 40, kind: .tempoRun),
-                SessionArchetype(role: .easy, title: "Natation · technique", subtitle: "éducatifs — en natation, le geste fait plus de différence que la condition", pace: "—", zone: "Technique", baseDuration: 30, kind: .triSwimTechnique)
+                SessionArchetype(role: .speed, title: "Tempo run", subtitle: "allure soutenue sur jambes fraîches : l'autre moitié du travail d'allure", pace: zones.threshold, zone: "Z3", baseDuration: 40, kind: .tempoRun),
+                SessionArchetype(role: .easy, title: "Natation · technique", subtitle: "éducatifs : en natation, le geste fait plus de différence que la condition", pace: "—", zone: "Technique", baseDuration: 30, kind: .triSwimTechnique)
             ]
         case .affutage:
             base = [
-                SessionArchetype(role: .longRun, title: "Enchaînement · allure de course", subtitle: "le même enchaînement, aux allures du jour J — la répétition générale", pace: zones.marathon, zone: "Z3", baseDuration: 50, kind: .triBrickRace),
+                SessionArchetype(role: .longRun, title: "Enchaînement · allure de course", subtitle: "le même enchaînement, aux allures du jour J : la répétition générale", pace: zones.marathon, zone: "Z3", baseDuration: 50, kind: .triBrickRace),
                 // L'eau libre est ICI et pas dans le bloc spécifique : courte, sans fatigue à
                 // accumuler, elle sert à vérifier la combinaison et à se rappeler qu'on sait
                 // viser sans ligne au fond. C'est exactement ce qu'un affûtage peut se permettre.
-                SessionArchetype(role: .easy, title: "Natation · eau libre", subtitle: "vérifier la combinaison et le repérage — courte, et jamais seule", pace: "—", zone: "Z2", baseDuration: 30, kind: .triOpenWater),
+                SessionArchetype(role: .easy, title: "Natation · eau libre", subtitle: "vérifier la combinaison et le repérage : courte, et jamais seule", pace: "—", zone: "Z2", baseDuration: 30, kind: .triOpenWater),
                 SessionArchetype(role: .easy, title: "Transitions · T1 et T2", subtitle: "deux minutes gagnées ici valent une séance de seuil", pace: "—", zone: "Technique", baseDuration: 25, kind: .triTransitions),
                 SessionArchetype(role: .easy, title: "Footing d'entretien", subtitle: "relâché, rien à construire", pace: zones.easy, zone: "Z2", baseDuration: 25, kind: .maintenanceFooting)
             ]
@@ -1194,8 +1194,8 @@ enum AdaptivePlanEngine {
         switch block {
         case .base:
             base = [
-                SessionArchetype(role: .longRun, title: "Sortie longue", subtitle: "la course reste la plus longue séance de la semaine — c'est elle qui porte les deux tiers de la journée", pace: zones.easy, zone: "Z2", baseDuration: 70, kind: .longRun),
-                SessionArchetype(role: .easy, title: "Vélo · endurance", subtitle: "durer sur la selle, sans forcer — le vélo se construit avant de se durcir", pace: "—", zone: "Z2", baseDuration: 75, kind: .triBikeEndurance),
+                SessionArchetype(role: .longRun, title: "Sortie longue", subtitle: "la course reste la plus longue séance de la semaine : c'est elle qui porte les deux tiers de la journée", pace: zones.easy, zone: "Z2", baseDuration: 70, kind: .longRun),
+                SessionArchetype(role: .easy, title: "Vélo · endurance", subtitle: "durer sur la selle, sans forcer : le vélo se construit avant de se durcir", pace: "—", zone: "Z2", baseDuration: 75, kind: .triBikeEndurance),
                 SessionArchetype(role: .speed, title: "Fractionné léger", subtitle: "de la vitesse sur jambes fraîches, pendant qu'on peut encore se le permettre", pace: zones.interval, zone: "Z4", baseDuration: 40, kind: .lightIntervals),
                 SessionArchetype(role: .easy, title: "Footing d'endurance", subtitle: "le volume à pied, tranquille", pace: zones.easy, zone: "Z2", baseDuration: 40, kind: .enduranceFooting)
             ]
@@ -1203,23 +1203,23 @@ enum AdaptivePlanEngine {
             base = [
                 // L'enchaînement prend la place de la séance longue, exactement comme au
                 // triathlon : ce qui se répète dans un bloc spécifique est la JOURNÉE.
-                SessionArchetype(role: .longRun, title: "Enchaînement vélo → course", subtitle: "descendre du vélo et partir courir tout de suite — les premiers kilomètres ne ressemblent à rien d'autre", pace: zones.marathon, zone: "Z3", baseDuration: 80, kind: .triBrick),
-                SessionArchetype(role: .speed, title: "Vélo · seuil", subtitle: "des blocs soutenus — on gagne du temps là sans en perdre pour la course d'après", pace: "—", zone: "Z3", baseDuration: 55, kind: .triBikeThreshold),
-                SessionArchetype(role: .speed, title: "Tempo run", subtitle: "l'allure du jour J sur jambes fraîches — l'autre moitié du travail", pace: zones.threshold, zone: "Z3", baseDuration: 40, kind: .tempoRun),
+                SessionArchetype(role: .longRun, title: "Enchaînement vélo → course", subtitle: "descendre du vélo et partir courir tout de suite : les premiers kilomètres ne ressemblent à rien d'autre", pace: zones.marathon, zone: "Z3", baseDuration: 80, kind: .triBrick),
+                SessionArchetype(role: .speed, title: "Vélo · seuil", subtitle: "des blocs soutenus : on gagne du temps là sans en perdre pour la course d'après", pace: "—", zone: "Z3", baseDuration: 55, kind: .triBikeThreshold),
+                SessionArchetype(role: .speed, title: "Tempo run", subtitle: "l'allure du jour J sur jambes fraîches : l'autre moitié du travail", pace: zones.threshold, zone: "Z3", baseDuration: 40, kind: .tempoRun),
                 SessionArchetype(role: .easy, title: "Footing d'endurance", subtitle: "le volume à pied ne baisse pas pendant le bloc spécifique", pace: zones.easy, zone: "Z2", baseDuration: 40, kind: .enduranceFooting)
             ]
         case .affutage:
             base = [
                 // La répétition générale, et elle n'arrive QU'ICI : elle coûte cher, et sa
                 // valeur est d'être vécue une fois avant le jour J, pas d'ajouter du volume.
-                SessionArchetype(role: .longRun, title: "Course → vélo → course", subtitle: "la répétition générale — pars plus doucement que tu ne crois sur la première", pace: zones.marathon, zone: "Z3", baseDuration: 60, kind: .duaRunBikeRun),
+                SessionArchetype(role: .longRun, title: "Course → vélo → course", subtitle: "la répétition générale : pars plus doucement que tu ne crois sur la première", pace: zones.marathon, zone: "Z3", baseDuration: 60, kind: .duaRunBikeRun),
                 SessionArchetype(role: .easy, title: "Transitions · T1 et T2", subtitle: "deux minutes gagnées ici valent une séance de seuil", pace: "—", zone: "Technique", baseDuration: 25, kind: .triTransitions),
                 SessionArchetype(role: .speed, title: "Rappel d'allure", subtitle: "quelques minutes au rythme du jour J, juste pour s'en souvenir", pace: zones.marathon, zone: "Z3", baseDuration: 30, kind: .racePaceReminder),
                 SessionArchetype(role: .easy, title: "Footing d'entretien", subtitle: "relâché, rien à construire", pace: zones.easy, zone: "Z2", baseDuration: 25, kind: .maintenanceFooting)
             ]
         case .deload:
             base = [
-                SessionArchetype(role: .longRun, title: "Vélo · endurance", subtitle: "volume réduit, aucune intensité — la selle est plus douce que le bitume", pace: "—", zone: "Z1-2", baseDuration: 60, kind: .triBikeEndurance),
+                SessionArchetype(role: .longRun, title: "Vélo · endurance", subtitle: "volume réduit, aucune intensité : la selle est plus douce que le bitume", pace: "—", zone: "Z1-2", baseDuration: 60, kind: .triBikeEndurance),
                 SessionArchetype(role: .easy, title: "Footing récup", subtitle: "coupe le volume, écoute ton corps", pace: zones.easy, zone: "Z1-2", baseDuration: 22, kind: .recoveryFooting),
                 SessionArchetype(role: .easy, title: "Footing d'endurance", subtitle: "facile, sans chrono", pace: zones.easy, zone: "Z2", baseDuration: 35, kind: .enduranceFooting)
             ]
@@ -1339,7 +1339,7 @@ enum AdaptivePlanEngine {
             result = result.map { a in
                 guard a.kind.demandeDuRelief, var substitut = remplacement else { return a }
                 substitut.baseDuration = a.baseDuration
-                substitut.adaptationNote = "remplacé — pas de dénivelé près de chez toi"
+                substitut.adaptationNote = "remplacé : pas de dénivelé près de chez toi"
                 return substitut
             }
         }
@@ -2368,9 +2368,9 @@ enum AdaptivePlanEngine {
             regenerate()
             let until = ease.until.formatted(.dateTime.day().month(.wide))
             if let cap = ease.maxMinutes, ease.noSpeedWork {
-                return String(localized: "Programme allégé — \(cap) min max, sans fractionné, jusqu'au \(until)")
+                return String(localized: "Programme allégé : \(cap) min max, sans fractionné, jusqu'au \(until)")
             } else if let cap = ease.maxMinutes {
-                return String(localized: "Programme allégé — \(cap) min max jusqu'au \(until)")
+                return String(localized: "Programme allégé : \(cap) min max jusqu'au \(until)")
             } else {
                 return String(localized: "Fractionné mis en pause jusqu'au \(until)")
             }

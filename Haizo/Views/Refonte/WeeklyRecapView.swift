@@ -185,7 +185,7 @@ struct WeeklyRecapView: View {
     /// précédente, ou son absence.
     private var motDuCoach: String {
         if bilan.nombreDeSeances == 0 {
-            return String(localized: "Pas encore de course cette semaine — tu as le temps.")
+            return String(localized: "Pas encore de course cette semaine. Tu as le temps.")
         }
         if bilan.estLaMeilleureSemaine {
             return String(localized: "C'est ta meilleure semaine : \(String(format: "%.1f", locale: Locale.current, bilan.kilometres)) km.")
