@@ -401,6 +401,9 @@ struct DailyGoalsWidgetView: View {
                 .foregroundColor(accent)
                 .lineLimit(1)
                 .minimumScaleFactor(WG.Forme.reductionDuGrandNombre)
+                // Mesuré contre la largeur qu'on lui laisse, et collé au bord gauche : sans cadre,
+                // un nombre plus large que la colonne était centré sur elle et sortait des deux côtés.
+                .frame(maxWidth: .infinity, alignment: .leading)
             Text(snapshot.heroTitre ?? "")
                 .font(WG.police(WG.Corps.titre))
                 .tracking(WG.serre(WG.Corps.titre))
@@ -493,5 +496,10 @@ struct DailyGoalsWidget: Widget {
         .configurationDisplayName("Aujourd'hui")
         .description(Text("La séance du jour et tes objectifs, d'un coup d'œil."))
         .supportedFamilies([.systemSmall, .systemMedium])
+        // LES MARGES SONT LES NÔTRES. Depuis iOS 17 le système en pose déjà (16 points sur un petit
+        // widget) autour du contenu, et la vue y ajoutait les siennes : le grand nombre ne disposait
+        // que de ~98 points sur 158, et débordait. Désactivées, les marges de `Forme` sont les
+        // seules, et la maquette (130 points utiles) dit vrai.
+        .contentMarginsDisabled()
     }
 }

@@ -8963,3 +8963,10 @@ objectifs, d'un coup d'œil. » (en/es traduits).
 **Non vérifié ici.** Aucune capture de widget en CI et pas de simulateur : le rendu réel (surtout la largeur du grand chiffre
 en petit, et les titres longs) reste à regarder sur l'iPhone. Le chiffre rétrécit (`minimumScaleFactor` 0,5) plutôt que d'être
 coupé ; mesuré sur une maquette avec le vrai fichier Archivo, pas sur WidgetKit.
+
+**Correction du même jour : le grand nombre débordait à gauche (retour de Charlotte sur l'appareil).** Cause : le système pose
+16 points de marge autour d'un widget (iOS 17) et la vue ajoutait les siens, soit ~98 points utiles sur 158 au lieu des
+130 de la maquette. Le nombre, mesuré à 62 points, n'y tenait pas. Les marges système sont désactivées
+(`contentMarginsDisabled`), et le nombre est cadré à gauche sur la largeur disponible. La Live Activity n'est pas concernée
+(autre mécanisme). Les états de course du widget gagnent aussi leurs 14 points de marge propres, sans le doublon.
+Toujours non vérifié ici : à revoir sur l'iPhone.
