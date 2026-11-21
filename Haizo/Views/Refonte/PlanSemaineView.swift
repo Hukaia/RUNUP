@@ -254,9 +254,11 @@ struct PlanSemaineView: View {
                     }
                     .scrollTargetLayout()
                     Color.clear
+                        // `largeur` est celle du défilement SANS ses marges de contenu : la marge de
+                        // départ en est déjà retranchée. Elle y figurait aussi, et la place valait 0 :
+                        // dimanche se posait collé à droite, 24 points trop loin (vu sur la capture).
                         .containerRelativeFrame(.horizontal) { largeur, _ in
-                            max(0, largeur - HZPlan.departDeLaCarte - HZCarteAffiche.largeur
-                                - HZEspace.entreTuiles)
+                            max(0, largeur - HZCarteAffiche.largeur - HZEspace.entreTuiles)
                         }
                 }
             }
