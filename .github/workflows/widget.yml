@@ -1,0 +1,103 @@
+# Le rendu du widget d'accueil, en images, à chaque changement du widget.
+#
+# ─── POURQUOI ──────────────────────────────────────────────────────────────────────────────────
+#
+# Le widget a été livré deux fois sans que personne l'ait vu : la maquette HTML qui le montrait
+# supposait 130 points de large là où le système n'en laissait que 98, et le grand nombre
+# débordait sur l'appareil. Aucun simulateur de CI n'affiche un widget sur un écran d'accueil.
+#
+# Ce workflow en rend les vues (`ImageRenderer`, vrai fichier Archivo, vrais jetons) dans un paquet
+# de test sans hôte, `HaizoWidgetTests`, pour chaque taille et chaque cas : séance, intervalles,
+# quatre chiffres, repos, instantané ancien, course en cours.
+#
+# CE N'EST PAS LE RENDU DE WIDGETKIT : ni les marges ni les coins du système. La mise en page, la
+# fonte, les tailles et les débordements sont vrais. Les marges système sont désactivées par le
+# widget lui-même (`contentMarginsDisabled`), ce qui rapproche les deux.
+#
+# AUCUN SECRET. Rien n'est signé, rien ne part chez Apple.
+
+name: Rendu du widget
+
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      - ".github/workflows/widget.yml"
+      - "HaizoWidgets/**"
+      - "HaizoWidgetTests/**"
+      - "Haizo/Shared/**"
+      - "Haizo/Resources/Fonts/**"
+      - "project.yml"
+
+concurrency:
+  group: widget
+  cancel-in-progress: true
+
+jobs:
+  widget:
+    runs-on: macos-26
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Choisir Xcode
+        run: |
+          set -euo pipefail
+          latest=$(ls -d /Applications/Xcode*.app | sort -V | tail -1)
+          echo "→ Xcode retenu : $latest"
+          sudo xcode-select -s "$latest"
+
+      - name: Installer XcodeGen
+        run: brew install xcodegen
+
+      - name: Préparer le projet
+        run: sh ci_scripts/prepare_project.sh
+
+      - name: Trouver un simulateur
+        id: sim
+        run: |
+          set -euo pipefail
+          liste=$(xcrun simctl list devices available -j)
+          choisi=$(echo "$liste" | jq -c '
+            [.devices[][] | select(.name | test("^iPhone [0-9]+$"))]
+            | sort_by(.name | capture("iPhone (?<n>[0-9]+)") | .n | tonumber)
+            | last // empty')
+          udid=$(echo "$choisi" | jq -r '.udid // empty')
+          if [ -z "$udid" ]; then
+            echo "✗ Aucun iPhone. Disponibles :"
+            echo "$liste" | jq -r '.devices[][].name' | sort -u
+            exit 1
+          fi
+          echo "→ $(echo "$choisi" | jq -r .name) : $udid"
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      - name: Rendre le widget
+        run: |
+          set -euo pipefail
+          mkdir -p widget
+          TEST_RUNNER_WIDGET_OUT="$PWD/widget" \
+            xcodebuild test \
+              -project Haizo.xcodeproj \
+              -scheme Widget \
+              -configuration Debug \
+              -destination "id=${{ steps.sim.outputs.udid }}" \
+              -derivedDataPath build/widget \
+              CODE_SIGNING_ALLOWED=NO
+          ls -la widget
+          # Un test vert qui n'a rien écrit ne prouve rien.
+          n=$(ls widget/*.png 2>/dev/null | wc -l | tr -d ' ')
+          if [ "$n" -lt 20 ]; then
+            echo "✗ $n image(s) seulement, 27 attendues."
+            exit 1
+          fi
+
+      - name: Publier les images du widget
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: widget
+          path: widget/**
+          if-no-files-found: warn
+          retention-days: 14

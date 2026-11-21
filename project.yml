@@ -461,6 +461,39 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.hicsuntco.runup.tests
         GENERATE_INFOPLIST_FILE: YES
 
+  # LE RENDU DU WIDGET, PHOTOGRAPHIÉ EN CI.
+  #
+  # Aucun simulateur ne peut afficher un widget sur un écran d'accueil depuis la CI, et le widget a
+  # été livré deux fois sans que personne ne l'ait vu (le grand nombre débordait ; la maquette HTML
+  # ne disait pas vrai). Cette cible compile les sources du widget dans un paquet de test SANS
+  # HÔTE et en rend les vues en images (`ImageRenderer`, avec le vrai fichier Archivo).
+  #
+  # Ce n'est PAS le rendu de WidgetKit : pas de marges système, pas de coins du système, et
+  # `containerBackground` n'y fait rien (le test pose le fond lui-même). C'est la mise en page, la
+  # fonte, les tailles et les débordements, avec les vraies vues et les vrais jetons.
+  #
+  # `RunActivityWidget` et le `@main` du paquet de widgets en sont exclus ou inertes : le premier
+  # compile (ActivityKit existe sur iOS), le second est exclu, un paquet de test n'a pas de `main`.
+  HaizoWidgetTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: HaizoWidgetTests
+      - path: HaizoWidgets
+        excludes:
+          - "HaizoWidgetsBundle.swift"
+          - "PrivacyInfo.xcprivacy"
+      - path: Haizo/Shared
+        excludes:
+          - "RouteGeometry.swift"
+      - path: Haizo/Resources/Fonts/Archivo-Variable.ttf
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hicsuntco.runup.widgettests
+        GENERATE_INFOPLIST_FILE: YES
+
   # Les captures de la fiche App Store, prises par la machine sur un simulateur.
   #
   # CIBLE SÉPARÉE ET SURTOUT SCHÉMA SÉPARÉ (voir `schemes:` en bas de ce fichier). L'attacher au
@@ -550,6 +583,15 @@ schemes:
       config: Debug
       targets:
         - HaizoWatchUITests
+  # Le rendu du widget : construit CETTE cible seule, sans l'app, et lance son test.
+  Widget:
+    build:
+      targets:
+        HaizoWidgetTests: [test]
+    test:
+      config: Debug
+      targets:
+        - HaizoWidgetTests
   Captures:
     build:
       targets:
