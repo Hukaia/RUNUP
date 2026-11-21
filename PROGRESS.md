@@ -8997,3 +8997,9 @@ sait faire. Le carrousel est un `ScrollView(.horizontal)` calé sur les cartes (
 Deux choses vues sur la même vidéo et pas encore traitées : toucher la carte d'un jour de repos ouvre la feuille d'une « Footing récap »
 (la carte dit « Off », la feuille décrit une séance : les deux ne viennent pas de la même définition du repos), et la bande blanche du
 bas, sous la barre flottante, est coupée (« Passer à un objectif » passe sous la barre).
+
+**Vérifié sur la capture CI (21 novembre, 19h58).** Plan natif : dimanche à l'ouverture est à 36 points du bord avec samedi qui dépasse à
+gauche (la place vide après la dernière carte valait 0 : `containerRelativeFrame` rend la largeur du défilement SANS ses marges de
+contenu), jeudi à 36 points avec la voisine à droite, et un balayage réel (`plan-glisse`) pose samedi à 36 points et fait passer la
+pastille de la rangée sur « S ». Reste à juger sur l'appareil : l'élan, la reprise du geste, le rebond. Build #679 (le Plan natif avec
+le défaut de placement de dimanche) distribué ; le correctif de dimanche est sur la branche.
