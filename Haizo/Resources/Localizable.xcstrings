@@ -15831,22 +15831,6 @@
         }
       }
     },
-    "KM": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "KM"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "KM"
-          }
-        }
-      }
-    },
     "Kilomètres cumulés": {
       "extractionState": "manual",
       "localizations": {
@@ -17699,22 +17683,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Madrugadora"
-          }
-        }
-      }
-    },
-    "M D+": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "M ELEV"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "M D+"
           }
         }
       }

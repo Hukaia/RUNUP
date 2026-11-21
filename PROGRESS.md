@@ -8915,3 +8915,12 @@ Vérifié sur les captures CI (résumé, carte de partage, feuille du débrief).
 échouait parce que je l'avais lancé depuis la racine du dépôt ; il se lance depuis `ci_scripts`, comme `testflight.yml`. Et `AccentColor` (la couleur d'accent par défaut de l'app, celle que iOS utilise pour ce qu'il
 dessine lui-même : boutons d'alerte, feuille de partage, curseur de saisie, interrupteurs ; ce n'est pas l'icône de l'app) valait `#FF0F5B`, un troisième rose : elle vaut maintenant `#FF2E6E`, celui de
 `HZAccent.rose`. Elle ne suit pas le choix de la personne (violet, bleu, vert) : une ressource ne se règle pas à l'exécution ; ces éléments système restent roses pour elle.
+
+## Le rythme d'une sortie s'écrit comme sa discipline l'écrit (21 novembre)
+
+Reprise de « la feuille de séance écrit /km en dur ». Le « — /km » d'une séance de nage était déjà réparé dans `SessionDetailSheet` (`AccueilModele.allureValide`) ; ce qui restait était plus large : la carte de
+partage, le tracé agrandi (`RouteZoomView`) et le résumé (`RecapView`) écrivaient « /km » à la main sous `avgPace`, quelle que soit la sortie, donc des kilomètres-heure lus comme des minutes au kilomètre sur une
+sortie à vélo. `RunRecord.rythmeEcrit` et `rythmeLibelle` (fin de `RunRecord.swift`) passent par `TimeFormat.rythmeEcrit` et `Discipline.rythmeLabel` : « 5:18/km » à pied, « 25,3 km/h » à vélo, « 1:42/100 m » en bassin,
+« — » rendu tel quel. Le résumé dit « Vitesse moyenne » à vélo. Cinq tests (`RythmeDuReleveTests`). Au passage, la carte de partage écrit « 5:18/km » collé (la règle de l'espace de `TimeFormat`) au lieu de « 5:18 /km ».
+**Pas vérifié** : le rendu d'une sortie à vélo ou de nage à l'écran (la graine de capture n'en pose pas). Les phrases de la feuille de séance gardent « /km » en littéral : ce sont des allures de course à pied (`session.pace`),
+et une séance sans allure n'écrit pas l'unité. Les deux clés de catalogue « KM » et « M D+ », sans usage depuis le débrief, sont retirées.

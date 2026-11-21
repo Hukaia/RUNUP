@@ -231,7 +231,9 @@ struct RecapView: View {
                 .padding(.top, HZResume.sousLaDistance)
 
             HStack(spacing: HZEspace.entreTuiles) {
-                grandeTuile(String(localized: "Allure moyenne"), run.avgPace)
+                grandeTuile(run.discipline.seLitEnAllure ? String(localized: "Allure moyenne")
+                                                          : String(localized: "Vitesse moyenne"),
+                            run.rythmeEcrit)
                 grandeTuile(String(localized: "Durée"), PaceModel.formatDuration(Double(run.durationSeconds)))
             }
             .padding(.top, HZResume.sousLeTitre)

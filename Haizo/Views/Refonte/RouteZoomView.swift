@@ -38,7 +38,7 @@ struct RouteZoomView: View {
                 valeur(String(format: "%.2f", locale: Locale.current, run.distanceKm),
                        unite: String(localized: "km"))
                 valeur(PaceModel.formatDuration(Double(run.durationSeconds)), unite: "")
-                valeur(run.avgPace, unite: String(localized: "/km"))
+                valeur(run.rythmeEcrit, unite: "")
             }
         }
         .padding(.horizontal, HZEspace.tuile)

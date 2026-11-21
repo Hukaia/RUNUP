@@ -108,7 +108,7 @@ struct RunShareCardView: View {
             VStack(spacing: HZJournee.entreLesMesures) {
                 // `statBlock` rend son libellé par un `Text(String)` nu.
                 statBlock(String(localized: "Distance"), String(format: "%.2f km", locale: Locale.current, run.distanceKm), style: HZJournee.distanceDeLaCarte)
-                statBlock(String(localized: "Allure"), "\(run.avgPace) /km", style: HZJournee.mesureDeLaCarte)
+                statBlock(run.rythmeLibelle, run.rythmeEcrit, style: HZJournee.mesureDeLaCarte)
                 statBlock(String(localized: "Temps"), PaceModel.formatDuration(Double(run.durationSeconds)), style: HZJournee.mesureDeLaCarte)
             }
 

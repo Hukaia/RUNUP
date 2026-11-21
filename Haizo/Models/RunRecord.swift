@@ -196,3 +196,18 @@ extension RunRecord {
         return pace < previousBest
     }
 }
+
+extension RunRecord {
+    /// Le rythme moyen, écrit comme la discipline l'écrit : « 5:18/km » à pied, « 25,3 km/h » à vélo,
+    /// « 1:42/100 m » en bassin. `avgPace` est toujours stocké en minutes-secondes au kilomètre ; c'est
+    /// ici qu'il devient ce qu'on lit. Écrire « /km » à la main sous une sortie à vélo affichait des
+    /// kilomètres-heure comme des minutes au kilomètre. Une valeur illisible (« — ») est rendue telle
+    /// quelle, sans unité : pas de mesure, pas d'unité.
+    var rythmeEcrit: String {
+        guard let secondesParKm = PaceModel.parseSecPerKm(avgPace) else { return avgPace }
+        return TimeFormat.rythmeEcrit(discipline, secondesParKm: secondesParKm)
+    }
+
+    /// Le nom de cette mesure : « Allure » à pied et en bassin, « Vitesse » à vélo.
+    var rythmeLibelle: String { discipline.rythmeLabel }
+}
