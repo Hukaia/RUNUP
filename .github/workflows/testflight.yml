@@ -539,6 +539,13 @@ jobs:
           cd ci_scripts && python3 test_majuscules.py
           cd .. && python3 ci_scripts/check_majuscules.py
 
+      # Aucun tiret cadratin dans les textes de l'app (catalogue, clés et traductions). Retiré des 177
+      # phrases qui en portaient le 21 novembre 2026 ; ce garde empêche la prochaine de le ramener.
+      - name: Vérifier qu'aucun texte de l'app ne contient de tiret cadratin
+        run: |
+          cd ci_scripts && python3 test_tirets.py
+          cd .. && python3 ci_scripts/check_tirets.py
+
       # « Aucune valeur en dur dans les vues » — la méthode de la refonte, point 5. Le garde
       # ci-dessus compare trois écritures à la grille de l'ancien système ; celui-ci refuse tout
       # nombre dans une vue de la refonte, quelle que soit son écriture, sans liste d'exceptions.
