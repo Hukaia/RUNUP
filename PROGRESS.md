@@ -8924,3 +8924,18 @@ sortie à vélo. `RunRecord.rythmeEcrit` et `rythmeLibelle` (fin de `RunRecord.s
 « — » rendu tel quel. Le résumé dit « Vitesse moyenne » à vélo. Cinq tests (`RythmeDuReleveTests`). Au passage, la carte de partage écrit « 5:18/km » collé (la règle de l'espace de `TimeFormat`) au lieu de « 5:18 /km ».
 **Pas vérifié** : le rendu d'une sortie à vélo ou de nage à l'écran (la graine de capture n'en pose pas). Les phrases de la feuille de séance gardent « /km » en littéral : ce sont des allures de course à pied (`session.pace`),
 et une séance sans allure n'écrit pas l'unité. Les deux clés de catalogue « KM » et « M D+ », sans usage depuis le débrief, sont retirées.
+
+## Plus de tiret cadratin dans les textes de l'app (21 novembre)
+
+Le tiret cadratin est de la ponctuation française légitime ; sa répétition mécanique se lit comme un tic, et Charlotte l'a fait retirer. **177 phrases du catalogue** ont été réécrites en trois langues, une par une, avec le
+séparateur que la phrase demande : un point et une majuscule (« Annulé. Ton programme n'a pas changé. »), deux-points (« Impossible d'enregistrer : … », « Charges renforcées : pour un niveau confirmé »), une virgule
+(« …selon ta forme, pas séance par séance »), ou des parenthèses (la phrase sur ce qui appartient au Club). **50 traductions** sous des clés techniques (les sous-titres de séance `session.*.subtitle`, trois phrases anglaises) aussi.
+Les textes du code qui s'affichent ont suivi : les sous-titres de repli de `AdaptivePlanEngine` (l'app affiche le catalogue par `kind`, le texte du code ne sert qu'aux anciens plans), les textes de démonstration de `CaptureSeed`,
+la carte défi (« base · 40 % »), l'objet du mail de retour. Deux entrées orphelines (« — %lld confirmé ») supprimées.
+
+**Le coach ne doit plus en écrire** : `CoachLanguage` (consigne de style et consigne vocale, dans les trois langues) lui interdit le tiret cadratin. **Pas vérifié** : que ses réponses suivent la consigne, ce qui ne se voit qu'à
+l'usage.
+
+**Un garde** : `check_tirets.py` (et `test_tirets.py`, 8 cas) lit le catalogue, clés et traductions, et refuse tout tiret cadratin ; étape `testflight.yml`. Le « — » SEUL (espace réservé d'une valeur absente) est permis.
+**Restes volontaires** : les commentaires de code, les messages d'assertion des tests, les textes de développement (`Sauvegarde`), le « — » seul. **Pas vérifié** : le rendu de chaque phrase à l'écran ; certaines sont un peu plus
+longues et pourraient serrer dans un gabarit étroit. La capture montre, dont la phrase du bas a changé (« Cours à ta sensation. Ta séance arrive de l'iPhone. »), a été refaite et regardée dans les trois langues.

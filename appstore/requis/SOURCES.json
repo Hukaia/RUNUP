@@ -1,23 +1,23 @@
 {
   "montre/en-US/1-course-libre.png": {
     "source": "appstore/raw-montre/en-US/1-course-libre.png",
-    "empreinte": "c3189f4d22b7",
+    "empreinte": "8e513945e247",
     "composee_par": "ci_scripts/requis.py",
     "code": "HaizoWatch",
-    "empreinte_code": "ed2acdf00d6f"
+    "empreinte_code": "ce99cf47f5d8"
   },
   "montre/es-ES/1-course-libre.png": {
     "source": "appstore/raw-montre/es-ES/1-course-libre.png",
-    "empreinte": "7f220c9963a6",
+    "empreinte": "bcd145944f2f",
     "composee_par": "ci_scripts/requis.py",
     "code": "HaizoWatch",
-    "empreinte_code": "ed2acdf00d6f"
+    "empreinte_code": "ce99cf47f5d8"
   },
   "montre/fr-FR/1-course-libre.png": {
     "source": "appstore/raw-montre/fr-FR/1-course-libre.png",
-    "empreinte": "352aabda45ef",
+    "empreinte": "46fe8ba01277",
     "composee_par": "ci_scripts/requis.py",
     "code": "HaizoWatch",
-    "empreinte_code": "ed2acdf00d6f"
+    "empreinte_code": "ce99cf47f5d8"
   }
 }
