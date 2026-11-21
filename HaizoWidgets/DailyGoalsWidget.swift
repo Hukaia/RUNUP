@@ -150,12 +150,16 @@ struct WidgetRingView: View {
 }
 
 struct DailyGoalsWidgetView: View {
-    @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetFamily) private var familleDuSysteme
     let snapshot: DailyGoalsSnapshot
     /// La date de l'entrée : un rendu de widget est une image figée, `.now` au moment où le corps
     /// s'évalue n'est pas la bonne horloge.
     var entryDate: Date = .now
     var course: LiveRunWidgetSnapshot? = nil
+    /// Imposée seulement par le rendu en image (`HaizoWidgetTests`) : `widgetFamily` est en lecture
+    /// seule, hors de WidgetKit rien ne la fixe. Vide dans le widget lui-même.
+    var familleImposee: WidgetFamily? = nil
+    private var family: WidgetFamily { familleImposee ?? familleDuSysteme }
 
     /// « Dimanche 15 novembre » — la date, avec la seule première lettre en capitale.
     private static let dateFormatter: DateFormatter = {

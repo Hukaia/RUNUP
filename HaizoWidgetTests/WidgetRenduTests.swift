@@ -85,7 +85,8 @@ final class WidgetRenduTests: XCTestCase {
         var ecrites = 0
         for t in tailles {
             for c in cas {
-                let vue = DailyGoalsWidgetView(snapshot: c.snapshot, entryDate: jeudi)
+                let vue = DailyGoalsWidgetView(snapshot: c.snapshot, entryDate: jeudi,
+                                               familleImposee: t.famille)
                 try ecrire(vue, t, "\(c.nom)-\(t.nom)", dans: dossier, fond: WG.noir)
                 ecrites += 1
             }
@@ -95,7 +96,8 @@ final class WidgetRenduTests: XCTestCase {
                                                distanceKm: 4.62, rythmeValeur: "5:09",
                                                sessionTitle: "Footing endurance",
                                                disciplineRaw: nil, publishedAt: jeudi)
-            let vue = DailyGoalsWidgetView(snapshot: instantane(), entryDate: jeudi, course: course)
+            let vue = DailyGoalsWidgetView(snapshot: instantane(), entryDate: jeudi, course: course,
+                                           familleImposee: t.famille)
             try ecrire(vue, t, "course-\(t.nom)", dans: dossier, fond: WG.noirFranc)
             ecrites += 1
         }
@@ -107,7 +109,6 @@ final class WidgetRenduTests: XCTestCase {
         // `containerBackground(for: .widget)` ne fait rien hors de WidgetKit : le fond se pose ici,
         // et la carte est coupée aux coins d'un widget (≈ 22 points).
         let carte = vue
-            .environment(\.widgetFamily, t.famille)
             .frame(width: t.taille.width, height: t.taille.height)
             .background(fond)
             .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
