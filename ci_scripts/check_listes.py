@@ -65,6 +65,10 @@ DISPENSES = {
     ("PublicProfileView.swift", "gagnes"):
         "Les badges gagnés par quelqu'un : un sous-ensemble du catalogue, donc borné par lui. "
         "Même bande horizontale, mêmes tuiles de largeur fixe.",
+    ("PlanSemaineView.swift", "visibles"):
+        "Les cartes de la semaine du plan : une par jour, donc sept au plus, et une seule quand le "
+        "plan est verrouillé. Un carrousel calé sur ses cartes (`viewAligned`) ; un conteneur "
+        "paresseux ferait varier la largeur du contenu et fausserait le calage et la position.",
     ("PlanSemaineView.swift", "autresObjectifs"):
         "Les objectifs que l'app propose à la place de celui qu'on suit : `GoalType` n'en a que neuf, "
         "`estProposable` en retire, et la vue n'en montre que quatre (`HZPlan.objectifsAffiches`). "
