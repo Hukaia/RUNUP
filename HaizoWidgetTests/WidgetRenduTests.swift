@@ -123,4 +123,74 @@ final class WidgetRenduTests: XCTestCase {
         piece.lifetime = .keepAlways
         add(piece)
     }
+
+    // MARK: La Live Activity
+
+    private func attributs(titre: String = "Sortie facile", prevues: Int = 40,
+                           discipline: String? = nil) -> RunActivityAttributes {
+        RunActivityAttributes(sessionTitle: titre, plannedDurationMinutes: prevues,
+                              disciplineRaw: discipline)
+    }
+
+    private func etat(pause: Bool = false, fin: Bool = false) -> RunActivityAttributes.ContentState {
+        RunActivityAttributes.ContentState(
+            distanceKm: 4.32, elapsedSeconds: 1_458, paceLabel: "5:38", isPaused: pause,
+            timerReference: pause || fin ? nil : Date().addingTimeInterval(-1_458), isEnded: fin)
+    }
+
+    /// L'écran verrouillé (carte de 359 points, hauteur libre) et l'île dynamique ÉTENDUE, assemblée
+    /// à la main : ActivityKit pose les trois régions autour de la caméra, ce que ce rendu ne sait
+    /// pas faire. C'est une approximation de l'île, fidèle pour les régions elles-mêmes.
+    func testLaLiveActivitySeRend() throws {
+        let dossier = URL(fileURLWithPath: ProcessInfo.processInfo.environment["WIDGET_OUT"]
+                          ?? NSTemporaryDirectory() + "widget")
+        try FileManager.default.createDirectory(at: dossier, withIntermediateDirectories: true)
+        let widget = RunActivityWidget()
+
+        let verrouille: [(String, RunActivityAttributes, RunActivityAttributes.ContentState)] = [
+            ("en-direct", attributs(), etat()),
+            ("en-pause", attributs(), etat(pause: true)),
+            ("terminee", attributs(), etat(fin: true)),
+            ("sans-duree", attributs(prevues: 0), etat()),
+            ("titre-long", attributs(titre: "Sortie longue en endurance fondamentale"), etat()),
+        ]
+        for (nom, a, e) in verrouille {
+            let carte = widget.ecranVerrouille(attributes: a, state: e)
+                .frame(width: 359)
+                .fixedSize(horizontal: false, vertical: true)
+                .background(WG.noirFranc)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            try ecrireImage(carte, "live-verrouille-\(nom)", dans: dossier)
+        }
+
+        for (nom, a, e) in verrouille.prefix(2) {
+            let ile = VStack(spacing: 8) {
+                HStack(alignment: .top) {
+                    widget.ileGauche(state: e)
+                    Spacer(minLength: 96) // la caméra
+                    widget.ileDroite(attributes: a, state: e)
+                }
+                widget.ileBas(attributes: a, state: e)
+            }
+            .padding(.horizontal, 22)
+            .padding(.vertical, 16)
+            .frame(width: 371)
+            .fixedSize(horizontal: false, vertical: true)
+            .background(WG.noirFranc)
+            .clipShape(RoundedRectangle(cornerRadius: 44, style: .continuous))
+            try ecrireImage(ile, "live-ile-\(nom)", dans: dossier)
+        }
+    }
+
+    private func ecrireImage<V: View>(_ vue: V, _ nom: String, dans dossier: URL) throws {
+        let rendu = ImageRenderer(content: vue.environment(\.colorScheme, .dark))
+        rendu.scale = 3
+        let image = try XCTUnwrap(rendu.uiImage, "\(nom) : rien n'a été rendu")
+        try XCTUnwrap(image.pngData(), "\(nom) : PNG impossible")
+            .write(to: dossier.appendingPathComponent("\(nom).png"))
+        let piece = XCTAttachment(image: image)
+        piece.name = nom
+        piece.lifetime = .keepAlways
+        add(piece)
+    }
 }

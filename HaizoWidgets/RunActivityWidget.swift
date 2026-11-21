@@ -34,39 +34,19 @@ struct RunActivityWidget: Widget {
 
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: RunActivityAttributes.self) { context in
-            lockScreenView(context: context)
+            ecranVerrouille(attributes: context.attributes, state: context.state)
         } dynamicIsland: { context in
             DynamicIsland {
                 // Le chrono et l'état à gauche, les deux mesures à droite — la même répartition
                 // que l'écran verrouillé, repliée pour tenir de part et d'autre de la caméra.
                 DynamicIslandExpandedRegion(.leading) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        elapsedText(context.state)
-                            .font(WG.police(WG.Corps.chronoPetit))
-                            .tracking(WG.serre(WG.Corps.chronoPetit))
-                            .monospacedDigit()
-                            .foregroundColor(chronoColor(context.state))
-                            .lineLimit(1)
-                            .minimumScaleFactor(WG.Forme.reductionDuChrono)
-                        statut(context.state)
-                    }
+                    ileGauche(state: context.state)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    VStack(alignment: .trailing, spacing: 2) {
-                        mesure(TimeFormat.distance(km: context.state.distanceKm), "km",
-                               taille: WG.Corps.chiffre)
-                        mesure(context.state.paceLabel, context.attributes.discipline.rythmeUnite,
-                               taille: WG.Corps.chiffre)
-                    }
+                    ileDroite(attributes: context.attributes, state: context.state)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(alignment: .leading, spacing: WG.Forme.ecart - 2) {
-                        barre(context)
-                        Text(context.attributes.sessionTitle)
-                            .font(WG.police(WG.Corps.legende, .semi))
-                            .foregroundColor(WG.secondaireSurSombre)
-                            .lineLimit(1)
-                    }
+                    ileBas(attributes: context.attributes, state: context.state)
                 }
             } compactLeading: {
                 Image(systemName: "figure.run").foregroundColor(Self.accent)
@@ -83,14 +63,53 @@ struct RunActivityWidget: Widget {
         }
     }
 
+    // MARK: L'île
+
+    // Ces trois régions et l'écran verrouillé reçoivent leurs données en paramètres, et non un
+    // `ActivityViewContext` : le contexte ne se fabrique pas hors d'ActivityKit, et le rendu en
+    // image (`HaizoWidgetTests`) ne pouvait donc pas les photographier.
+
+    func ileGauche(state: RunActivityAttributes.ContentState) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            elapsedText(state)
+                .font(WG.police(WG.Corps.chronoPetit))
+                .tracking(WG.serre(WG.Corps.chronoPetit))
+                .monospacedDigit()
+                .foregroundColor(chronoColor(state))
+                .lineLimit(1)
+                .minimumScaleFactor(WG.Forme.reductionDuChrono)
+            statut(state)
+        }
+    }
+
+    func ileDroite(attributes: RunActivityAttributes,
+                   state: RunActivityAttributes.ContentState) -> some View {
+        VStack(alignment: .trailing, spacing: 2) {
+            mesure(TimeFormat.distance(km: state.distanceKm), "km", taille: WG.Corps.chiffre)
+            mesure(state.paceLabel, attributes.discipline.rythmeUnite, taille: WG.Corps.chiffre)
+        }
+    }
+
+    func ileBas(attributes: RunActivityAttributes,
+                state: RunActivityAttributes.ContentState) -> some View {
+        VStack(alignment: .leading, spacing: WG.Forme.ecart - 2) {
+            barre(attributes: attributes, state: state)
+            Text(attributes.sessionTitle)
+                .font(WG.police(WG.Corps.legende, .semi))
+                .foregroundColor(WG.secondaireSurSombre)
+                .lineLimit(1)
+        }
+    }
+
     // MARK: L'écran verrouillé
 
-    private func lockScreenView(context: ActivityViewContext<RunActivityAttributes>) -> some View {
+    func ecranVerrouille(attributes: RunActivityAttributes,
+                         state: RunActivityAttributes.ContentState) -> some View {
         VStack(alignment: .leading, spacing: WG.Forme.ecart + 2) {
             HStack {
-                statut(context.state)
+                statut(state)
                 Spacer(minLength: WG.Forme.ecart)
-                Text(context.attributes.sessionTitle)
+                Text(attributes.sessionTitle)
                     .font(WG.police(WG.Corps.legende, .semi))
                     .foregroundColor(WG.secondaireSurSombre)
                     .lineLimit(1)
@@ -98,23 +117,23 @@ struct RunActivityWidget: Widget {
 
             HStack(alignment: .center, spacing: WG.Forme.ecartDeColonnes) {
                 VStack(alignment: .leading, spacing: WG.Forme.ecart) {
-                    elapsedText(context.state)
+                    elapsedText(state)
                         .font(WG.police(WG.Corps.chronoHero))
                         .tracking(WG.serre(WG.Corps.chronoHero))
                         .monospacedDigit()
-                        .foregroundColor(chronoColor(context.state))
+                        .foregroundColor(chronoColor(state))
                         .lineLimit(1)
                         .minimumScaleFactor(WG.Forme.reductionDuChrono)
-                    barre(context)
+                    barre(attributes: attributes, state: state)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 VStack(spacing: WG.Forme.ecart) {
-                    tuile(TimeFormat.distance(km: context.state.distanceKm), "km")
+                    tuile(TimeFormat.distance(km: state.distanceKm), "km")
                     // « Allure » était écrit en dur, sous un chiffre qui est des kilomètres-heure
                     // dès qu'on roule. `Discipline` décide — la même décision que l'écran de
                     // course prend, dans `Shared`, que cette extension compile aussi.
-                    tuile(context.state.paceLabel, context.attributes.discipline.rythmeUnite)
+                    tuile(state.paceLabel, attributes.discipline.rythmeUnite)
                 }
                 .frame(width: WG.Forme.largeurDesTuiles)
             }
@@ -184,16 +203,17 @@ struct RunActivityWidget: Widget {
 
     /// La barre vers la durée prévue, et cette durée à droite. Absente quand la séance n'en a pas.
     @ViewBuilder
-    private func barre(_ context: ActivityViewContext<RunActivityAttributes>) -> some View {
-        let prevues = context.attributes.plannedDurationMinutes
+    private func barre(attributes: RunActivityAttributes,
+                       state: RunActivityAttributes.ContentState) -> some View {
+        let prevues = attributes.plannedDurationMinutes
         if prevues > 0 {
-            let fraction = max(0, min(1, context.state.elapsedSeconds / Double(prevues * 60)))
+            let fraction = max(0, min(1, state.elapsedSeconds / Double(prevues * 60)))
             HStack(spacing: WG.Forme.ecart) {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         Capsule().fill(WG.filetSombre)
                         Capsule()
-                            .fill(context.state.isPaused ? WG.secondaireSurSombre : Self.accent)
+                            .fill(state.isPaused ? WG.secondaireSurSombre : Self.accent)
                             .frame(width: geo.size.width * fraction)
                     }
                 }

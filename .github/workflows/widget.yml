@@ -89,7 +89,7 @@ jobs:
           # Un test vert qui n'a rien écrit ne prouve rien.
           n=$(ls widget/*.png 2>/dev/null | wc -l | tr -d ' ')
           if [ "$n" -lt 20 ]; then
-            echo "✗ $n image(s) seulement, 27 attendues."
+            echo "✗ $n image(s) seulement, 34 attendues."
             exit 1
           fi
 
