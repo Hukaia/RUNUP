@@ -98,16 +98,38 @@ struct DailyGoalsSnapshot: Codable, Equatable {
     /// the widget to placeholder data).
     var isRestDay: Bool = false
 
+    /// LA SÉANCE DU JOUR, telle que l'accueil de l'app l'écrit (`AccueilModele.hero`) : le grand
+    /// nombre, son préfixe (« 5 × »), le titre et les mesures, déjà composés et traduits par l'app.
+    ///
+    /// Le widget était un tableau d'objectifs : un anneau et des libellés. L'accueil de l'app, lui,
+    /// est une affiche, avec un grand chiffre et la séance du jour dessus. Le widget en est
+    /// maintenant la miniature — d'où ces champs.
+    ///
+    /// TOUS OPTIONNELS, et décodés avec `decodeIfPresent` : un instantané écrit avant eux n'a pas
+    /// de séance, et le widget retombe alors sur l'anneau seul plutôt que d'afficher un grand
+    /// chiffre inventé. `nil` veut dire « on ne sait pas », jamais « repos » (le repos est
+    /// `heroNombre == "Off"`, écrit par l'app).
+    var heroPrefixe: String? = nil
+    var heroNombre: String? = nil
+    var heroTitre: String? = nil
+    /// « 39 min · 6:18/km · Z2 », composé par l'app comme la pilule de l'accueil.
+    var heroMesures: String? = nil
+    /// La séance du jour est déjà faite.
+    var heroFaite: Bool = false
+
     private enum CodingKeys: String, CodingKey {
         case progress, streak, accentThemeID, isLightMode, dailyGoalsDone, dailyGoalsTotal
         case activeCaloriesRemaining, stepsRemaining, weekStrip, isRestDay
         case activeCaloriesGoal, stepsGoal
+        case heroPrefixe, heroNombre, heroTitre, heroMesures, heroFaite
     }
 
     init(progress: [Double], streak: Int, accentThemeID: String, isLightMode: Bool,
          dailyGoalsDone: Int, dailyGoalsTotal: Int, activeCaloriesRemaining: Int,
          stepsRemaining: Int, weekStrip: [WidgetWeekDay], isRestDay: Bool = false,
-         activeCaloriesGoal: Int = 0, stepsGoal: Int = 0) {
+         activeCaloriesGoal: Int = 0, stepsGoal: Int = 0,
+         heroPrefixe: String? = nil, heroNombre: String? = nil, heroTitre: String? = nil,
+         heroMesures: String? = nil, heroFaite: Bool = false) {
         self.progress = progress
         self.streak = streak
         self.accentThemeID = accentThemeID
@@ -120,6 +142,11 @@ struct DailyGoalsSnapshot: Codable, Equatable {
         self.isRestDay = isRestDay
         self.activeCaloriesGoal = activeCaloriesGoal
         self.stepsGoal = stepsGoal
+        self.heroPrefixe = heroPrefixe
+        self.heroNombre = heroNombre
+        self.heroTitre = heroTitre
+        self.heroMesures = heroMesures
+        self.heroFaite = heroFaite
     }
 
     init(from decoder: Decoder) throws {
@@ -143,6 +170,11 @@ struct DailyGoalsSnapshot: Codable, Equatable {
         isRestDay = try c.decodeIfPresent(Bool.self, forKey: .isRestDay) ?? false
         activeCaloriesGoal = try c.decodeIfPresent(Int.self, forKey: .activeCaloriesGoal) ?? 0
         stepsGoal = try c.decodeIfPresent(Int.self, forKey: .stepsGoal) ?? 0
+        heroPrefixe = try c.decodeIfPresent(String.self, forKey: .heroPrefixe)
+        heroNombre = try c.decodeIfPresent(String.self, forKey: .heroNombre)
+        heroTitre = try c.decodeIfPresent(String.self, forKey: .heroTitre)
+        heroMesures = try c.decodeIfPresent(String.self, forKey: .heroMesures)
+        heroFaite = try c.decodeIfPresent(Bool.self, forKey: .heroFaite) ?? false
     }
 
     /// L'état vide honnête — ce que le widget montre avant que l'app ait jamais publié

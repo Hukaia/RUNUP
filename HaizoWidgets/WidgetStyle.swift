@@ -15,6 +15,9 @@ enum WG {
 
     // MARK: Les couleurs
 
+    /// `HZCouleur.noir` : le fond de l'en-tête de l'accueil, et du widget d'accueil — le même noir que
+    /// l'app pose derrière sa séance du jour.
+    static let noir = Color(hex: 0x0B0B0C)
     /// `HZCouleur.noirFranc` : le fond d'une course, de la Live Activity et du widget en mode sombre.
     static let noirFranc = Color(hex: 0x000000)
     static let blanc = Color(hex: 0xFFFFFF)
@@ -56,9 +59,21 @@ enum WG {
     }
 
     static func police(_ taille: CGFloat, _ graisse: Graisse = .gras) -> Font {
+        fabrique(taille, graisse: graisse.rawValue, largeur: largeur)
+    }
+
+    /// LA FONTE D'AFFICHAGE de l'app (`HZPolice.affichage`) : graisse 800, largeur 125 %. Pour le très
+    /// grand chiffre seulement — celui de la séance du jour sur le widget d'accueil, comme sur
+    /// l'accueil de l'app. Sa largeur ne tient que pour trois ou quatre signes : le widget la
+    /// réduit (`minimumScaleFactor`) plutôt que de la couper.
+    static func affichage(_ taille: CGFloat) -> Font {
+        fabrique(taille, graisse: graisseDAffichage, largeur: largeurDAffichage)
+    }
+
+    private static func fabrique(_ taille: CGFloat, graisse: CGFloat, largeur: CGFloat) -> Font {
         let descripteur = CTFontDescriptorCreateWithAttributes([
             kCTFontFamilyNameAttribute: famille,
-            kCTFontVariationAttribute: [axeDeGraisse: graisse.rawValue, axeDeLargeur: largeur],
+            kCTFontVariationAttribute: [axeDeGraisse: graisse, axeDeLargeur: largeur],
         ] as CFDictionary)
         return Font(CTFontCreateWithFontDescriptor(descripteur, taille, nil))
     }
@@ -69,6 +84,8 @@ enum WG {
     private static let axeDeGraisse = 0x7767_6874
     private static let axeDeLargeur = 0x7764_7468
     private static let largeur: CGFloat = 100
+    private static let graisseDAffichage: CGFloat = 800
+    private static let largeurDAffichage: CGFloat = 125
 
     /// L'interlettrage d'un grand chiffre : quatre centièmes du corps, dans la mesure de l'app.
     /// Jamais positif : il n'y a plus de capitales à espacer.
@@ -90,6 +107,10 @@ enum WG {
         static let chiffreDeCourse: CGFloat = 18
         static let grandChiffre: CGFloat = 24
         static let chronoLive: CGFloat = 26
+        /// Le très grand chiffre de la séance du jour, sur le widget d'accueil.
+        static let grandNombre: CGFloat = 62
+        /// Le chiffre dans l'anneau des objectifs.
+        static let chiffreDeLAnneau: CGFloat = 22
         static let chronoPetit: CGFloat = 30
         static let chronoMoyen: CGFloat = 40
         /// Le chrono de la Live Activity : un seul chiffre qui domine l'écran verrouillé.
@@ -115,5 +136,14 @@ enum WG {
         static let hauteurDeBarre: CGFloat = 6
         static let pointDEtat: CGFloat = 6
         static let reductionDuChrono: CGFloat = 0.6
+        /// Le grand nombre peut rétrécir jusqu'à la moitié avant d'être coupé.
+        static let reductionDuGrandNombre: CGFloat = 0.5
+        static let margeDuWidget: CGFloat = 14
+        static let margeDuWidgetMoyen: CGFloat = 16
+        static let ecartDesPoints: CGFloat = 7
+        static let pointDeLaSemaine: CGFloat = 7
+        static let traitDuJour: CGFloat = 2
+        static let anneauDuMoyen: CGFloat = 84
+        static let anneauDuPetit: CGFloat = 74
     }
 }

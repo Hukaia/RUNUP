@@ -29,7 +29,9 @@ struct DailyGoalsProvider: TimelineProvider {
             WidgetWeekDay(letter: "V", isDone: false, isToday: false),
             WidgetWeekDay(letter: "S", isDone: false, isToday: false),
             WidgetWeekDay(letter: "D", isDone: false, isToday: false)
-        ]
+        ],
+        heroNombre: "45′", heroTitre: String(localized: "Footing"),
+        heroMesures: "45 min · 5:30/km · Z2"
     )
 
     func placeholder(in context: Context) -> DailyGoalsEntry {
@@ -155,43 +157,29 @@ struct DailyGoalsWidgetView: View {
     var entryDate: Date = .now
     var course: LiveRunWidgetSnapshot? = nil
 
-    private static let weekdayFormatter: DateFormatter = {
+    /// « Dimanche 15 novembre » — la date, avec la seule première lettre en capitale.
+    private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.locale = .current
-        f.setLocalizedDateFormatFromTemplate("EEEE")
+        f.setLocalizedDateFormatFromTemplate("EEEEdMMMM")
         return f
     }()
 
-    /// Groupement des milliers selon la locale : « 2 400 » en français, « 2,400 » en anglais.
-    ///
-    /// Était figé sur `fr_FR` — le même défaut que la montre avait déjà corrigé de son côté, et
-    /// qui était resté ici. Une anglophone lisait « 2 400 » sur son écran d'accueil.
-    private static let groupedNumber: NumberFormatter = {
-        let f = NumberFormatter()
-        f.numberStyle = .decimal
-        f.locale = .current
-        return f
-    }()
-
-    private func grouped(_ value: Int) -> String {
-        Self.groupedNumber.string(from: NSNumber(value: value)) ?? "\(value)"
+    private var dateDuJour: String {
+        let texte = Self.dateFormatter.string(from: entryDate)
+        return texte.prefix(1).capitalized + texte.dropFirst()
     }
 
-    private var isLight: Bool { snapshot.isLightMode }
     /// L'accent qu'elle a réellement choisi dans l'app, jamais une couleur fixe — et trois fois
     /// le même depuis que l'anneau est mono-accent, comme `DailyGoalsBarsView.fillColors`.
-    private var colors: [Color] { WidgetAccentPalette.ringColors(themeID: snapshot.accentThemeID, isLight: isLight) }
-    private var bg: Color { isLight ? WG.blanc : WG.noirFranc }
-    /// Les jetons de l'app, RECOPIÉS et pas lus (`WG`) : la cible du widget ne compile pas
-    /// `Haizo/DesignSystem`, pour la raison écrite en tête de `WidgetAccentPalette`.
-    private var textPrimary: Color { isLight ? WG.encre : WG.blanc }
-    private var text2: Color { isLight ? WG.secondaireSurClair : WG.secondaireSurSombre }
-    /// Le point d'un jour sans séance : un jeton, pas le gris du texte à 40 %.
-    private var pointEteint: Color { isLight ? WG.pointEteintClair : WG.pointEteintSombre }
-    /// La pastille de la série : une surface posée sur le fond, comme les pilules de l'app.
-    private var surfacePastille: Color { isLight ? WG.surfaceClaire : WG.surfaceSombre }
-    /// Allumée ou éteinte, dans l'accent et le gris — le miroir de l'écran des stats.
-    private var flameColor: Color { snapshot.streak > 0 ? colors[0] : text2 }
+    private var colors: [Color] { WidgetAccentPalette.ringColors(themeID: snapshot.accentThemeID, isLight: false) }
+    private var accent: Color { colors[0] }
+
+    // LE WIDGET EST TOUJOURS NOIR, comme l'en-tête de l'accueil de l'app, qui l'est dans les deux
+    // modes : un fond blanc le ferait ressembler à une carte de l'app et non à son affiche. Les
+    // jetons de l'app, RECOPIÉS et pas lus (`WG`) : la cible du widget ne compile pas
+    // `Haizo/DesignSystem`, pour la raison écrite en tête de `WidgetAccentPalette`.
+    private var bg: Color { WG.noir }
 
     /// Les objectifs réellement en jeu : deux un jour de repos, trois sinon. L'anneau se partage
     /// alors en deux arcs plutôt que d'en dessiner un troisième qui ne pourra jamais se remplir.
@@ -201,30 +189,9 @@ struct DailyGoalsWidgetView: View {
         return snapshot.isRestDay ? Array(all.dropFirst()) : all
     }
 
-    private var sessionValue: String {
-        if snapshot.isRestDay { return String(localized: "Repos") }
-        return (snapshot.progress[safe: 0] ?? 0) >= 1 ? "✓" : String(localized: "À faire")
-    }
-    /// LE RESTE À FAIRE S'ÉCRIT COMME DANS L'APP, ET PLUS AVEC UN SIGNE MOINS.
-    ///
-    /// Le widget affichait « -600 » et « -15 000 ». Le code savait ce qu'il voulait dire — ce
-    /// qu'il reste — mais personne ne lit un moins comme ça : on lit un déficit, ou un défaut.
-    /// « -15 000 Pas » sur l'écran d'accueil d'une app de course ressemble à un bug, et c'est
-    /// le premier objet de la marque que son utilisatrice voit chaque matin.
-    ///
-    /// L'app, elle, écrit déjà « À FAIRE 0 /400 KCAL » sur l'accueil. Le widget la contredisait
-    /// donc sur le même téléphone. Il reprend sa forme : fait sur objectif.
-    private func accompli(_ restant: Int, objectif: Int) -> String {
-        guard objectif > 0 else { return restant > 0 ? grouped(restant) : "✓" }
-        guard restant > 0 else { return "✓" }
-        return "\(grouped(max(0, objectif - restant)))/\(grouped(objectif))"
-    }
-    private var caloriesValue: String {
-        accompli(snapshot.activeCaloriesRemaining, objectif: snapshot.activeCaloriesGoal)
-    }
-    private var stepsValue: String {
-        accompli(snapshot.stepsRemaining, objectif: snapshot.stepsGoal)
-    }
+    /// La séance du jour est-elle connue ? Un instantané écrit avant les champs de la séance n'en a
+    /// pas : le widget retombe alors sur l'anneau seul, plutôt que d'inventer un grand chiffre.
+    private var aUneSeance: Bool { snapshot.heroNombre != nil && snapshot.heroTitre != nil }
 
     var body: some View {
         Group {
@@ -347,137 +314,164 @@ struct DailyGoalsWidgetView: View {
         .accessibilityLabel(Text("Course en cours, \(TimeFormat.distance(km: course.distanceKm)) kilomètres"))
     }
 
-    /// Petit : l'anneau, et un seul chiffre sous lui.
+    // MARK: La séance du jour
+
+    /// LE WIDGET EST L'ACCUEIL EN MINIATURE : la semaine en points, le grand chiffre de la séance du
+    /// jour dans l'accent, son titre, ses mesures, et l'anneau des objectifs. Il était un tableau
+    /// d'objectifs — un anneau et des libellés gris — à côté d'une app qui est une affiche.
     ///
-    /// La légende à trois lignes a été essayée et coupée à l'écran : 158 points de large, moins
-    /// les marges, moins l'anneau, il restait cinquante-huit points pour trois valeurs et leurs
-    /// libellés. Le rendu a fait ce qu'il devait : couper chaque ligne à une ou deux lettres. Une
-    /// maquette HTML ne subit pas cette contrainte de largeur, d'où l'erreur.
-    ///
-    /// Le petit widget n'a donc qu'un travail : dire d'un coup d'œil où on en est. C'est
-    /// exactement ce que l'anneau dit, et le détail attend le moyen, qui a la largeur pour lui.
+    /// Petit : la semaine et la série en haut, le grand nombre, le titre. Rien d'autre : 158 points
+    /// de large ne portent pas l'anneau en plus, qui attend le moyen. Quand la séance n'est pas
+    /// connue (instantané ancien), l'anneau prend sa place.
     private var smallBody: some View {
-        VStack(spacing: 8) {
-            Spacer(minLength: 0)
-            WidgetRingView(goals: goals, size: 74, colors: colors, isLight: isLight)
-            HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text("\(snapshot.dailyGoalsDone)/\(snapshot.dailyGoalsTotal)")
-                    .font(WG.police(WG.Corps.chiffre))
-                    .tracking(WG.serre(WG.Corps.chiffre))
-                    .foregroundColor(textPrimary)
-                Text("bouclés")
-                    .font(WG.police(WG.Corps.etiquette, .semi))
-                    .foregroundColor(text2)
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(12)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .overlay(alignment: .topTrailing) {
-            if snapshot.streak > 0 { streakBadge.padding(10) }
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text("\(snapshot.dailyGoalsDone) sur \(snapshot.dailyGoalsTotal) objectifs bouclés"))
-    }
-
-    /// Moyen : l'anneau, et la légende qui occupe VRAIMENT la largeur.
-    ///
-    /// La colonne de droite ne s'étirait pas — elle prenait la place de son contenu et laissait un
-    /// tiers de la carte vide. Et chaque ligne se lisait à l'envers, « À faire Séance » au lieu de
-    /// « Séance … à faire » : la valeur venait avant son libellé, ce qui marche sous un chiffre
-    /// centré et pas dans une phrase.
-    private var mediumBody: some View {
-        HStack(spacing: 14) {
-            WidgetRingView(goals: goals, size: 92, colors: colors, isLight: isLight)
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) {
-                    Text(Self.weekdayFormatter.string(from: entryDate).capitalized)
-                        .font(WG.police(WG.Corps.titre))
-                        .tracking(WG.serre(WG.Corps.titre))
-                        .foregroundColor(textPrimary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                    Spacer(minLength: 0)
-                    if snapshot.streak > 0 { streakBadge }
-                }
-                legendRow(slot: 0, value: sessionValue, label: "Séance", muted: snapshot.isRestDay)
-                legendRow(slot: 1, value: caloriesValue, label: "kcal")
-                legendRow(slot: 2, value: stepsValue, label: "Pas")
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: WG.Forme.ecart) {
+                semaine
                 Spacer(minLength: 0)
-                weekDots
+                if snapshot.streak > 0 { serie }
             }
-            // C'est CE modificateur qui manquait : sans lui la colonne se contente de la largeur
-            // de son texte, et la carte reste vide sur sa droite.
-            .frame(maxWidth: .infinity, alignment: .leading)
+            Spacer(minLength: 0)
+            if aUneSeance {
+                affiche(avecMesures: true)
+            } else {
+                HStack {
+                    Spacer(minLength: 0)
+                    anneau(taille: WG.Forme.anneauDuPetit)
+                    Spacer(minLength: 0)
+                }
+                Spacer(minLength: 0)
+            }
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    /// Une ligne de légende : la pastille de l'arc, son libellé, et la valeur poussée à droite.
-    ///
-    /// Le libellé AVANT la valeur, et la valeur alignée au bord droit. L'ordre inverse donnait
-    /// « À faire Séance » ; celui-ci se lit comme une ligne de tableau, et l'alignement à droite
-    /// met les trois valeurs sur une même colonne — c'est ce qui les rend comparables d'un coup
-    /// d'œil au lieu de flotter chacune après un mot de longueur différente.
-    private func legendRow(slot: Int, value: String, label: String, muted: Bool = false) -> some View {
-        HStack(spacing: 6) {
-            Circle()
-                .fill(muted ? pointEteint : colors[min(max(0, slot), colors.count - 1)])
-                .frame(width: 7, height: 7)
-            Text(LocalizedStringKey(label))
-                .font(WG.police(WG.Corps.legende, .semi))
-                .foregroundColor(text2)
-                .lineLimit(1)
-            Spacer(minLength: 6)
-            Text(value)
-                .font(WG.police(WG.Corps.valeur))
-                .foregroundColor(muted ? text2 : textPrimary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        }
+        .padding(WG.Forme.margeDuWidget)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibiliteDeLaSeance)
     }
 
-    /// LE JOUR COURANT VIENT DE LA DATE, PAS DE L'INSTANTANÉ.
-    ///
-    /// L'en-tête du widget écrit « Mardi » à partir de `entryDate`, que le système tient à jour.
-    /// La pastille du jour, elle, lisait `state == .today` dans l'instantané publié par l'app —
-    /// un état figé au dernier passage dans l'app. Résultat visible sur un vrai téléphone : le
-    /// titre disait mardi pendant que la pastille cerclée était sur lundi. Deux parties du même
-    /// widget, deux jours différents.
-    ///
-    /// La bande va de lundi à dimanche (`UserProfile.weekStrip`, index 0 = lundi). Le rang du
-    /// jour se déduit donc de la date, et l'instantané ne garde que ce que lui seul sait : les
-    /// jours bouclés.
-    private var rangDuJour: Int { WidgetWeekDay.rangDuJour(entryDate) }
+    /// Moyen : la même affiche à gauche, l'anneau des objectifs à droite, la date en haut.
+    private var mediumBody: some View {
+        VStack(alignment: .leading, spacing: WG.Forme.ecart) {
+            HStack(spacing: WG.Forme.ecart) {
+                semaine
+                Spacer(minLength: 0)
+                if snapshot.streak > 0 { serie }
+                Text(dateDuJour)
+                    .font(WG.police(WG.Corps.texte, .semi))
+                    .foregroundColor(WG.secondaireSurSombre)
+                    .lineLimit(1)
+                    .minimumScaleFactor(WG.Forme.reductionDuChrono)
+            }
+            HStack(alignment: .center, spacing: WG.Forme.ecartDeColonnes) {
+                if aUneSeance {
+                    affiche(avecMesures: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                VStack(spacing: WG.Forme.ecart - 2) {
+                    anneau(taille: WG.Forme.anneauDuMoyen)
+                    Text("bouclés")
+                        .font(WG.police(WG.Corps.legende, .semi))
+                        .foregroundColor(WG.secondaireSurSombre)
+                }
+                .frame(maxWidth: aUneSeance ? nil : .infinity)
+            }
+            .frame(maxHeight: .infinity)
+        }
+        .padding(.horizontal, WG.Forme.margeDuWidgetMoyen)
+        .padding(.vertical, WG.Forme.margeDuWidget)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibiliteDeLaSeance)
+    }
 
-    private var weekDots: some View {
-        HStack(spacing: 6) {
+    /// Le grand nombre dans l'accent, son préfixe (« 5 × ») au-dessus, le titre dessous, puis les
+    /// mesures. Le préfixe prend une ligne : avec lui, les mesures sautent, faute de place.
+    private func affiche(avecMesures: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let prefixe = snapshot.heroPrefixe {
+                Text(prefixe)
+                    .font(WG.police(WG.Corps.titre))
+                    .foregroundColor(WG.blanc)
+                    .lineLimit(1)
+            }
+            Text(snapshot.heroNombre ?? "")
+                .font(WG.affichage(WG.Corps.grandNombre))
+                .tracking(WG.serre(WG.Corps.grandNombre))
+                .foregroundColor(accent)
+                .lineLimit(1)
+                .minimumScaleFactor(WG.Forme.reductionDuGrandNombre)
+            Text(snapshot.heroTitre ?? "")
+                .font(WG.police(WG.Corps.titre))
+                .tracking(WG.serre(WG.Corps.titre))
+                .foregroundColor(WG.blanc)
+                .lineLimit(1)
+                .minimumScaleFactor(WG.Forme.reductionDuChrono)
+                .padding(.top, WG.Forme.ecart - 2)
+            if avecMesures, snapshot.heroPrefixe == nil, let ligne = ligneSecondaire {
+                Text(ligne)
+                    .font(WG.police(WG.Corps.legende, .semi))
+                    .foregroundColor(WG.secondaireSurSombre)
+                    .lineLimit(1)
+                    .minimumScaleFactor(WG.Forme.reductionDuChrono)
+                    .padding(.top, 2)
+            }
+        }
+    }
+
+    /// « Fait » quand la séance l'est, sinon ses mesures.
+    private var ligneSecondaire: String? {
+        snapshot.heroFaite ? String(localized: "Fait") : snapshot.heroMesures
+    }
+
+    /// L'anneau des objectifs, avec ce qui est bouclé écrit dedans.
+    private func anneau(taille: CGFloat) -> some View {
+        WidgetRingView(goals: goals, size: taille, colors: colors, isLight: false)
+            .overlay {
+                Text("\(snapshot.dailyGoalsDone)/\(snapshot.dailyGoalsTotal)")
+                    .font(WG.police(WG.Corps.chiffreDeLAnneau))
+                    .tracking(WG.serre(WG.Corps.chiffreDeLAnneau))
+                    .foregroundColor(WG.blanc)
+            }
+    }
+
+    /// LA SEMAINE EN POINTS, comme sur l'accueil : un point allumé (blanc) par jour bouclé, un point
+    /// éteint sinon, un anneau blanc pour aujourd'hui.
+    ///
+    /// LE JOUR COURANT VIENT DE LA DATE, PAS DE L'INSTANTANÉ : l'écran dit « Dimanche » à partir de
+    /// `entryDate`, que le système tient à jour ; la pastille du jour lisait `state == .today` dans
+    /// l'instantané publié, figé au dernier passage dans l'app. Deux parties du même widget, deux
+    /// jours différents. Le rang se déduit donc de la date (`WidgetWeekDay.rangDuJour`).
+    private var semaine: some View {
+        HStack(spacing: WG.Forme.ecartDesPoints) {
             ForEach(Array(snapshot.weekStrip.enumerated()), id: \.offset) { rang, jour in
-                // `colors[0]` et non `colors[1]` : depuis que les trois objectifs portent trois
-                // teintes distinctes, l'index 1 n'est plus l'accent principal mais le violet du
-                // deuxième objectif. Une pastille de jour n'appartient à aucun objectif — elle
-                // doit porter l'accent de l'app, qui est désormais en tête de liste.
-                if rang == rangDuJour && !jour.isDone {
-                    Circle().stroke(colors[0], lineWidth: 1.3).frame(width: 6, height: 6)
+                if rang == WidgetWeekDay.rangDuJour(entryDate) {
+                    Circle()
+                        .stroke(WG.blanc, lineWidth: WG.Forme.traitDuJour)
+                        .frame(width: WG.Forme.pointDeLaSemaine, height: WG.Forme.pointDeLaSemaine)
                 } else {
                     Circle()
-                        .fill(jour.isDone ? colors[0] : pointEteint)
-                        .frame(width: 6, height: 6)
+                        .fill(jour.isDone ? WG.blanc : WG.pointEteintSombre)
+                        .frame(width: WG.Forme.pointDeLaSemaine, height: WG.Forme.pointDeLaSemaine)
                 }
             }
         }
     }
 
-    private var streakBadge: some View {
+    /// La série : une pastille sombre, la flamme dans l'accent, le nombre en blanc.
+    private var serie: some View {
         HStack(spacing: 2) {
-            Image(systemName: "flame.fill").font(.system(size: 9)).foregroundColor(flameColor)
-            Text("\(snapshot.streak)").font(WG.police(WG.Corps.legende)).foregroundColor(textPrimary)
+            Image(systemName: "flame.fill").font(.system(size: 9)).foregroundColor(accent)
+            Text("\(snapshot.streak)").font(WG.police(WG.Corps.legende)).foregroundColor(WG.blanc)
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
-        .background(surfacePastille, in: Capsule())
+        .background(WG.surfaceSombre, in: Capsule())
+    }
+
+    private var accessibiliteDeLaSeance: Text {
+        let seance = [snapshot.heroNombre, snapshot.heroTitre, snapshot.heroMesures]
+            .compactMap { $0 }.joined(separator: ", ")
+        let objectifs = String(localized: "\(snapshot.dailyGoalsDone) sur \(snapshot.dailyGoalsTotal) objectifs bouclés")
+        return Text(seance.isEmpty ? objectifs : seance + ". " + objectifs)
     }
 }
 
@@ -494,8 +488,8 @@ struct DailyGoalsWidget: Widget {
         StaticConfiguration(kind: kind, provider: DailyGoalsProvider()) { entry in
             DailyGoalsWidgetView(snapshot: entry.snapshot, entryDate: entry.date, course: entry.course)
         }
-        .configurationDisplayName("Objectifs du jour")
-        .description(Text("Ta séance, tes calories actives et tes pas, d'un coup d'œil."))
+        .configurationDisplayName("Aujourd'hui")
+        .description(Text("La séance du jour et tes objectifs, d'un coup d'œil."))
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

@@ -860,11 +860,35 @@ final class AppState {
     /// to redraw the Home Screen widget — call anywhere `dailyGoalsProgress`, `streak`, or the
     /// accent/light-mode theme could have just changed, since the widget's own process has no way
     /// to observe `profile` directly (see `DailyGoalsSnapshot`).
+    /// Le grand nombre de l'accueil, en texte — les mêmes mots que `AccueilView.texte(du:)`.
+    private static func texteDuNombre(_ nombre: AccueilModele.Nombre) -> String {
+        switch nombre {
+        case .valeur(let valeur): return valeur
+        case .repos: return String(localized: "Off")
+        case .libre: return String(localized: "Libre")
+        }
+    }
+
+    /// Une mesure de la pilule de l'accueil, en texte — les mêmes que `AccueilView.texte(de:)`.
+    private static func texteDeLaMesure(_ mesure: AccueilModele.Mesure) -> String {
+        switch mesure {
+        case .minutes(let minutes): return String(localized: "\(minutes) min")
+        case .allure(let allure): return allure + HZAccueil.uniteDAllure
+        case .zone(let zone): return zone
+        }
+    }
+
     func publishWidgetSnapshot() {
         // Le `let today` qui vivait ici ne servait plus à rien : la pastille du jour du widget se
         // calcule maintenant chez le widget, depuis la date de son entrée de chronologie (voir
         // `WidgetWeekDay.rangDuJour`), parce qu'un rang publié vieillit à minuit alors que le
         // widget, lui, continue de se redessiner.
+        // La séance du jour, composée par le même `AccueilModele.hero` que l'accueil de l'app :
+        // le widget en est la miniature et ne doit jamais dire autre chose qu'elle.
+        let hero = AccueilModele.hero(session: profile.todaySession,
+                                      estUnJourDeRepos: profile.isRestDayToday,
+                                      faiteAujourdhui: profile.seanceDoneToday,
+                                      titreDeLaCourseLibre: String(localized: "Course libre"))
         let snapshot = DailyGoalsSnapshot(
             progress: profile.dailyGoalsProgress,
             streak: profile.streak,
@@ -882,7 +906,12 @@ final class AppState {
             isRestDay: profile.isRestDayToday,
             // Les objectifs, pour que le widget écrive « 240/600 » comme l'app et non « -360 ».
             activeCaloriesGoal: max(0, Int(profile.activeCaloriesGoal.rounded())),
-            stepsGoal: max(0, Int(profile.stepsGoal.rounded()))
+            stepsGoal: max(0, Int(profile.stepsGoal.rounded())),
+            heroPrefixe: hero.prefixe,
+            heroNombre: Self.texteDuNombre(hero.nombre),
+            heroTitre: hero.titre,
+            heroMesures: hero.mesures.isEmpty ? nil : hero.mesures.map(Self.texteDeLaMesure).joined(separator: " · "),
+            heroFaite: hero.faite
         )
         // Only burn a WidgetKit reload (daily budget ~40-70) when something the widget shows
         // actually changed — browsing the color nuancier used to exhaust it and silently freeze

@@ -82,4 +82,34 @@ final class WidgetWeekStripTests: XCTestCase {
         XCTAssertEqual(relu.stepsGoal, 0)
         XCTAssertEqual(relu.activeCaloriesRemaining, 360)
     }
+
+    /// La séance du jour voyage dans l'instantané, composée par l'app : le widget n'en recompose
+    /// rien.
+    func testLaSeanceDuJourVoyageDansLInstantane() throws {
+        let s = DailyGoalsSnapshot(progress: [0, 0, 0], streak: 1, accentThemeID: "rose",
+                                   isLightMode: true, dailyGoalsDone: 0, dailyGoalsTotal: 3,
+                                   activeCaloriesRemaining: 360, stepsRemaining: 9000,
+                                   weekStrip: [], heroPrefixe: "5 ×", heroNombre: "400 m",
+                                   heroTitre: "Fractionné", heroMesures: "40 min · Z4",
+                                   heroFaite: true)
+        let relu = try JSONDecoder().decode(DailyGoalsSnapshot.self,
+                                            from: JSONEncoder().encode(s))
+        XCTAssertEqual(relu, s)
+        XCTAssertEqual(relu.heroPrefixe, "5 ×")
+        XCTAssertTrue(relu.heroFaite)
+    }
+
+    /// Un instantané écrit avant la séance du jour n'en a pas : `nil` (« on ne sait pas »), et le
+    /// widget retombe sur l'anneau seul plutôt que d'afficher un grand chiffre inventé.
+    func testUnInstantaneSansSeanceNEnInventePas() throws {
+        let ancien = """
+        {"progress":[0,0,0],"streak":1,"accentThemeID":"rose","isLightMode":true,
+         "dailyGoalsDone":0,"dailyGoalsTotal":3,"activeCaloriesRemaining":360,
+         "stepsRemaining":9000,"weekStrip":[],"isRestDay":false}
+        """.data(using: .utf8)!
+        let relu = try JSONDecoder().decode(DailyGoalsSnapshot.self, from: ancien)
+        XCTAssertNil(relu.heroNombre)
+        XCTAssertNil(relu.heroTitre)
+        XCTAssertFalse(relu.heroFaite)
+    }
 }

@@ -28574,19 +28574,19 @@
         }
       }
     },
-    "Ta séance, tes calories actives et tes pas, d'un coup d'œil.": {
+    "La séance du jour et tes objectifs, d'un coup d'œil.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your session, active calories and steps, at a glance."
+            "value": "Today's session and your goals, at a glance."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tu sesión, tus calorías activas y tus pasos, de un vistazo."
+            "value": "La sesión de hoy y tus objetivos, de un vistazo."
           }
         }
       }
