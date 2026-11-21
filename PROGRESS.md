@@ -8970,3 +8970,15 @@ coupé ; mesuré sur une maquette avec le vrai fichier Archivo, pas sur WidgetKi
 (`contentMarginsDisabled`), et le nombre est cadré à gauche sur la largeur disponible. La Live Activity n'est pas concernée
 (autre mécanisme). Les états de course du widget gagnent aussi leurs 14 points de marge propres, sans le doublon.
 Toujours non vérifié ici : à revoir sur l'iPhone.
+
+**Le widget se photographie maintenant en CI (21 novembre).** Après deux livraisons jugées sur une maquette HTML fausse, la cible
+`HaizoWidgetTests` (`project.yml`, schéma `Widget`) compile les sources du widget dans un paquet de test sans hôte et en rend
+les vues en images (`ImageRenderer`, vrai Archivo) ; `.github/workflows/widget.yml` publie l'artifact `widget` (27 PNG : petit
+158 et 170, moyen 338, neuf cas dont repos, quatre chiffres, instantané ancien, course en cours). Ce n'est PAS le rendu de
+WidgetKit : ni marges ni coins du système, `containerBackground` n'y fait rien (le test pose le fond), et la taille est
+imposée par `DailyGoalsWidgetView.familleImposee` (`widgetFamily` est en lecture seule). La mise en page, la fonte et les
+débordements sont vrais.
+
+Ce que le premier rendu a révélé : la pastille de série coupée dans le petit widget (corrigée : `fixedSize`, points de la
+semaine resserrés) et l'interlettrage négatif qui mangeait les espaces du titre (retiré, il ne sert qu'aux grands chiffres).
+Le chrono « 8813:47 » du premier rendu était un défaut du test (date de départ en 2025), corrigé.
