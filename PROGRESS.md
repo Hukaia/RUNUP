@@ -8982,3 +8982,18 @@ débordements sont vrais.
 Ce que le premier rendu a révélé : la pastille de série coupée dans le petit widget (corrigée : `fixedSize`, points de la
 semaine resserrés) et l'interlettrage négatif qui mangeait les espaces du titre (retiré, il ne sert qu'aux grands chiffres).
 Le chrono « 8813:47 » du premier rendu était un défaut du test (date de départ en 2025), corrigé.
+
+## Le balayage du Plan passe au défilement natif (21 novembre) : « Ça fonctionne toujours très mal »
+
+Charlotte a filmé l'écran (7 s, 60 images par seconde). Ce que la vidéo montre, mesuré image par image sur le bord de la carte de
+dimanche : le geste fait bien changer de carte (le jour se pose, le point de la rangée suit), mais il se fait à la volée : trois
+essais maison successifs (une pile de cartes décalée à la main, un `DragGesture` simultané dans le `ScrollView` vertical de la page, un
+seuil, une prévision de fin, une résistance au bout) ne peuvent ni être repris en cours de route ni avoir l'élan et le rebond du système, et
+le geste se dispute avec le défilement vertical. On ne peut pas, d'ici, mesurer « le ressenti » : le code est donc passé à ce que le système
+sait faire. Le carrousel est un `ScrollView(.horizontal)` calé sur les cartes (`scrollTargetBehavior(.viewAligned)`,
+`scrollPosition`, `contentMargins`) ; la rangée des jours le commande par `choix`. `HZCarrousel` ne garde que le mouvement de la rangée
+(340 ms) ; `CarrouselDuPlanTests` (la décision du cran) est supprimé avec la fonction qu'il testait.
+
+Deux choses vues sur la même vidéo et pas encore traitées : toucher la carte d'un jour de repos ouvre la feuille d'une « Footing récap »
+(la carte dit « Off », la feuille décrit une séance : les deux ne viennent pas de la même définition du repos), et la bande blanche du
+bas, sous la barre flottante, est coupée (« Passer à un objectif » passe sous la barre).

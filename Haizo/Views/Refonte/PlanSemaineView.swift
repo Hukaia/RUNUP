@@ -30,9 +30,10 @@ struct PlanSemaineView: View {
     /// Le jour regardé. `nil` tant qu'on n'a rien touché : c'est alors aujourd'hui.
     @State private var choix: Int?
     @State private var planCompletOuvert = false
-    /// Le déplacement de la rangée de cartes pendant que le doigt la tient. Remis à zéro, avec
-    /// l'animation du carrousel, quand le doigt se lève.
-    @State private var decalage: CGFloat = 0
+    /// Jusqu'à quand le défilement vient d'un appui sur la rangée des jours, et non du doigt : le
+    /// système rapporte alors les cartes qu'il traverse, et les prendre pour des choix ferait
+    /// parcourir la rangée des jours une à une.
+    @State private var defilementProgramme = Date.distantPast
 
     private var profile: UserProfile { appState.profile }
     private var planDebloque: Bool { subscriptions.unlocks(.adaptivePlan) }
@@ -218,40 +219,70 @@ struct PlanSemaineView: View {
     /// Les appelants ont déjà tenu compte du verrou : la rangée est éteinte quand le plan l'est, et
     /// le glissement le vérifie lui-même.
     private func selectionner(_ jour: Int) {
+        defilementProgramme = Date().addingTimeInterval(HZCarrousel.dureeDuDefilement)
         withAnimation(HZCarrousel.animation) { choix = jour }
         Haptics.selection()
     }
 
     // MARK: - Le carrousel
 
-    /// Les cartes font plus de deux largeurs d'écran. Posées dans un cadre, elles l'élargissent, et
-    /// toute la pile — en-tête, titre, boutons, feuille — se recentre sur cette largeur : le plan
-    /// entier glisse de moitié. Le cadre est donc une surface vide de la bonne hauteur, et les
-    /// cartes y débordent en superposition, alignées sur son bord de départ.
+    /// LE CARROUSEL EST UN DÉFILEMENT HORIZONTAL NATIF, calé sur les cartes.
+    ///
+    /// Trois versions maison l'ont précédé : un geste sur une pile de cartes décalée à la main, avec
+    /// un seuil, une prévision de fin, une résistance au bout. Chacune se comportait mal sur
+    /// l'appareil — le geste se disputait avec le défilement vertical de la page, ne pouvait pas
+    /// être repris en cours de route, n'avait ni l'élan ni le rebond du reste du système. Un
+    /// `ScrollView` les a tous, et le calage sur les cartes (`viewAligned`) en fait un carrousel.
+    ///
+    /// La carte du jour commence à `departDeLaCarte` du bord (la précédente dépasse à gauche) : c'est
+    /// la marge du contenu. Et une dernière place vide, de la largeur de l'écran moins une carte,
+    /// laisse dimanche se poser au même endroit que les autres jours plutôt que collé à droite.
     private var carrousel: some View {
-        Color.clear
-            .frame(height: HZCarteAffiche.hauteur)
-            .overlay(alignment: .leading) {
+        ScrollViewReader { lecteur in
+            ScrollView(.horizontal) {
                 HStack(spacing: HZEspace.entreTuiles) {
-                    ForEach(visibles) { jour in
-                        Button {
-                            toucher(jour)
-                        } label: {
-                            carte(jour)
+                    HStack(spacing: HZEspace.entreTuiles) {
+                        ForEach(visibles) { jour in
+                            Button {
+                                toucher(jour)
+                            } label: {
+                                carte(jour)
+                            }
+                            .buttonStyle(.plain)
+                            .id(jour.id)
                         }
-                        .buttonStyle(.plain)
                     }
+                    .scrollTargetLayout()
+                    Color.clear
+                        .containerRelativeFrame(.horizontal) { largeur, _ in
+                            max(0, largeur - HZPlan.departDeLaCarte - HZCarteAffiche.largeur
+                                - HZEspace.entreTuiles)
+                        }
                 }
-                .fixedSize()
-                .offset(x: HZPlan.departDeLaCarte - CGFloat(position) * HZPlan.pasDuCarrousel + decalage)
             }
-            .clipped()
-            // La carte SUIT le doigt (`suivre`), puis se pose sur la carte que le geste vise
-            // (`glisser`). C'était un saut d'un cran à la fin du geste, quelle que soit sa vitesse.
-            .simultaneousGesture(
-                DragGesture(minimumDistance: HZCarrousel.seuilDeDebut)
-                    .onChanged { geste in suivre(geste.translation) }
-                    .onEnded { geste in glisser(geste) })
+            .contentMargins(.leading, HZPlan.departDeLaCarte, for: .scrollContent)
+            .scrollTargetBehavior(.viewAligned)
+            .scrollPosition(id: positionDuCarrousel, anchor: .leading)
+            .scrollIndicators(.hidden)
+            // Verrouillé : une seule carte, rien à faire défiler.
+            .scrollDisabled(!planDebloque)
+            .frame(height: HZCarteAffiche.hauteur)
+            // Ouvert sur le jour choisi (aujourd'hui) : la position initiale du système n'est pas
+            // toujours honorée avant la première mise en page.
+            .onAppear { lecteur.scrollTo(choisi, anchor: .leading) }
+        }
+    }
+
+    /// Le jour que le doigt a posé au bord gauche : c'est lui le jour choisi.
+    private var positionDuCarrousel: Binding<Int?> {
+        Binding(
+            get: { choisi },
+            set: { nouveau in
+                guard planDebloque, let nouveau, nouveau != choisi,
+                      Date() >= defilementProgramme else { return }
+                choix = nouveau
+                Haptics.selection()
+            })
     }
 
     private func toucher(_ jour: PlanSemaineModele.Jour) {
@@ -261,36 +292,6 @@ struct PlanSemaineView: View {
         } else {
             selectionner(jour.id)
         }
-    }
-
-    /// Un geste surtout vertical est un défilement de la page, pas un changement de jour : la carte
-    /// ne bouge que si le doigt va plus à l'horizontale qu'à la verticale.
-    private func suivre(_ deplacement: CGSize) {
-        guard planDebloque, abs(deplacement.width) > abs(deplacement.height) else {
-            decalage = 0
-            return
-        }
-        let auBout = (deplacement.width > 0 && position == 0)
-            || (deplacement.width < 0 && position == visibles.count - 1)
-        decalage = HZCarrousel.decalage(deplacement.width, auBout: auBout)
-    }
-
-    private func glisser(_ geste: DragGesture.Value) {
-        let deplacement = geste.translation
-        guard planDebloque, abs(deplacement.width) > abs(deplacement.height) else {
-            withAnimation(HZCarrousel.animation) { decalage = 0 }
-            return
-        }
-        let cartes = HZCarrousel.pas(deplacement: deplacement.width,
-                                     prevu: geste.predictedEndTranslation.width,
-                                     pasDeCarte: HZPlan.pasDuCarrousel)
-        let cible = min(max(position + cartes, 0), visibles.count - 1)
-        let change = cible != position
-        withAnimation(HZCarrousel.animation) {
-            decalage = 0
-            if change { choix = visibles[cible].id }
-        }
-        if change { Haptics.selection() }
     }
 
     private func carte(_ jour: PlanSemaineModele.Jour) -> some View {

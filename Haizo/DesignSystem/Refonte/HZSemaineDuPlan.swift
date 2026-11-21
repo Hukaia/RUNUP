@@ -45,40 +45,11 @@ struct HZColonneDeJour: View {
     static let remonteeDuPoint: CGFloat = 1
 }
 
-/// LE MOUVEMENT DU CARROUSEL DU PLAN : 340 ms, la courbe du canvas — `cubic-bezier(0.2, 0.8, 0.2, 1)`,
-/// qui part vite et se pose doucement.
+/// LE MOUVEMENT DU CARROUSEL DU PLAN, quand c'est la rangée des jours qui le commande : 340 ms, la courbe du
+/// canvas, `cubic-bezier(0.2, 0.8, 0.2, 1)`, qui part vite et se pose doucement. Le geste du doigt, lui, est
+/// le défilement natif du système (voir `PlanSemaineView.carrousel`) : il n'a plus de seuil ni de résistance
+/// à lui, c'est le système qui en décide.
 enum HZCarrousel {
-    static let animation = Animation.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.34)
-    /// Au-delà de ce déplacement horizontal, un geste LENT change de carte.
-    static let seuilDeGlissement: CGFloat = 40
-    /// La carte se met à suivre le doigt dès ce déplacement. Plus bas que le seuil du changement :
-    /// c'est ce qui lui fait suivre le doigt, au lieu de sauter d'un cran à la fin du geste — le
-    /// défaut de la première version, où rien ne bougeait avant que le doigt se lève.
-    static let seuilDeDebut: CGFloat = 8
-    /// Au bout de la rangée (lundi vers la gauche, dimanche vers la droite) la carte suit le doigt à
-    /// ce rapport : elle résiste, et le doigt sent qu'il n'y a plus de carte.
-    static let resistanceAuBout: CGFloat = 0.3
-    /// Un geste rapide peut sauter des cartes, pas toute la semaine.
-    static let sautMaximal = 2
-
-    /// Le déplacement de la carte pendant le geste.
-    static func decalage(_ deplacement: CGFloat, auBout: Bool) -> CGFloat {
-        auBout ? deplacement * resistanceAuBout : deplacement
-    }
-
-    /// Combien de cartes le geste fait passer, signé : positif vers la carte suivante (le doigt va
-    /// vers la gauche), négatif vers la précédente.
-    ///
-    /// Deux gestes changent de carte : un geste LENT qui dépasse `seuilDeGlissement`, et un geste
-    /// RAPIDE dont la course prévue (`prevu`, ce que le doigt aurait parcouru en continuant) dépasse
-    /// la moitié d'un pas. Le second peut sauter jusqu'à `sautMaximal` cartes. Un geste plus court et
-    /// plus lent que cela ramène la carte où elle était.
-    static func pas(deplacement: CGFloat, prevu: CGFloat, pasDeCarte: CGFloat) -> Int {
-        guard pasDeCarte > 0 else { return 0 }
-        var cartes = Int((-prevu / pasDeCarte).rounded())
-        if cartes == 0, abs(deplacement) > seuilDeGlissement {
-            cartes = deplacement < 0 ? 1 : -1
-        }
-        return max(-sautMaximal, min(sautMaximal, cartes))
-    }
+    static let animation = Animation.timingCurve(0.2, 0.8, 0.2, 1, duration: dureeDuDefilement)
+    static let dureeDuDefilement: TimeInterval = 0.34
 }

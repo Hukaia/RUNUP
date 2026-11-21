@@ -484,7 +484,8 @@ Une feuille ne s'ouvre jamais avec l'habillage du système : fond blanc, coins d
 Une page ouverte depuis une autre se décale de 28 points en entrant (`decalageDePage`) ; la racine d'un onglet se fond en passant par
 une échelle de 0,98 (`echelleDOnglet`). Chaque écran emporte sa transition (`AppScreen.transitionDecran`) : rien ne se croise, parce
 qu'un seul des deux écrans se déplace. Le carrousel du plan a son mouvement propre (`HZCarrousel`) : 340 ms, la courbe du canvas
-(0,2 ; 0,8 ; 0,2 ; 1), qui part vite et se pose doucement ; au-delà de 40 points de glissement horizontal, le geste change de carte.
+(0,2 ; 0,8 ; 0,2 ; 1), qui part vite et se pose doucement, quand c'est la rangée des jours qui le commande. Le geste du doigt est le défilement horizontal natif
+du système, calé sur les cartes (`viewAligned`) : il n'a ni seuil ni résistance qui lui soient propres.
 
 **« Réduire les animations » ne veut pas dire des animations plus courtes : la valeur doit SAUTER.** C'est
 `HZMouvement.respecter(reduireLeMouvement, animation)`, qui rend `nil` quand la personne a demandé moins de mouvement. Une animation
