@@ -9073,3 +9073,15 @@ Comparé au canvas (`Club.png`), trois écarts réels :
 3. **La carte bleue du club était un grand aplat vide** quand aucune sortie n'est prévue : elle dit maintenant « Aucune sortie prévue pour l'instant » (seulement quand les
    sorties sont CONNUES, jamais pendant le chargement) et, pour qui est propriétaire, « Proposer une sortie » (ouvre la création). Clés du catalogue déjà traduites.
 Non traité, à décider avec elle : la ligne d'identité (« il y a 1 j » là où le canvas écrit « Samedi · Malakoff »), et le peu de vie d'un club d'une seule personne.
+
+## Le résumé de course, moins brouillon (22 novembre)
+
+Charlotte : « Les résumés courses font un peu brouillon ». Comparé au canvas `Resume.png` (date, kilomètres, titre, deux tuiles, bandeau, deux boutons), l'écran livrait cinq
+boîtes de mesures de trois tailles, puis, tout en bas, une vignette de partage suivie de trois pastilles, d'un bouton vidéo pleine largeur et de deux petits liens côte à côte.
+Deux regroupements, sans rien retirer :
+1. **Les mesures dans UNE carte** : allure et durée en grand, filet, puis FC moyenne, kcal et D+ sur une seconde rangée (`mesures(_:)`, `cellule(_:_:grande:)`).
+2. **La vidéo, l'export GPX et la publication d'itinéraire dans UNE liste** de lignes de 56 points (`autresSorties`, `ligneDAction`, `ligneVideo`), même chevron que les listes du
+   profil. Les trois états de la vidéo (à faire, en fabrication avec sa jauge réelle, à partager) tiennent dans la même ligne ; la liste n'existe pas si rien n'est possible,
+   et « Publier l'itinéraire » reste réservé à qui peut vraiment publier. Textes inchangés, donc aucune nouvelle traduction.
+Nouvelle mesure `HZResume.hauteurDeLaLigne` ; aucun nombre en dur dans la vue. Vérifié : les contrôles de dépôt (valeurs, chaînes, listes, câblage) passent. Pas encore vu :
+le rendu, à relire sur la capture Refonte (`resume.png`, `resume-bas.png`) au prochain build.

@@ -418,6 +418,8 @@ enum HZResume {
     static let hauteurDeLApercu: CGFloat = 300
     static let hauteurDeLElevation: CGFloat = 80
     static let hauteurDeLaJauge: CGFloat = 6
+    /// Une ligne de la liste « vidéo, export, publication » : la zone tactile, pas moins.
+    static let hauteurDeLaLigne: CGFloat = 56
     static let attenteAvantLeRendu = 450
     static let opacitePleine: Double = 1
     /// La carte de partage est rendue en 3x : une image nette, à la taille logique de 360 par 640.

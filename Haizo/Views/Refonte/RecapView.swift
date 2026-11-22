@@ -230,19 +230,8 @@ struct RecapView: View {
                 .hzTexte(.c20, .gras)
                 .padding(.top, HZResume.sousLaDistance)
 
-            HStack(spacing: HZEspace.entreTuiles) {
-                grandeTuile(run.discipline.seLitEnAllure ? String(localized: "Allure moyenne")
-                                                          : String(localized: "Vitesse moyenne"),
-                            run.rythmeEcrit)
-                grandeTuile(String(localized: "Durée"), PaceModel.formatDuration(Double(run.durationSeconds)))
-            }
-            .padding(.top, HZResume.sousLeTitre)
-            HStack(spacing: HZEspace.entreTuiles) {
-                petiteTuile(String(localized: "FC moy."), run.avgHeartRate > 0 ? "\(run.avgHeartRate)" : "—")
-                petiteTuile("kcal", "\(run.kcal)")
-                petiteTuile("D+ (m)", run.elevationGainM > 0 ? "+\(run.elevationGainM)" : "—")
-            }
-            .padding(.top, HZEspace.entreTuiles)
+            mesures(run)
+                .padding(.top, HZResume.sousLeTitre)
 
             if let kind = recordKind(for: run) {
                 recordBanner(kind)
@@ -280,46 +269,57 @@ struct RecapView: View {
             .weekday(.wide).day().month(.wide))
     }
 
-    /// Les deux grandes mesures de la sortie : allure et durée.
-    private func grandeTuile(_ libelle: String, _ valeur: String) -> some View {
+    /// Toutes les mesures de la sortie dans UNE carte : allure et durée en grand, puis ce qui les complète
+    /// sur une seconde rangée, séparées par un filet. Cinq boîtes de tailles différentes faisaient brouillon.
+    private func mesures(_ run: RunRecord) -> some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                cellule(run.discipline.seLitEnAllure ? String(localized: "Allure moyenne")
+                                                      : String(localized: "Vitesse moyenne"),
+                        run.rythmeEcrit, grande: true)
+                filetVertical
+                cellule(String(localized: "Durée"), PaceModel.formatDuration(Double(run.durationSeconds)), grande: true)
+            }
+            filetHorizontal
+            HStack(spacing: 0) {
+                cellule(String(localized: "FC moy."), run.avgHeartRate > 0 ? "\(run.avgHeartRate)" : "—", grande: false)
+                filetVertical
+                cellule("kcal", "\(run.kcal)", grande: false)
+                filetVertical
+                cellule("D+ (m)", run.elevationGainM > 0 ? "+\(run.elevationGainM)" : "—", grande: false)
+            }
+        }
+        .background(HZCouleur.surfaceClaire, in: RoundedRectangle(cornerRadius: HZRayon.groupe, style: .circular))
+        .opacity(splitsRevealed ? HZResume.opacitePleine : 0)
+        .animation(reduceMotion ? nil : .easeOut(duration: HZResume.dureeDEntree), value: splitsRevealed)
+    }
+
+    private func cellule(_ libelle: String, _ valeur: String, grande: Bool) -> some View {
         VStack(alignment: .leading, spacing: HZLive.entreCibleEtValeur) {
             Text(libelle)
                 .hzTexte(.c13, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
             Text(verbatim: valeur)
-                .hzAffichage(.mesure)
+                .hzAffichage(grande ? .mesure : .chiffreDeLigne)
                 .lineLimit(1)
                 .minimumScaleFactor(HZLive.reductionDeLAllure)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, HZEspace.groupe)
         .padding(.vertical, HZEspace.tuile)
-        .background(HZCouleur.surfaceClaire, in: RoundedRectangle(cornerRadius: HZRayon.mesure, style: .circular))
-        .opacity(splitsRevealed ? HZResume.opacitePleine : 0)
-        .animation(reduceMotion ? nil : .easeOut(duration: HZResume.dureeDEntree), value: splitsRevealed)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(libelle), \(valeur)")
     }
 
-    /// Les trois mesures secondaires. Le canvas n'en a pas ; elles gardent ce que l'écran donnait déjà.
-    private func petiteTuile(_ libelle: String, _ valeur: String) -> some View {
-        VStack(alignment: .leading, spacing: HZLive.entreCibleEtValeur) {
-            Text(libelle)
-                .hzTexte(.c13, .semi)
-                .foregroundStyle(HZCouleur.secondaireSurClair)
-            Text(verbatim: valeur)
-                .hzAffichage(.chiffreDeLigne)
-                .lineLimit(1)
-                .minimumScaleFactor(HZLive.reductionDeLAllure)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, HZEspace.groupe)
-        .padding(.vertical, HZEspace.tuile)
-        .background(HZCouleur.surfaceClaire, in: RoundedRectangle(cornerRadius: HZRayon.mesure, style: .circular))
-        .opacity(splitsRevealed ? HZResume.opacitePleine : 0)
-        .animation(reduceMotion ? nil : .easeOut(duration: HZResume.dureeDEntree), value: splitsRevealed)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(libelle), \(valeur)")
+    private var filetHorizontal: some View {
+        Rectangle().fill(HZCouleur.filetGroupe)
+            .frame(height: HZMesuresDeLigne.filet)
+    }
+
+    private var filetVertical: some View {
+        Rectangle().fill(HZCouleur.filetGroupe)
+            .frame(width: HZMesuresDeLigne.filet)
+            .padding(.vertical, HZEspace.tuile)
     }
 
     private func recordBanner(_ kind: RecordKind) -> some View {
@@ -463,64 +463,77 @@ struct RecapView: View {
             }
             .padding(.top, HZEspace.entreCommandes)
 
-            // LA VIDÉO, AU MÊME RANG QUE LA CARTE : le même geste avec deux sorties, et la seule des deux
-            // qu'on poste en story.
-            if peutFaireUneVideo(run) {
-                boutonVideo(for: run)
-                    .padding(.top, HZEspace.entreCommandes)
-            }
+            autresSorties(run)
+                .padding(.top, HZEspace.groupe)
+        }
+    }
 
-            // L'export et la publication, gestes rares, au rang de liens. L'itinéraire n'est proposé que
-            // s'il y a vraiment quelque chose à publier : un compte pour en être l'autrice, et un tracé
-            // qui survit au rognage des extrémités. Une feuille qui annoncerait « trop court » serait une
-            // fausse promesse.
-            HStack(spacing: HZEspace.entreCommandes) {
-                if let gpxURL = GPXExporter.fileURL(for: run) {
-                    ShareLink(item: gpxURL) {
-                        actionDiscrete(dessin: .partager, titre: String(localized: "Exporter en GPX"))
+    /// Ce qu'on peut faire de plus de la sortie, en une seule liste : la vidéo, l'export, la publication.
+    /// L'itinéraire n'est proposé que s'il y a vraiment quelque chose à publier : un compte pour en être
+    /// l'autrice, et un tracé qui survit au rognage des extrémités. Une ligne qui annoncerait « trop court »
+    /// serait une fausse promesse. Si rien n'est possible, la liste n'existe pas.
+    @ViewBuilder
+    private func autresSorties(_ run: RunRecord) -> some View {
+        let video = peutFaireUneVideo(run)
+        let gpx = GPXExporter.fileURL(for: run)
+        let itineraire = appState.auth.isSignedIn && RouteGeometry.shareablePayload(run.route) != nil
+        if video || gpx != nil || itineraire {
+            VStack(spacing: 0) {
+                if video {
+                    ligneVideo(for: run)
+                }
+                if let gpx {
+                    if video { filetHorizontal }
+                    ShareLink(item: gpx) {
+                        ligneDAction(dessin: .partager, titre: String(localized: "Exporter en GPX"))
                     }
                     .buttonStyle(.plain)
                 }
-                if appState.auth.isSignedIn, RouteGeometry.shareablePayload(run.route) != nil {
+                if itineraire {
+                    if video || gpx != nil { filetHorizontal }
                     Button {
                         Haptics.selection()
                         showPublishRoute = true
                     } label: {
-                        actionDiscrete(dessin: .itineraire, titre: String(localized: "Publier l'itinéraire"))
+                        ligneDAction(dessin: .itineraire, titre: String(localized: "Publier l'itinéraire"))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(String(localized: "Publier l'itinéraire"))
                 }
             }
-            .padding(.top, HZEspace.entreCommandes)
+            .background(HZCouleur.surfaceClaire, in: RoundedRectangle(cornerRadius: HZRayon.groupe, style: .circular))
         }
     }
 
-    private func actionDiscrete(dessin: HZDessin, titre: String) -> some View {
-        HStack(spacing: HZEspace.entrePilules) {
+    private func ligneDAction(dessin: HZDessin, titre: String) -> some View {
+        HStack(spacing: HZEspace.entreCommandes) {
             HZIcone(dessin: dessin, cote: HZResume.cotePartage, couleur: HZCouleur.encre)
-            Text(titre).hzTexte(.c14, .semi)
+            Text(titre)
+                .hzTexte(.c16, .semi)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            HZChevron()
         }
         .foregroundStyle(HZCouleur.encre)
-        .frame(maxWidth: .infinity, minHeight: HZBoutonRond.zoneTactile)
-        .background(HZCouleur.surfaceClaire, in: Capsule())
-        .contentShape(Capsule())
+        .padding(.horizontal, HZEspace.groupe)
+        .frame(minHeight: HZResume.hauteurDeLaLigne)
+        .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
     }
 
-    /// Trois états, un seul bouton : à faire, en train de se faire, à partager.
+    /// Trois états, une seule ligne : à faire, en train de se faire, à partager.
     @ViewBuilder
-    private func boutonVideo(for run: RunRecord) -> some View {
+    private func ligneVideo(for run: RunRecord) -> some View {
         if let videoURL {
             ShareLink(item: videoURL) {
-                pilulePleine(String(localized: "Partager la vidéo"), dessin: .partager)
+                ligneDAction(dessin: .partager, titre: String(localized: "Partager la vidéo"))
             }
             .buttonStyle(.plain)
         } else if videoEnCours != nil {
-            VStack(spacing: HZEspace.entrePilules) {
-                pilulePleine(String(localized: "Je fabrique ta vidéo…"), dessin: .lecture,
-                             cote: HZBoutonPilule.coteDeLecture, ecart: HZBoutonPilule.ecartDeLecture)
-                    .opacity(HZResume.opaciteEteinte)
+            VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
+                HStack(spacing: HZEspace.entreCommandes) {
+                    HZIcone(dessin: .lecture, cote: HZResume.cotePartage, couleur: HZCouleur.encre)
+                    Text(String(localized: "Je fabrique ta vidéo…")).hzTexte(.c16, .semi)
+                }
                 // L'avancement est réel, image par image : c'est la seule chose qui dise que l'app
                 // travaille plutôt qu'elle ne bloque.
                 Capsule()
@@ -533,27 +546,19 @@ struct RecapView: View {
                         }
                     }
             }
+            .foregroundStyle(HZCouleur.encre)
+            .padding(.horizontal, HZEspace.groupe)
+            .padding(.vertical, HZMesuresDeLigne.margeDeSortie)
+            .frame(minHeight: HZResume.hauteurDeLaLigne)
         } else {
-            HZBoutonPilule(libelle: String(localized: "Faire ma vidéo"), dessin: .lecture,
-                           fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre, etendu: true,
-                           cote: HZBoutonPilule.coteDeLecture, ecart: HZBoutonPilule.ecartDeLecture) {
+            Button {
                 Haptics.selection()
                 lanceLaVideo(for: run)
+            } label: {
+                ligneDAction(dessin: .lecture, titre: String(localized: "Faire ma vidéo"))
             }
+            .buttonStyle(.plain)
         }
-    }
-
-    private func pilulePleine(_ titre: String, dessin: HZDessin, cote: CGFloat = HZResume.cotePartage,
-                              ecart: CGFloat = HZEspace.entrePilules) -> some View {
-        HStack(spacing: ecart) {
-            HZIcone(dessin: dessin, cote: cote, couleur: HZCouleur.encre)
-            Text(titre).hzTexte(.c16, .gras)
-        }
-        .foregroundStyle(HZCouleur.encre)
-        .frame(maxWidth: .infinity)
-        .frame(height: HZHauteurDeBouton.grande.rawValue)
-        .background(HZCouleur.surfaceClaire, in: Capsule())
-        .contentShape(Capsule())
     }
 
     // MARK: - Le rendu de la carte
