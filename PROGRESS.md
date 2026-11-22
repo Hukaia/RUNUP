@@ -9087,3 +9087,21 @@ Nouvelle mesure `HZResume.hauteurDeLaLigne` ; aucun nombre en dur dans la vue. V
 le rendu, à relire sur la capture Refonte (`resume.png`, `resume-bas.png`) au prochain build.
 
 Correction : le build #689 (commit Club) était rouge à la compilation des tests, `TraceDuFilTests` utilisait `EmptyView` sans `import SwiftUI`. Ajouté ; les tests du lissage n'avaient donc pas tourné.
+
+## Courses du monde : un catalogue sourcé et des caractéristiques (22 novembre)
+
+Charlotte : « plus de course dans le monde entier avec leurs caractéristiques ». Choisi avec elle : pays et ville de départ, distances et dénivelé, surface et profil,
+date, heure de départ, inscription et lien officiel.
+- **Catalogue : 9 → 52 courses, 22 pays** (Europe 27, Amérique du Nord 8, Asie 7, Afrique 5, Amérique du Sud 3, Océanie 2). Majors, grands trails et ultras, Challenge Roth, IRONMAN 70.3 Worlds,
+  HYROX Worlds. Chaque course porte sa `source` (URL lue) et sa date de vérification (`verified_on`) ; `db/semer_courses.js` refuse une caractéristique sans source, une course passée, un doublon.
+  Je n'ai pas atteint la centaine : mieux vaut 52 lignes sourcées que 100 devinées. Écartées faute de source ou de date 2027 (UTMB, Tor des Géants, Marseille-Cassis, Melbourne, Auckland,
+  Marine Corps, Toronto, Mexico, Hawaï, Séoul, Kigali, Tel Aviv, Buenos Aires, Francfort, MIUT, UTMF, Singapour, Amsterdam) : à compléter quand l'organisateur publie.
+  Moins solides, à relire : Séville et Prague (date relayée par Finishers), Edimbourg (pas d'ouverture des inscriptions), Great Wall et Dubaï (formats par un revendeur / la presse), Transvulcania, São Paulo.
+- **Règle** : une valeur absente reste absente (null), jamais inventée ni écrite « — ». Le statut d'inscription est une photo datée (« relevée le … ») : c'est la donnée qui se périme le plus vite.
+  Relancer `node db/semer_courses.js` à chaque nouvelle édition annoncée.
+- **Serveur** : 9 colonnes (`country`, `distances_km`, `surface`, `profile`, `start_time`, `registration_status`, `registration_url`, `registration_opens`, `verified_on`) dans `db/schema.sql` ;
+  recherche par pays ; `upcoming` filtrable par discipline et pays. **À faire par Charlotte : coller `db/A_COLLER_courses_monde.sql` dans la console Neon** (idempotent, ne touche à aucune saisie de coureur).
+  Le serveur se déploie avant l'app ; une app déjà installée ignore les nouveaux champs.
+- **App** : `RacePageView` (section « La course », bouton « Inscription sur le site officiel »), `RaceDiscoveryView` (rangée de filtres par épreuve, recherche par pays), `CreateRaceSheet`
+  (pays, surface, profil, lien), listes trail et HYROX demandées au serveur. 25 clés en fr/en/es. Aucun jeton nouveau.
+- **Vérifié** : 40 tests Node, contrôles du dépôt. **Non vu** : tout le Swift a été écrit sans compilateur (CI à lire), l'aspect des écrans (captures à faire), les requêtes contre le vrai Neon.
