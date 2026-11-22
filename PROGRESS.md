@@ -9003,3 +9003,10 @@ gauche (la place vide après la dernière carte valait 0 : `containerRelativeFra
 contenu), jeudi à 36 points avec la voisine à droite, et un balayage réel (`plan-glisse`) pose samedi à 36 points et fait passer la
 pastille de la rangée sur « S ». Reste à juger sur l'appareil : l'élan, la reprise du geste, le rebond. Build #679 (le Plan natif avec
 le défaut de placement de dimanche) distribué ; le correctif de dimanche est sur la branche.
+
+**Live Activity : la carte 2 de la maquette (22 novembre).** Charlotte a dit que la Live Activity ne ressemblait pas aux maquettes ; sa capture
+de l'écran verrouillé montrait la carte 1 (deux colonnes), pas la carte 2 (chrono en fonte d'affichage, barre pleine largeur, tuiles côte à côte),
+que j'avais écartée parce que la pile mesurait ~172 points pour un plafond d'iOS d'environ 160, sans le lui dire. Elle a choisi la carte 2.
+Construite en resserrant le corps du chrono (46, `chronoAffichage`), les marges (12) et l'espace entre rangées (6). Le test de rendu REFUSE
+toute carte de plus de 158 points : mesurées en CI, 152 (en direct, en pause, titre long), 154 (terminée), 134 (sans durée prévue).
+L'île dynamique n'a pas bougé. Non vérifié : le rendu réel d'iOS (ses marges, ses coins) et la hauteur réelle sur l'appareil.
