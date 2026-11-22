@@ -9124,3 +9124,34 @@ Charlotte : « l'adhésion à un club n'est pas automatique », et l'esthétique
 
 Premier build qui compile tout le Swift des courses et des clubs (#693) : un seul test rouge, un vrai défaut. `localizedString(forRegionCode:)` rend « Unknown Region » (jamais nil) pour un code
 inconnu, que la page d'une course aurait écrit tel quel. Corrigé : `paysLisible` ne nomme que les codes ISO connus (`codesDePaysConnus`).
+
+## HYROX : une séance par station, et le travail qui n'est pas une station (22 novembre)
+
+Charlotte : « Toutes les stations doivent avoir un entraînement spécifique, et l'entraînement HYROX ne contient pas uniquement les stations présentes lors des compétitions. »
+Choisi avec elle : une station par séance, deux par semaine ; force des jambes, prise/dos/gainage, pliométrie et appuis, mobilité ; consignes sourcées, sans chiffres inventés.
+
+### Ce qui change dans le plan
+- **8 types de séance, un par station** (`ProgrammeHyrox.Station`, dans l'ordre de l'épreuve), à la place des 4 séances « familles » de deux stations. Les familles restent comme **paires de la rotation** :
+  quatre semaines, deux stations par semaine, chacune une fois. L'ordre de la paire s'inverse au cycle suivant. Les anciens types (`hyrox_sleds`…) restent décodables et s'affichent comme avant : un plan enregistré ne casse pas.
+- **4 types de travail complémentaire** (`ProgrammeHyrox.TravailComplementaire`) : force des jambes (squats, fentes chargées), prise/dos/gainage (suspensions, port de charges, tirages, gainage), pliométrie et appuis, mobilité et récupération.
+- **La composition de la semaine** vit dans `ProgrammeHyrox.lesAutresSeances` (fonction pure, testée), selon le nombre de jours de course :
+  | Jours | Séances hors sortie longue |
+  | --- | --- |
+  | 3 ou moins | une station, du footing (les stations de la 2ᵉ place passent en 8 semaines, pas en 4) |
+  | 4 | station A, footing ou travail complémentaire (une semaine sur deux), station B |
+  | 5 | station A, footing, station B, un travail complémentaire chaque semaine |
+  | 6 et plus | idem, plus un second footing |
+  Les deux stations ne sont jamais sur deux jours de course consécutifs ; elles prennent les deux places de qualité du plafond ; la sortie longue reste la course compromise.
+
+### Deux arbitrages à connaître (et à relire)
+1. **Il n'y a plus de tempo séparé** dans le bloc spécifique. Avec deux stations, il aurait été la troisième séance dure, et le plafond l'aurait remplacé par un footing. La qualité à pied vient de la course
+   compromise 6 × 1 km au rythme course. La semaine porte donc moins de course de qualité qu'avant, pour une épreuve qui est à moitié de la course.
+2. **À quatre jours de course, le footing cède une semaine sur deux** au travail complémentaire. À trois jours, il n'y a pas de travail complémentaire du tout : la semaine n'a pas la place.
+
+### Ce qui est sourcé, et ce qui ne l'est pas
+- **Stations** : chaque séance affiche la distance et la charge de la division (règlement 26/27), et « le geste validé », reprenant les points de la section 8 du règlement qui font accepter ou refuser une répétition
+  (pieds du SkiErg, couloir du sled, debout au sled pull, poitrine au sol et pieds ensemble au burpee broad jump, assis au rameur, kettlebells bras tendus, genou arrière au sol aux fentes, squat sous le parallèle aux wall balls).
+- **Complément** : aucun plan officiel pour adultes n'est publié par HYROX (seulement des programmes de partenaires). L'app ne prescrit **ni séries, ni répétitions, ni charge** pour ce travail : elle nomme les gestes et ce qui
+  les relie à l'épreuve quand une source le dit (le règlement pour le squat et la fente ; hyrox.com pour ce que le farmers carry sollicite : haut du dos, gainage, prise). Un test échoue si un chiffre y entre.
+  Le contenu n'a **pas** été relu par quelqu'un qui a couru un HYROX (voir le tableau « Ce qui attend » en haut de ce fichier).
+- **Non vérifié** : tout le Swift (nouveau fichier, moteur, fiche, tests) est écrit sans compilateur, la CI le dira ; aucun rendu de la fiche d'une séance de station ou de complément n'a été photographié.

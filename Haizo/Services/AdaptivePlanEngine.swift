@@ -1024,49 +1024,49 @@ enum AdaptivePlanEngine {
         // Les charges s'affichent donc là où elles peuvent : la fiche détail, qui a le profil donc
         // la division, et qui les nomme station par station (voir `ChargesHyrox.stations`).
 
-        // LA FAMILLE DE LA SEMAINE, et une seule.
+        // DEUX STATIONS PAR SEMAINE, CHACUNE DANS SA SÉANCE, ET LE TRAVAIL QUI N'EST PAS UNE STATION.
         //
-        // Le plafond du moteur autorise deux séances de qualité par semaine. Une famille prend une
-        // place ; la seconde reste à une séance de qualité EN COURANT, parce que l'épreuve fait
-        // huit kilomètres de course — la moitié du temps de course pour la plupart des gens — et
-        // que préparer les stations en abandonnant la vitesse à pied serait préparer la moitié de
-        // l'épreuve. Voir `ChargesHyrox.FamilleDeStations`.
-        let famille = ChargesHyrox.FamilleDeStations.pourLaSemaine(weekNumber)
-        let stationsDeLaSemaine = SessionArchetype(
-            role: .speed, title: "Stations de la semaine",
-            subtitle: "les deux stations de la famille du moment, à charge de course",
-            pace: "—", zone: "Z3-4", baseDuration: 40, kind: famille.kind
-        )
+        // La composition de la semaine est décidée par `ProgrammeHyrox.lesAutresSeances`, qui dit
+        // pourquoi l'ordre compte et ce que le nombre de jours de course change. Le moteur ne fait
+        // que traduire chaque place en archétype : les deux stations sont les deux séances de
+        // qualité que le plafond autorise, la course compromise est la sortie longue du bloc.
+        let places = ProgrammeHyrox.lesAutresSeances(semaine: weekNumber,
+                                                      joursDeCourse: profile.runningDays.count)
         let footing = SessionArchetype(
             role: .easy, title: "Footing base HYROX",
             subtitle: "endurance de fond : construit le volume de course du format",
             pace: zones.easy, zone: "Z2", baseDuration: 30, kind: .hyroxBaseFooting
         )
+        func archetype(_ place: ProgrammeHyrox.Place) -> SessionArchetype {
+            switch place {
+            case .footing:
+                return footing
+            case .station(let station):
+                return SessionArchetype(
+                    role: .speed, title: station.nom,
+                    subtitle: "la station seule, à charge de course",
+                    pace: "—", zone: "Z3-4", baseDuration: 40, kind: station.kind
+                )
+            case .complement(let travail):
+                return SessionArchetype(
+                    role: .easy,
+                    title: travail.titreEnregistre,
+                    subtitle: "travail complémentaire, sans séries prescrites",
+                    pace: "—", zone: travail == .mobilite ? "Récup" : "Technique",
+                    baseDuration: travail == .mobilite ? 25 : 35, kind: travail.kind
+                )
+            }
+        }
+        let autres = places.map(archetype)
 
         let base: [SessionArchetype]
         switch block {
-        // DEUX FOOTINGS DANS LA LISTE, ET CE N'EST PAS UNE FAUTE DE COPIE.
-        //
-        // Les archétypes hors sortie longue sont distribués dans l'ordre des jours de course, en
-        // bouclant sur la liste. Avec deux entrées seulement, quatre jours de course donneraient
-        // famille, footing, famille — soit DEUX séances de station dans la semaine, ce que la
-        // rotation d'une famille par semaine est censée exclure. Trois entrées suffisent à ce que
-        // la famille ne tombe qu'une fois jusqu'à cinq jours de course.
         case .base:
-            base = [
-                stationsDeLaSemaine,
-                footing,
-                footing,
+            base = autres + [
                 SessionArchetype(role: .longRun, title: "Course compromise 3 × 1 km", subtitle: "course + bloc fonctionnel entre chaque km : apprivoise la fatigue du format", pace: zones.easy, zone: "Z2-3", baseDuration: 40, kind: .hyroxCompromisedRun3, intervals: IntervalStructure(reps: 3, repMeters: 1000, recoveryMeters: nil))
             ]
-        // LE FOOTING ENTRE LES DEUX SÉANCES DURES, et pas en fin de liste : même raison d'ordre.
-        // En dernier, la famille et le tempo tomberaient sur deux jours de course consécutifs —
-        // ce que le moteur interdit par ailleurs (voir `SessionMove.stacksHardDays`).
         case .specifique:
-            base = [
-                stationsDeLaSemaine,
-                footing,
-                SessionArchetype(role: .speed, title: "Tempo course", subtitle: "allure seuil tenue : la moitié de l'épreuve se court", pace: zones.threshold, zone: "Z3", baseDuration: 35, kind: .tempoRun),
+            base = autres + [
                 SessionArchetype(role: .longRun, title: "Course compromise 6 × 1 km", subtitle: "simulation partielle : course + fonctionnel enchaînés, rythme course visé", pace: zones.marathon, zone: "Z3", baseDuration: 55, kind: .hyroxCompromisedRun6, intervals: IntervalStructure(reps: 6, repMeters: 1000, recoveryMeters: nil))
             ]
         case .affutage:

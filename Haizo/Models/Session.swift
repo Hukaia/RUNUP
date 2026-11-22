@@ -164,12 +164,27 @@ enum SessionKind: String, Codable, Equatable, CaseIterable {
     case stridesFooting = "strides_footing"
     case easedLongRun = "eased_long_run"
     case hyroxBaseFooting = "hyrox_base_footing"
-    // LES QUATRE FAMILLES DE STATIONS, une par semaine en rotation — voir
-    // `ChargesHyrox.FamilleDeStations`, qui dit d'où vient ce découpage et ce qu'il n'affirme pas.
+    // LES QUATRE FAMILLES DE STATIONS (deux stations par séance) : LEGACY. Le programme n'en produit
+    // plus — chaque station a maintenant sa séance, plus bas — mais un plan enregistré peut encore en
+    // porter une, et un type qu'on ne sait plus décoder ferait perdre la séance. À ne pas supprimer.
     case hyroxSleds = "hyrox_sleds"
     case hyroxPort = "hyrox_port"
     case hyroxSolDebout = "hyrox_sol_debout"
     case hyroxErgometres = "hyrox_ergometres"
+    // UNE SÉANCE PAR STATION, dans l'ordre de l'épreuve — voir `ProgrammeHyrox.Station`.
+    case hyroxStationSkiErg = "hyrox_station_skierg"
+    case hyroxStationSledPush = "hyrox_station_sled_push"
+    case hyroxStationSledPull = "hyrox_station_sled_pull"
+    case hyroxStationBurpee = "hyrox_station_burpee"
+    case hyroxStationRameur = "hyrox_station_rameur"
+    case hyroxStationFarmers = "hyrox_station_farmers"
+    case hyroxStationFentes = "hyrox_station_fentes"
+    case hyroxStationWallBalls = "hyrox_station_wall_balls"
+    // LE TRAVAIL QUI N'EST PAS UNE STATION — voir `ProgrammeHyrox.TravailComplementaire`.
+    case hyroxForceJambes = "hyrox_force_jambes"
+    case hyroxGripDosGainage = "hyrox_grip_dos_gainage"
+    case hyroxPliometrie = "hyrox_pliometrie"
+    case hyroxMobilite = "hyrox_mobilite"
     /// Les deux séances fonctionnelles existent en version standard et « charge renforcée »
     /// (division pro). C'était une interpolation dans le sous-titre — deux cas distincts plutôt
     /// qu'une phrase à trous, parce qu'une phrase à trous se traduit mal : l'espagnol et l'anglais
@@ -375,6 +390,9 @@ enum SessionKind: String, Codable, Equatable, CaseIterable {
              .hyroxCompromisedRun3, .hyroxCompromisedRun6, .hyroxCompromisedRunLight2,
              .hyroxStationsReminder, .hyroxLightSimulation, .hyroxLightFunctional,
              .hyroxSleds, .hyroxPort, .hyroxSolDebout, .hyroxErgometres,
+             .hyroxStationSkiErg, .hyroxStationSledPush, .hyroxStationSledPull, .hyroxStationBurpee,
+             .hyroxStationRameur, .hyroxStationFarmers, .hyroxStationFentes, .hyroxStationWallBalls,
+             .hyroxForceJambes, .hyroxGripDosGainage, .hyroxPliometrie, .hyroxMobilite,
              // La technique de nage et les transitions : hors de l'axe d'effort, comme le
              // renforcement HYROX. Ce qu'on y travaille n'est pas une filière énergétique, c'est
              // un geste — et dans les deux cas, c'est là que se trouvent les minutes les moins
@@ -431,7 +449,10 @@ enum SessionKind: String, Codable, Equatable, CaseIterable {
              .hyroxCompromisedRunLight2, .hyroxTempoSled, .hyroxMaintenanceFooting,
              .hyroxStationsReminder, .hyroxLightSimulation, .hyroxRecoveryFooting,
              .hyroxLightFunctional,
-             .hyroxSleds, .hyroxPort, .hyroxSolDebout, .hyroxErgometres:
+             .hyroxSleds, .hyroxPort, .hyroxSolDebout, .hyroxErgometres,
+             .hyroxStationSkiErg, .hyroxStationSledPush, .hyroxStationSledPull, .hyroxStationBurpee,
+             .hyroxStationRameur, .hyroxStationFarmers, .hyroxStationFentes, .hyroxStationWallBalls,
+             .hyroxForceJambes, .hyroxGripDosGainage, .hyroxPliometrie, .hyroxMobilite:
             return [.run]
 
         case .ultraEnduranceFooting, .ultraHillRepeats, .ultraPowerHike, .ultraLongRun,

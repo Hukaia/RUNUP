@@ -255,42 +255,81 @@ final class AdaptivePlanEngineSafetyTests: XCTestCase {
         }
     }
 
-    /// UNE SEULE SÉANCE DE STATIONS PAR SEMAINE, ET UNE QUALITÉ EN COURANT À CÔTÉ.
+    /// DEUX STATIONS PAR SEMAINE AU PLUS, JAMAIS SUR DEUX JOURS DE COURSE CONSÉCUTIFS.
     ///
-    /// La répartition choisie : une famille de stations à charge de course, plus une séance de
-    /// qualité à pied — parce que l'épreuve fait huit kilomètres de course, soit la moitié du
-    /// temps de course pour la plupart des gens.
-    ///
-    /// Le piège est dans la DISTRIBUTION, pas dans la liste : les archétypes hors sortie longue
-    /// tournent en bouclant sur la liste, donc une liste trop courte répète la famille et en fait
-    /// deux séances dures. Ce cas l'éprouve sur quatre jours de course, le plus fréquent.
+    /// La répartition choisie par Charlotte : chaque station a sa séance, deux par semaine. Elles
+    /// prennent les deux places de qualité que le plafond autorise ; une troisième serait remplacée
+    /// par un footing, et deux stations dos à dos seraient deux jours durs de suite. Éprouvé pour
+    /// trois à six jours de course, sur toutes les semaines du bloc de build.
     @MainActor
-    func testUneSeuleSeanceDeStationsParSemaineEnSpecifique() {
-        let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15,
-                                  runningDays: [0, 2, 4, 6])
-        let s = shape(for: profile)
-        guard let total = s.totalWeeks else { return XCTFail("un HYROX daté doit avoir une durée") }
+    func testDeuxStationsParSemaineAuPlusEtJamaisDosADos() {
+        for jours in [[0, 2, 6], [0, 2, 4, 6], [0, 1, 3, 4, 6], [0, 1, 2, 4, 5, 6]] {
+            let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15, runningDays: jours)
+            let s = shape(for: profile)
+            let buildWeeks = s.baseWeeks + s.specificWeeks
+            guard buildWeeks > 0 else { return XCTFail("un HYROX daté doit avoir des semaines de build") }
 
-        for week in 1...total {
+            for week in 1...buildWeeks {
+                let semaine = AdaptivePlanEngine
+                    .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
+                let jourDesStations = semaine.filter {
+                    $0.session?.kind.flatMap(ProgrammeHyrox.Station.pour) != nil
+                }.map(\.weekday)
+                XCTAssertLessThanOrEqual(jourDesStations.count, 2,
+                                         "\(jours.count) jours, S\(week) : \(jourDesStations.count) séances de stations")
+                if jourDesStations.count == 2 {
+                    XCTAssertGreaterThan(abs(jourDesStations[0] - jourDesStations[1]), 1,
+                                         "\(jours.count) jours, S\(week) : deux stations sur deux jours de suite")
+                }
+            }
+        }
+    }
+
+    /// QUATRE JOURS DE COURSE ET PLUS PORTENT LES DEUX STATIONS ; CHAQUE STATION REVIENT EN CYCLE.
+    ///
+    /// Avec quatre jours, la semaine a les deux stations, la sortie longue et un troisième jour. Sur
+    /// quatre semaines du bloc de base, les huit stations passent chacune une fois.
+    @MainActor
+    func testLesHuitStationsPassentSurQuatreSemainesAvecQuatreJours() {
+        let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15, runningDays: [0, 2, 4, 6])
+        let s = shape(for: profile)
+        guard s.baseWeeks >= 4 else { return XCTFail("quatre semaines de base au moins") }
+
+        var vues: [ProgrammeHyrox.Station] = []
+        for week in 1...4 {
+            let kinds = AdaptivePlanEngine
+                .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
+                .compactMap { $0.session?.kind }
+            let stations = kinds.compactMap(ProgrammeHyrox.Station.pour)
+            XCTAssertEqual(stations.count, 2, "S\(week) : deux stations avec quatre jours de course")
+            vues += stations
+        }
+        XCTAssertEqual(Set(vues).count, 8, "les huit stations sur quatre semaines")
+    }
+
+    /// LE TRAVAIL COMPLÉMENTAIRE ENTRE DANS LE PLAN, ET LE PLAFOND DE QUALITÉ TIENT TOUJOURS.
+    ///
+    /// À cinq jours, un travail complémentaire chaque semaine. Il est de rôle facile : ajouté aux deux
+    /// stations, il ne doit pas faire sauter le plafond de deux séances dures.
+    @MainActor
+    func testLeTravailComplementaireEntreSansFaireSauterLePlafond() {
+        let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15,
+                                  runningDays: [0, 1, 3, 4, 6])
+        let s = shape(for: profile)
+        var vus = Set<ProgrammeHyrox.TravailComplementaire>()
+        for week in 1...(s.baseWeeks + s.specificWeeks) {
             let seances = AdaptivePlanEngine
                 .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
                 .compactMap { $0.session }
-            let stations = seances.filter {
-                $0.kind.flatMap(ChargesHyrox.FamilleDeStations.pour) != nil
+            let complements = seances.compactMap { $0.kind.flatMap(ProgrammeHyrox.TravailComplementaire.pour) }
+            XCTAssertEqual(complements.count, 1, "S\(week) : un travail complémentaire à cinq jours")
+            vus.formUnion(complements)
+            let dures = seances.filter { seance in
+                seance.role == .speed && (seance.kind?.disciplines.contains(where: \.wearsShoes) ?? false)
             }
-            XCTAssertLessThanOrEqual(stations.count, 1,
-                                     "S\(week) programme \(stations.count) séances de stations")
+            XCTAssertLessThanOrEqual(dures.count, 2, "S\(week) : \(dures.count) séances dures")
         }
-
-        // Et le bloc spécifique garde bien une qualité EN COURANT à côté de la famille.
-        let specifique = s.baseWeeks + 1
-        let seances = AdaptivePlanEngine
-            .generateWeekSessions(weekNumber: specifique, tier: profile.weekTier, profile: profile)
-            .compactMap { $0.session }
-        XCTAssertTrue(seances.contains { $0.kind == .tempoRun },
-                      "S\(specifique) ne contient aucune séance de qualité à pied")
-        XCTAssertTrue(seances.contains { $0.kind.flatMap(ChargesHyrox.FamilleDeStations.pour) != nil },
-                      "S\(specifique) ne contient aucune séance de stations")
+        XCTAssertEqual(vus.count, 4, "les quatre travaux passent sur le bloc")
     }
 
     /// CHAQUE BLOC DE BUILD GARDE UNE SÉANCE FACILE, DANS LES CINQ FAMILLES.

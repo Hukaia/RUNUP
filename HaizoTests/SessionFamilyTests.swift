@@ -55,6 +55,9 @@ final class SessionFamilyTests: XCTestCase {
             .hyroxTechnique, .hyroxTechniquePro, .hyroxIntenseCircuit, .hyroxIntenseCircuitPro,
             .hyroxCompromisedRun3, .hyroxCompromisedRun6, .hyroxCompromisedRunLight2,
             .hyroxStationsReminder, .hyroxLightSimulation, .hyroxLightFunctional,
+            .hyroxStationSkiErg, .hyroxStationSledPush, .hyroxStationSledPull, .hyroxStationBurpee,
+            .hyroxStationRameur, .hyroxStationFarmers, .hyroxStationFentes, .hyroxStationWallBalls,
+            .hyroxForceJambes, .hyroxGripDosGainage, .hyroxPliometrie, .hyroxMobilite,
         ]
         for kind in expected {
             XCTAssertEqual(kind.family, .functional, "\(kind.rawValue)")

@@ -150,13 +150,44 @@ struct SessionDetailSheet: View {
             return choisies.map { ($0.nom, $0.prescription, HZCouleur.accent) }
         }
 
-        // UNE SÉANCE DE FAMILLE NE MONTRE QUE SES DEUX STATIONS. Afficher les huit sur une séance
-        // qui en travaille deux ferait lire une liste dont six lignes ne concernent pas le jour.
-        if let kind, let famille = ChargesHyrox.FamilleDeStations.pour(kind) {
+        // UNE SÉANCE DE STATION NE MONTRE QUE SA STATION : sa distance et sa charge pour la division,
+        // le geste tel que le juge le valide, et la façon de la travailler. Afficher les huit sur une
+        // séance qui en travaille une ferait lire une liste dont sept lignes ne concernent pas le jour.
+        if let kind, let station = ProgrammeHyrox.Station.pour(kind) {
+            let ligne = charges.flatMap { charges -> (String, String, Color)? in
+                let toutes = charges.stations
+                guard toutes.indices.contains(station.rang) else { return nil }
+                return (toutes[station.rang].nom, toutes[station.rang].prescription, HZCouleur.accent)
+            } ?? (station.nom, String(localized: "choisis ta division pour voir ta charge"),
+                  HZCouleur.secondaireSurClair)
+            return [
+                (String(localized: "\(session.durationMinutes)′ · une station"),
+                 String(localized: "\(session.zone) · à charge de course, technique avant charge"),
+                 HZCouleur.accent),
+                ligne,
+                (String(localized: "Le geste validé"), station.standard, HZCouleur.secondaireSurClair),
+                (String(localized: "Comment la travailler"),
+                 String(localized: "la station entière, puis tu reprends quand le souffle est revenu · arrête la série quand le geste ne respecte plus le standard"),
+                 HZCouleur.secondaireSurClair)
+            ]
+        }
+
+        // UN PLAN ENREGISTRÉ AVANT LES SÉANCES PAR STATION peut porter l'ancienne séance de deux
+        // stations : elle s'affiche comme avant, ses deux stations et leurs charges.
+        if let kind, let famille = ChargesHyrox.FamilleDeStations.enregistree(kind) {
             return [(String(localized: "\(session.durationMinutes)′ · deux stations"),
                      String(localized: "\(session.zone) · à charge de course, technique avant charge"),
                      HZCouleur.accent)]
                 + stations(famille.rangs)
+        }
+
+        // LE TRAVAIL COMPLÉMENTAIRE : les gestes et ce qui les relie à l'épreuve, jamais de séries.
+        // Aucune source publiée n'en donne pour un programme d'adulte, et la séance le dit.
+        if let kind, let travail = ProgrammeHyrox.TravailComplementaire.pour(kind) {
+            return [(String(localized: "\(session.durationMinutes)′ · travail complémentaire"),
+                     String(localized: "\(session.zone) · pas de séries prescrites : choisis une charge qui garde le geste propre, et arrête avant qu'il se dégrade"),
+                     HZCouleur.accent)]
+                + travail.gestes.map { ($0.nom, $0.intention, HZCouleur.secondaireSurClair) }
         }
 
         switch kind {

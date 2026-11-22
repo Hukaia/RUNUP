@@ -255,16 +255,37 @@ final class ChargesHyroxTests: XCTestCase {
                       "deux stations par famille")
     }
 
-    /// Chaque famille a son propre type de séance, et on retrouve la famille depuis le type.
-    func testChaqueFamilleAUnTypeDeSeanceDistinct() {
-        let types = ChargesHyrox.FamilleDeStations.allCases.map(\.kind)
-        XCTAssertEqual(Set(types).count, 4, "aucun type partagé entre deux familles")
-        for famille in ChargesHyrox.FamilleDeStations.allCases {
-            XCTAssertEqual(ChargesHyrox.FamilleDeStations.pour(famille.kind), famille)
+    /// CHAQUE STATION A SA SÉANCE : huit types distincts, et on retrouve la station depuis le type.
+    func testChaqueStationAUnTypeDeSeanceDistinct() {
+        let types = ProgrammeHyrox.Station.allCases.map(\.kind)
+        XCTAssertEqual(types.count, 8)
+        XCTAssertEqual(Set(types).count, 8, "aucun type partagé entre deux stations")
+        for station in ProgrammeHyrox.Station.allCases {
+            XCTAssertEqual(ProgrammeHyrox.Station.pour(station.kind), station)
         }
-        // Un type qui n'est pas une famille ne doit pas en désigner une par accident.
-        XCTAssertNil(ChargesHyrox.FamilleDeStations.pour(.hyroxBaseFooting))
-        XCTAssertNil(ChargesHyrox.FamilleDeStations.pour(.tempoRun))
+        // Un type qui n'est pas une station ne doit pas en désigner une par accident.
+        XCTAssertNil(ProgrammeHyrox.Station.pour(.hyroxBaseFooting))
+        XCTAssertNil(ProgrammeHyrox.Station.pour(.tempoRun))
+        XCTAssertNil(ProgrammeHyrox.Station.pour(.hyroxSleds), "l'ancienne séance de deux stations n'en est pas une")
+    }
+
+    /// Le rang d'une station est celui de l'épreuve, et les noms sont ceux de `stations`.
+    func testLeRangDUneStationEstCeluiDeLEpreuve() {
+        XCTAssertEqual(ProgrammeHyrox.Station.allCases.map(\.rang), Array(0..<8))
+        let charges = HyroxDivision.hommes.charges
+        for station in ProgrammeHyrox.Station.allCases {
+            XCTAssertEqual(charges?.stations[station.rang].nom, station.nom,
+                           "le rang \(station.rang) doit nommer la même station dans les deux listes")
+        }
+    }
+
+    /// LES ANCIENNES SÉANCES DE DEUX STATIONS SE RETROUVENT, pour un plan déjà enregistré.
+    func testLesAnciennesSeancesDeDeuxStationsRestentLisibles() {
+        XCTAssertEqual(ChargesHyrox.FamilleDeStations.enregistree(.hyroxSleds), .pousserTirer)
+        XCTAssertEqual(ChargesHyrox.FamilleDeStations.enregistree(.hyroxErgometres), .ergometres)
+        XCTAssertNil(ChargesHyrox.FamilleDeStations.enregistree(.hyroxStationSledPush))
+        XCTAssertEqual(SessionKind(rawValue: "hyrox_sleds"), .hyroxSleds,
+                       "un plan enregistré avec l'ancien type doit toujours se décoder")
     }
 
     /// LA ROTATION PASSE PAR LES QUATRE EN QUATRE SEMAINES, puis recommence.

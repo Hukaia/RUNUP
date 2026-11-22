@@ -93,14 +93,20 @@ struct ChargesHyrox: Equatable, Sendable {
     /// affirmation physiologique n'est portée ici : le règlement donne un format, pas une méthode,
     /// et ce que la source ne dit pas, ce fichier ne l'invente pas.
     ///
-    /// # UNE FAMILLE PAR SEMAINE, À CHARGE RÉELLE
+    /// # LES FAMILLES NE SONT PLUS DES SÉANCES : ELLES SONT LES PAIRES DE LA ROTATION
     ///
-    /// Le plafond du moteur autorise deux séances de qualité par semaine, et toutes les séances
-    /// HYROX comptent comme chaussées. Quatre familles ne peuvent donc pas être dures la même
-    /// semaine. Une famille prend donc UNE place, et la seconde reste à une séance de qualité en
-    /// courant — parce que l'épreuve fait huit kilomètres de course, soit la moitié du temps de
-    /// course pour la plupart des gens, et que préparer les stations en abandonnant la vitesse à
-    /// pied serait préparer la moitié de l'épreuve.
+    /// Depuis le 22 novembre, chaque station a SA séance (`ProgrammeHyrox.Station`). Les quatre
+    /// familles restent comme paires : une semaine travaille les deux stations d'une famille, chacune
+    /// dans sa séance, et la rotation passe par les quatre familles en quatre semaines.
+    ///
+    /// # DEUX STATIONS PAR SEMAINE, À CHARGE RÉELLE
+    ///
+    /// Le plafond du moteur autorise deux séances de qualité par semaine : les deux stations les
+    /// prennent. La qualité EN COURANT vient de la course compromise, la sortie longue du bloc, que
+    /// ce plafond ne compte pas. Il n'y a plus de tempo séparé : avec deux stations, il aurait été
+    /// la troisième séance dure et le moteur l'aurait remplacé en silence par un footing. C'est un
+    /// arbitrage de Charlotte (22 novembre) : l'épreuve compte la moitié de course, et la semaine
+    /// porte maintenant moins de course de qualité qu'avant. À relire sur le retour de qui s'entraîne.
     enum FamilleDeStations: String, CaseIterable, Equatable, Sendable {
         /// Sled push et sled pull : les deux charges les plus lourdes.
         case pousserTirer
@@ -121,19 +127,22 @@ struct ChargesHyrox: Equatable, Sendable {
             }
         }
 
-        /// Le type de séance qui travaille cette famille.
-        var kind: SessionKind {
-            switch self {
-            case .pousserTirer: return .hyroxSleds
-            case .porter: return .hyroxPort
-            case .solDebout: return .hyroxSolDebout
-            case .ergometres: return .hyroxErgometres
-            }
+        /// Les deux stations de la famille, dans l'ordre de l'épreuve.
+        var stations: [ProgrammeHyrox.Station] {
+            rangs.compactMap(ProgrammeHyrox.Station.init(rawValue:))
         }
 
-        /// La famille qu'un type de séance travaille, ou `nil` si ce n'en est pas une.
-        static func pour(_ kind: SessionKind) -> FamilleDeStations? {
-            allCases.first { $0.kind == kind }
+        /// La famille d'une séance de l'ANCIEN découpage (deux stations par séance), ou `nil`. Le
+        /// programme n'en produit plus, mais un plan enregistré peut en porter une, et la fiche doit
+        /// pouvoir l'afficher.
+        static func enregistree(_ kind: SessionKind) -> FamilleDeStations? {
+            switch kind {
+            case .hyroxSleds: return .pousserTirer
+            case .hyroxPort: return .porter
+            case .hyroxSolDebout: return .solDebout
+            case .hyroxErgometres: return .ergometres
+            default: return nil
+            }
         }
 
         /// La famille travaillée en semaine `semaine`, en rotation sur quatre semaines.

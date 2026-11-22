@@ -39825,6 +39825,1187 @@
           }
         }
       }
+    },
+    "session.hyrox_station_skierg.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SkiErg"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SkiErg"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SkiErg"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_skierg.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mille mètres, les deux pieds sur la plateforme"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "one thousand metres, both feet on the platform"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mil metros, los dos pies sobre la plataforma"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_sled_push.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sled push"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sled push"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empuje de trineo"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_sled_push.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cinquante mètres en quatre allers, à ta charge de course"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fifty metres in four lengths, at your race weight"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cincuenta metros en cuatro tramos, a tu peso de carrera"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_sled_pull.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sled pull"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sled pull"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrastre de trineo"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_sled_pull.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cinquante mètres en quatre allers, debout, à ta charge de course"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fifty metres in four lengths, standing, at your race weight"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cincuenta metros en cuatro tramos, de pie, a tu peso de carrera"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_burpee.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Burpee broad jumps"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Burpee broad jumps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Burpees con salto"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_burpee.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "quatre-vingts mètres, la poitrine touche le sol à chaque burpee"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "eighty metres, chest on the ground at every burpee"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ochenta metros, el pecho toca el suelo en cada burpee"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_rameur.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rameur"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rowing"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remo"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_rameur.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mille mètres, assis jusqu'au bout"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "one thousand metres, seated all the way"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mil metros, sentado hasta el final"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_farmers.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Farmers carry"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Farmers carry"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Farmers carry"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_farmers.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "deux cents mètres, une kettlebell dans chaque main, bras le long du corps"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "two hundred metres, a kettlebell in each hand, arms by your sides"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "doscientos metros, una kettlebell en cada mano, los brazos a los lados"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_fentes.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fentes sandbag"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sandbag lunges"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zancadas con saco"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_fentes.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cent mètres, le genou arrière touche le sol à chaque fente"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "one hundred metres, the back knee touches the ground on every lunge"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cien metros, la rodilla de atrás toca el suelo en cada zancada"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_wall_balls.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wall balls"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wall balls"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wall balls"
+          }
+        }
+      }
+    },
+    "session.hyrox_station_wall_balls.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cent répétitions, squat sous le parallèle, balle sur la cible"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "one hundred reps, squat below parallel, ball on the target"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cien repeticiones, sentadilla por debajo del paralelo, balón en la diana"
+          }
+        }
+      }
+    },
+    "session.hyrox_force_jambes.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Force des jambes"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leg strength"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fuerza de piernas"
+          }
+        }
+      }
+    },
+    "session.hyrox_force_jambes.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "squats et fentes chargées : les deux gestes que l'épreuve te fait répéter"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "squats and loaded lunges: the two movements the race makes you repeat"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sentadillas y zancadas con carga: los dos gestos que la prueba te hace repetir"
+          }
+        }
+      }
+    },
+    "session.hyrox_grip_dos_gainage.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prise, dos et gainage"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grip, back and core"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agarre, espalda y core"
+          }
+        }
+      }
+    },
+    "session.hyrox_grip_dos_gainage.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ce que le farmers carry sollicite : haut du dos, gainage et prise"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "what the farmers carry works: upper back, core and grip"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lo que trabaja el farmers carry: parte alta de la espalda, core y agarre"
+          }
+        }
+      }
+    },
+    "session.hyrox_pliometrie.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pliométrie et appuis"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plyometrics and footwork"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pliometría y apoyos"
+          }
+        }
+      }
+    },
+    "session.hyrox_pliometrie.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sauts contrôlés, deux pieds ensemble, pour le rythme et la coordination"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "controlled jumps, both feet together, for rhythm and coordination"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "saltos controlados, con los dos pies juntos, para el ritmo y la coordinación"
+          }
+        }
+      }
+    },
+    "session.hyrox_mobilite.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mobilité et récupération"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mobility and recovery"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movilidad y recuperación"
+          }
+        }
+      }
+    },
+    "session.hyrox_mobilite.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gestes lents, sans charge : l'amplitude du squat et des fentes"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "slow movements, no load: the range of the squat and the lunge"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gestos lentos, sin carga: la amplitud de la sentadilla y la zancada"
+          }
+        }
+      }
+    },
+    "les deux pieds reviennent sur la plateforme, même si tu sautes · les talons peuvent dépasser, sans toucher le sol": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "both feet come back onto the platform, even if you jump · heels may hang over the edge, without touching the floor"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "los dos pies vuelven a la plataforma, aunque saltes · los talones pueden sobresalir, sin tocar el suelo"
+          }
+        }
+      }
+    },
+    "le sled et toi restez dans votre couloir · le sled dépasse entièrement la ligne de fin de couloir avant de changer de sens": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the sled and you stay in your lane · the sled passes the end-of-lane line completely before you change direction"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "el trineo y tú os quedáis en vuestro carril · el trineo supera por completo la línea del final del carril antes de cambiar de sentido"
+          }
+        }
+      }
+    },
+    "tu restes debout, jamais assis ni à genoux · tu restes dans ta zone de travail · le sled dépasse entièrement la ligne avant de changer de sens": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you stay standing, never seated or kneeling · you stay in your working area · the sled passes the line completely before you change direction"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "te quedas de pie, nunca sentado ni de rodillas · te quedas en tu zona de trabajo · el trineo supera la línea por completo antes de cambiar de sentido"
+          }
+        }
+      }
+    },
+    "poitrine au sol à chaque burpee · mains à 30 cm au plus devant les orteils · saut en longueur, décollage et réception des deux pieds ensemble, 5 cm d'écart au plus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "chest on the ground at every burpee · hands no more than 30 cm in front of your toes · broad jump, both feet taking off and landing together, 5 cm apart at most"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "el pecho en el suelo en cada burpee · las manos a 30 cm como máximo por delante de los dedos de los pies · salto de longitud, despegue y aterrizaje con los dos pies juntos, 5 cm de diferencia como máximo"
+          }
+        }
+      }
+    },
+    "tu restes assis jusqu'au bout · tu peux t'arrêter, reposer la poignée et récupérer, sans quitter le siège": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you stay seated to the end · you may stop, put the handle down and recover, without leaving the seat"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "te quedas sentado hasta el final · puedes parar, dejar la barra y recuperar, sin dejar el asiento"
+          }
+        }
+      }
+    },
+    "les deux kettlebells portées, bras tendus le long du corps · tu peux les poser pour te reposer, sans qu'elles avancent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "both kettlebells carried, arms extended by your sides · you may put them down to rest, as long as they do not move forward"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "las dos kettlebells en la mano, brazos extendidos a los lados · puedes dejarlas para descansar, siempre que no avancen"
+          }
+        }
+      }
+    },
+    "le genou arrière touche clairement le sol · chaque fente finit debout, genoux et hanches tendus · fentes alternées, sans pas intermédiaire, le sac sur les deux épaules": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the back knee clearly touches the ground · every lunge ends standing, knees and hips extended · alternating lunges, no extra steps, the bag on both shoulders"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "la rodilla de atrás toca claramente el suelo · cada zancada termina de pie, con rodillas y caderas extendidas · zancadas alternas, sin pasos intermedios, el saco sobre los dos hombros"
+          }
+        }
+      }
+    },
+    "départ debout, balle tenue à deux mains · squat complet, hanches sous les genoux · la balle touche la cible · une répétition hors standard ne compte pas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "start standing, ball held in both hands · full squat, hips below the knees · the ball hits the target · a rep that misses the standard does not count"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "salida de pie, balón sujeto con las dos manos · sentadilla completa, caderas por debajo de las rodillas · el balón toca la diana · una repetición que no cumple el estándar no cuenta"
+          }
+        }
+      }
+    },
+    "Squats": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Squats"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sentadillas"
+          }
+        }
+      }
+    },
+    "descends jusqu'à passer les hanches sous les genoux, comme à chaque wall ball": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "go down until your hips pass below your knees, as on every wall ball"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "baja hasta pasar las caderas por debajo de las rodillas, como en cada wall ball"
+          }
+        }
+      }
+    },
+    "Fentes chargées": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loaded lunges"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zancadas con carga"
+          }
+        }
+      }
+    },
+    "alterne les jambes, le genou arrière touche le sol, remonte debout : le geste des fentes sandbag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alternate legs, the back knee touches the ground, come back up standing: the sandbag lunge movement"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alterna las piernas, la rodilla de atrás toca el suelo, sube de pie: el gesto de las zancadas con saco"
+          }
+        }
+      }
+    },
+    "Suspensions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hangs"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colgarse"
+          }
+        }
+      }
+    },
+    "accroche-toi à une barre, bras tendus, le temps que ta prise le permet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hang from a bar, arms straight, for as long as your grip allows"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cuélgate de una barra, con los brazos estirados, el tiempo que tu agarre lo permita"
+          }
+        }
+      }
+    },
+    "Port de charges": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loaded carries"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargas en las manos"
+          }
+        }
+      }
+    },
+    "une kettlebell ou un haltère dans chaque main, bras le long du corps : le geste du farmers carry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a kettlebell or dumbbell in each hand, arms by your sides: the farmers carry movement"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "una kettlebell o una mancuerna en cada mano, brazos a los lados: el gesto del farmers carry"
+          }
+        }
+      }
+    },
+    "Tirages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rows"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remos con peso"
+          }
+        }
+      }
+    },
+    "pour le haut du dos, que le farmers carry sollicite avec le gainage et la prise": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "for the upper back, which the farmers carry works along with the core and grip"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "para la parte alta de la espalda, que el farmers carry trabaja junto con el core y el agarre"
+          }
+        }
+      }
+    },
+    "Gainage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Core work"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trabajo de core"
+          }
+        }
+      }
+    },
+    "planche et variantes, le dos droit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "planks and variations, back straight"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "planchas y variantes, con la espalda recta"
+          }
+        }
+      }
+    },
+    "Sauts en longueur": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Broad jumps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saltos de longitud"
+          }
+        }
+      }
+    },
+    "décollage et réception des deux pieds ensemble, comme au burpee broad jump": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "take off and land with both feet together, as in the burpee broad jump"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "despega y aterriza con los dos pies juntos, como en el burpee con salto"
+          }
+        }
+      }
+    },
+    "Burpees": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Burpees"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Burpees"
+          }
+        }
+      }
+    },
+    "poitrine au sol à chaque répétition, comme à l'épreuve": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "chest on the ground on every rep, as in the race"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "el pecho en el suelo en cada repetición, como en la prueba"
+          }
+        }
+      }
+    },
+    "Appuis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Footwork"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apoyos"
+          }
+        }
+      }
+    },
+    "rebonds courts et montées de genoux, pour le rythme et la coordination": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "short bounces and high knees, for rhythm and coordination"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rebotes cortos y elevaciones de rodillas, para el ritmo y la coordinación"
+          }
+        }
+      }
+    },
+    "Hanches et chevilles": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hips and ankles"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caderas y tobillos"
+          }
+        }
+      }
+    },
+    "amplitude complète, sans charge, lentement : de quoi tenir un squat sous le parallèle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "full range, no load, slowly: enough to hold a squat below parallel"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "amplitud completa, sin carga, despacio: lo necesario para mantener una sentadilla por debajo del paralelo"
+          }
+        }
+      }
+    },
+    "Épaules et haut du dos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shoulders and upper back"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hombros y parte alta de la espalda"
+          }
+        }
+      }
+    },
+    "bras au-dessus de la tête, gestes lents : la zone que le farmers carry et les fentes chargées sollicitent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "arms overhead, slow movements: the area the farmers carry and loaded lunges work"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brazos por encima de la cabeza, gestos lentos: la zona que trabajan el farmers carry y las zancadas con carga"
+          }
+        }
+      }
+    },
+    "%lld′ · une station": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · one station"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · una estación"
+          }
+        }
+      }
+    },
+    "choisis ta division pour voir ta charge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pick your division to see your load"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "elige tu división para ver tu carga"
+          }
+        }
+      }
+    },
+    "Le geste validé": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The movement the judge accepts"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El gesto que valida el juez"
+          }
+        }
+      }
+    },
+    "Comment la travailler": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to work it"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cómo trabajarla"
+          }
+        }
+      }
+    },
+    "la station entière, puis tu reprends quand le souffle est revenu · arrête la série quand le geste ne respecte plus le standard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the whole station, then go again once your breathing has settled · stop the set when the movement no longer meets the standard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "la estación entera, y repites cuando recuperes el aliento · para la serie cuando el gesto deje de cumplir el estándar"
+          }
+        }
+      }
+    },
+    "%lld′ · travail complémentaire": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · supplementary work"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld′ · trabajo complementario"
+          }
+        }
+      }
+    },
+    "%@ · pas de séries prescrites : choisis une charge qui garde le geste propre, et arrête avant qu'il se dégrade": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · no sets prescribed: pick a load that keeps the movement clean, and stop before it breaks down"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · sin series prescritas: elige una carga que mantenga el gesto limpio y para antes de que se deteriore"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
