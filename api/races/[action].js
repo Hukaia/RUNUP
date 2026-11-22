@@ -25,7 +25,7 @@ const { underDailyCap } = require('../../lib/rateLimit');
 // ligatures. « marathon de paris » trouve « Marathon de PARIS », et surtout l'index UNIQUE sur
 // (nom replié, date) empêche les deux d'exister en même temps.
 const { ACCENTS_SOURCE, ACCENTS_CIBLE, normaliser, echapperPourLike } = require('../../lib/recherche');
-const { nettoyerCourse } = require('../../lib/courses');
+const { nettoyerCourse, codesPourPays, pays, DISCIPLINES } = require('../../lib/courses');
 
 // Ce qu'un message peut être. `partner` est une recherche de partenaire, `bib_offer` une annonce
 // de cession, `bib_wanted` une recherche de dossard, `message` tout le reste.
@@ -78,7 +78,29 @@ module.exports = withErrorHandling(async function handler(req, res) {
   }
 });
 
+// Les formats d'un événement. Le pilote rend `numeric[]` en tableau de nombres quand la colonne est
+// lue en `float8[]` (c'est ce que font les SELECT ci-dessous), mais ce qu'on rend à l'app ne doit
+// pas dépendre de ce détail : un tableau de chaînes, ou la forme texte « {10,42.195} », donne la
+// même liste. Jamais de liste vide : « aucun format connu » est null, comme pour la distance.
+function listeDeFormats(valeur) {
+  let brut = valeur;
+  if (typeof brut === 'string') brut = brut.replace(/^\{|\}$/g, '').split(',').filter((x) => x !== '');
+  if (!Array.isArray(brut)) return null;
+  const nombres = brut.map(Number).filter((n) => Number.isFinite(n) && n > 0);
+  return nombres.length > 0 ? nombres : null;
+}
+
+// TOUS LES CHAMPS AJOUTÉS APRÈS LA PREMIÈRE VERSION DE L'APP SONT FACULTATIFS : `null` quand ils
+// sont absents, jamais une clé qui disparaît ni une valeur inventée. Une app déjà installée qui ne
+// les connaît pas les ignore (le décodeur Swift saute les clés inconnues) ; une app à jour qui
+// parle à un serveur plus ancien les lit comme absents.
+//
+// `officialDate` : vrai pour une course SEMÉE par l'app, dont la date a été relevée à la source de
+// l'organisateur (voir db/semer_courses.js) ; null pour une course créée par un coureur, dont la
+// date est celle qu'il a tapée. L'app s'en sert pour dire « Date annoncée par l'organisateur » ou
+// se taire, et jamais pour l'affirmer d'une saisie.
 function mapRace(row) {
+  const formats = listeDeFormats(row.distances_km);
   return {
     id: row.id,
     name: row.name,
@@ -89,6 +111,16 @@ function mapRace(row) {
     discipline: row.discipline,
     website: row.website || null,
     followerCount: row.follower_count === undefined ? null : Number(row.follower_count),
+    country: row.country || null,
+    distancesKm: formats,
+    surface: row.surface || null,
+    profile: row.profile || null,
+    startTime: row.start_time || null,
+    registrationStatus: row.registration_status || null,
+    registrationUrl: row.registration_url || null,
+    registrationOpens: row.registration_opens || null,
+    verifiedOn: row.verified_on || null,
+    officialDate: row.is_seeded === true ? true : null,
   };
 }
 
@@ -104,15 +136,22 @@ async function handleSearch(req, res, userId) {
     return res.status(429).json({ error: 'too_many_requests' });
   }
 
-  const besoin = echapperPourLike(normaliser(raw));
+  const replie = normaliser(raw);
+  const besoin = echapperPourLike(replie);
+  // « japon », « japan », « japón » : le pays se cherche dans la langue de celui qui tape, par le
+  // début de son nom. Moins de trois lettres, aucun pays : voir `codesPourPays`.
+  const codes = codesPourPays(replie);
   const { rows } = await sql`
     SELECT r.id, r.name, r.city, to_char(r.race_date, 'YYYY-MM-DD') AS race_date, r.distance_km, r.elevation_gain_m, r.discipline,
-           r.website, r.is_seeded,
+           r.website, r.country, r.distances_km::float8[] AS distances_km, r.surface, r.profile, r.start_time,
+           r.registration_status, r.registration_url, to_char(r.registration_opens, 'YYYY-MM-DD') AS registration_opens,
+           to_char(r.verified_on, 'YYYY-MM-DD') AS verified_on, r.is_seeded,
            (SELECT COUNT(*)::int FROM race_followers f WHERE f.race_id = r.id) AS follower_count
     FROM races r
     WHERE r.race_date >= CURRENT_DATE
       AND (r.name_key LIKE ${'%' + besoin + '%'}
-           OR translate(lower(coalesce(r.city, '')), ${ACCENTS_SOURCE}, ${ACCENTS_CIBLE}) LIKE ${'%' + besoin + '%'})
+           OR translate(lower(coalesce(r.city, '')), ${ACCENTS_SOURCE}, ${ACCENTS_CIBLE}) LIKE ${'%' + besoin + '%'}
+           OR r.country = ANY(${codes}::text[]))
     ORDER BY
       -- Ce qui commence par ce qui est tapé d'abord, puis les courses semées par l'app (elles
       -- portent le nom officiel, donc ce sont elles qu'on veut voir avant une saisie approximative
@@ -128,13 +167,22 @@ async function handleSearch(req, res, userId) {
 // Ce qu'on propose quand rien n'est tapé : les courses les plus suivies qui approchent. La
 // meilleure recherche reste celle qu'on n'a pas à taper.
 async function handleUpcoming(req, res, userId) {
+  // Deux filtres facultatifs, pour les pilules de l'app : une discipline, un pays. Un filtre qu'on
+  // ne reconnaît pas est IGNORÉ plutôt que de rendre une liste vide : une app plus récente que ce
+  // serveur ne doit pas voir « aucune course » parce qu'elle a demandé quelque chose de neuf.
+  const discipline = DISCIPLINES.includes(req.query.discipline) ? req.query.discipline : null;
+  const paysFiltre = pays(req.query.country);
   const { rows } = await sql`
     SELECT r.id, r.name, r.city, to_char(r.race_date, 'YYYY-MM-DD') AS race_date, r.distance_km, r.elevation_gain_m, r.discipline,
-           r.website,
+           r.website, r.country, r.distances_km::float8[] AS distances_km, r.surface, r.profile, r.start_time,
+           r.registration_status, r.registration_url, to_char(r.registration_opens, 'YYYY-MM-DD') AS registration_opens,
+           to_char(r.verified_on, 'YYYY-MM-DD') AS verified_on, r.is_seeded,
            (SELECT COUNT(*)::int FROM race_followers f WHERE f.race_id = r.id) AS follower_count
     FROM races r
     WHERE r.race_date >= CURRENT_DATE
       AND r.id NOT IN (SELECT race_id FROM race_followers WHERE user_id = ${userId})
+      AND (${discipline}::text IS NULL OR r.discipline = ${discipline}::text)
+      AND (${paysFiltre}::text IS NULL OR r.country = ${paysFiltre}::text)
     ORDER BY follower_count DESC, r.race_date ASC
     LIMIT 20
   `;
@@ -146,7 +194,9 @@ async function handleUpcoming(req, res, userId) {
 async function handleMine(req, res, userId) {
   const { rows } = await sql`
     SELECT r.id, r.name, r.city, to_char(r.race_date, 'YYYY-MM-DD') AS race_date, r.distance_km, r.elevation_gain_m, r.discipline,
-           r.website,
+           r.website, r.country, r.distances_km::float8[] AS distances_km, r.surface, r.profile, r.start_time,
+           r.registration_status, r.registration_url, to_char(r.registration_opens, 'YYYY-MM-DD') AS registration_opens,
+           to_char(r.verified_on, 'YYYY-MM-DD') AS verified_on, r.is_seeded,
            (SELECT COUNT(*)::int FROM race_followers f WHERE f.race_id = r.id) AS follower_count
     FROM race_followers me
     JOIN races r ON r.id = me.race_id
@@ -185,11 +235,19 @@ async function handleCreate(req, res, userId) {
   }
 
   const { rows } = await sql`
-    INSERT INTO races (name, name_key, city, race_date, distance_km, elevation_gain_m, discipline, website, created_by)
+    INSERT INTO races (name, name_key, city, race_date, distance_km, elevation_gain_m, discipline, website,
+                       country, distances_km, surface, profile, start_time, registration_status,
+                       registration_url, registration_opens, created_by)
     VALUES (${course.name}, ${course.nameKey}, ${course.city}, ${course.raceDate},
-            ${course.distanceKm}, ${course.elevationGainM}, ${course.discipline}, ${course.website}, ${userId})
+            ${course.distanceKm}, ${course.elevationGainM}, ${course.discipline}, ${course.website},
+            ${course.country}, ${course.distancesKm}::numeric[], ${course.surface}, ${course.profile},
+            ${course.startTime}, ${course.registrationStatus}, ${course.registrationUrl},
+            ${course.registrationOpens}::date, ${userId})
     ON CONFLICT (name_key, race_date) DO NOTHING
-    RETURNING id, name, city, to_char(race_date, 'YYYY-MM-DD') AS race_date, distance_km, elevation_gain_m, discipline, website
+    RETURNING id, name, city, to_char(race_date, 'YYYY-MM-DD') AS race_date, distance_km, elevation_gain_m, discipline, website,
+              country, distances_km::float8[] AS distances_km, surface, profile, start_time,
+              registration_status, registration_url, to_char(registration_opens, 'YYYY-MM-DD') AS registration_opens,
+              to_char(verified_on, 'YYYY-MM-DD') AS verified_on, is_seeded
   `;
   if (rows.length > 0) {
     return res.status(201).json({ race: mapRace({ ...rows[0], follower_count: 0 }), created: true });
@@ -198,6 +256,9 @@ async function handleCreate(req, res, userId) {
   // Elle existait déjà : on rend l'existante. Voir le commentaire en tête de ce handler.
   const { rows: deja } = await sql`
     SELECT r.id, r.name, r.city, to_char(r.race_date, 'YYYY-MM-DD') AS race_date, r.distance_km, r.elevation_gain_m, r.discipline, r.website,
+           r.country, r.distances_km::float8[] AS distances_km, r.surface, r.profile, r.start_time,
+           r.registration_status, r.registration_url, to_char(r.registration_opens, 'YYYY-MM-DD') AS registration_opens,
+           to_char(r.verified_on, 'YYYY-MM-DD') AS verified_on, r.is_seeded,
            (SELECT COUNT(*)::int FROM race_followers f WHERE f.race_id = r.id) AS follower_count
     FROM races r WHERE r.name_key = ${course.nameKey} AND r.race_date = ${course.raceDate}
   `;
@@ -262,6 +323,9 @@ async function handlePage(req, res, userId) {
 
   const { rows: courseRows } = await sql`
     SELECT r.id, r.name, r.city, to_char(r.race_date, 'YYYY-MM-DD') AS race_date, r.distance_km, r.elevation_gain_m, r.discipline, r.website,
+           r.country, r.distances_km::float8[] AS distances_km, r.surface, r.profile, r.start_time,
+           r.registration_status, r.registration_url, to_char(r.registration_opens, 'YYYY-MM-DD') AS registration_opens,
+           to_char(r.verified_on, 'YYYY-MM-DD') AS verified_on, r.is_seeded,
            (SELECT COUNT(*)::int FROM race_followers f WHERE f.race_id = r.id) AS follower_count
     FROM races r WHERE r.id = ${raceId}
   `;
