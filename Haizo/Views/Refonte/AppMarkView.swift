@@ -43,7 +43,8 @@ struct AppMarkView: View, Animatable {
 
     private var remplissage: AnyShapeStyle {
         if let fond { return AnyShapeStyle(fond) }
-        return AnyShapeStyle(HZCouleur.accent)
+        // Le dégradé du logo, JAMAIS la couleur d'accentuation : voir `HZMarque.degrade`.
+        return AnyShapeStyle(HZMarque.degrade)
     }
 
     private var cornerRadius: CGFloat { radius ?? size * HZMarque.rayonRelatif }

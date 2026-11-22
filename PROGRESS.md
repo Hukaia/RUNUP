@@ -9172,3 +9172,10 @@ Charlotte a vu, dans l'écran « Rejoins un club », des clubs « Debug Test Clu
 - **Base** : `db/A_COLLER_nettoyer_clubs.sql`, à coller dans Neon en deux temps : d'abord la liste de ce qui va partir (à relire), puis la suppression (les lignes sont commentées par défaut). Je n'ai pas accès à la base : je ne supprime rien moi-même.
 
 La CI photographie maintenant le programme HYROX (`test18Hyrox`, graine DEBUG `--hyrox=semaine|<type de séance>` `--phase=specifique`) : la semaine du plan, et la fiche d'une séance de station (sled push au bloc de base et au spécifique, wall balls) et de deux travaux complémentaires (force des jambes, prise/dos/gainage), haut et bas. `hyrox-*.png` dans l'artefact `refonte`.
+
+## Le logo à l'ouverture (22 novembre)
+
+Charlotte : « Les couleurs n'ont toujours pas été rectifiées, et le logo à l'ouverture non plus. » Cause trouvée pour le logo : la tuile de la marque (`AppMarkView`, lancement, carte de partage, vidéo) remplissait sa tuile avec la **couleur d'accentuation**
+choisie dans les réglages, pas avec le logo. Quelqu'un qui avait choisi violet, bleu ou vert voyait donc, à l'ouverture, un logo qui n'était pas celui de son icône. La direction artistique permet le dégradé rose-violet « sur l'icône, le splash et le logo » :
+la tuile le reprend (`HZMarque.degrade`, `#FC105E` vers `#7F5AFB`), indépendamment de l'accent. L'écran de lancement du système passe de lavande (`#F4F3F8`) à blanc, comme l'ouverture, pour qu'il n'y ait plus de saut de couleur au démarrage.
+Les « couleurs » : question posée à Charlotte (quelles couleurs précisément), aucune modification.

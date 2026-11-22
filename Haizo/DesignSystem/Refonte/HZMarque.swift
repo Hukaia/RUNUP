@@ -3,6 +3,18 @@ import SwiftUI
 /// LA MARQUE ET LE TRACÉ : la tuile aux quatre barres, et les mesures du tracé qui se dessine.
 enum HZMarque {
     static let coteParDefaut: CGFloat = 24
+
+    /// LE DÉGRADÉ DU LOGO : du rose `#FC105E` (haut gauche) au violet `#7F5AFB` (bas droite), celui de
+    /// l'icône de l'app. C'est le SEUL dégradé de Haizo : la direction artistique le permet « sur
+    /// l'icône, le splash et le logo », nulle part ailleurs.
+    ///
+    /// La tuile de la marque l'a toujours dû, et ne l'avait plus : elle prenait la couleur d'accentuation
+    /// choisie dans les réglages. Quelqu'un qui avait choisi le violet ou le vert voyait donc, à
+    /// l'ouverture, un logo qui n'était pas celui de l'icône sur son écran d'accueil. Un logo ne suit pas
+    /// le réglage d'accent.
+    static let degrade = LinearGradient(
+        colors: [Color(hex: 0xFC105E), Color(hex: 0x7F5AFB)],
+        startPoint: .topLeading, endPoint: .bottomTrailing)
     /// Le rayon de la tuile, relatif à son côté, et le glyphe, relatif à la tuile.
     static let rayonRelatif: CGFloat = 0.26
     static let glypheRelatif: CGFloat = 0.62

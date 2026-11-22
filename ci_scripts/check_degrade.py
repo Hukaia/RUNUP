@@ -55,6 +55,14 @@ DEGRADE = re.compile(
 
 #: fichier → (nombre de dégradés autorisés, pourquoi)
 PERMIS = {
+    # ── 1. LA MARQUE ──────────────────────────────────────────────────────────────────────
+    #
+    # Le dégradé rose-violet du logo, celui de l'icône : la direction artistique le permet « sur
+    # l'icône, le splash et le logo ». Un seul, défini une fois dans `HZMarque.degrade` et lu par la
+    # tuile de la marque (lancement, carte de partage, vidéo). La tuile le portait avant le 15 novembre,
+    # puis a pris la couleur d'accentuation — et le logo à l'ouverture n'était plus celui de l'icône.
+    "Haizo/DesignSystem/Refonte/HZMarque.swift": (1, "le dégradé rose-violet du logo : celui de l'icône, que la tuile de la marque porte sur le lancement et les images de partage"),
+
     # ── 2. UNE IMAGE PRODUITE, PAS UN ÉCRAN ───────────────────────────────────────────────────
     #
     # Elle a tenu deux entrées : la carte de partage (style « Haizo ») et les images de la vidéo
