@@ -9061,3 +9061,15 @@ Défaut vu à la première capture du résumé : la phrase du bas (« Your debri
 46 mm. Anneau 108 → 92, jeu intérieur 14 → 10 : la phrase est entière dans les trois langues, le haut du bouton « OK » paraît dessous (il se rejoint à la
 couronne). Course et pause : rien à redire, y compris en pause (chrono et barre en gris). Recapture des images livrables (`requis/montre`, `SOURCES.json`) avec le rose
 `#FC105E`. Non vu : la montre réelle (couronne, lisibilité au poignet).
+
+## Le Club, d'après la capture de Charlotte (22 novembre) : « on peut bien améliorer »
+
+Comparé au canvas (`Club.png`), trois écarts réels :
+1. **« kilomètres » collé au bord haut de la carte de sortie** (3 points au lieu de 16), sur son téléphone ET dans toutes les captures CI du Club depuis le début.
+   Cause : `hzTexte` pose une ligne de repère `.top` sur le texte ; un `.padding(.top)` placé derrière, dans un `overlay` aligné en haut, est annulé par
+   cet alignement. Remplacé par un `.offset(y:)`. C'est le seul endroit du dépôt où ce motif se trouvait.
+2. **Le tracé GPS dentelé** (pointes de bruit de capteur, rendues par un trait de 6 points) : lissage de Chaikin, deux passes, extrémités fixes (`HZSortieDuFil.lisser`,
+   `TraceDuFilTests`). Le fil du club et la page d'une sortie en profitent ; les miniatures d'Explorer ont leur propre fonction et ne bougent pas.
+3. **La carte bleue du club était un grand aplat vide** quand aucune sortie n'est prévue : elle dit maintenant « Aucune sortie prévue pour l'instant » (seulement quand les
+   sorties sont CONNUES, jamais pendant le chargement) et, pour qui est propriétaire, « Proposer une sortie » (ouvre la création). Clés du catalogue déjà traduites.
+Non traité, à décider avec elle : la ligne d'identité (« il y a 1 j » là où le canvas écrit « Samedi · Malakoff »), et le peu de vie d'un club d'une seule personne.

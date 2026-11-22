@@ -12,6 +12,11 @@ struct HZCarteDeClub: View {
     var prochaineSortie: String? = nil
     var boutonDeSortie: String? = nil
     var actionDeSortie: () -> Void = {}
+    /// Quand on SAIT qu'aucune sortie n'est prévue : la phrase qui le dit, et, pour qui peut en
+    /// proposer une, le bouton. Sans eux la carte restait un grand aplat bleu vide sous le nom.
+    var sansSortie: String? = nil
+    var boutonSansSortie: String? = nil
+    var actionSansSortie: () -> Void = {}
     let ouvrir: () -> Void
 
     var body: some View {
@@ -32,6 +37,20 @@ struct HZCarteDeClub: View {
                     Spacer(minLength: HZEspace.entreCommandes)
                     HZBoutonPilule(libelle: boutonDeSortie, hauteur: .petite, fond: HZCouleur.blanc,
                                    couleur: HZCouleur.noir, action: actionDeSortie)
+                }
+                .padding(.top, HZCarteDeClub.sousLeNom)
+            } else if let sansSortie {
+                HStack {
+                    Text(sansSortie)
+                        .hzTexte(.c15, .semi)
+                        .foregroundStyle(HZCouleur.blanc)
+                        .lineLimit(1)
+                        .minimumScaleFactor(HZCarteDeClub.retraitDuNom)
+                    Spacer(minLength: HZEspace.entreCommandes)
+                    if let boutonSansSortie {
+                        HZBoutonPilule(libelle: boutonSansSortie, hauteur: .petite, fond: HZCouleur.blanc,
+                                       couleur: HZCouleur.noir, action: actionSansSortie)
+                    }
                 }
                 .padding(.top, HZCarteDeClub.sousLeNom)
             }
@@ -224,7 +243,12 @@ struct HZSortieDuFil<Avatar: View, Options: View>: View {
                     .hzTexte(.c20, .gras)
                     .foregroundStyle(HZCouleur.blanc)
                     .padding(.leading, HZFil.margeDuLibelle)
-                    .padding(.top, HZFil.margeHautDuLibelle)
+                    // UN DÉCALAGE ET NON `.padding(.top)` : `hzTexte` pose une ligne de repère `.top`
+                    // sur le texte, et un remplissage du haut posé derrière, dans un `overlay` aligné
+                    // en haut, est ANNULÉ par cet alignement. « kilomètres » se collait au bord de la
+                    // carte (3 points au lieu de 16) sur la capture de Charlotte, et dans toutes les
+                    // captures CI du Club depuis le début.
+                    .offset(y: HZFil.margeHautDuLibelle)
             }
             .overlay(alignment: .bottomLeading) {
                 Text(distance)
@@ -300,10 +324,33 @@ struct HZSortieDuFil<Avatar: View, Options: View>: View {
         let cote = max(largeur, hauteur, Double.ulpOfOne)
         let decalageX = (cote - largeur) / HZFil.moitie
         let decalageY = (cote - hauteur) / HZFil.moitie
-        return points.map { point in
+        let ramenes = points.map { point in
             CGPoint(x: (((point.lng - minLng) * correction) + decalageX) / cote,
                     y: 1 - (((point.lat - minLat) + decalageY) / cote))
         }
+        return lisser(ramenes)
+    }
+
+    /// Un tracé GPS brut est dentelé : le bruit du capteur à l'arrêt ou sous les arbres dessine des
+    /// pointes que le trait épais du fil rend aussi visibles qu'un détour. Le canvas dessine une
+    /// courbe nette. Chaque passe coupe chaque coin à un quart de sa longueur (Chaikin) ; les deux
+    /// extrémités restent où elles sont, et le tracé reste dans son carré.
+    static func lisser(_ points: [CGPoint]) -> [CGPoint] {
+        var courant = points
+        for _ in 0..<HZFil.passesDeLissage {
+            guard courant.count > HZFil.pointsMinimumPourLisser else { return courant }
+            var suivant = [courant[0]]
+            for index in 0..<(courant.count - 1) {
+                let a = courant[index], b = courant[index + 1]
+                suivant.append(CGPoint(x: a.x + (b.x - a.x) * HZFil.coupeDuLissage,
+                                       y: a.y + (b.y - a.y) * HZFil.coupeDuLissage))
+                suivant.append(CGPoint(x: b.x - (b.x - a.x) * HZFil.coupeDuLissage,
+                                       y: b.y - (b.y - a.y) * HZFil.coupeDuLissage))
+            }
+            suivant.append(courant[courant.count - 1])
+            courant = suivant
+        }
+        return courant
     }
 }
 

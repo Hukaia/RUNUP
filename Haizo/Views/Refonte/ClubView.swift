@@ -307,6 +307,12 @@ struct ClubView: View {
                         $0.goingByMe ? String(localized: "Tu y vas") : String(localized: "J'y vais")
                     },
                     actionDeSortie: { if let sortie = prochaineSortie { magasin.toggleRsvp(sortie) } },
+                    // Les sorties sont CONNUES (`events` n'est plus nil) et aucune n'est à venir :
+                    // pas pendant le chargement, où « aucune » serait faux.
+                    sansSortie: magasin.board.events != nil && prochaineSortie == nil
+                        ? String(localized: "Aucune sortie prévue pour l'instant") : nil,
+                    boutonSansSortie: club.isOwner == true ? String(localized: "Proposer une sortie") : nil,
+                    actionSansSortie: { showCreateEvent = true },
                     ouvrir: { showManagement = true })
                     .padding(.horizontal, HZEspace.marge)
                     .padding(.top, HZHub.sousLesCommandes)

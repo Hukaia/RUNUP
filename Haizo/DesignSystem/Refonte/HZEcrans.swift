@@ -196,6 +196,11 @@ enum HZFil {
     static let sousLIdentite: CGFloat = 12
     static let sousLaCarteDeSortie: CGFloat = 12
     static let traitDeLaTrace: CGFloat = 6
+    /// Le lissage du tracé GPS (Chaikin) : deux passes, chacune coupant un coin au quart.
+    static let passesDeLissage = 2
+    static let coupeDuLissage: CGFloat = 0.25
+    /// En dessous, un tracé n'a pas de coins à couper.
+    static let pointsMinimumPourLisser = 2
     static let zoneDeLaTraceX: CGFloat = 0.62
     static let zoneDeLaTraceLargeur: CGFloat = 0.32
     static let zoneDeLaTraceY: CGFloat = 0.1
