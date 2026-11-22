@@ -5,8 +5,10 @@ import UIKit
 ///
 /// CE QUI N'EST PAS DEMANDÉ. Le minimum est un nom et une date, rien de plus — c'est la limite du
 /// serveur, et c'est voulu. Quelqu'un qui vient d'échouer à trouver sa course est à un formulaire
-/// de distance de renoncer : la distance, le dénivelé, la ville et le site sont tous facultatifs,
-/// et n'importe qui pourra les compléter plus tard sur la même page.
+/// de distance de renoncer : la distance, le dénivelé, la ville, le pays, la surface, le profil,
+/// le site et le lien d'inscription sont tous facultatifs, et n'importe qui pourra les compléter
+/// plus tard sur la même page. Un champ laissé vide ne s'affichera pas : la page d'une course ne
+/// montre que ce qu'on lui a dit.
 ///
 /// LE DOUBLON NE REMONTE PAS COMME UNE ERREUR. Si la course existe déjà — même nom replié, même
 /// date — le serveur rend l'existante au lieu de refuser, et cet écran ouvre sa page comme si elle
@@ -28,10 +30,17 @@ struct CreateRaceSheet: View {
     @State private var denivele = ""
     @State private var discipline = "run"
     @State private var site = ""
+    /// Le code ISO du pays, ou « » quand on ne l'a pas précisé. Même chose pour la surface et le profil.
+    @State private var pays = ""
+    @State private var surface = ""
+    @State private var profil = ""
+    @State private var lienDInscription = ""
     @State private var enCours = false
     @State private var erreur: String?
 
     private static let disciplines = ["run", "trail", "hyrox", "triathlon"]
+    private static let surfaces = ["route", "trail", "piste", "mixte"]
+    private static let profils = ["plat", "vallonne", "montagneux"]
 
     private var nomPropre: String { nom.trimmingCharacters(in: .whitespaces) }
 
@@ -57,6 +66,7 @@ struct CreateRaceSheet: View {
 
                     champ(titre: String(localized: "Ville"), texte: $ville,
                           exemple: String(localized: "Paris"), facultatif: true)
+                    choixDuPays
 
                     // L'un sous l'autre et pas côte à côte : « Distance (km) · facultatif » ne tient
                     // pas dans une demi-largeur à 390 points.
@@ -65,7 +75,12 @@ struct CreateRaceSheet: View {
                     champ(titre: String(localized: "D+ (m)"), texte: $denivele,
                           exemple: "1200", facultatif: true, clavier: .numberPad)
 
+                    choixDeLaSurface
+                    choixDuProfil
+
                     champ(titre: String(localized: "Site officiel"), texte: $site,
+                          exemple: "https://…", facultatif: true, clavier: .URL)
+                    champ(titre: String(localized: "Lien d'inscription"), texte: $lienDInscription,
                           exemple: "https://…", facultatif: true, clavier: .URL)
 
                     if let erreur {
@@ -112,6 +127,78 @@ struct CreateRaceSheet: View {
         }
     }
 
+    /// Le pays dans un menu : environ deux cent cinquante lignes qui ne se construisent qu'à l'ouverture
+    /// du menu, et que le téléphone nomme et trie dans sa langue.
+    private var choixDuPays: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
+            let titre = String(localized: "Pays")
+            etiquette(String(localized: "\(titre) · facultatif"))
+            Menu {
+                Button(String(localized: "Non précisé")) { pays = "" }
+                ForEach(RaceEvent.paysProposes) { propose in
+                    Button(propose.nom) { pays = propose.code }
+                }
+            } label: {
+                HZPilule(texte: nomDuPaysChoisi ?? String(localized: "Choisir un pays"),
+                         style: .etiquetteGrasse, fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre)
+            }
+        }
+    }
+
+    private var nomDuPaysChoisi: String? {
+        pays.isEmpty ? nil : Locale.current.localizedString(forRegionCode: pays)
+    }
+
+    private var choixDeLaSurface: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
+            let titre = String(localized: "Surface")
+            etiquette(String(localized: "\(titre) · facultatif"))
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: HZEspace.entrePilules) {
+                    ForEach(Self.surfaces, id: \.self) { clef in
+                        HZFiltre(libelle: Self.libelleDeSurface(clef), actif: surface == clef, fond: .clair) {
+                            // Toucher de nouveau la valeur choisie la retire : « facultatif » doit pouvoir se défaire.
+                            surface = surface == clef ? "" : clef
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private var choixDuProfil: some View {
+        VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
+            let titre = String(localized: "Profil")
+            etiquette(String(localized: "\(titre) · facultatif"))
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: HZEspace.entrePilules) {
+                    ForEach(Self.profils, id: \.self) { clef in
+                        HZFiltre(libelle: Self.libelleDeProfil(clef), actif: profil == clef, fond: .clair) {
+                            profil = profil == clef ? "" : clef
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static func libelleDeSurface(_ clef: String) -> String {
+        switch clef {
+        case "trail": return String(localized: "Trail")
+        case "piste": return String(localized: "Piste")
+        case "mixte": return String(localized: "Mixte")
+        default: return String(localized: "Route")
+        }
+    }
+
+    private static func libelleDeProfil(_ clef: String) -> String {
+        switch clef {
+        case "vallonne": return String(localized: "Vallonné")
+        case "montagneux": return String(localized: "Montagneux")
+        default: return String(localized: "Plat")
+        }
+    }
+
     private static func libelleDuTypeDEpreuve(_ clef: String) -> String {
         switch clef {
         case "trail": return String(localized: "Trail")
@@ -149,7 +236,11 @@ struct CreateRaceSheet: View {
                 distanceKm: km,
                 elevationGainM: dplus,
                 discipline: discipline,
-                website: site.trimmingCharacters(in: .whitespaces)
+                website: site.trimmingCharacters(in: .whitespaces),
+                country: pays,
+                surface: surface,
+                profile: profil,
+                registrationUrl: lienDInscription.trimmingCharacters(in: .whitespaces)
             )
             Haptics.impact(.light)
             // Pas de `dismiss()` ici : c'est l'écran appelant qui referme cette feuille, puis

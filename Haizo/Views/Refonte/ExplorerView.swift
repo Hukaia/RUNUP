@@ -18,6 +18,10 @@ struct ExplorerView: View {
     @State private var filtre: Filtre = .pourToi
     @State private var itineraires: [SharedRoute] = []
     @State private var courses: [RaceEvent] = []
+    /// Les courses de trail et de HYROX, demandées au serveur À PART : « Courses à venir » ne garde que les
+    /// plus proches, et un trail de juin n'y figure pas tant que dix marathons le précèdent.
+    @State private var coursesDeTrail: [RaceEvent] = []
+    @State private var coursesHyrox: [RaceEvent] = []
     @State private var clubs: [ClubSearchResult] = []
     @State private var enChargement = true
     @State private var panne: String?
@@ -122,10 +126,10 @@ struct ExplorerView: View {
             case .route:
                 listeDItineraires
             case .trail:
-                listeDeCourses(courses.filter { $0.discipline == "trail" },
+                listeDeCourses(coursesDeTrail,
                                vide: String(localized: "Aucune course de trail à venir pour l'instant."))
             case .hyrox:
-                listeDeCourses(courses.filter { $0.discipline == "hyrox" },
+                listeDeCourses(coursesHyrox,
                                vide: String(localized: "Aucune course HYROX à venir pour l'instant."))
             case .clubs:
                 listeDeClubs
@@ -218,7 +222,7 @@ struct ExplorerView: View {
                 LazyHStack(alignment: .top, spacing: HZExplorer.entreLesTuiles) {
                     ForEach(Array(courses.prefix(HZExplorer.itinerairesRetenus).enumerated()), id: \.element.id) { index, course in
                         HZTuileDeCourse(mois: mois(de: course),
-                                        distance: course.distanceKm.map { Distances.valeur($0) } ?? "—",
+                                        distance: course.grandeEtiquette,
                                         nom: course.name,
                                         note: noteDeCourse(course),
                                         couleur: couleur(index)) { courseOuverte = course }
@@ -351,6 +355,8 @@ struct ExplorerView: View {
         if Demonstration.enCours {
             itineraires = appState.cachedExplorerRoutes ?? []
             courses = appState.cachedUpcomingRaces ?? []
+            coursesDeTrail = courses.filter { $0.discipline == "trail" }
+            coursesHyrox = courses.filter { $0.discipline == "hyrox" }
             clubs = appState.cachedSuggestedClubs ?? []
             enChargement = false
             return
@@ -362,6 +368,13 @@ struct ExplorerView: View {
         } catch {
             panne = PanneReseau.motif(pour: error)
         }
+        // Un échec ici n'est pas une panne de l'écran : la liste du filtre reste vide et dit « aucune
+        // course », ce que « Courses à venir » ne contredit pas. Le serveur filtre ; s'il ignore le
+        // paramètre (version plus ancienne), le tri sur l'appareil rend la liste juste quand même.
+        coursesDeTrail = ((try? await service.upcomingRaces(discipline: "trail")) ?? courses)
+            .filter { $0.discipline == "trail" }
+        coursesHyrox = ((try? await service.upcomingRaces(discipline: "hyrox")) ?? courses)
+            .filter { $0.discipline == "hyrox" }
         clubs = await suggeres
         enChargement = false
         await chargerLesItineraires()

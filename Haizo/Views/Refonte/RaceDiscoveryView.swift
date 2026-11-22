@@ -3,9 +3,10 @@ import SwiftUI
 /// « Qui d'autre court le marathon de Paris ? »
 ///
 /// La porte d'entrée des pages de course : celles qu'on prépare, celles qui approchent, et un
-/// champ pour trouver les autres. Rien ici n'est un catalogue mondial — l'app sème une dizaine de
-/// grandes courses et tout le reste est créé par les coureurs eux-mêmes, au moment où ils en ont
-/// besoin. Une page de course n'a pas à exister avant que quelqu'un la prépare.
+/// champ pour trouver les autres — par le nom, la ville ou le pays. L'app sème les grandes courses
+/// du monde, dont chaque caractéristique a été relevée chez l'organisateur, et tout le reste est
+/// créé par les coureurs eux-mêmes, au moment où ils en ont besoin. Une page de course n'a pas à
+/// exister avant que quelqu'un la prépare.
 /// LES COURSES : des pilules de filtre en haut, puis des affiches colorées — la distance en très grand,
 /// le nom et ce qu'on en sait dessous. C'est « Courses à venir » d'Explorer, en grille.
 struct RaceDiscoveryView: View {
@@ -22,6 +23,9 @@ struct RaceDiscoveryView: View {
     @State private var ouverte: RaceEvent?
     @State private var creationPresentee = false
     @State private var filtre: Filtre = .tout
+    /// Le type d'épreuve montré : `nil` pour tous. Le serveur filtre la liste « Ça approche », qui est
+    /// limitée aux plus proches ; mes courses, peu nombreuses, se filtrent ici.
+    @State private var epreuve: Epreuve?
 
     /// Ce qu'on montre : tout, ce que je prépare, ce qui approche.
     private enum Filtre: CaseIterable, Identifiable {
@@ -36,7 +40,36 @@ struct RaceDiscoveryView: View {
         }
     }
 
+    /// Les types d'épreuve qu'on peut isoler. Les clefs sont celles du serveur (`discipline`).
+    private enum Epreuve: CaseIterable, Identifiable {
+        case route, trail, hyrox, triathlon
+        var id: Self { self }
+        var clef: String {
+            switch self {
+            case .route: return "run"
+            case .trail: return "trail"
+            case .hyrox: return "hyrox"
+            case .triathlon: return "triathlon"
+            }
+        }
+        var libelle: String {
+            switch self {
+            case .route: return String(localized: "Route")
+            case .trail: return String(localized: "Trail")
+            case .hyrox: return String(localized: "Hyrox")
+            case .triathlon: return String(localized: "Triathlon")
+            }
+        }
+    }
+
     private var clubService: ClubService { ClubService(auth: appState.auth) }
+
+    /// Le serveur filtre déjà `upcoming`, mais un serveur plus ancien ignore le paramètre : refiltrer
+    /// ici coûte une boucle et rend la liste juste dans les deux cas.
+    private func retenues(_ courses: [RaceEvent]) -> [RaceEvent] {
+        guard let epreuve else { return courses }
+        return courses.filter { $0.discipline == epreuve.clef }
+    }
 
     private var recherche: String { query.trimmingCharacters(in: .whitespaces) }
     private var enRecherche: Bool { recherche.count >= HZHub.lettresPourChercher }
@@ -51,6 +84,7 @@ struct RaceDiscoveryView: View {
             feuille
         }
         .onChange(of: query) { _, nouveau in chercher(nouveau) }
+        .onChange(of: epreuve) { _, _ in Task { await charger() } }
         .fullScreenCover(item: $ouverte) { course in
             RacePageView(race: course) { Task { await charger() } }
         }
@@ -85,7 +119,7 @@ struct RaceDiscoveryView: View {
                 .foregroundStyle(HZCouleur.blanc)
                 .padding(.horizontal, HZEspace.margeDeTitre)
                 .padding(.top, HZHub.sousLesCommandes)
-            HZChampDeRecherche(invite: String(localized: "Nom de la course, ou sa ville"), texte: $query,
+            HZChampDeRecherche(invite: String(localized: "Nom de la course, sa ville ou son pays"), texte: $query,
                                surNoir: true, enRecherche: searchEnCours)
                 .padding(.horizontal, HZEspace.marge)
                 .padding(.top, HZHub.sousLaCarte)
@@ -101,6 +135,24 @@ struct RaceDiscoveryView: View {
                 .padding(.horizontal, HZEspace.marge)
             }
             .padding(.top, HZHub.sousLaCarte)
+            // Le type d'épreuve, dans une seconde rangée : la première dit QUELLES courses (les miennes,
+            // celles qui approchent), celle-ci dit DE QUEL genre.
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: HZEspace.entrePilules) {
+                    HZFiltre(libelle: String(localized: "Toutes les épreuves"), actif: epreuve == nil && !enRecherche) {
+                        query = ""
+                        epreuve = nil
+                    }
+                    ForEach(Epreuve.allCases) { valeur in
+                        HZFiltre(libelle: valeur.libelle, actif: epreuve == valeur && !enRecherche) {
+                            query = ""
+                            epreuve = valeur
+                        }
+                    }
+                }
+                .padding(.horizontal, HZEspace.marge)
+            }
+            .padding(.top, HZEspace.entrePilules)
         }
     }
 
@@ -114,13 +166,15 @@ struct RaceDiscoveryView: View {
         } else if enRecherche {
             resultats
         } else {
+            let miennes = retenues(mine)
+            let aVenir = retenues(upcoming)
             VStack(alignment: .leading, spacing: HZEspace.entreSections) {
-                if filtre != .aVenir, !mine.isEmpty { section(titre: String(localized: "Je prépare"), courses: mine) }
-                if filtre != .miennes, !upcoming.isEmpty {
-                    section(titre: String(localized: "Ça approche"), courses: upcoming)
+                if filtre != .aVenir, !miennes.isEmpty { section(titre: String(localized: "Je prépare"), courses: miennes) }
+                if filtre != .miennes, !aVenir.isEmpty {
+                    section(titre: String(localized: "Ça approche"), courses: aVenir)
                 }
-                if (filtre == .miennes && mine.isEmpty) || (filtre == .aVenir && upcoming.isEmpty)
-                    || (mine.isEmpty && upcoming.isEmpty) {
+                if (filtre == .miennes && miennes.isEmpty) || (filtre == .aVenir && aVenir.isEmpty)
+                    || (miennes.isEmpty && aVenir.isEmpty) {
                     videHonnete
                 }
                 boutonCreer
@@ -179,7 +233,7 @@ struct RaceDiscoveryView: View {
         LazyVGrid(columns: colonnes, alignment: .leading, spacing: HZEspace.entreSections) {
             ForEach(Array(courses.enumerated()), id: \.element.id) { index, course in
                 HZTuileDeCourse(mois: mois(de: course),
-                                distance: course.distanceKm.map { Distances.valeur($0) } ?? "—",
+                                distance: course.grandeEtiquette,
                                 nom: course.name,
                                 note: note(de: course),
                                 couleur: HZIntensite.allCases[index % HZIntensite.allCases.count].couleur,
@@ -228,7 +282,7 @@ struct RaceDiscoveryView: View {
             // Les deux listes ensemble : elles s'affichent ensemble, et les charger l'une après
             // l'autre ferait apparaître la page en deux temps.
             async let miennes = clubService.myRaces()
-            async let aVenir = clubService.upcomingRaces()
+            async let aVenir = clubService.upcomingRaces(discipline: epreuve?.clef)
             mine = try await miennes
             upcoming = try await aVenir
         } catch {

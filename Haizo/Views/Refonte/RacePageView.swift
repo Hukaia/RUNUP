@@ -119,8 +119,21 @@ struct RacePageView: View {
                     .padding(.horizontal, HZEspace.margeDeTitre)
                     .padding(.top, HZPlan.sousLeTitre)
             }
+            dateAnnoncee
             pastillesDuHaut
             siteOfficiel
+        }
+    }
+
+    /// « Date annoncée par l'organisateur » : la date d'une course semée a été relevée chez lui. La
+    /// page le dit plutôt que d'en laisser douter, et se tait pour une saisie, dont elle ne sait rien.
+    @ViewBuilder private var dateAnnoncee: some View {
+        if courante.dateEstAnnoncee {
+            Text("Date annoncée par l'organisateur")
+                .hzTexte(.c13, .medium)
+                .foregroundStyle(HZCouleur.secondaireSurSombre)
+                .padding(.horizontal, HZEspace.margeDeTitre)
+                .padding(.top, HZPlan.sousLeTitre)
         }
     }
 
@@ -166,6 +179,7 @@ struct RacePageView: View {
 
     private var feuille: some View {
         VStack(alignment: .leading, spacing: HZEspace.entreSections) {
+            caracteristiques
             if isLoading {
                 ProgressView().frame(maxWidth: .infinity).padding(.vertical, HZFil.enAttente)
             } else if let loadError {
@@ -176,6 +190,47 @@ struct RacePageView: View {
                 leMur
                 boutonSignalerLaCourse
             }
+        }
+    }
+
+    // MARK: - 1. La course : ce qu'on en sait
+
+    /// Pays et ville, distances, dénivelé, surface, profil, heure de départ, inscription : des
+    /// lignes sobres, et SEULEMENT celles dont on a la valeur. Une ligne qui dirait « — » serait
+    /// une ligne qu'on a oublié de retirer ; la page d'une course saisie à la main n'en montre
+    /// qu'une ou deux, et c'est la bonne page.
+    @ViewBuilder private var caracteristiques: some View {
+        let rubriques = courante.rubriques
+        if !rubriques.isEmpty {
+            VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+                HZTitreDeSection(titre: String(localized: "La course"))
+                VStack(spacing: 0) {
+                    ForEach(RaceEvent.Rubrique.allCases.filter { rubriques.contains($0) }) { rubrique in
+                        ligneDInfo(titre: rubrique.titre(pour: courante),
+                                   valeur: rubrique.valeur(de: courante) ?? "",
+                                   filet: rubrique != rubriques.last)
+                    }
+                }
+                noteDeVerification
+                boutonDInscription
+            }
+        }
+    }
+
+    /// Le statut d'inscription est une PHOTO : « Ouverte » le 22 novembre peut être « Complète » le 23.
+    /// La page dit de quel jour elle date, et seulement quand elle le sait.
+    @ViewBuilder private var noteDeVerification: some View {
+        if courante.inscriptionLisible != nil, let jour = courante.verifieLe {
+            HZPhrase(texte: String(localized: "Inscription relevée le \(jour) : vérifie-la sur le site officiel."))
+        }
+    }
+
+    /// Le geste qui sort de l'app : l'adresse d'inscription, ou le site de l'organisateur tant que les
+    /// places ne sont pas parties. Le serveur n'a laissé passer que du http(s) — voir lib/courses.js.
+    @ViewBuilder private var boutonDInscription: some View {
+        if let adresse = courante.adresseDInscription, let url = URL(string: adresse) {
+            HZBoutonPilule(libelle: String(localized: "Inscription sur le site officiel"), hauteur: .moyenne,
+                           fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre, etendu: true) { openURL(url) }
         }
     }
 

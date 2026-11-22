@@ -755,7 +755,9 @@ enum CaptureSeed {
               "race": {
                 "id": "demo-course", "name": "Marathon de Paris", "city": "Paris",
                 "raceDate": "2027-04-04", "distanceKm": 42.195, "discipline": "run",
-                "followerCount": 143
+                "followerCount": 143,
+                "country": "FR", "distancesKm": [42.195], "surface": "route",
+                "registrationStatus": "fermee", "verifiedOn": "2026-11-22", "officialDate": true
               },
               "me": {
                 "targetChrono": "3:45", "targetPaceSecPerKm": 320,
