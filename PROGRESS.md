@@ -9039,3 +9039,7 @@ Non vérifié : tout ce qui touche au doigt. À essayer sur l'appareil avec le b
 `joursEnCourseLibre(semaine:seance:…)` laisse la semaine telle quelle et fait seulement prendre à AUJOURD'HUI la séance proposée (la carte ne dit plus « Off »
 quand la feuille décrit un footing). Il ne reste qu'une carte que sans semaine du tout. La rangée des sept jours, le bandeau et « Déplacer » reviennent
 dès qu'il y a plusieurs cartes ; le sous-titre compte les séances visibles sur les cartes.
+
+**Confirmé sur l'appareil (22 novembre, build 684) : le balayage du Plan fonctionne**, au doigt, et la semaine entière est revenue en course libre. Cause la plus
+probable du défaut des builds 679 à 682, non isolée : la liaison `scrollPosition` fabriquée et/ou le `Button` par carte (retirés ensemble). Le ressenti
+(élan, reprise du geste) est validé par Charlotte : « ça fonctionne parfaitement ».
