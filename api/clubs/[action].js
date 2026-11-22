@@ -16,6 +16,10 @@ const MAX_CLUB_CITY = 80;
 const { sendPushToUsers } = require('../../lib/apns');
 const { underDailyCap } = require('../../lib/rateLimit');
 const { MAX_SUGGESTIONS, ligneSuggeree } = require('../../lib/clubsSuggeres');
+const {
+  LONGUEUR_DU_CODE, MAX_DEMANDES_EN_ATTENTE, MAX_ESSAIS_DE_CODE_PAR_JOUR,
+  modeValide, modeDuClub, colonnesDuMode, normaliserLeCode, codesIdentiques, codeVisible,
+} = require('../../lib/adhesionClub');
 // Le même repli que la recherche de personnes : accents, casse, traits d'union, ligatures. Un
 // club qui s'appelle « Les Côtes de Belleville » doit se trouver en tapant « cotes ».
 const {
@@ -55,6 +59,29 @@ module.exports = withErrorHandling(async function handler(req, res) {
     case 'setOpen':
       if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
       return handleSetOpen(req, res, userId);
+    // L'ADHÉSION : trois modes au choix du propriétaire (ouvert, sur demande, sur code), la fiche
+    // qu'on voit avant d'entrer, et les demandes. Voir `lib/adhesionClub.js`.
+    case 'preview':
+      if (req.method !== 'GET') return res.status(405).json({ error: 'method_not_allowed' });
+      return handlePreview(req, res, userId);
+    case 'byCode':
+      if (req.method !== 'GET') return res.status(405).json({ error: 'method_not_allowed' });
+      return handleByCode(req, res, userId);
+    case 'requestJoin':
+      if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+      return handleRequestJoin(req, res, userId);
+    case 'cancelRequest':
+      if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+      return handleCancelRequest(req, res, userId);
+    case 'requests':
+      if (req.method !== 'GET') return res.status(405).json({ error: 'method_not_allowed' });
+      return handleRequests(req, res, userId);
+    case 'respondRequest':
+      if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+      return handleRespondRequest(req, res, userId);
+    case 'setJoinMode':
+      if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+      return handleSetJoinMode(req, res, userId);
     case 'leave':
       if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
       return handleLeave(req, res, userId);
@@ -145,6 +172,16 @@ async function handleCreate(req, res, userId) {
   if (!cleanName) return res.status(400).json({ error: 'bad_request' });
   if (containsObjectionableContent(cleanName)) return res.status(422).json({ error: 'objectionable_content' });
 
+  // COMMENT ON ENTRERA DANS CE CLUB, au choix de qui le crée. Absent : ouvert, comme avant — une
+  // app installée ne l'envoie pas. Présent mais inconnu : une faute, pas un repli silencieux sur
+  // un mode que la personne n'a pas choisi.
+  let mode = 'open';
+  if (req.body?.joinMode !== undefined && req.body?.joinMode !== null) {
+    mode = modeValide(req.body.joinMode);
+    if (!mode) return res.status(400).json({ error: 'bad_request' });
+  }
+  const colonnes = colonnesDuMode(mode);
+
   let club;
   // LE CODE EST ENCORE ÉCRIT, ET PLUS JAMAIS LU.
   //
@@ -158,8 +195,8 @@ async function handleCreate(req, res, userId) {
     const code = randomInviteCode();
     try {
       const { rows } = await sql`
-        INSERT INTO clubs (name, invite_code, created_by)
-        VALUES (${cleanName}, ${code}, ${userId})
+        INSERT INTO clubs (name, invite_code, created_by, is_open, join_mode)
+        VALUES (${cleanName}, ${code}, ${userId}, ${colonnes.isOpen}, ${colonnes.joinMode})
         RETURNING id, name
       `;
       club = rows[0];
@@ -180,19 +217,23 @@ async function handleCreate(req, res, userId) {
     }
     throw e;
   }
-  res.status(201).json({ id: club.id, name: club.name });
+  res.status(201).json({ id: club.id, name: club.name, joinMode: mode });
 }
 
-// ON REJOINT UN CLUB PAR SON IDENTIFIANT, PLUS PAR UN CODE.
+// ON REJOINT UN CLUB PAR SON IDENTIFIANT — ET, S'IL EST SUR CODE, AVEC SON CODE.
 //
 // Le code à six lettres supposait qu'on l'ait reçu de quelqu'un — donc qu'on sache déjà que le
 // club existe, et comment il s'appelle. C'est exactement ce qu'une recherche par nom rend
 // inutile. `handleSearchClubs` trouve le club, celui-ci l'ouvre.
 //
-// L'identifiant n'est pas un secret et ne remplace pas le code : il ne sert à rien à qui ne
-// l'a pas obtenu par la recherche, et la recherche ne rend que les clubs OUVERTS. Le `is_open`
-// est donc revérifié ici, et pas seulement à la recherche — sans quoi un identifiant retenu
-// avant la fermeture d'un club y ferait encore entrer.
+// L'identifiant n'est pas un secret et ne remplace pas le mode du club : le serveur le revérifie
+// ICI, pas seulement à la recherche — sans quoi un identifiant retenu avant un changement de
+// mode ferait encore entrer.
+//
+//   · ouvert    : on entre ;
+//   · sur code  : on entre avec `code`, sinon c'est la réponse d'avant, « n'existe pas » — une
+//                 app installée n'envoie pas de code et se comporte comme devant un club fermé ;
+//   · sur demande : on n'entre pas d'un appui, on demande (`handleRequestJoin`) : 409.
 async function handleJoin(req, res, userId) {
   const { rows: already } = await sql`SELECT club_id FROM club_members WHERE user_id = ${userId}`;
   if (already.length > 0) return res.status(409).json({ error: 'already_in_club' });
@@ -204,12 +245,25 @@ async function handleJoin(req, res, userId) {
   const { clubId } = req.body || {};
   if (!isUuid(clubId)) return res.status(400).json({ error: 'bad_request' });
 
-  const { rows } = await sql`SELECT id, name, is_open FROM clubs WHERE id = ${clubId}`;
+  const { rows } = await sql`SELECT id, name, is_open, join_mode, invite_code FROM clubs WHERE id = ${clubId}`;
   const club = rows[0];
   if (!club) return res.status(404).json({ error: 'not_found' });
-  // Fermé : la même réponse que « n'existe pas ». Dire « ce club est fermé » confirmerait son
-  // existence à quelqu'un qui ne peut de toute façon pas y entrer.
-  if (!club.is_open) return res.status(404).json({ error: 'not_found' });
+  const mode = modeDuClub(club);
+
+  if (mode === 'request') return res.status(409).json({ error: 'request_required' });
+
+  if (mode === 'code') {
+    const saisi = normaliserLeCode(req.body?.code);
+    // Pas de code : la même réponse que « n'existe pas ». Dire « ce club est fermé » confirmerait
+    // son existence à quelqu'un qui ne peut de toute façon pas y entrer.
+    if (!saisi) return res.status(404).json({ error: 'not_found' });
+    // Un plafond à part pour les essais : c'est la seule valeur ici qu'on puisse chercher.
+    if (!(await underDailyCap('joinCode:' + userId, MAX_ESSAIS_DE_CODE_PAR_JOUR))) {
+      return res.status(429).json({ error: 'too_many_requests' });
+    }
+    // 400 et non 403 : le client traite un 403 comme une session refusée.
+    if (!codesIdentiques(club.invite_code, saisi)) return res.status(400).json({ error: 'bad_code' });
+  }
 
   // Same double-submit race as create — the unique index is the real guard, the pre-check above
   // just gives the common case a friendlier path.
@@ -221,7 +275,17 @@ async function handleJoin(req, res, userId) {
     }
     throw e;
   }
+  await retirerSesDemandes(userId);
   res.status(200).json({ id: club.id, name: club.name });
+}
+
+// Une personne qui vient d'entrer dans un club n'a plus de demande à faire : on les retire toutes.
+// Isolé dans son try/catch : entrer dans le club est fait, et une table de demandes pas encore
+// migrée ne doit pas transformer cette réussite en erreur.
+async function retirerSesDemandes(userId) {
+  try {
+    await sql`DELETE FROM club_join_requests WHERE user_id = ${userId}`;
+  } catch { /* table pas encore migrée : rien à retirer */ }
 }
 
 // CHERCHER UN CLUB PAR SON NOM.
@@ -240,12 +304,21 @@ async function handleSearchClubs(req, res, userId) {
   // table des clubs, donc celle qu'un script interrogerait préfixe par préfixe.
   if (!(await underDailyCap('clubSearch:' + userId, 300))) return res.status(429).json({ error: 'too_many_requests' });
 
+  // `adhesion=1` : l'app sait ce qu'est un club sur demande. Sans elle, la recherche rend ce
+  // qu'elle a toujours rendu — les clubs ouverts, et eux seuls : une app installée afficherait un
+  // bouton « Rejoindre » sur un club qu'on ne rejoint pas d'un appui.
+  // Les clubs sur code n'y sont jamais : ils ne se trouvent pas, on y entre avec le code.
+  const avecDemandes = req.query.adhesion === '1';
+
   const besoin = echapperPourLike(normaliser(raw));
   const { rows } = await sql`
-    SELECT c.id, c.name, c.city,
-           (SELECT COUNT(*)::int FROM club_members m WHERE m.club_id = c.id) AS member_count
+    SELECT c.id, c.name, c.city, c.is_open, c.join_mode,
+           (SELECT COUNT(*)::int FROM club_members m WHERE m.club_id = c.id) AS member_count,
+           EXISTS (SELECT 1 FROM club_join_requests r
+                    WHERE r.club_id = c.id AND r.user_id = ${userId}) AS demande_en_cours
     FROM clubs c
-    WHERE c.is_open = true
+    WHERE (c.is_open = true
+           OR (${avecDemandes}::boolean AND c.join_mode = 'request' AND c.created_by IS NOT NULL))
       AND c.id NOT IN (SELECT club_id FROM club_members WHERE user_id = ${userId})
       AND translate(lower(replace(replace(replace(c.name, '-', ' '), 'œ', 'oe'), 'æ', 'ae')),
             ${ACCENTS_SOURCE}, ${ACCENTS_CIBLE}) LIKE ${'%' + besoin + '%'}
@@ -258,7 +331,11 @@ async function handleSearchClubs(req, res, userId) {
   res.status(200).json({
     // La ville avec le nom : « Les Foulées · Lyon » et « Les Foulées · Nantes » cessent d'être
     // le même résultat, et on ne rejoint plus un club à l'autre bout du pays par homonymie.
-    items: rows.map((row) => ({ id: row.id, name: row.name, city: row.city || null, memberCount: row.member_count })),
+    items: rows.map((row) => ({
+      id: row.id, name: row.name, city: row.city || null, memberCount: row.member_count,
+      // Comment on y entre, et si on a déjà demandé : de quoi écrire le bon bouton sans ouvrir la fiche.
+      joinMode: modeDuClub(row), requestPending: row.demande_en_cours === true,
+    })),
   });
 }
 
@@ -278,14 +355,20 @@ async function handleSuggestedClubs(req, res, userId) {
   // l'ouverture d'un écran. Cent fois par jour est déjà beaucoup.
   if (!(await underDailyCap('clubSuggest:' + userId, 100))) return res.status(429).json({ error: 'too_many_requests' });
 
+  // Même `adhesion=1` que la recherche, pour la même raison.
+  const avecDemandes = req.query.adhesion === '1';
+
   const { rows } = await sql`
-    SELECT c.id, c.name, c.city,
+    SELECT c.id, c.name, c.city, c.is_open, c.join_mode,
            (SELECT COUNT(*)::int FROM club_members m WHERE m.club_id = c.id) AS member_count,
            EXISTS (SELECT 1 FROM club_events e
                     WHERE e.club_id = c.id AND e.starts_at > now()) AS seance_prevue,
-           (SELECT MAX(p.created_at) FROM club_posts p WHERE p.club_id = c.id) AS dernier_message
+           (SELECT MAX(p.created_at) FROM club_posts p WHERE p.club_id = c.id) AS dernier_message,
+           EXISTS (SELECT 1 FROM club_join_requests r
+                    WHERE r.club_id = c.id AND r.user_id = ${userId}) AS demande_en_cours
     FROM clubs c
-    WHERE c.is_open = true
+    WHERE (c.is_open = true
+           OR (${avecDemandes}::boolean AND c.join_mode = 'request' AND c.created_by IS NOT NULL))
       AND c.id NOT IN (SELECT club_id FROM club_members WHERE user_id = ${userId})
     ORDER BY seance_prevue DESC,
              dernier_message DESC NULLS LAST,
@@ -298,15 +381,20 @@ async function handleSuggestedClubs(req, res, userId) {
   res.status(200).json({ items: rows.map((row) => ligneSuggeree(row, maintenant)) });
 }
 
-// LE VERROU, ET IL N'APPARTIENT QU'À LA PERSONNE QUI A CRÉÉ LE CLUB.
+// LE VERROU D'AVANT LES TROIS MODES, GARDÉ POUR LES APPS DÉJÀ INSTALLÉES.
 //
-// Un club fermé disparaît des recherches et ne se rejoint plus — ni par la recherche, ni par un
-// identifiant retenu avant la fermeture. Ses membres actuels ne sont pas touchés : fermer n'est
-// pas vider.
+// Une app qui ne connaît pas `join_mode` ouvre et ferme son club avec cet interrupteur, et il doit
+// continuer à faire exactement cela : un club fermé disparaît des recherches et ne se rejoint
+// plus — il est donc « sur code », ce qu'était un club fermé. Ses membres actuels ne sont pas
+// touchés : fermer n'est pas vider.
 //
-// Volontairement PAS « sur invitation » : il n'existe aucun mécanisme d'invitation dans l'app,
-// et nommer ainsi un interrupteur qui se contente de fermer la porte promettrait une porte de
-// service qui n'existe pas.
+// Deux cas où le mode ne se réduit pas à deux valeurs :
+//   · ouvrir un club sur demande l'ouvre pour de bon, et ses demandes en attente n'ont plus de
+//     sens : elles sont retirées (leurs auteurs peuvent maintenant entrer d'un appui) ;
+//   · « fermer » un club déjà sur demande ne le change pas : pour une app ancienne il est déjà
+//     fermé, et le faire passer sur code aurait changé ce que son propriétaire a choisi.
+//
+// `is_open` reste écrit à chaque fois : voir `lib/adhesionClub.js`.
 async function handleSetOpen(req, res, userId) {
   const { isOpen } = req.body || {};
   if (typeof isOpen !== 'boolean') return res.status(400).json({ error: 'bad_request' });
@@ -314,12 +402,23 @@ async function handleSetOpen(req, res, userId) {
   const clubId = await clubQueJAdministre(userId);
   if (!clubId) return res.status(403).json({ error: 'forbidden' });
   const { rows } = await sql`
-    UPDATE clubs SET is_open = ${isOpen}
+    UPDATE clubs SET
+      is_open = ${isOpen},
+      join_mode = CASE WHEN ${isOpen}::boolean THEN 'open'
+                       WHEN is_open = false AND join_mode = 'request' THEN 'request'
+                       ELSE 'code' END
     WHERE id = ${clubId}
     RETURNING id, is_open
   `;
   if (rows.length === 0) return res.status(403).json({ error: 'forbidden' });
+  if (isOpen) await retirerLesDemandesDuClub(clubId);
   res.status(200).json({ isOpen: rows[0].is_open });
+}
+
+async function retirerLesDemandesDuClub(clubId) {
+  try {
+    await sql`DELETE FROM club_join_requests WHERE club_id = ${clubId}`;
+  } catch { /* table pas encore migrée : rien à retirer */ }
 }
 
 async function handleLeave(req, res, userId) {
@@ -398,8 +497,25 @@ async function handleMine(req, res, userId) {
   if (memberRows.length === 0) return res.status(200).json({ club: null, leaderboard: [] });
 
   const clubId = memberRows[0].club_id;
-  const { rows: clubRows } = await sql`SELECT id, name, is_open, created_by, description, city, cover_url FROM clubs WHERE id = ${clubId}`;
+  const { rows: clubRows } = await sql`SELECT id, name, is_open, join_mode, invite_code, created_by, description, city, cover_url FROM clubs WHERE id = ${clubId}`;
   const club = clubRows[0];
+  const mode = modeDuClub(club);
+  const estProprietaire = club.created_by === userId;
+  // Les demandes en attente, comptées pour le seul propriétaire : de quoi lui dire qu'il y a
+  // quelque chose à traiter sans qu'il ouvre la gestion. Isolé dans son try/catch — c'est une
+  // mention EN PLUS, et une table pas encore migrée ne doit pas coûter l'écran du club entier.
+  let demandesEnAttente = 0;
+  if (estProprietaire && mode === 'request') {
+    try {
+      const { rows } = await sql`
+        SELECT COUNT(*)::int AS n FROM club_join_requests r
+         WHERE r.club_id = ${clubId}
+           AND r.user_id NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ${userId})
+           AND r.user_id NOT IN (SELECT blocker_id FROM blocks WHERE blocked_id = ${userId})
+      `;
+      demandesEnAttente = rows[0]?.n ?? 0;
+    } catch { /* table pas encore migrée */ }
+  }
 
   // Rank is computed over every member first (a subquery), then blocked users are filtered out
   // of the outer result — so someone you've blocked disappears from your view, but everyone
@@ -572,7 +688,13 @@ async function handleMine(req, res, userId) {
       id: club.id, name: club.name, memberCount: countRows[0].count,
       // Le verrou, et à qui il appartient. Le client n'affiche l'interrupteur qu'à la personne
       // qui a créé le club — le serveur le revérifie de toute façon (`handleSetOpen`).
-      isOpen: club.is_open, isOwner: club.created_by === userId,
+      isOpen: club.is_open, isOwner: estProprietaire,
+      // Comment on entre dans ce club (`open`, `request`, `code`). Le code d'invitation n'est
+      // rendu qu'à la personne qui a créé le club, et seulement quand le club est sur code : il
+      // n'a aucune raison d'atterrir sur l'écran d'un membre.
+      joinMode: mode,
+      inviteCode: codeVisible(mode, estProprietaire, club.invite_code),
+      pendingRequests: estProprietaire && mode === 'request' ? demandesEnAttente : null,
       // Ce qui fait d'un club un LIEU et plus un nom : ce qu'il est, et où il court.
       description: club.description || null,
       city: club.city || null,
@@ -1367,4 +1489,294 @@ async function handleSetRole(req, res, userId) {
   `;
   if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
   res.status(200).json({ ok: true, memberId, role });
+}
+
+
+// ─── L'ADHÉSION : LA FICHE, LES DEMANDES, LE MODE ────────────────────────────────────────────────
+//
+// Voir `lib/adhesionClub.js` pour les trois modes et la règle qui dit quelle colonne l'emporte.
+// Tout ce qui suit est RÉSERVÉ à la personne qui a créé le club quand il s'agit de décider (voir
+// `clubQueJePossede`), et ouvert à tout compte connecté quand il s'agit de demander.
+
+// LE CLUB QUE JE POSSÈDE ET DONT JE SUIS MEMBRE, ou rien.
+//
+// Pas `clubQueJAdministre` : celui-là inclut les organisateurs, et décider qui entre dans un club
+// est une décision de propriétaire. Pas non plus `SELECT … WHERE created_by = …` seul : quelqu'un
+// qui a quitté son club puis en a rejoint un autre possède encore l'ancien, sans y être — le
+// propriétaire qui décide est celui du club où il est.
+async function clubQueJePossede(userId) {
+  const { rows } = await sql`
+    SELECT c.id, c.name, c.is_open, c.join_mode, c.invite_code
+      FROM clubs c
+      JOIN club_members m ON m.club_id = c.id AND m.user_id = ${userId}
+     WHERE c.created_by = ${userId}
+  `;
+  return rows[0] || null;
+}
+
+// LA FICHE D'UN CLUB, telle qu'on la voit avant d'y entrer.
+//
+// Le nom, la ville, la présentation, la bannière, le nombre de membres : ce que le club montre
+// déjà dans la recherche et dans sa page publique. Aucun nom de membre.
+//
+// LA PROCHAINE SÉANCE N'EST DITE QUE D'UN CLUB OUVERT, comme sa page publique. Pour un club sur
+// demande ou sur code, les séances sont ce que les membres se disent entre eux : les montrer à
+// quelqu'un qui n'est pas entré serait plus que ce que le propriétaire a choisi de montrer.
+async function ficheDuClub(club, userId, mode) {
+  const { rows: compte } = await sql`SELECT COUNT(*)::int AS n FROM club_members WHERE club_id = ${club.id}`;
+  const dejaMembre = await monClub(userId);
+  let demandeEnCours = false;
+  try {
+    const { rows } = await sql`
+      SELECT 1 FROM club_join_requests WHERE club_id = ${club.id} AND user_id = ${userId}
+    `;
+    demandeEnCours = rows.length > 0;
+  } catch { /* table pas encore migrée : pas de demande */ }
+
+  let prochaineSeance = null;
+  if (mode === 'open') {
+    try {
+      const { rows } = await sql`
+        SELECT title, location, starts_at, repeats_weekly
+          FROM club_events
+         WHERE club_id = ${club.id} AND starts_at >= now() - interval '3 hours'
+         ORDER BY starts_at ASC
+         LIMIT 1
+      `;
+      if (rows[0]) {
+        prochaineSeance = {
+          title: rows[0].title,
+          location: rows[0].location || null,
+          startsAt: rows[0].starts_at,
+          repeatsWeekly: rows[0].repeats_weekly === true,
+        };
+      }
+    } catch { /* table pas encore migrée : une fiche sans séance vaut mieux qu'une fiche en panne */ }
+  }
+
+  return {
+    id: club.id,
+    name: club.name,
+    city: club.city || null,
+    description: club.description || null,
+    coverUrl: club.cover_url || null,
+    memberCount: compte[0].n,
+    joinMode: mode,
+    requestPending: demandeEnCours,
+    alreadyInClub: Boolean(dejaMembre),
+    nextSession: prochaineSeance,
+  };
+}
+
+// LA FICHE PAR IDENTIFIANT : un club ouvert, ou sur demande. Un club sur code répond « n'existe
+// pas », comme dans la recherche — on le trouve par son code (`handleByCode`), pas autrement.
+async function handlePreview(req, res, userId) {
+  const id = typeof req.query.id === 'string' ? req.query.id : '';
+  if (!isUuid(id)) return res.status(400).json({ error: 'bad_request' });
+  if (!(await underDailyCap('clubPreview:' + userId, 200))) return res.status(429).json({ error: 'too_many_requests' });
+
+  const { rows } = await sql`
+    SELECT id, name, city, description, cover_url, is_open, join_mode, created_by
+      FROM clubs WHERE id = ${id}
+  `;
+  const club = rows[0];
+  const mode = club ? modeDuClub(club) : null;
+  if (!club || mode === 'code' || (mode === 'request' && !club.created_by)) {
+    return res.status(404).json({ error: 'not_found' });
+  }
+  res.status(200).json(await ficheDuClub(club, userId, mode));
+}
+
+// LA FICHE PAR CODE : la seule façon de tomber sur un club sur code. Le plafond est celui d'un
+// essai de code, pas d'une lecture : c'est la route qu'un script interrogerait pour deviner.
+async function handleByCode(req, res, userId) {
+  const code = normaliserLeCode(req.query.code);
+  if (code.length !== LONGUEUR_DU_CODE) return res.status(400).json({ error: 'bad_request' });
+  if (!(await underDailyCap('joinCode:' + userId, MAX_ESSAIS_DE_CODE_PAR_JOUR))) {
+    return res.status(429).json({ error: 'too_many_requests' });
+  }
+
+  const { rows } = await sql`
+    SELECT id, name, city, description, cover_url, is_open, join_mode, created_by, invite_code
+      FROM clubs WHERE invite_code = ${code}
+  `;
+  const club = rows[0];
+  // Le code d'un club qui n'est pas sur code ne désigne rien : il existe en base pour chaque
+  // club depuis toujours, et ne doit pas faire retrouver un club ouvert ou sur demande.
+  if (!club || modeDuClub(club) !== 'code') return res.status(404).json({ error: 'not_found' });
+  res.status(200).json(await ficheDuClub(club, userId, 'code'));
+}
+
+// DEMANDER À REJOINDRE UN CLUB SUR DEMANDE. Le propriétaire reçoit une notification.
+//
+// Les gardes, dans l'ordre où elles coûtent : déjà dans un club (409, comme `join`), plafond
+// quotidien, puis le club. Un club qui n'est pas sur demande ne se demande pas : ouvert, c'est
+// `join` (409 `use_join`, pour que l'app se rafraîchisse) ; sur code, il « n'existe pas ».
+async function handleRequestJoin(req, res, userId) {
+  const { rows: already } = await sql`SELECT club_id FROM club_members WHERE user_id = ${userId}`;
+  if (already.length > 0) return res.status(409).json({ error: 'already_in_club' });
+
+  if (!(await underDailyCap('joinRequest:' + userId, 10))) return res.status(429).json({ error: 'too_many_requests' });
+
+  const { clubId } = req.body || {};
+  if (!isUuid(clubId)) return res.status(400).json({ error: 'bad_request' });
+
+  const { rows } = await sql`SELECT id, name, is_open, join_mode, created_by FROM clubs WHERE id = ${clubId}`;
+  const club = rows[0];
+  if (!club) return res.status(404).json({ error: 'not_found' });
+  const mode = modeDuClub(club);
+  if (mode === 'open') return res.status(409).json({ error: 'use_join' });
+  // Sans propriétaire (son compte a été supprimé), personne ne répondrait jamais.
+  if (mode !== 'request' || !club.created_by) return res.status(404).json({ error: 'not_found' });
+
+  // Un blocage dans un sens ou dans l'autre : la même réponse que « n'existe pas », comme partout
+  // ailleurs où un blocage cache quelqu'un. C'est aussi le recours d'un propriétaire contre
+  // quelqu'un qui insiste.
+  const { rows: bloque } = await sql`
+    SELECT 1 FROM blocks
+     WHERE (blocker_id = ${club.created_by} AND blocked_id = ${userId})
+        OR (blocker_id = ${userId} AND blocked_id = ${club.created_by})
+     LIMIT 1
+  `;
+  if (bloque.length > 0) return res.status(404).json({ error: 'not_found' });
+
+  const { rows: enAttente } = await sql`
+    SELECT COUNT(*)::int AS n FROM club_join_requests WHERE user_id = ${userId}
+  `;
+  if (enAttente[0].n >= MAX_DEMANDES_EN_ATTENTE) {
+    return res.status(409).json({ error: 'too_many_pending_requests' });
+  }
+
+  const { rows: inseree } = await sql`
+    INSERT INTO club_join_requests (club_id, user_id) VALUES (${club.id}, ${userId})
+    ON CONFLICT (club_id, user_id) DO NOTHING
+    RETURNING id
+  `;
+  // Déjà demandée : le même résultat, sans second message au propriétaire.
+  if (inseree.length === 0) return res.status(200).json({ requestPending: true });
+
+  // Push avant la réponse — Vercel peut figer la fonction une fois la réponse envoyée.
+  const { rows: moi } = await sql`SELECT name FROM users WHERE id = ${userId}`;
+  await sendPushToUsers(sql, [club.created_by], {
+    title: 'Demande pour rejoindre le club',
+    body: `${moi[0]?.name || 'Quelqu\'un'} demande à rejoindre ${club.name}`,
+  });
+  res.status(201).json({ requestPending: true });
+}
+
+// RETIRER SA DEMANDE. Idempotent : retirer une demande qui n'existe plus (déjà acceptée, déjà
+// retirée depuis un autre appareil) est un succès, pas une erreur — le résultat voulu est atteint.
+async function handleCancelRequest(req, res, userId) {
+  const { clubId } = req.body || {};
+  if (!isUuid(clubId)) return res.status(400).json({ error: 'bad_request' });
+  await sql`DELETE FROM club_join_requests WHERE club_id = ${clubId} AND user_id = ${userId}`;
+  res.status(200).json({ ok: true, requestPending: false });
+}
+
+// LES DEMANDES EN ATTENTE DE MON CLUB, la plus ancienne d'abord. Le propriétaire seulement.
+//
+// Les gens qu'on a bloqués, ou qui nous ont bloqué, n'y figurent pas : même règle que les
+// classements et le mur.
+async function handleRequests(req, res, userId) {
+  const club = await clubQueJePossede(userId);
+  if (!club) return res.status(403).json({ error: 'forbidden' });
+
+  const { rows } = await sql`
+    SELECT r.id, r.created_at, u.id AS user_id, u.name, u.last_name, u.avatar_data, u.avatar_url
+      FROM club_join_requests r
+      JOIN users u ON u.id = r.user_id
+     WHERE r.club_id = ${club.id}
+       AND u.id NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ${userId})
+       AND u.id NOT IN (SELECT blocker_id FROM blocks WHERE blocked_id = ${userId})
+     ORDER BY r.created_at ASC
+     LIMIT 50
+  `;
+  res.status(200).json({
+    items: rows.map((r) => ({
+      id: r.id,
+      userId: r.user_id,
+      name: r.name,
+      lastName: r.last_name || null,
+      avatarUrl: r.avatar_url || null,
+      avatarBase64: r.avatar_data || null,
+      createdAt: r.created_at,
+    })),
+  });
+}
+
+// ACCEPTER OU REFUSER UNE DEMANDE. Le propriétaire seulement.
+//
+// Accepter fait entrer la personne ET RETIRE TOUTES SES DEMANDES : elle n'est plus qu'à un club,
+// et les autres propriétaires n'ont plus rien à traiter. Elle est notifiée. Refuser retire la
+// demande sans rien dire à personne — une notification de refus n'est demandée à personne, et
+// faire savoir à quelqu'un qu'on l'a écarté n'est pas la même chose que ne pas l'avoir accepté.
+async function handleRespondRequest(req, res, userId) {
+  const { userId: demandeurId, accept } = req.body || {};
+  if (!isUuid(demandeurId) || typeof accept !== 'boolean') return res.status(400).json({ error: 'bad_request' });
+
+  const club = await clubQueJePossede(userId);
+  if (!club) return res.status(403).json({ error: 'forbidden' });
+
+  const { rows: demande } = await sql`
+    SELECT id FROM club_join_requests WHERE club_id = ${club.id} AND user_id = ${demandeurId}
+  `;
+  // Déjà retirée par son auteur, ou déjà traitée depuis un autre appareil.
+  if (demande.length === 0) return res.status(404).json({ error: 'not_found' });
+
+  if (!accept) {
+    await sql`DELETE FROM club_join_requests WHERE club_id = ${club.id} AND user_id = ${demandeurId}`;
+    return res.status(200).json({ ok: true, accepted: false });
+  }
+
+  // Elle a pu entrer dans un autre club depuis sa demande. Sa demande ici n'a plus d'objet.
+  if (await monClub(demandeurId)) {
+    await retirerSesDemandes(demandeurId);
+    return res.status(409).json({ error: 'already_in_club' });
+  }
+  try {
+    await sql`INSERT INTO club_members (club_id, user_id) VALUES (${club.id}, ${demandeurId})`;
+  } catch (e) {
+    if (String(e.message).includes('uniq_club_members_user')) {
+      await retirerSesDemandes(demandeurId);
+      return res.status(409).json({ error: 'already_in_club' });
+    }
+    throw e;
+  }
+  await retirerSesDemandes(demandeurId);
+
+  // Push avant la réponse, pour la même raison que partout ailleurs dans ce fichier.
+  await sendPushToUsers(sql, [demandeurId], {
+    title: 'Demande acceptée',
+    body: `Tu fais maintenant partie de ${club.name}`,
+  });
+  res.status(200).json({ ok: true, accepted: true });
+}
+
+// CHANGER LE MODE D'ADHÉSION DE SON CLUB. Le propriétaire seulement — pas les organisateurs :
+// décider qui peut entrer est ce qui définit le club, et un organisateur qui pourrait le faire
+// pourrait aussi le rendre ouvert à tous malgré sa fondatrice.
+//
+// Les membres actuels ne sont jamais touchés : changer de mode ne vide rien. Quitter le mode
+// « sur demande » retire les demandes en attente : leurs auteurs peuvent maintenant entrer d'un
+// appui, ou doivent avoir le code, et une demande qui ne mène plus nulle part ne doit pas rester
+// affichée « envoyée ».
+async function handleSetJoinMode(req, res, userId) {
+  const mode = modeValide(req.body?.joinMode);
+  if (!mode) return res.status(400).json({ error: 'bad_request' });
+
+  const club = await clubQueJePossede(userId);
+  if (!club) return res.status(403).json({ error: 'forbidden' });
+
+  const colonnes = colonnesDuMode(mode);
+  await sql`
+    UPDATE clubs SET is_open = ${colonnes.isOpen}, join_mode = ${colonnes.joinMode}
+     WHERE id = ${club.id}
+  `;
+  if (mode !== 'request') await retirerLesDemandesDuClub(club.id);
+
+  res.status(200).json({
+    joinMode: mode,
+    isOpen: colonnes.isOpen,
+    inviteCode: codeVisible(mode, true, club.invite_code),
+  });
 }

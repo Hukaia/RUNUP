@@ -20,6 +20,18 @@ struct ClubInfo: Decodable {
     /// La bannière du club. Une URL de stockage, jamais l'image : une ligne de `clubs` est relue
     /// à chaque ouverture de l'écran, par chaque membre.
     var coverUrl: String?
+    /// COMMENT ON ENTRE DANS CE CLUB : « open », « request » ou « code ». Absent d'un serveur plus
+    /// ancien, et pour la même raison que les champs d'au-dessus : optionnel. Voir `modeDAdhesion`,
+    /// qui retombe sur `isOpen` quand il manque.
+    var joinMode: String?
+    /// Le code d'invitation, rendu à la seule personne qui a créé le club, et seulement quand le
+    /// club est sur code. Un membre ne le voit jamais.
+    var inviteCode: String?
+    /// Les demandes en attente, pour le seul propriétaire d'un club sur demande : de quoi lui dire
+    /// qu'il y a quelque chose à traiter sans qu'il ouvre la gestion.
+    var pendingRequests: Int?
+
+    var modeDAdhesion: ClubJoinMode { ClubJoinMode(serveur: joinMode, isOpen: isOpen) }
 }
 
 /// Un club trouvé par la recherche — tout ce qu'il faut pour décider de le rejoindre, et rien de
@@ -41,6 +53,57 @@ struct ClubSearchResult: Decodable, Identifiable, Hashable {
     /// exactement à « aucun club ne porte ce nom ».
     var seancePrevue: Bool?
     var actifRecemment: Bool?
+    /// Comment on y entre, et si on a déjà demandé : de quoi écrire la pilule d'une carte sans
+    /// ouvrir la fiche. Optionnels, comme tout ce qui a été ajouté après coup : un serveur qui ne
+    /// les rend pas ne rend que des clubs ouverts.
+    var joinMode: String?
+    var requestPending: Bool?
+
+    var mode: ClubJoinMode { ClubJoinMode(serveur: joinMode, isOpen: nil) }
+}
+
+/// LA FICHE D'UN CLUB, telle qu'on la voit avant d'y entrer : ce qu'il montre de lui, et où en est
+/// la personne qui le regarde. Aucun nom de membre — la fiche est lisible par quiconque a un compte.
+///
+/// Tout sauf l'identité et le nombre de membres est optionnel : un club peut n'avoir rien écrit, et
+/// la fenêtre entre le déploiement du serveur et celui de l'app n'est jamais nulle.
+struct ClubPreview: Decodable, Identifiable, Hashable {
+    var id: String
+    var name: String
+    var memberCount: Int
+    var city: String?
+    var description: String?
+    var coverUrl: String?
+    var joinMode: String?
+    /// Elle a déjà demandé à rejoindre ce club, et la demande attend.
+    var requestPending: Bool?
+    /// Elle fait déjà partie d'un club : un seul à la fois, donc aucun bouton d'adhésion.
+    var alreadyInClub: Bool?
+    /// La prochaine séance, dite SEULEMENT d'un club ouvert : celles d'un club sur demande ou sur
+    /// code sont ce que ses membres se disent entre eux.
+    var nextSession: ClubPreviewSession?
+
+    var mode: ClubJoinMode { ClubJoinMode(serveur: joinMode, isOpen: nil) }
+}
+
+struct ClubPreviewSession: Decodable, Hashable {
+    var title: String
+    var location: String?
+    var startsAt: Date
+    var repeatsWeekly: Bool?
+}
+
+/// UNE DEMANDE POUR REJOINDRE MON CLUB, vue par son propriétaire. Une personne, une date : rien
+/// d'écrit par elle, donc rien à modérer.
+struct ClubJoinRequest: Decodable, Identifiable, Hashable, Nomme {
+    var id: String
+    var userId: String
+    var name: String
+    var lastName: String?
+    var avatarUrl: String?
+    var avatarBase64: String?
+    var createdAt: Date
+    var nomDeFamille: String? { lastName }
 }
 
 struct LeaderboardRow: Decodable, Identifiable, Hashable, Nomme {
@@ -534,6 +597,23 @@ enum ClubServiceError: Error {
         guard case let .badResponse(status, body) = self else { return false }
         return status == 422 && body.contains("objectionable_content")
     }
+
+    /// Le code d'erreur que le serveur écrit dans sa réponse (« bad_code », « already_in_club »,
+    /// « request_required »…), quand elle en porte un. Plusieurs refus partagent un même statut :
+    /// 409 veut dire « déjà dans un club » comme « ce club se demande », et ce n'est pas la même
+    /// phrase à dire.
+    var codeServeur: String? {
+        guard case let .badResponse(_, corps) = self,
+              let donnees = corps.data(using: .utf8),
+              let objet = try? JSONSerialization.jsonObject(with: donnees) as? [String: Any] else { return nil }
+        return objet["error"] as? String
+    }
+
+    /// Le statut HTTP d'un refus du serveur.
+    var statut: Int? {
+        guard case let .badResponse(statut, _) = self else { return nil }
+        return statut
+    }
 }
 
 /// Talks to Haizo's real club backend (`api/clubs/*.js`, `api/activities/*.js`) — replaces
@@ -573,8 +653,11 @@ struct ClubService {
         try await send(path: "api/clubs/mine", method: "GET")
     }
 
-    func createClub(name: String) async throws -> ClubCreatedResponse {
-        try await send(path: "api/clubs/create", method: "POST", body: ["name": name])
+    /// `joinMode` : comment on entrera dans ce club, au choix de qui le crée. Absent, le serveur
+    /// crée un club ouvert, comme avant.
+    func createClub(name: String, joinMode: ClubJoinMode = .open) async throws -> ClubCreatedResponse {
+        try await send(path: "api/clubs/create", method: "POST",
+                       body: ["name": name, "joinMode": joinMode.rawValue])
     }
 
     /// Sets the club's active challenge — replaces whichever one was active before (a club has at
@@ -651,17 +734,22 @@ struct ClubService {
         let _: OkResponse = try await send(path: "api/clubs/deleteEvent", method: "POST", body: ["eventId": eventId])
     }
 
-    /// Rejoint un club trouvé par la recherche. L'identifiant ne remplace pas le code : il ne
-    /// sert à rien à qui ne l'a pas obtenu par `searchClubs`, et le serveur revérifie que le
-    /// club est bien ouvert.
-    func joinClub(clubId: String) async throws -> ClubJoinedResponse {
-        try await send(path: "api/clubs/join", method: "POST", body: ["clubId": clubId])
+    /// Rejoint un club : d'un appui s'il est ouvert, avec `code` s'il est sur code. L'identifiant
+    /// ne remplace pas le mode du club : il ne sert à rien à qui ne l'a pas obtenu par la
+    /// recherche ou par un code, et le serveur revérifie le mode à chaque appel. Un club sur
+    /// demande ne se rejoint pas ici : voir `requestJoin`.
+    func joinClub(clubId: String, code: String? = nil) async throws -> ClubJoinedResponse {
+        var body: [String: Any] = ["clubId": clubId]
+        if let code, !code.isEmpty { body["code"] = code }
+        return try await send(path: "api/clubs/join", method: "POST", body: body)
     }
 
     /// Cherche un club par son nom — accents, casse et traits d'union ignorés, comme pour les
-    /// personnes. Ne rend que les clubs ouverts, et jamais celui dont on est déjà membre.
+    /// personnes. Rend les clubs ouverts ET ceux sur demande (`adhesion=1` dit au serveur que cette
+    /// version sait les afficher), jamais ceux sur code, et jamais celui dont on est déjà membre.
     func searchClubs(query: String) async throws -> [ClubSearchResult] {
-        let response: ClubSearchResponse = try await send(path: "api/clubs/search", method: "GET", query: ["q": query])
+        let response: ClubSearchResponse = try await send(path: "api/clubs/search", method: "GET",
+                                                          query: ["q": query, "adhesion": "1"])
         return response.items
     }
 
@@ -672,8 +760,59 @@ struct ClubService {
     /// la raison de chacune. Rend une liste vide plutôt que de lever : c'est un confort, et une
     /// ligne d'erreur sous un champ de recherche se lirait comme un échec de la recherche.
     func suggestedClubs() async -> [ClubSearchResult] {
-        let reponse: ClubSearchResponse? = try? await send(path: "api/clubs/suggested", method: "GET")
-        return reponse?.items ?? []
+        (try? await fetchSuggestedClubs()) ?? []
+    }
+
+    /// Les mêmes cinq lignes, mais qui disent quand le réseau a failli : l'écran de découverte des
+    /// clubs a besoin de savoir « aucun club à proposer » de « impossible de charger ».
+    func fetchSuggestedClubs() async throws -> [ClubSearchResult] {
+        let reponse: ClubSearchResponse = try await send(path: "api/clubs/suggested", method: "GET",
+                                                         query: ["adhesion": "1"])
+        return reponse.items
+    }
+
+    // MARK: - L'adhésion : la fiche, les demandes, le mode
+
+    /// La fiche d'un club ouvert ou sur demande, telle qu'on la voit avant d'y entrer.
+    func clubPreview(id: String) async throws -> ClubPreview {
+        try await send(path: "api/clubs/preview", method: "GET", query: ["id": id])
+    }
+
+    /// La fiche d'un club sur code, trouvée PAR SON CODE — la seule façon d'en trouver un.
+    func clubPreview(code: String) async throws -> ClubPreview {
+        try await send(path: "api/clubs/byCode", method: "GET", query: ["code": code])
+    }
+
+    /// Demande à rejoindre un club sur demande. Le propriétaire reçoit une notification ; rien
+    /// d'écrit n'est envoyé. Demander deux fois est sans effet.
+    func requestJoin(clubId: String) async throws {
+        let _: RequestPendingResponse = try await send(path: "api/clubs/requestJoin", method: "POST",
+                                                       body: ["clubId": clubId])
+    }
+
+    /// Retire sa demande. Sans effet si elle n'existe plus (déjà acceptée, déjà retirée).
+    func cancelJoinRequest(clubId: String) async throws {
+        let _: OkResponse = try await send(path: "api/clubs/cancelRequest", method: "POST",
+                                           body: ["clubId": clubId])
+    }
+
+    /// Les demandes en attente de mon club, la plus ancienne d'abord. Le propriétaire seulement.
+    func fetchJoinRequests() async throws -> [ClubJoinRequest] {
+        let reponse: JoinRequestsResponse = try await send(path: "api/clubs/requests", method: "GET")
+        return reponse.items
+    }
+
+    /// Accepte ou refuse la demande d'une personne. Accepter la fait entrer et la prévient ;
+    /// refuser retire la demande sans rien lui dire. Le propriétaire seulement.
+    func respondToJoinRequest(userId: String, accept: Bool) async throws {
+        let _: OkResponse = try await send(path: "api/clubs/respondRequest", method: "POST",
+                                           body: ["userId": userId, "accept": accept])
+    }
+
+    /// Change la façon dont on entre dans son club. Le propriétaire seulement ; les membres actuels
+    /// ne sont jamais touchés. Rend le mode retenu par le serveur et, sur code, le code.
+    func setJoinMode(_ mode: ClubJoinMode) async throws -> JoinModeResponse {
+        try await send(path: "api/clubs/setJoinMode", method: "POST", body: ["joinMode": mode.rawValue])
     }
 
     /// Nommer un organisateur, ou lui retirer le rôle. RÉSERVÉ à qui a créé le club — pas aux
@@ -737,11 +876,6 @@ struct ClubService {
         let valeur: Any = dataURI.map { $0 as Any } ?? NSNull()
         let _: OkResponse = try await send(path: "api/clubs/cover", method: "POST",
                                            body: ["coverDataURI": valeur])
-    }
-
-    /// Ouvre ou ferme son club. Réservé à la personne qui l'a créé — le serveur refuse les autres.
-    func setClubOpen(_ isOpen: Bool) async throws {
-        let _: ClubOpenResponse = try await send(path: "api/clubs/setOpen", method: "POST", body: ["isOpen": isOpen])
     }
 
     func leaveClub() async throws {
@@ -1707,8 +1841,20 @@ private struct ClubSearchResponse: Decodable {
     var items: [ClubSearchResult]
 }
 
-private struct ClubOpenResponse: Decodable {
-    var isOpen: Bool
+private struct RequestPendingResponse: Decodable {
+    var requestPending: Bool?
+}
+
+private struct JoinRequestsResponse: Decodable {
+    var items: [ClubJoinRequest]
+}
+
+/// Ce que le serveur retient quand on change le mode de son club. Le code n'est rendu que pour un
+/// club sur code, et seulement à son propriétaire.
+struct JoinModeResponse: Decodable {
+    var joinMode: String?
+    var isOpen: Bool?
+    var inviteCode: String?
 }
 
 private struct PublicUserListResponse: Decodable {

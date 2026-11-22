@@ -114,6 +114,9 @@ point, qui vit sur le noir à huit points de diamètre, est plus clair.
 | Récupération | `recuperation` | `#2B6CB8` | `#5AA9E6` |
 | Sortie longue | `longue` | `#6B35D6` | `#9B6BF2` |
 
+Une de ces teintes sert aussi de couleur à un club dans la découverte : le club n'a pas de couleur en donnée, elle est tirée de son
+identifiant (`HZIntensite.pourClub(id:)`, un hachage stable, donc la même partout et d'une session à l'autre).
+
 Le canvas n'en dessine pas d'autre. Une séance de seuil, de fractionné ou de renforcement n'a pas de teinte : elle prend l'accent,
 et se lit par ce qui est écrit dessus. Un repos prend le noir doux (`surfaceSombre`) et son point éteint. C'est une hypothèse de
 l'équipe, à confirmer (§ 11).
@@ -430,6 +433,10 @@ noir doux), `HZBulle` et `HZTexteDeBulle` (15 points, interligne 1,4 ; blanc sur
 dit qui parle), `HZSaisie` (une capsule claire de 54, le bouton d'envoi noir à droite).
 
 **Explorer, fil, stats, plan**
+- `HZCarteDeDecouverte` (un club à découvrir : aplat de sa teinte, rayon `carteDeClub` 32, 168 de haut, 214 sur sa fiche sans action ;
+  pilule voilée « Ouvert », « Sur demande » ou « Sur code » en haut à gauche, pilule blanche « Demande envoyée » quand il y en a une,
+  nom en `titreDeCarte`, « ville · membres » en 15/600) et `HZLigneDeDemande` (une demande d'adhésion : photo, nom, « il y a… », puis
+  deux pilules `petite` dessous, Accepter noire et Refuser grise).
 - `HZChampDExploration`, `HZCarteDItineraire` (un grand bloc noir, le tracé en accent, la distance en très grand), `HZTuileDeCourse`.
 - `HZCarteDeClub`, `HZSortieDuFil` (le bloc est à l'accent quand la sortie est un record, noir sinon ; le nom ouvre la personne, le
   bloc ouvre la sortie), `HZNoteDuFil` (une phrase et une coche : ce n'est pas une sortie), `HZMiniatureDeSortie` (le tracé, ou le
@@ -625,6 +632,7 @@ qu'on la retrouve, à revoir sur la maquette.
 | **La course libre d'une autre discipline** | La barre du canvas n'a pas de bouton de course : sur l'accueil on démarre la séance du jour. Où va, dans le design, une sortie libre à vélo, en trail ou en natation ? Posée le 17 novembre, non tranchée dans `PROGRESS.md`. |
 | **Les écrans hors canvas** | L'app comptait cinquante-trois écrans au 17 novembre, le canvas dix. Le plan complet, les phases Récupération et Choix, le plan verrouillé, l'historique, le récap hebdo, les chaussures, la carte de chaleur, les pages de course et le hub du Club sont habillés avec les mêmes composants, à montrer avant validation. |
 | **Ce que l'équipe a posé faute de canvas** | Une séance passée et non faite porte une pastille « Non faite » (plan) ou s'affiche comme un repos (accueil) ; les calories ne s'affichent plus pendant la course (elles restent enregistrées et au résumé) ; la marque d'un badge est son symbole et non un court texte ; la flamme de la série est retirée ; « Passer à un objectif » propose quatre tuiles au plus ; le bandeau du coach du plan dit ce que le déplacement fait vraiment, pas « je réorganise le reste ». |
+| **La couleur de la carte du club** | Dans la découverte, chaque club prend l'une des trois teintes d'intensité. La carte du club dans l'onglet Club reste bleue comme sur le canvas. Unifier (une ligne : `couleur: HZIntensite.pourClub(id:)`) ou garder le bleu ? |
 | **La longueur de l'inscription** | D4 (9 novembre) fait de la qualité du plan sur mesure le critère. L'inscription compte aujourd'hui cinq écrans, une question chacun, et `PROGRESS.md` n'enregistre pas d'arbitrage de Charlotte sur ce raccourcissement : confirmer que les cinq écrans tiennent D4. |
 
 Les trois questions ouvertes le 15 novembre — la chaleur du fond de consultation, la teinte des surfaces secondaires, l'app qui n'a

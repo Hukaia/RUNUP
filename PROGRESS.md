@@ -9105,3 +9105,19 @@ date, heure de départ, inscription et lien officiel.
 - **App** : `RacePageView` (section « La course », bouton « Inscription sur le site officiel »), `RaceDiscoveryView` (rangée de filtres par épreuve, recherche par pays), `CreateRaceSheet`
   (pays, surface, profil, lien), listes trail et HYROX demandées au serveur. 25 clés en fr/en/es. Aucun jeton nouveau.
 - **Vérifié** : 40 tests Node, contrôles du dépôt. **Non vu** : tout le Swift a été écrit sans compilateur (CI à lire), l'aspect des écrans (captures à faire), les requêtes contre le vrai Neon.
+
+## Clubs : l'adhésion au choix du propriétaire, et une découverte soignée (22 novembre)
+
+Charlotte : « l'adhésion à un club n'est pas automatique », et l'esthétique des clubs à reprendre. Choisi avec elle : ouvert, sur demande, sur code, au choix du propriétaire.
+- **Serveur** : colonne `join_mode`, table `club_join_requests`, 7 actions (`preview`, `byCode`, `requestJoin`, `cancelRequest`, `requests`, `respondRequest`, `setJoinMode`) toujours dans
+  `api/clubs/[action].js` (12 fonctions sur 12). La règle des trois modes vit dans `lib/adhesionClub.js`. Compatible avec une app déjà installée : `is_open` reste écrit et l'emporte,
+  `search` et `suggested` ne rendent les clubs sur demande qu'avec `?adhesion=1`. **À faire par Charlotte : coller `db/A_COLLER_adhesion_clubs.sql` dans Neon AVANT de déployer le serveur** (les clubs
+  fermés deviennent « sur code »).
+- **Décisions** : un club fermé d'aujourd'hui ne pouvait être rejoint par personne (le code n'était lu nulle part) ; « sur code » le rend enfin utilisable (« Rejoindre avec un code »), sans qu'il
+  apparaisse dans la recherche. Seul le propriétaire (`created_by`) change le mode et répond aux demandes. Une demande n'existe qu'en attente ; la demande reçue et l'acceptation notifient, pas le refus ;
+  5 demandes en attente au plus par personne. Le dialogue « Quitter le club » disait de redemander le code : faux, corrigé.
+- **App** : Explorer > Clubs (cartes en aplat avec pilule de mode, recherche par nom, code, états chargement/erreur/vide), `ClubFicheView` en feuille, `ClubCodeSheet`, gestion du club (les trois modes
+  remplacent l'interrupteur, code copiable, demandes Accepter / Refuser), plaque « N personnes veulent rejoindre le club » pour le propriétaire, mode choisi à la création. 55 chaînes fr/en/es.
+- **Vérifié** : 54 tests Node d'adhésion (faux `sql`), contrôles du dépôt. **Non vu** : le Swift n'a jamais été compilé (CI à lire), le SQL n'a pas tourné sur Postgres, aucun rendu (largeur des trois pilules
+  sur 390 pt, en/es), les notifications. Ordre de mise en ligne : migration, puis serveur, puis app.
+- Fusionné avec les courses du monde (un conflit dans `ExplorerView.charger`, résolu en gardant les deux).
