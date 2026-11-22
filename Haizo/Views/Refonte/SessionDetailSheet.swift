@@ -6,7 +6,13 @@ struct SessionDetailSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var moved = false
 
-    private var session: WorkoutSession { appState.profile.todaySession }
+    private var session: WorkoutSession {
+        #if DEBUG
+        // Capture : `--hyrox=<kind>` fait lire à la feuille CETTE séance. Voir `CaptureSeed.seanceHyroxDemandee`.
+        if let demandee = CaptureSeed.seanceHyroxDemandee { return demandee }
+        #endif
+        return appState.profile.todaySession
+    }
 
     /// L'allure de la séance, si c'EN est une. Une séance de natation, de vélo ou de marche en
     /// côte a « — » : écrire « — /km » serait écrire quelque chose de faux. Même règle que

@@ -292,23 +292,25 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains("--phase=specifique") ? .specifique : .base
     }
 
-    /// Pose la séance HYROX demandée comme séance du jour.
+    /// La séance HYROX demandée, pour photographier sa fiche avec `--seance`.
     ///
     /// La semaine du plan n'est PAS touchée (`check_entrees.py` l'interdit : une séance écrite à la main
-    /// dans la semaine est effacée par la prochaine génération). La séance du jour, elle, est reposée
-    /// juste avant l'ouverture de la feuille, après le premier rafraîchissement du programme.
-    @MainActor
-    static func poserLaSeanceHyrox(sur profil: UserProfile) {
-        guard let brut = hyroxDemande, brut != "semaine", let kind = SessionKind(rawValue: brut) else { return }
+    /// dans la semaine est effacée par la prochaine génération).
+    /// La séance demandée, construite sans toucher au profil : la feuille de séance la lit à la place de
+    /// `todaySession` quand `--hyrox=<kind>` est passé (voir `SessionDetailSheet.session`). Le moteur
+    /// recalcule `todaySession` depuis la semaine, tard et à plusieurs endroits : la reposer dans le
+    /// profil, comme la première version, était perdu d'avance, et la capture montrait la course
+    /// compromise du dimanche sous cinq noms de fichier différents.
+    static var seanceHyroxDemandee: WorkoutSession? {
+        guard let brut = hyroxDemande, brut != "semaine", let kind = SessionKind(rawValue: brut) else { return nil }
         let estUneStation = ProgrammeHyrox.Station.pour(kind) != nil
-        let seance = WorkoutSession(
+        return WorkoutSession(
             title: brut, subtitle: "",
             durationMinutes: estUneStation ? 40 : 35, pace: "—",
             zone: estUneStation ? "Z3-4" : "Technique",
             adjustment: nil, kind: kind, role: estUneStation ? .speed : .easy,
             phaseHyrox: phaseHyroxDemandee
         )
-        profil.todaySession = seance
     }
 
     /// `--feuille=<nom>` : ouvrir une feuille que l'état de l'app suffit à présenter, pour la photographier.
@@ -416,7 +418,6 @@ enum CaptureSeed {
         // dans `ThemeStore` au moment où il charge le profil, donc bien après.
         profil.isLightMode = modeClairDemande
         AdaptivePlanEngine.applyOnboarding(resultat(maintenant: maintenant, hyrox: hyroxDemande != nil), to: profil)
-        poserLaSeanceHyrox(sur: profil)
 
         // LE MODE COURSE LIBRE, QUAND ON LE DEMANDE.
         //
