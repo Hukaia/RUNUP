@@ -9164,3 +9164,9 @@ Premier passage de la CI sur le programme HYROX par station (#696) : le Swift co
 brut de la semaine, et le moteur pose une décharge toutes les quatre semaines (4, 8, 12…). Une des quatre familles tombait donc TOUJOURS sur une décharge, qui ne porte aucune station : **les ergomètres (SkiErg et rameur) n'étaient
 jamais travaillés**, ni avant ni après ce chantier. Corrigé : la rotation compte les semaines de travail (`ProgrammeHyrox.semaineDeTravail`, les décharges ne consomment pas de rang). Un cycle de quatre semaines de travail dure donc
 cinq semaines du calendrier. Tests : la rotation ignore les décharges, une décharge ne porte aucune station, les huit stations passent sur quatre semaines de travail.
+
+## Clubs fantômes dans « Rejoins un club » (22 novembre)
+
+Charlotte a vu, dans l'écran « Rejoins un club », des clubs « Debug Test Club », « Ebury » (trois fois) et « Malakoff », tous à « 0 membre », avec un bouton « Rejoindre » : des clubs de test et des clubs abandonnés.
+- **Serveur** : la recherche et les suggestions ne rendent plus un club qui n'a aucun membre (`EXISTS (… club_members …)`), pour que d'autres ne reviennent pas. À déployer.
+- **Base** : `db/A_COLLER_nettoyer_clubs.sql`, à coller dans Neon en deux temps : d'abord la liste de ce qui va partir (à relire), puis la suppression (les lignes sont commentées par défaut). Je n'ai pas accès à la base : je ne supprime rien moi-même.

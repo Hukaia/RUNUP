@@ -296,6 +296,10 @@ async function retirerSesDemandes(userId) {
 // Le nombre de membres accompagne chaque résultat, et ce n'est pas une décoration : rien
 // n'empêche deux clubs de porter le même nom, et c'est la seule chose qui permette de les
 // distinguer d'un coup d'œil.
+// UN CLUB SANS UN SEUL MEMBRE N'EST PAS UN CLUB À REJOINDRE : ni la recherche ni les suggestions ne le
+// rendent. Des clubs de test et des clubs abandonnés (tout le monde est parti) s'affichaient avec
+// « 0 membre » et un bouton « Rejoindre ». Le nettoyage de ceux qui existent déjà est dans
+// `db/A_COLLER_nettoyer_clubs.sql` ; cette condition évite que d'autres reviennent.
 async function handleSearchClubs(req, res, userId) {
   const raw = typeof req.query.q === 'string' ? req.query.q.trim().slice(0, 60) : '';
   if (raw.length < 2) return res.status(200).json({ items: [] });
@@ -319,6 +323,7 @@ async function handleSearchClubs(req, res, userId) {
     FROM clubs c
     WHERE (c.is_open = true
            OR (${avecDemandes}::boolean AND c.join_mode = 'request' AND c.created_by IS NOT NULL))
+      AND EXISTS (SELECT 1 FROM club_members vivant WHERE vivant.club_id = c.id)
       AND c.id NOT IN (SELECT club_id FROM club_members WHERE user_id = ${userId})
       AND translate(lower(replace(replace(replace(c.name, '-', ' '), 'œ', 'oe'), 'æ', 'ae')),
             ${ACCENTS_SOURCE}, ${ACCENTS_CIBLE}) LIKE ${'%' + besoin + '%'}
@@ -369,6 +374,7 @@ async function handleSuggestedClubs(req, res, userId) {
     FROM clubs c
     WHERE (c.is_open = true
            OR (${avecDemandes}::boolean AND c.join_mode = 'request' AND c.created_by IS NOT NULL))
+      AND EXISTS (SELECT 1 FROM club_members vivant WHERE vivant.club_id = c.id)
       AND c.id NOT IN (SELECT club_id FROM club_members WHERE user_id = ${userId})
     ORDER BY seance_prevue DESC,
              dernier_message DESC NULLS LAST,
