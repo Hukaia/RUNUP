@@ -19,19 +19,31 @@ const MAINTENANT = Date.parse('2026-11-09T08:00:00Z');
 function ligneBrute(extra = {}) {
   return {
     id: 'c1', name: 'Les Foulées du Canal', city: 'Lyon', member_count: 12,
-    seance_prevue: false, dernier_message: null, ...extra,
+    seance_prevue: false, dernier_message: null, is_open: true, join_mode: 'open',
+    demande_en_cours: false, ...extra,
   };
 }
 
-test('la ligne a exactement la forme d\'un résultat de recherche, plus les deux raisons', () => {
+test('la ligne a exactement la forme d\'un résultat de recherche, plus les deux raisons et le mode d\'adhésion', () => {
   // L'app réutilise la même vue pour les deux listes : un champ qui manque ici fait une ligne
   // qui se dessine à moitié, sans erreur.
   const ligne = ligneSuggeree(ligneBrute(), MAINTENANT);
   assert.deepStrictEqual(Object.keys(ligne).sort(),
-    ['actifRecemment', 'city', 'id', 'memberCount', 'name', 'seancePrevue']);
+    ['actifRecemment', 'city', 'id', 'joinMode', 'memberCount', 'name', 'requestPending', 'seancePrevue']);
   assert.strictEqual(ligne.name, 'Les Foulées du Canal');
   assert.strictEqual(ligne.city, 'Lyon');
   assert.strictEqual(ligne.memberCount, 12);
+});
+
+test('la ligne dit comment on entre, et si on a déjà demandé', () => {
+  const ouvert = ligneSuggeree(ligneBrute(), MAINTENANT);
+  assert.strictEqual(ouvert.joinMode, 'open');
+  assert.strictEqual(ouvert.requestPending, false);
+
+  const surDemande = ligneSuggeree(
+    ligneBrute({ is_open: false, join_mode: 'request', demande_en_cours: true }), MAINTENANT);
+  assert.strictEqual(surDemande.joinMode, 'request');
+  assert.strictEqual(surDemande.requestPending, true);
 });
 
 test('une ville absente devient null, jamais une chaîne vide', () => {
