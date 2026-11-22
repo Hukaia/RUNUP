@@ -43,9 +43,17 @@ struct PlanSemaineView: View {
     private var aujourdHui: Int { PlanSemaineModele.indiceDuJour(Demonstration.maintenant) }
     private var lundi: Date { PlanSemaineModele.lundi(de: Demonstration.maintenant) }
 
+    /// En course libre, la semaine n'existe pas : voir `PlanSemaineModele.joursEnCourseLibre`.
+    private var estEnCourseLibre: Bool { profile.programPhase == .freerun }
+
     private var jours: [PlanSemaineModele.Jour] {
-        PlanSemaineModele.jours(profile.weekSessions, aujourdHui: aujourdHui, lundi: lundi,
-                                titreDuRepos: String(localized: "Jour de repos"))
+        if estEnCourseLibre {
+            return PlanSemaineModele.joursEnCourseLibre(
+                seance: profile.todaySession, faite: profile.seanceDoneToday, aujourdHui: aujourdHui,
+                lundi: lundi, titreDuRepos: String(localized: "Jour de repos"))
+        }
+        return PlanSemaineModele.jours(profile.weekSessions, aujourdHui: aujourdHui, lundi: lundi,
+                                       titreDuRepos: String(localized: "Jour de repos"))
     }
 
     /// Les jours qu'on peut regarder : tous, ou celui d'aujourd'hui seul quand le plan est
@@ -99,9 +107,12 @@ struct PlanSemaineView: View {
             entete
             titre
             if !visibles.isEmpty {
-                rangeeDesJours
-                    .padding(.horizontal, HZEspace.marge)
-                    .padding(.top, HZPlan.sousLEntete)
+                // Une seule carte (course libre) : sept jours à choisir n'auraient pas de sens.
+                if jours.count > 1 {
+                    rangeeDesJours
+                        .padding(.horizontal, HZEspace.marge)
+                        .padding(.top, HZPlan.sousLEntete)
+                }
                 carrousel
                     .padding(.top, HZPlan.sousLesJours)
                 boutons
@@ -155,7 +166,8 @@ struct PlanSemaineView: View {
         let dates = periode.surDeuxMois
             ? String(localized: "\(periode.premierJour) \(periode.moisDuPremier) au \(periode.dernierJour) \(periode.moisDuDernier)")
             : String(localized: "\(periode.premierJour) au \(periode.dernierJour) \(periode.moisDuPremier)")
-        let seances = PlanSemaineModele.nombreDeSeances(profile.weekSessions)
+        // En course libre, `weekSessions` est celle d'un ancien programme : n'en compter aucune séance.
+        let seances = estEnCourseLibre ? 0 : PlanSemaineModele.nombreDeSeances(profile.weekSessions)
         guard seances > 0 else { return dates }
         let compte = Pluriel.choisir(seances,
                                      String(localized: "\(seances) séance"),
@@ -355,7 +367,7 @@ struct PlanSemaineView: View {
             // glissement et de faire sauter la mise en page.
             .disabled(choisi != aujourdHui)
             .opacity(choisi == aujourdHui ? HZPlan.pleine : HZPlan.eteint)
-            if planDebloque {
+            if planDebloque && !estEnCourseLibre {
                 HZBoutonPilule(libelle: String(localized: "Déplacer"), dessin: .deplacer,
                                fond: HZCouleur.surfaceSombre) {
                     appState.openMoveSession()
@@ -371,7 +383,9 @@ struct PlanSemaineView: View {
     private var feuille: some View {
         HZFeuille {
             if planDebloque {
-                HZBandeauDuCoach(texte: String(localized: "Glisse une carte pour changer de jour. Déplacer te laisse changer le jour d'une séance de cette semaine."))
+                if !estEnCourseLibre {
+                    HZBandeauDuCoach(texte: String(localized: "Glisse une carte pour changer de jour. Déplacer te laisse changer le jour d'une séance de cette semaine."))
+                }
                 objectifs
                 planComplet
             } else {

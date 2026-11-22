@@ -74,9 +74,11 @@ struct RunActivityWidget: Widget {
 
     func ileGauche(state: RunActivityAttributes.ContentState) -> some View {
         VStack(alignment: .leading, spacing: 2) {
+            // La fonte d'affichage, comme le chrono de la carte de l'écran verrouillé : l'île et la
+            // carte ne se contredisent pas. Un corps de moins (`chronoLive`) : la région est étroite.
             elapsedText(state)
-                .font(WG.police(WG.Corps.chronoPetit))
-                .tracking(WG.serre(WG.Corps.chronoPetit))
+                .font(WG.affichage(WG.Corps.chronoLive))
+                .tracking(WG.serre(WG.Corps.chronoLive))
                 .monospacedDigit()
                 .foregroundColor(chronoColor(state))
                 .lineLimit(1)

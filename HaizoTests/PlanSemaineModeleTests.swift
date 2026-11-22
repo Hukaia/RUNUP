@@ -199,4 +199,26 @@ final class PlanSemaineModeleTests: XCTestCase {
         XCTAssertEqual(periode.moisDuDernier, "décembre")
         XCTAssertTrue(periode.surDeuxMois)
     }
+
+    // MARK: - La course libre
+
+    /// En course libre la semaine du plan n'existe pas : une seule carte, la séance proposée
+    /// aujourd'hui, jamais un repos issu de l'ancien programme.
+    func testEnCourseLibreUneSeuleCarteAvecLaSeanceDuJour() {
+        let cartes = PlanSemaineModele.joursEnCourseLibre(
+            seance: seance("Footing récap", minutes: 30, zone: "Z1-2"), faite: false, aujourdHui: 5,
+            lundi: lundi, titreDuRepos: "Jour de repos", calendrier: calendrier)
+        XCTAssertEqual(cartes.count, 1)
+        XCTAssertEqual(cartes.first?.id, 5)
+        XCTAssertEqual(cartes.first?.etat, .aujourdhui)
+        XCTAssertFalse(cartes.first?.estUnRepos ?? true)
+        XCTAssertEqual(cartes.first?.nombre, .valeur("30'"))
+    }
+
+    func testEnCourseLibreLaSeanceFaiteSeDitFaite() {
+        let cartes = PlanSemaineModele.joursEnCourseLibre(
+            seance: seance("Footing récap", minutes: 30), faite: true, aujourdHui: 2,
+            lundi: lundi, titreDuRepos: "Jour de repos", calendrier: calendrier)
+        XCTAssertEqual(cartes.first?.faite, true)
+    }
 }

@@ -147,7 +147,9 @@ enum WG {
         static let ecartDesPoints: CGFloat = 5
         static let pointDeLaSemaine: CGFloat = 7
         static let traitDuJour: CGFloat = 2
-        static let anneauDuMoyen: CGFloat = 84
+        /// 78 et non 84 : à 84, « bouclés » touchait le bas de l'anneau (rendu CI du 21 novembre) et la
+        /// pile, avec l'écart qu'on lui rend, ne tient plus dans les 158 points d'un moyen.
+        static let anneauDuMoyen: CGFloat = 78
         static let anneauDuPetit: CGFloat = 74
     }
 }

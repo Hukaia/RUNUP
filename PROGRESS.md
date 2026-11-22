@@ -9010,3 +9010,17 @@ que j'avais écartée parce que la pile mesurait ~172 points pour un plafond d'i
 Construite en resserrant le corps du chrono (46, `chronoAffichage`), les marges (12) et l'espace entre rangées (6). Le test de rendu REFUSE
 toute carte de plus de 158 points : mesurées en CI, 152 (en direct, en pause, titre long), 154 (terminée), 134 (sans durée prévue).
 L'île dynamique n'a pas bougé. Non vérifié : le rendu réel d'iOS (ses marges, ses coins) et la hauteur réelle sur l'appareil.
+
+## Ce qui restait après le Plan et la Live Activity (22 novembre)
+
+**La carte de repos du Plan ouvrait la feuille d'une séance.** Cause : en COURSE LIBRE (la vidéo montrait « Mode course libre »), `weekSessions` est
+celle d'un ancien programme et `todaySession` un modèle choisi à part. « Ta semaine » dessinait sept cartes de ce plan mort, dont un
+« Off / Jour de repos » aujourd'hui, et la feuille lisait `todaySession` : « Footing récap ». En course libre, le Plan montre maintenant UNE
+carte, la séance proposée aujourd'hui (`PlanSemaineModele.joursEnCourseLibre`, testée), sans la rangée des sept jours, sans le bandeau qui parle de
+glisser, sans « Déplacer », et sans compter de séances d'un programme qui n'existe plus.
+
+**Le bandeau blanc sous la barre flottante : pas un défaut du code.** Le canvas a la même composition : la feuille blanche commence là où flotte la
+barre, et la page se défile. Laissé tel quel.
+
+**Widget moyen :** l'anneau passe de 84 à 78 points et « bouclés » reprend son écart (le rendu CI le montrait collé). **Île dynamique :** son chrono prend la
+fonte d'affichage de la carte. **DESIGN.md** décrit désormais le widget, la Live Activity et leur contrôle en image (§ 4.6).

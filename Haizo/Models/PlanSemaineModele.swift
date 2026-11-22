@@ -72,6 +72,20 @@ enum PlanSemaineModele {
         }
     }
 
+    /// COURSE LIBRE : UNE SEULE CARTE, celle d'aujourd'hui, faite de la séance qu'on propose.
+    ///
+    /// En course libre il n'y a pas de semaine planifiée : `todaySession` est un modèle choisi
+    /// indépendamment de `weekSessions` (voir `UserProfile.seanceDoneToday`), qui garde la semaine
+    /// d'un ancien programme. La lire pour dessiner « Ta semaine » montrait sept cartes d'un plan qui
+    /// n'existe plus, dont un « Off / Jour de repos » AUJOURD'HUI, et toucher cette carte ouvrait la
+    /// feuille d'une séance qu'elle disait ne pas exister (vu sur la vidéo du 21 novembre). La
+    /// séance proposée aujourd'hui est la seule qu'on puisse dire.
+    static func joursEnCourseLibre(seance: WorkoutSession, faite: Bool, aujourdHui: Int, lundi: Date,
+                                   titreDuRepos: String, calendrier: Calendar = .current) -> [Jour] {
+        jours([PlannedDay(weekday: aujourdHui, session: seance, completed: faite)],
+              aujourdHui: aujourdHui, lundi: lundi, titreDuRepos: titreDuRepos, calendrier: calendrier)
+    }
+
     private static func etat(du jour: PlannedDay, aujourdHui: Int) -> Etat {
         if jour.weekday == aujourdHui { return .aujourdhui }
         if jour.completed { return .fait }

@@ -372,7 +372,7 @@ struct DailyGoalsWidgetView: View {
                     affiche(avecMesures: true)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                VStack(spacing: WG.Forme.ecart - 2) {
+                VStack(spacing: WG.Forme.ecart) {
                     anneau(taille: WG.Forme.anneauDuMoyen)
                     Text("bouclés")
                         .font(WG.police(WG.Corps.legende, .semi))

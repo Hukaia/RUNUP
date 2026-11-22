@@ -349,6 +349,25 @@ planches du canvas, et posé à côté du rendu de sa référence (workflow `ref
 
 ---
 
+### 4.6 Le widget, la Live Activity et la montre
+
+Ces trois surfaces ne compilent pas `Haizo/DesignSystem` : elles en recopient les jetons par rôle (`WG` pour le widget et la Live Activity,
+`WT` pour la montre), avec la même règle : des aplats, aucun dégradé, aucune ombre, un texte secondaire en gris OPAQUE et jamais en
+opacité, l'accent en touche. Même fonte que l'app : Archivo, le fichier variable, réglée par CoreText.
+
+**Le widget d'accueil est l'accueil en miniature.** Fond `0B0B0C` dans les deux modes, la semaine en points (aujourd'hui cerclé), le grand
+chiffre de la séance du jour dans l'accent, en fonte d'affichage (graisse 800, largeur 125 %, comme `hzVedette`), son préfixe, son titre
+et ses mesures. Le moyen ajoute l'anneau des objectifs. La séance vient de `AccueilModele.hero`, par l'instantané partagé : le widget n'en
+recompose rien. Il désactive les marges système (`contentMarginsDisabled`) : les siennes sont les seules.
+
+**La Live Activity est une carte de moins de 158 points** (iOS coupe vers 160), noir franc : l'état (point d'accent, éteint en pause, coche à la fin),
+le chrono en fonte d'affichage, une barre pleine largeur vers la durée prévue, la distance et l'allure côte à côte dans deux tuiles
+`surfaceSombre`. Le plafond est tenu par un test, pas par un commentaire : `WidgetRenduTests` refuse toute carte plus haute. La barre se masque
+quand la séance n'a pas de durée prévue. L'île dynamique reprend la même fonte pour son chrono.
+
+**Les deux se vérifient en image, en CI** (`widget.yml`, artifact `widget`) : un rendu de test avec les vraies vues et le vrai Archivo. Il n'est
+pas celui d'iOS (ni marges ni coins du système) : la mise en page, la fonte et les débordements y sont vrais.
+
 ## 5. Les composants
 
 À quoi il sert, quand l'employer, son nom Swift. Un écran est **refait à partir de ces composants, jamais repeint par-dessus** : si
