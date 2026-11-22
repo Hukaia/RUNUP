@@ -8,17 +8,20 @@ import SwiftUI
 /// live `ThemeStore`/accent color anyway — fixed dark + the brand rose (`WG.rose`), a system
 /// surface outside her in-app theme choice.
 ///
-/// # L'ÉCRAN VERROUILLÉ : UN CHIFFRE, DEUX TUILES, UNE BARRE
+/// # L'ÉCRAN VERROUILLÉ : UN CHIFFRE, UNE BARRE, DEUX TUILES
 ///
-/// C'est l'écran de course de l'app, à l'échelle d'une carte : le chrono domine (52 points, gras,
-/// serré), la distance et l'allure sont posées dans deux tuiles `surfaceSombre`, une barre avance
-/// vers la durée prévue, et l'accent n'est qu'une touche — le point d'état et le remplissage de la
-/// barre. Noir franc, Archivo, des gris opaques, aucun dégradé, aucune ombre.
+/// C'est l'écran de course de l'app, à l'échelle d'une carte : le chrono domine, dans la FONTE
+/// D'AFFICHAGE de l'app (Archivo 800, largeur 125 %, comme ses gros chiffres), une barre pleine
+/// largeur avance vers la durée prévue, la distance et l'allure sont posées côte à côte dans deux
+/// tuiles `surfaceSombre`, et l'accent n'est qu'une touche : le point d'état et le remplissage de
+/// la barre. Noir franc, des gris opaques, aucun dégradé, aucune ombre.
 ///
-/// Deux colonnes plutôt qu'une pile : le chrono et sa barre à gauche, les deux tuiles à droite. La
-/// pile verticale (chrono pleine largeur, puis les tuiles) mesurait 172 points, sous le plafond
-/// de ~160 que le système accorde à une carte d'écran verrouillé — elle aurait été coupée. Celle-ci
-/// en mesure 138, mesurée sur une maquette rendue avec le vrai fichier Archivo.
+/// C'est la « carte 2 » de la maquette, que Charlotte a choisie le 22 novembre. Elle a un coût : la
+/// pile verticale est haute, et iOS coupe une carte d'écran verrouillé vers 160 points. Les marges
+/// et le corps du chrono (`chronoAffichage`) ont été resserrés pour qu'elle en mesure moins de 158 ;
+/// `WidgetRenduTests` REFUSE toute carte plus haute, sur chaque état. La première version, en deux
+/// colonnes (chrono et barre à gauche, tuiles à droite), mesurait 138 : elle tenait sans effort et
+/// a été remplacée par celle-ci.
 ///
 /// La barre vient de `elapsedSeconds`, que l'app republie toutes les ~5 secondes : sur 40 minutes
 /// et 300 points, elle avance d'un huitième de point par seconde, ce qui ne se voit pas. Un
@@ -105,7 +108,7 @@ struct RunActivityWidget: Widget {
 
     func ecranVerrouille(attributes: RunActivityAttributes,
                          state: RunActivityAttributes.ContentState) -> some View {
-        VStack(alignment: .leading, spacing: WG.Forme.ecart + 2) {
+        VStack(alignment: .leading, spacing: WG.Forme.ecartDeLaCarte) {
             HStack {
                 statut(state)
                 Spacer(minLength: WG.Forme.ecart)
@@ -115,31 +118,28 @@ struct RunActivityWidget: Widget {
                     .lineLimit(1)
             }
 
-            HStack(alignment: .center, spacing: WG.Forme.ecartDeColonnes) {
-                VStack(alignment: .leading, spacing: WG.Forme.ecart) {
-                    elapsedText(state)
-                        .font(WG.police(WG.Corps.chronoHero))
-                        .tracking(WG.serre(WG.Corps.chronoHero))
-                        .monospacedDigit()
-                        .foregroundColor(chronoColor(state))
-                        .lineLimit(1)
-                        .minimumScaleFactor(WG.Forme.reductionDuChrono)
-                    barre(attributes: attributes, state: state)
-                }
+            // Le chrono tient sur sa ligne : « 1:24:18 » rétrécit plutôt que de passer à la ligne.
+            elapsedText(state)
+                .font(WG.affichage(WG.Corps.chronoAffichage))
+                .tracking(WG.serre(WG.Corps.chronoAffichage))
+                .monospacedDigit()
+                .foregroundColor(chronoColor(state))
+                .lineLimit(1)
+                .minimumScaleFactor(WG.Forme.reductionDuChrono)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                VStack(spacing: WG.Forme.ecart) {
-                    tuile(TimeFormat.distance(km: state.distanceKm), "km")
-                    // « Allure » était écrit en dur, sous un chiffre qui est des kilomètres-heure
-                    // dès qu'on roule. `Discipline` décide — la même décision que l'écran de
-                    // course prend, dans `Shared`, que cette extension compile aussi.
-                    tuile(state.paceLabel, attributes.discipline.rythmeUnite)
-                }
-                .frame(width: WG.Forme.largeurDesTuiles)
+            barre(attributes: attributes, state: state)
+
+            HStack(spacing: WG.Forme.ecart) {
+                tuile(TimeFormat.distance(km: state.distanceKm), "km")
+                // « Allure » était écrit en dur, sous un chiffre qui est des kilomètres-heure
+                // dès qu'on roule. `Discipline` décide — la même décision que l'écran de
+                // course prend, dans `Shared`, que cette extension compile aussi.
+                tuile(state.paceLabel, attributes.discipline.rythmeUnite)
             }
         }
         .padding(.horizontal, WG.Forme.margeHorizontale)
-        .padding(.vertical, WG.Forme.margeVerticale)
+        .padding(.vertical, WG.Forme.margeVerticaleSerree)
         .activityBackgroundTint(Self.bg)
         .activitySystemActionForegroundColor(WG.blanc)
     }

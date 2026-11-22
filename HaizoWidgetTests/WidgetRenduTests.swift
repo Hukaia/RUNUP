@@ -160,7 +160,10 @@ final class WidgetRenduTests: XCTestCase {
                 .fixedSize(horizontal: false, vertical: true)
                 .background(WG.noirFranc)
                 .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-            try ecrireImage(carte, "live-verrouille-\(nom)", dans: dossier)
+            let hauteur = try ecrireImage(carte, "live-verrouille-\(nom)", dans: dossier)
+            // iOS coupe une carte d'écran verrouillé vers 160 points : au-delà, le bas disparaît.
+            XCTAssertLessThanOrEqual(hauteur, Self.hauteurMaximaleDeLaCarte,
+                                     "\(nom) : la carte mesure \(hauteur) points")
         }
 
         for (nom, a, e) in verrouille.prefix(2) {
@@ -182,7 +185,11 @@ final class WidgetRenduTests: XCTestCase {
         }
     }
 
-    private func ecrireImage<V: View>(_ vue: V, _ nom: String, dans dossier: URL) throws {
+    /// Le plafond que le système accorde à une carte d'écran verrouillé, moins deux points de jeu.
+    private static let hauteurMaximaleDeLaCarte: CGFloat = 158
+
+    @discardableResult
+    private func ecrireImage<V: View>(_ vue: V, _ nom: String, dans dossier: URL) throws -> CGFloat {
         let rendu = ImageRenderer(content: vue.environment(\.colorScheme, .dark))
         rendu.scale = 3
         let image = try XCTUnwrap(rendu.uiImage, "\(nom) : rien n'a été rendu")
@@ -192,5 +199,6 @@ final class WidgetRenduTests: XCTestCase {
         piece.name = nom
         piece.lifetime = .keepAlways
         add(piece)
+        return image.size.height
     }
 }

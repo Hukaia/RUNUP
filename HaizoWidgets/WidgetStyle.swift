@@ -113,8 +113,10 @@ enum WG {
         static let chiffreDeLAnneau: CGFloat = 22
         static let chronoPetit: CGFloat = 30
         static let chronoMoyen: CGFloat = 40
-        /// Le chrono de la Live Activity : un seul chiffre qui domine l'écran verrouillé.
-        static let chronoHero: CGFloat = 52
+        /// Le chrono de la Live Activity, en fonte d'affichage (largeur 125 %) : un seul chiffre qui
+        /// domine l'écran verrouillé. 46 et non plus : la pile (en-tête, chrono, barre, tuiles) doit
+        /// tenir sous les 158 points que `WidgetRenduTests` impose à la carte.
+        static let chronoAffichage: CGFloat = 46
         /// Le chiffre d'une tuile (distance, allure) de la Live Activity.
         static let valeurDeTuile: CGFloat = 22
     }
@@ -126,13 +128,15 @@ enum WG {
     /// que le système accorde avant de couper.
     enum Forme {
         static let rayonDeTuile: CGFloat = 14
-        static let largeurDesTuiles: CGFloat = 116
         static let ecart: CGFloat = 8
         static let ecartDeColonnes: CGFloat = 14
         static let margeHorizontale: CGFloat = 18
-        static let margeVerticale: CGFloat = 16
+        /// La marge haute et basse de la carte de la Live Activity : serrée, la carte est haute.
+        static let margeVerticaleSerree: CGFloat = 12
+        /// Entre les quatre rangées de la carte (état, chrono, barre, tuiles).
+        static let ecartDeLaCarte: CGFloat = 6
         static let tuileHorizontale: CGFloat = 12
-        static let tuileVerticale: CGFloat = 7
+        static let tuileVerticale: CGFloat = 6
         static let hauteurDeBarre: CGFloat = 6
         static let pointDEtat: CGFloat = 6
         static let reductionDuChrono: CGFloat = 0.6
