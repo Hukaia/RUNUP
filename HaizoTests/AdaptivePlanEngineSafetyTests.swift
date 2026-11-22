@@ -255,6 +255,14 @@ final class AdaptivePlanEngineSafetyTests: XCTestCase {
         }
     }
 
+    /// Les semaines de TRAVAIL du bloc de build : sans les décharges (semaines 4, 8, 12…), qui ne portent
+    /// ni station ni travail complémentaire.
+    private func semainesDeTravail(_ s: AdaptivePlanEngine.ProgramShape) -> [Int] {
+        (1...(s.baseWeeks + s.specificWeeks)).filter {
+            AdaptivePlanEngine.trainingBlock(forWeek: $0, shape: s) != .deload
+        }
+    }
+
     /// DEUX STATIONS PAR SEMAINE AU PLUS, JAMAIS SUR DEUX JOURS DE COURSE CONSÉCUTIFS.
     ///
     /// La répartition choisie par Charlotte : chaque station a sa séance, deux par semaine. Elles
@@ -285,18 +293,18 @@ final class AdaptivePlanEngineSafetyTests: XCTestCase {
         }
     }
 
-    /// QUATRE JOURS DE COURSE ET PLUS PORTENT LES DEUX STATIONS ; CHAQUE STATION REVIENT EN CYCLE.
+    /// QUATRE JOURS DE COURSE : LES DEUX STATIONS CHAQUE SEMAINE DE TRAVAIL, ET LES HUIT PASSENT.
     ///
-    /// Avec quatre jours, la semaine a les deux stations, la sortie longue et un troisième jour. Sur
-    /// quatre semaines du bloc de base, les huit stations passent chacune une fois.
+    /// Sur quatre semaines de travail du bloc de build, les huit stations passent chacune une fois. Le
+    /// cas échouait quand la rotation comptait les décharges : une famille tombait toujours dessus.
     @MainActor
-    func testLesHuitStationsPassentSurQuatreSemainesAvecQuatreJours() {
+    func testLesHuitStationsPassentSurQuatreSemainesDeTravail() {
         let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15, runningDays: [0, 2, 4, 6])
-        let s = shape(for: profile)
-        guard s.baseWeeks >= 4 else { return XCTFail("quatre semaines de base au moins") }
+        let travail = semainesDeTravail(shape(for: profile))
+        guard travail.count >= 4 else { return XCTFail("quatre semaines de travail au moins") }
 
         var vues: [ProgrammeHyrox.Station] = []
-        for week in 1...4 {
+        for week in travail.prefix(4) {
             let kinds = AdaptivePlanEngine
                 .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
                 .compactMap { $0.session?.kind }
@@ -304,7 +312,21 @@ final class AdaptivePlanEngineSafetyTests: XCTestCase {
             XCTAssertEqual(stations.count, 2, "S\(week) : deux stations avec quatre jours de course")
             vues += stations
         }
-        XCTAssertEqual(Set(vues).count, 8, "les huit stations sur quatre semaines")
+        XCTAssertEqual(Set(vues).count, 8, "les huit stations sur quatre semaines de travail")
+    }
+
+    /// UNE DÉCHARGE NE PORTE AUCUNE STATION : la semaine est allégée, pas un jour de plus de charge.
+    @MainActor
+    func testUneDechargeNePorteAucuneStation() {
+        let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15, runningDays: [0, 2, 4, 6])
+        let s = shape(for: profile)
+        for week in 1...(s.baseWeeks + s.specificWeeks)
+        where AdaptivePlanEngine.trainingBlock(forWeek: week, shape: s) == .deload {
+            let kinds = AdaptivePlanEngine
+                .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
+                .compactMap { $0.session?.kind }
+            XCTAssertTrue(kinds.compactMap(ProgrammeHyrox.Station.pour).isEmpty, "S\(week) est une décharge")
+        }
     }
 
     /// LA PHASE DU PROGRAMME VOYAGE AVEC LA SÉANCE : la fiche en tire le volume et la charge.
@@ -320,8 +342,14 @@ final class AdaptivePlanEngineSafetyTests: XCTestCase {
                 .filter { $0.kind.flatMap(ProgrammeHyrox.Station.pour) != nil }
                 .compactMap(\.phaseHyrox))
         }
-        XCTAssertEqual(phases(1), [.base])
-        XCTAssertEqual(phases(s.baseWeeks + 1), [.specifique])
+        // Les semaines de travail seulement : une décharge ne porte pas de station.
+        let travail = semainesDeTravail(s)
+        guard let premiereDeBase = travail.first(where: { $0 <= s.baseWeeks }),
+              let premiereDeSpecifique = travail.first(where: { $0 > s.baseWeeks }) else {
+            return XCTFail("une semaine de travail dans chaque bloc")
+        }
+        XCTAssertEqual(phases(premiereDeBase), [.base])
+        XCTAssertEqual(phases(premiereDeSpecifique), [.specifique])
     }
 
     /// LE TRAVAIL COMPLÉMENTAIRE ENTRE DANS LE PLAN, ET LE PLAFOND DE QUALITÉ TIENT TOUJOURS.
@@ -334,7 +362,7 @@ final class AdaptivePlanEngineSafetyTests: XCTestCase {
                                   runningDays: [0, 1, 3, 4, 6])
         let s = shape(for: profile)
         var vus = Set<ProgrammeHyrox.TravailComplementaire>()
-        for week in 1...(s.baseWeeks + s.specificWeeks) {
+        for week in semainesDeTravail(s) {
             let seances = AdaptivePlanEngine
                 .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
                 .compactMap { $0.session }

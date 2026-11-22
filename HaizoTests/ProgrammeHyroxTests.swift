@@ -8,6 +8,9 @@ import XCTest
 /// les jours non consécutifs — est éprouvé dans `AdaptivePlanEngineSafetyTests`.
 final class ProgrammeHyroxTests: XCTestCase {
 
+    /// Les semaines de TRAVAIL d'un plan : sans les décharges (4, 8, 12…), qui ne portent aucune station.
+    private static let travail: [Int] = (1...40).filter { $0 % 4 != 0 }
+
     private func stations(_ places: [ProgrammeHyrox.Place]) -> [ProgrammeHyrox.Station] {
         places.compactMap { place in
             if case .station(let s) = place { return s }
@@ -24,31 +27,44 @@ final class ProgrammeHyroxTests: XCTestCase {
 
     // MARK: La rotation des stations
 
-    /// LES HUIT STATIONS EN QUATRE SEMAINES, deux par semaine, chacune une fois.
-    func testLesHuitStationsPassentEnQuatreSemaines() {
+    /// LES DÉCHARGES NE COMPTENT PAS DANS LA ROTATION.
+    ///
+    /// Le moteur pose une décharge toutes les quatre semaines. Indexée sur le numéro brut de la
+    /// semaine, la rotation faisait tomber une famille sur chaque décharge — les ergomètres n'étaient
+    /// jamais travaillés. Ce cas tient que les semaines de travail se suivent sans trou.
+    func testLaRotationIgnoreLesDecharges() {
+        XCTAssertEqual(Self.travail.prefix(8).map(ProgrammeHyrox.semaineDeTravail), Array(1...8))
+        XCTAssertEqual(ProgrammeHyrox.semaineDeTravail(4), ProgrammeHyrox.semaineDeTravail(3),
+                       "une décharge ne consomme pas de rang")
+    }
+
+    /// LES HUIT STATIONS EN QUATRE SEMAINES DE TRAVAIL, deux par semaine, chacune une fois.
+    func testLesHuitStationsPassentEnQuatreSemainesDeTravail() {
         var vues: [ProgrammeHyrox.Station] = []
-        for semaine in 1...4 {
+        for semaine in Self.travail.prefix(4) {
             let duo = ProgrammeHyrox.duo(semaine: semaine)
             XCTAssertNotEqual(duo.premiere, duo.seconde)
             vues += [duo.premiere, duo.seconde]
         }
-        XCTAssertEqual(Set(vues).count, 8, "huit stations différentes sur quatre semaines")
+        XCTAssertEqual(Set(vues).count, 8, "huit stations différentes sur quatre semaines de travail")
         XCTAssertEqual(vues.count, 8)
     }
 
     /// L'ORDRE DE LA PAIRE S'INVERSE AU CYCLE SUIVANT : pour les semaines de trois jours, qui ne
-    /// portent que la première, toutes les stations passent en huit semaines.
+    /// portent que la première, toutes les stations passent en huit semaines de travail.
     func testLOrdreDeLaPaireSInverseAChaqueCycle() {
-        let premiers = (1...8).map { ProgrammeHyrox.duo(semaine: $0).premiere }
-        XCTAssertEqual(Set(premiers).count, 8, "la première station de huit semaines couvre les huit")
-        for semaine in 1...4 {
-            let avant = ProgrammeHyrox.duo(semaine: semaine)
-            let apres = ProgrammeHyrox.duo(semaine: semaine + 4)
+        let semaines = Self.travail
+        let premiers = semaines.prefix(8).map { ProgrammeHyrox.duo(semaine: $0).premiere }
+        XCTAssertEqual(Set(premiers).count, 8, "la première station de huit semaines de travail couvre les huit")
+        for i in 0..<4 {
+            let avant = ProgrammeHyrox.duo(semaine: semaines[i])
+            let apres = ProgrammeHyrox.duo(semaine: semaines[i + 4])
             XCTAssertEqual(avant.premiere, apres.seconde)
             XCTAssertEqual(avant.seconde, apres.premiere)
         }
         // Le troisième cycle recommence comme le premier.
-        XCTAssertEqual(ProgrammeHyrox.duo(semaine: 9).premiere, ProgrammeHyrox.duo(semaine: 1).premiere)
+        XCTAssertEqual(ProgrammeHyrox.duo(semaine: semaines[8]).premiere,
+                       ProgrammeHyrox.duo(semaine: semaines[0]).premiere)
     }
 
     func testUneSemaineAberranteNeFaitPasSortirDeLIndex() {
@@ -85,7 +101,7 @@ final class ProgrammeHyroxTests: XCTestCase {
             XCTAssertEqual(stations(places).count, 1, "\(jours) jours : une seule station")
         }
         for jours in 4...7 {
-            for semaine in 1...8 {
+            for semaine in Self.travail.prefix(8) {
                 let places = ProgrammeHyrox.lesAutresSeances(semaine: semaine, joursDeCourse: jours)
                 XCTAssertEqual(stations(places).count, 2, "\(jours) jours, S\(semaine)")
                 let rangs = places.indices.filter { if case .station = places[$0] { return true } else { return false } }
@@ -99,7 +115,7 @@ final class ProgrammeHyroxTests: XCTestCase {
     func testLeTravailComplementaireTourneChaqueSemaineAuDessusDeQuatreJours() {
         for jours in 5...7 {
             var vus = Set<ProgrammeHyrox.TravailComplementaire>()
-            for semaine in 1...4 {
+            for semaine in Self.travail.prefix(4) {
                 let c = complements(ProgrammeHyrox.lesAutresSeances(semaine: semaine, joursDeCourse: jours))
                 XCTAssertEqual(c.count, 1, "\(jours) jours, S\(semaine)")
                 vus.formUnion(c)
@@ -111,14 +127,14 @@ final class ProgrammeHyroxTests: XCTestCase {
     /// À QUATRE JOURS, une semaine sur deux, et un footing l'autre. Les quatre travaux en huit semaines.
     func testAQuatreJoursLeTravailComplementaireUneSemaineSurDeux() {
         var vus = Set<ProgrammeHyrox.TravailComplementaire>()
-        for semaine in 1...8 {
+        for semaine in Self.travail.prefix(8) {
             let places = ProgrammeHyrox.lesAutresSeances(semaine: semaine, joursDeCourse: 4)
             let c = complements(places)
-            if semaine % 2 == 0 {
-                XCTAssertEqual(c.count, 1, "S\(semaine) paire : un travail complémentaire")
+            if ProgrammeHyrox.semaineDeTravail(semaine) % 2 == 0 {
+                XCTAssertEqual(c.count, 1, "S\(semaine) de travail paire : un travail complémentaire")
                 XCTAssertEqual(places[1], .complement(c[0]), "il prend la place entre les deux stations")
             } else {
-                XCTAssertTrue(c.isEmpty, "S\(semaine) impaire : un footing")
+                XCTAssertTrue(c.isEmpty, "S\(semaine) de travail impaire : un footing")
                 XCTAssertEqual(places[1], .footing)
             }
             vus.formUnion(c)

@@ -180,19 +180,33 @@ enum ProgrammeHyrox {
 
     // MARK: La rotation des stations
 
+    /// LE RANG DE LA SEMAINE PARMI LES SEMAINES DE TRAVAIL, c'est-à-dire sans compter les décharges.
+    ///
+    /// Le moteur pose une décharge toutes les quatre semaines (voir `AdaptivePlanEngine.trainingBlock` :
+    /// les semaines 4, 8, 12…). Une rotation de quatre semaines indexée sur le numéro brut de la semaine
+    /// tombait donc, pour l'une des quatre familles, TOUJOURS sur une décharge — qui ne porte aucune
+    /// station — et cette famille (les ergomètres) n'était jamais travaillée. Elle est maintenant indexée
+    /// sur le nombre de semaines de travail : les semaines 1, 2, 3, 5, 6, 7, 9… valent 1, 2, 3, 4, 5, 6, 7…
+    static func semaineDeTravail(_ semaine: Int) -> Int {
+        let s = max(1, semaine)
+        return s - s / 4
+    }
+
     /// Les deux stations d'une semaine : la première, puis la seconde.
     ///
     /// Les paires viennent des quatre familles de `ChargesHyrox.FamilleDeStations`, qui tournent sur
-    /// quatre semaines : chaque station revient donc une fois par cycle de quatre semaines quand la
-    /// semaine compte au moins quatre jours de course.
+    /// quatre semaines DE TRAVAIL (les décharges ne comptent pas, voir `semaineDeTravail`) : chaque
+    /// station revient donc une fois par cycle de quatre semaines de travail quand la semaine compte au
+    /// moins quatre jours de course.
     ///
     /// L'ORDRE DE LA PAIRE S'INVERSE À CHAQUE CYCLE, et c'est pour les semaines de trois jours : elles
     /// ne portent qu'UNE séance de station (la première), et sans cette alternance la seconde station
     /// de chaque paire — sled pull, fentes, wall balls, rameur — ne serait jamais travaillée. Avec
     /// elle, chacune revient tous les huit semaines. Voir `lesAutresSeances`.
     static func duo(semaine: Int) -> (premiere: Station, seconde: Station) {
-        let deux = ChargesHyrox.FamilleDeStations.pourLaSemaine(semaine).stations
-        let cycle = (max(1, semaine) - 1) / ChargesHyrox.FamilleDeStations.allCases.count
+        let travail = semaineDeTravail(semaine)
+        let deux = ChargesHyrox.FamilleDeStations.pourLaSemaine(travail).stations
+        let cycle = (travail - 1) / ChargesHyrox.FamilleDeStations.allCases.count
         return cycle % 2 == 0 ? (deux[0], deux[1]) : (deux[1], deux[0])
     }
 
@@ -226,13 +240,13 @@ enum ProgrammeHyrox {
             }
         }
 
-        /// Le travail de la semaine, en rotation sur quatre semaines.
+        /// Le travail de la semaine DE TRAVAIL `semaine` (voir `semaineDeTravail`), en rotation sur quatre.
         static func pourLaSemaine(_ semaine: Int) -> TravailComplementaire {
             allCases[(max(1, semaine) - 1) % allCases.count]
         }
 
-        /// Le travail d'une semaine PAIRE, pour les semaines de quatre jours : il n'y est qu'une
-        /// semaine sur deux, en rotation sur huit semaines. Voir `lesAutresSeances`.
+        /// Le travail d'une semaine de travail PAIRE, pour les semaines de quatre jours : il n'y est
+        /// qu'une semaine sur deux, en rotation sur huit. Voir `lesAutresSeances`.
         static func pourUneSemaineSurDeux(_ semaine: Int) -> TravailComplementaire {
             allCases[(max(2, semaine) / 2 - 1) % allCases.count]
         }
@@ -325,18 +339,19 @@ enum ProgrammeHyrox {
     /// silence par un footing.
     static func lesAutresSeances(semaine: Int, joursDeCourse: Int) -> [Place] {
         let (premiere, seconde) = duo(semaine: semaine)
-        let semainePaire = max(1, semaine) % 2 == 0
+        let travail = semaineDeTravail(semaine)
+        let semainePaire = travail % 2 == 0
 
         if joursDeCourse <= 3 {
             return [.station(premiere), .footing, .footing, .footing, .footing, .footing]
         }
         if joursDeCourse == 4 {
             let milieu: Place = semainePaire
-                ? .complement(TravailComplementaire.pourUneSemaineSurDeux(semaine))
+                ? .complement(TravailComplementaire.pourUneSemaineSurDeux(travail))
                 : .footing
             return [.station(premiere), milieu, .station(seconde), .footing, .footing, .footing]
         }
-        let complement = Place.complement(TravailComplementaire.pourLaSemaine(semaine))
+        let complement = Place.complement(TravailComplementaire.pourLaSemaine(travail))
         return [.station(premiere), .footing, .station(seconde), complement, .footing, .footing]
     }
 }

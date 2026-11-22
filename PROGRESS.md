@@ -9159,3 +9159,8 @@ Choisi avec elle : une station par séance, deux par semaine ; force des jambes,
   deux tiers de la charge de course au bloc de base, 4 × 50 m à la charge de course au spécifique, repos 90 puis 120 s. Un test borne chaque prescription (séries 1 à 8, repos 20 à 240 s, effort 5 à 9). La phase voyage avec la séance
   (`WorkoutSession.phaseHyrox`, optionnelle, décodage tolérant). **Pas relu par quelqu'un qui a couru un HYROX** : à faire avant de présenter ces volumes comme autre chose que des valeurs de départ.
 - **Non vérifié** : tout le Swift (nouveau fichier, moteur, fiche, tests) est écrit sans compilateur, la CI le dira ; aucun rendu de la fiche d'une séance de station ou de complément n'a été photographié.
+
+Premier passage de la CI sur le programme HYROX par station (#696) : le Swift compile, et trois tests rouges ont révélé **un vrai défaut de la rotation** (le mien, de l'étape 2b du 12 novembre) : elle était indexée sur le numéro
+brut de la semaine, et le moteur pose une décharge toutes les quatre semaines (4, 8, 12…). Une des quatre familles tombait donc TOUJOURS sur une décharge, qui ne porte aucune station : **les ergomètres (SkiErg et rameur) n'étaient
+jamais travaillés**, ni avant ni après ce chantier. Corrigé : la rotation compte les semaines de travail (`ProgrammeHyrox.semaineDeTravail`, les décharges ne consomment pas de rang). Un cycle de quatre semaines de travail dure donc
+cinq semaines du calendrier. Tests : la rotation ignore les décharges, une décharge ne porte aucune station, les huit stations passent sur quatre semaines de travail.
