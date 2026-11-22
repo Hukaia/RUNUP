@@ -273,6 +273,47 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains("--seance")
     }
 
+    /// `--hyrox=<type de séance>` : un profil qui prépare un HYROX, et la séance du jour posée sur ce type.
+    ///
+    /// `semaine` ne pose que l'objectif (division Hommes, quatorze semaines devant) : le plan montre
+    /// alors la vraie semaine HYROX que le moteur génère. Toute autre valeur est la valeur brute d'un
+    /// `SessionKind` (`hyrox_station_sled_push`, `hyrox_force_jambes`…) et pose en plus CETTE séance
+    /// aujourd'hui, pour photographier sa fiche avec `--seance`. `--phase=specifique` la pose au bloc
+    /// spécifique (le bloc de base sinon).
+    ///
+    /// Jamais lu hors de la démonstration : ce drapeau n'existe que dans le chemin `--captures`.
+    static var hyroxDemande: String? {
+        ProcessInfo.processInfo.arguments
+            .first { $0.hasPrefix("--hyrox=") }
+            .map { String($0.dropFirst("--hyrox=".count)) }
+    }
+
+    static var phaseHyroxDemandee: PhaseHyrox {
+        ProcessInfo.processInfo.arguments.contains("--phase=specifique") ? .specifique : .base
+    }
+
+    /// Pose, dans le plan de la semaine ET comme séance du jour, la séance HYROX demandée.
+    ///
+    /// Dans les deux, parce que la génération recopie la séance du jour depuis le plan de la semaine :
+    /// poser la seule séance du jour, c'était la voir écrasée au premier rafraîchissement.
+    @MainActor
+    static func poserLaSeanceHyrox(sur profil: UserProfile) {
+        guard let brut = hyroxDemande, brut != "semaine", let kind = SessionKind(rawValue: brut) else { return }
+        let estUneStation = ProgrammeHyrox.Station.pour(kind) != nil
+        let seance = WorkoutSession(
+            title: brut, subtitle: "",
+            durationMinutes: estUneStation ? 40 : 35, pace: "—",
+            zone: estUneStation ? "Z3-4" : "Technique",
+            adjustment: nil, kind: kind, role: estUneStation ? .speed : .easy,
+            phaseHyrox: phaseHyroxDemandee
+        )
+        let aujourdhui = AdaptivePlanEngine.currentWeekdayIndex()
+        if let i = profil.weekSessions.firstIndex(where: { $0.weekday == aujourdhui }) {
+            profil.weekSessions[i].session = seance
+        }
+        profil.todaySession = seance
+    }
+
     /// `--feuille=<nom>` : ouvrir une feuille que l'état de l'app suffit à présenter, pour la photographier.
     ///
     /// Un seul drapeau pour toutes celles qui n'ont rien à choisir : `deplacer`, `journal`,
@@ -377,7 +418,8 @@ enum CaptureSeed {
         // Posé AVANT `applyOnboarding` sans que l'ordre importe : `AppState` recopie ce champ
         // dans `ThemeStore` au moment où il charge le profil, donc bien après.
         profil.isLightMode = modeClairDemande
-        AdaptivePlanEngine.applyOnboarding(resultat(maintenant: maintenant), to: profil)
+        AdaptivePlanEngine.applyOnboarding(resultat(maintenant: maintenant, hyrox: hyroxDemande != nil), to: profil)
+        poserLaSeanceHyrox(sur: profil)
 
         // LE MODE COURSE LIBRE, QUAND ON LE DEMANDE.
         //
@@ -1096,22 +1138,22 @@ enum CaptureSeed {
 
     /// Une préparation de 10 km en cours : une date devant soi, un chrono visé, quatre jours par
     /// semaine. C'est l'objectif le plus choisi, et celui dont toutes les accroches parlent.
-    private static func resultat(maintenant: Date) -> AdaptivePlanEngine.OnboardingResult {
+    private static func resultat(maintenant: Date, hyrox: Bool = false) -> AdaptivePlanEngine.OnboardingResult {
         let calendrier = Calendar.current
         return AdaptivePlanEngine.OnboardingResult(
             name: "Charlotte",
             lastName: "Perret",
             birthdate: calendrier.date(byAdding: .year, value: -31, to: maintenant),
             sex: "female",
-            goal: .race,
-            raceDistance: .k10,
+            goal: hyrox ? .hyrox : .race,
+            raceDistance: hyrox ? nil : .k10,
             raceDistanceCustom: nil,
             raceElevationGainM: nil,
-            raceChrono: "47:30",
+            raceChrono: hyrox ? "1:30:00" : "47:30",
             // Six semaines devant : assez pour que le plan soit en plein bloc spécifique, donc
             // que l'écran du plan montre autre chose que des footings de base.
-            raceDate: calendrier.date(byAdding: .weekOfYear, value: 6, to: maintenant),
-            hyroxDivision: nil,
+            raceDate: calendrier.date(byAdding: .weekOfYear, value: hyrox ? 14 : 6, to: maintenant),
+            hyroxDivision: hyrox ? HyroxDivision.hommes.rawValue : nil,
             triathlonFormat: nil,
             nageNiveau: nil,
             duathlonFormat: nil,

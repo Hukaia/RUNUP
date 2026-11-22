@@ -9170,3 +9170,5 @@ cinq semaines du calendrier. Tests : la rotation ignore les décharges, une déc
 Charlotte a vu, dans l'écran « Rejoins un club », des clubs « Debug Test Club », « Ebury » (trois fois) et « Malakoff », tous à « 0 membre », avec un bouton « Rejoindre » : des clubs de test et des clubs abandonnés.
 - **Serveur** : la recherche et les suggestions ne rendent plus un club qui n'a aucun membre (`EXISTS (… club_members …)`), pour que d'autres ne reviennent pas. À déployer.
 - **Base** : `db/A_COLLER_nettoyer_clubs.sql`, à coller dans Neon en deux temps : d'abord la liste de ce qui va partir (à relire), puis la suppression (les lignes sont commentées par défaut). Je n'ai pas accès à la base : je ne supprime rien moi-même.
+
+La CI photographie maintenant le programme HYROX (`test18Hyrox`, graine DEBUG `--hyrox=semaine|<type de séance>` `--phase=specifique`) : la semaine du plan, et la fiche d'une séance de station (sled push au bloc de base et au spécifique, wall balls) et de deux travaux complémentaires (force des jambes, prise/dos/gainage), haut et bas. `hyrox-*.png` dans l'artefact `refonte`.

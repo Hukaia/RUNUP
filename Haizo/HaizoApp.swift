@@ -198,6 +198,10 @@ private struct RootView: View {
                 // présente par-dessus l'écran demandé. Rien à choisir dedans — elle lit
                 // `profile.todaySession`. Voir `CaptureSeed.seanceDemandee`.
                 if CaptureSeed.seanceDemandee {
+                    // La séance HYROX demandée est reposée ICI, après le premier rafraîchissement du
+                    // programme : la génération recopie la séance du jour depuis le plan de la semaine
+                    // et l'aurait écrasée. Sans `--hyrox`, ne fait rien.
+                    if let profil = appState?.profile { CaptureSeed.poserLaSeanceHyrox(sur: profil) }
                     appState?.openSessionDetail()
                 }
                 switch CaptureSeed.feuilleDemandee {

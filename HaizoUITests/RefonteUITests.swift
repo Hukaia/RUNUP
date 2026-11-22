@@ -303,6 +303,31 @@ final class RefonteUITests: XCTestCase {
         reglages.terminate()
     }
 
+    /// LE PROGRAMME HYROX : la semaine que le moteur génère (écran du plan), puis la fiche d'une séance de
+    /// station au bloc de base, de station au bloc spécifique, et des quatre travaux complémentaires.
+    /// Photographié pour que le contenu soit vu, pas jugé de mémoire.
+    func test18Hyrox() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        let plan = lancer(arguments: ["--ecran=plan", "--hyrox=semaine"])
+        photographier("hyrox-plan", app: plan)
+        plan.terminate()
+        let fiches: [(String, String, String?)] = [
+            ("hyrox-fiche-sled-push-base", "hyrox_station_sled_push", nil),
+            ("hyrox-fiche-sled-push-specifique", "hyrox_station_sled_push", "--phase=specifique"),
+            ("hyrox-fiche-wall-balls", "hyrox_station_wall_balls", "--phase=specifique"),
+            ("hyrox-fiche-force-jambes", "hyrox_force_jambes", nil),
+            ("hyrox-fiche-grip-dos-gainage", "hyrox_grip_dos_gainage", nil),
+        ]
+        for (nom, kind, phase) in fiches {
+            let app = lancer(arguments: ["--ecran=prog", "--seance", "--hyrox=\(kind)"] + (phase.map { [$0] } ?? []))
+            photographier(nom, app: app)
+            defiler(app)
+            photographier("\(nom)-bas", app: app)
+            app.terminate()
+        }
+    }
+
     /// LA FEUILLE DU DÉBRIEF : « Donner mon ressenti », sur le résumé de la dernière sortie (la graine
     /// en pose une). Elle s'ouvre à mi-hauteur ; un glissement la tire à sa hauteur pleine, pour voir
     /// l'effort ressenti en entier puis ce que ça change. L'image doit changer au toucher.
