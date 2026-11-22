@@ -40888,23 +40888,6 @@
         }
       }
     },
-    "%lld′ · une station": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld′ · one station"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld′ · una estación"
-          }
-        }
-      }
-    },
     "choisis ta division pour voir ta charge": {
       "extractionState": "manual",
       "localizations": {
@@ -40939,40 +40922,6 @@
         }
       }
     },
-    "Comment la travailler": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "How to work it"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cómo trabajarla"
-          }
-        }
-      }
-    },
-    "la station entière, puis tu reprends quand le souffle est revenu · arrête la série quand le geste ne respecte plus le standard": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "the whole station, then go again once your breathing has settled · stop the set when the movement no longer meets the standard"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "la estación entera, y repites cuando recuperes el aliento · para la serie cuando el gesto deje de cumplir el estándar"
-          }
-        }
-      }
-    },
     "%lld′ · travail complémentaire": {
       "extractionState": "manual",
       "localizations": {
@@ -40990,19 +40939,206 @@
         }
       }
     },
-    "%@ · pas de séries prescrites : choisis une charge qui garde le geste propre, et arrête avant qu'il se dégrade": {
+    "%lld × %lld m": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · no sets prescribed: pick a load that keeps the movement clean, and stop before it breaks down"
+            "value": "%lld × %lld m"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · sin series prescritas: elige una carga que mantenga el gesto limpio y para antes de que se deteriore"
+            "value": "%lld × %lld m"
+          }
+        }
+      }
+    },
+    "%lld × %lld répétitions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × %lld reps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × %lld repeticiones"
+          }
+        }
+      }
+    },
+    "%lld × %lld par côté": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × %lld each side"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × %lld por lado"
+          }
+        }
+      }
+    },
+    "%lld × %lld s": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × %lld s"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × %lld s"
+          }
+        }
+      }
+    },
+    "%lld s de repos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld s rest"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld s de descanso"
+          }
+        }
+      }
+    },
+    "aux deux tiers de ta charge de course": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "at two thirds of your race weight"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a dos tercios de tu peso de carrera"
+          }
+        }
+      }
+    },
+    "aux trois quarts de ta charge de course": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "at three quarters of your race weight"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a tres cuartos de tu peso de carrera"
+          }
+        }
+      }
+    },
+    "à ta charge de course": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "at your race weight"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a tu peso de carrera"
+          }
+        }
+      }
+    },
+    "effort %lld sur 10": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "effort %lld out of 10"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "esfuerzo %lld sobre 10"
+          }
+        }
+      }
+    },
+    "La séance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The session"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La sesión"
+          }
+        }
+      }
+    },
+    "Comment l'ajuster": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to adjust it"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cómo ajustarla"
+          }
+        }
+      }
+    },
+    "valeurs de départ courantes en préparation, pas un protocole officiel : ajuste à ton ressenti, et arrête avant que le geste ne se dégrade": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "common starting values in training, not an official protocol: adjust to how it feels, and stop before the movement breaks down"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "valores de partida habituales en la preparación, no un protocolo oficial: ajusta a tu sensación y para antes de que el gesto se deteriore"
           }
         }
       }

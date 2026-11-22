@@ -107,6 +107,14 @@ struct SessionDetailSheet: View {
             : String(localized: "\(minutesDeBloc)′ · \(session.zone) · effort soutenu et continu")
     }
 
+
+    /// Ce que la séance dit de ses chiffres : des valeurs de départ, pas un protocole officiel. HYROX
+    /// ne publie aucun plan pour adultes ; le volume vient de pratiques courantes de préparation, et
+    /// l'effort se règle au ressenti. Le geste, lui, doit rester propre.
+    private var valeursDeDepart: String {
+        String(localized: "valeurs de départ courantes en préparation, pas un protocole officiel : ajuste à ton ressenti, et arrête avant que le geste ne se dégrade")
+    }
+
     /// Le découpage des séances HYROX, par `kind`.
     ///
     /// # DEUX CHOSES QUE CETTE FONCTION FAISAIT MAL
@@ -151,8 +159,10 @@ struct SessionDetailSheet: View {
         }
 
         // UNE SÉANCE DE STATION NE MONTRE QUE SA STATION : sa distance et sa charge pour la division,
-        // le geste tel que le juge le valide, et la façon de la travailler. Afficher les huit sur une
-        // séance qui en travaille une ferait lire une liste dont sept lignes ne concernent pas le jour.
+        // la séance à faire (séries, distance, repos, intensité), le geste tel que le juge le valide.
+        // Afficher les huit sur une séance qui en travaille une ferait lire une liste dont sept
+        // lignes ne concernent pas le jour.
+        let phase = session.phaseHyrox ?? .base
         if let kind, let station = ProgrammeHyrox.Station.pour(kind) {
             let ligne = charges.flatMap { charges -> (String, String, Color)? in
                 let toutes = charges.stations
@@ -161,15 +171,23 @@ struct SessionDetailSheet: View {
             } ?? (station.nom, String(localized: "choisis ta division pour voir ta charge"),
                   HZCouleur.secondaireSurClair)
             return [
-                (String(localized: "\(session.durationMinutes)′ · une station"),
-                 String(localized: "\(session.zone) · à charge de course, technique avant charge"),
-                 HZCouleur.accent),
+                warmup,
+                (String(localized: "La séance"), station.prescription(phase: phase).texte, HZCouleur.accent),
                 ligne,
                 (String(localized: "Le geste validé"), station.standard, HZCouleur.secondaireSurClair),
-                (String(localized: "Comment la travailler"),
-                 String(localized: "la station entière, puis tu reprends quand le souffle est revenu · arrête la série quand le geste ne respecte plus le standard"),
-                 HZCouleur.secondaireSurClair)
+                (String(localized: "Comment l'ajuster"), valeursDeDepart, HZCouleur.secondaireSurClair),
+                cooldown
             ]
+        }
+
+        // LE TRAVAIL COMPLÉMENTAIRE : les gestes, ce qui les relie à l'épreuve, et leur volume.
+        if let kind, let travail = ProgrammeHyrox.TravailComplementaire.pour(kind) {
+            return [(String(localized: "\(session.durationMinutes)′ · travail complémentaire"),
+                     valeursDeDepart,
+                     HZCouleur.accent)]
+                + travail.gestes(phase: phase).map {
+                    ($0.nom, "\($0.intention) · \($0.prescription.texte)", HZCouleur.secondaireSurClair)
+                }
         }
 
         // UN PLAN ENREGISTRÉ AVANT LES SÉANCES PAR STATION peut porter l'ancienne séance de deux
@@ -179,15 +197,6 @@ struct SessionDetailSheet: View {
                      String(localized: "\(session.zone) · à charge de course, technique avant charge"),
                      HZCouleur.accent)]
                 + stations(famille.rangs)
-        }
-
-        // LE TRAVAIL COMPLÉMENTAIRE : les gestes et ce qui les relie à l'épreuve, jamais de séries.
-        // Aucune source publiée n'en donne pour un programme d'adulte, et la séance le dit.
-        if let kind, let travail = ProgrammeHyrox.TravailComplementaire.pour(kind) {
-            return [(String(localized: "\(session.durationMinutes)′ · travail complémentaire"),
-                     String(localized: "\(session.zone) · pas de séries prescrites : choisis une charge qui garde le geste propre, et arrête avant qu'il se dégrade"),
-                     HZCouleur.accent)]
-                + travail.gestes.map { ($0.nom, $0.intention, HZCouleur.secondaireSurClair) }
         }
 
         switch kind {

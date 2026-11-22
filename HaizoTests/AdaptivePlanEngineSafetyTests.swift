@@ -307,6 +307,23 @@ final class AdaptivePlanEngineSafetyTests: XCTestCase {
         XCTAssertEqual(Set(vues).count, 8, "les huit stations sur quatre semaines")
     }
 
+    /// LA PHASE DU PROGRAMME VOYAGE AVEC LA SÉANCE : la fiche en tire le volume et la charge.
+    @MainActor
+    func testLesSeancesHyroxPortentLaPhaseDeLeurBloc() {
+        let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15, runningDays: [0, 2, 4, 6])
+        let s = shape(for: profile)
+        guard s.baseWeeks > 0, s.specificWeeks > 0 else { return XCTFail("un bloc de base et un spécifique") }
+        func phases(_ week: Int) -> Set<PhaseHyrox> {
+            Set(AdaptivePlanEngine
+                .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
+                .compactMap { $0.session }
+                .filter { $0.kind.flatMap(ProgrammeHyrox.Station.pour) != nil }
+                .compactMap(\.phaseHyrox))
+        }
+        XCTAssertEqual(phases(1), [.base])
+        XCTAssertEqual(phases(s.baseWeeks + 1), [.specifique])
+    }
+
     /// LE TRAVAIL COMPLÉMENTAIRE ENTRE DANS LE PLAN, ET LE PLAFOND DE QUALITÉ TIENT TOUJOURS.
     ///
     /// À cinq jours, un travail complémentaire chaque semaine. Il est de rôle facile : ajouté aux deux

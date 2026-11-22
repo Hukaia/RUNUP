@@ -680,6 +680,8 @@ enum AdaptivePlanEngine {
         /// Recopiée telle quelle dans la séance produite ; voir `WorkoutSession.adaptationNote`
         /// pour ce que ce champ répare.
         var adaptationNote: String? = nil
+        /// La phase d'une séance HYROX, recopiée dans la séance : la fiche en tire le volume.
+        var phaseHyrox: PhaseHyrox? = nil
     }
 
     /// Reference distance (km) the long run scales toward — the user's real race distance when
@@ -1057,7 +1059,12 @@ enum AdaptivePlanEngine {
                 )
             }
         }
-        let autres = places.map(archetype)
+        let phase: PhaseHyrox = block == .base ? .base : .specifique
+        let autres = places.map { place -> SessionArchetype in
+            var a = archetype(place)
+            a.phaseHyrox = phase
+            return a
+        }
 
         let base: [SessionArchetype]
         switch block {
@@ -1728,7 +1735,8 @@ enum AdaptivePlanEngine {
                 // LE RÔLE VOYAGE AVEC LA SÉANCE. C'est lui qui dit si elle compte contre le
                 // plafond de deux séances de qualité par semaine, et le perdre à la génération
                 // rendait ce plafond invérifiable en aval.
-                role: archetype.role
+                role: archetype.role,
+                phaseHyrox: archetype.phaseHyrox
             )
             session.adaptationNote = archetype.adaptationNote
             // L'ALLÈGEMENT DU JOUR MORD EN DERNIER, sur la séance telle qu'elle s'affichera. La

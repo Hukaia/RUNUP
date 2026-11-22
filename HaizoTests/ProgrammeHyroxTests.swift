@@ -145,20 +145,80 @@ final class ProgrammeHyroxTests: XCTestCase {
         XCTAssertEqual(Set(phrases).count, 8, "huit standards distincts")
     }
 
-    /// LE TRAVAIL COMPLÉMENTAIRE NE PRESCRIT AUCUN CHIFFRE : ni séries, ni répétitions, ni charge.
+    /// LES CHIFFRES VIVENT DANS LA PRESCRIPTION, PAS DANS LE TEXTE DES GESTES.
     ///
-    /// Aucune source n'en publie pour un programme d'adulte, et un nombre sans source est ce que
-    /// cette app s'interdit. Le cas échoue si quelqu'un en ajoute un.
-    func testLeTravailComplementairePrescritAucunChiffre() {
-        for travail in ProgrammeHyrox.TravailComplementaire.allCases {
-            XCTAssertFalse(travail.gestes.isEmpty, "\(travail)")
-            for geste in travail.gestes {
-                for texte in [geste.nom, geste.intention] {
-                    XCTAssertNil(texte.rangeOfCharacter(from: .decimalDigits),
-                                 "« \(texte) » prescrit un nombre : aucune source ne le donne")
+    /// Le nom d'un geste et son intention ne portent aucun nombre : séries, répétitions, distances et
+    /// repos sont dans `PrescriptionHyrox`, où le test suivant les borne. Un nombre glissé dans une
+    /// phrase échapperait à ces bornes.
+    func testLeTexteDesGestesNePorteAucunNombre() {
+        for phase in [PhaseHyrox.base, .specifique] {
+            for travail in ProgrammeHyrox.TravailComplementaire.allCases {
+                XCTAssertFalse(travail.gestes(phase: phase).isEmpty, "\(travail)")
+                for geste in travail.gestes(phase: phase) {
+                    for texte in [geste.nom, geste.intention] {
+                        XCTAssertNil(texte.rangeOfCharacter(from: .decimalDigits),
+                                     "« \(texte) » porte un nombre hors de la prescription")
+                    }
                 }
             }
         }
+    }
+
+    /// TOUTE PRESCRIPTION RESTE DANS DES BORNES RAISONNABLES, station et complément, base et spécifique.
+    ///
+    /// Un volume de départ n'a pas de bonne valeur unique, mais il a des valeurs absurdes : zéro série,
+    /// dix minutes de repos, un effort de onze sur dix. Ce cas les écarte, et il échoue si quelqu'un
+    /// dérape en éditant le tableau.
+    func testLesPrescriptionsRestentDansDesBornes() {
+        var toutes: [PrescriptionHyrox] = []
+        for phase in [PhaseHyrox.base, .specifique] {
+            toutes += ProgrammeHyrox.Station.allCases.map { $0.prescription(phase: phase) }
+            toutes += ProgrammeHyrox.TravailComplementaire.allCases.flatMap {
+                $0.gestes(phase: phase).map(\.prescription)
+            }
+        }
+        for p in toutes {
+            XCTAssertTrue((1...8).contains(p.series), "séries : \(p)")
+            XCTAssertTrue((1...1000).contains(p.quantite), "quantité : \(p)")
+            XCTAssertTrue((20...240).contains(p.reposSecondes), "repos : \(p)")
+            if case .effort(let sur10) = p.intensite {
+                XCTAssertTrue((5...9).contains(sur10), "effort : \(p)")
+            }
+            XCTAssertNil(p.texte.range(of: "%"), "une chaîne non résolue : \(p.texte)")
+            XCTAssertNotNil(p.texte.rangeOfCharacter(from: .decimalDigits), p.texte)
+        }
+    }
+
+    /// LE BLOC SPÉCIFIQUE PRESCRIT LA CHARGE DE COURSE, LE BLOC DE BASE MOINS, pour les stations chargées.
+    func testLeBlocDeBaseChargeMoinsQueLeBlocSpecifique() {
+        for station in [ProgrammeHyrox.Station.sledPush, .sledPull, .farmersCarry, .fentesSandbag] {
+            XCTAssertEqual(station.prescription(phase: .specifique).intensite, .chargeDeCourse, "\(station)")
+            XCTAssertNotEqual(station.prescription(phase: .base).intensite, .chargeDeCourse, "\(station)")
+            XCTAssertNotEqual(station.prescription(phase: .base).intensite, .aucune, "\(station)")
+        }
+        // Les stations d'ergomètre se règlent à l'effort : plus haut au bloc spécifique.
+        for station in [ProgrammeHyrox.Station.skiErg, .rameur] {
+            guard case .effort(let base) = station.prescription(phase: .base).intensite,
+                  case .effort(let spe) = station.prescription(phase: .specifique).intensite else {
+                return XCTFail("\(station) : un effort sur dix attendu")
+            }
+            XCTAssertLessThan(base, spe)
+        }
+    }
+
+    /// La phase voyage avec la séance, et une séance enregistrée avant ce champ se décode encore.
+    func testLaPhaseSeDecodeEtUneAncienneSeanceAussi() throws {
+        let avec = #"{"title":"Sled push","subtitle":"","durationMinutes":40,"pace":"—","zone":"Z3-4","kind":"hyrox_station_sled_push","phaseHyrox":"specifique"}"#
+        let s1 = try JSONDecoder().decode(WorkoutSession.self, from: Data(avec.utf8))
+        XCTAssertEqual(s1.phaseHyrox, .specifique)
+        XCTAssertEqual(s1.kind, .hyroxStationSledPush)
+
+        let sans = #"{"title":"Sled push","subtitle":"","durationMinutes":40,"pace":"—","zone":"Z3-4"}"#
+        XCTAssertNil(try JSONDecoder().decode(WorkoutSession.self, from: Data(sans.utf8)).phaseHyrox)
+
+        // Une phase inconnue (une version future) ne fait pas perdre la séance.
+        let future = #"{"title":"X","subtitle":"","durationMinutes":40,"pace":"—","zone":"Z2","phaseHyrox":"autre"}"#
+        XCTAssertNil(try JSONDecoder().decode(WorkoutSession.self, from: Data(future.utf8)).phaseHyrox)
     }
 
     /// Chaque travail complémentaire a son type, retrouvable depuis lui.

@@ -10,17 +10,67 @@ import Foundation
 /// stations de l'épreuve : la force des jambes, la prise, le dos et le gainage, la pliométrie et
 /// les appuis, la mobilité y ont leur place.
 ///
-/// # CE QUI EST SOURCÉ, ET CE QUI NE L'EST PAS
+/// # CE QUI EST SOURCÉ, ET CE QUI EST UNE PRESCRIPTION DE PRÉPARATION
 ///
-/// Les standards de chaque station viennent du règlement (HYROX Single Rulebook 26/27, section 8,
-/// voir `ChargesHyrox`) : ce que le juge valide, ce qu'il refuse. C'est le seul « contenu
-/// d'entraînement » que cette app affirme.
+/// Deux sortes de contenu, et la séance les distingue à l'écran.
 ///
-/// Pour le travail complémentaire, aucun plan officiel pour adultes n'est publié par HYROX — seulement
-/// des programmes de partenaires. L'app ne prescrit donc NI séries NI répétitions NI charges pour
-/// lui : elle nomme les gestes et ce qui les relie à l'épreuve, quand une source le dit (le règlement
-/// pour le squat des wall balls et la fente du sandbag, hyrox.com pour ce que le farmers carry
-/// sollicite). Rien de plus précis que ce qui est sourcé, et le dit à l'écran.
+/// SOURCÉ : les standards de chaque station (HYROX Single Rulebook 26/27, section 8, voir
+/// `ChargesHyrox`) — ce que le juge valide, ce qu'il refuse — et les distances et charges par division.
+///
+/// PRESCRIPTION DE PRÉPARATION : le nombre de séries, de répétitions, de mètres et le repos. HYROX ne
+/// publie aucun plan pour adultes (seulement des programmes de partenaires), donc ces nombres ne
+/// viennent d'aucun protocole officiel. Ce sont des valeurs de départ COURANTES en préparation
+/// physique — volume modéré au bloc de base, charge et distance de course au bloc spécifique,
+/// repos qui laisse le geste propre — écrites pour être ajustées au ressenti (effort sur dix). La
+/// fiche le dit en toutes lettres : « valeurs de départ, pas un protocole officiel ». Elles n'ont
+/// pas été relues par quelqu'un qui a couru un HYROX.
+///
+/// Les charges des stations sont relatives à la charge de course de la division (aux deux tiers, aux
+/// trois quarts, à la charge de course) : la fiche connaît la division, donc les kilos.
+/// La phase du programme d'où vient une séance HYROX : elle décide du volume et de la charge.
+/// Portée par la séance (`WorkoutSession.phaseHyrox`) pour que la fiche sache de quelle semaine
+/// elle parle sans recalculer le plan.
+enum PhaseHyrox: String, Codable, Equatable, Sendable {
+    case base, specifique
+}
+
+/// Ce qu'une séance prescrit : combien de séries de quoi, à quelle intensité, avec quel repos.
+struct PrescriptionHyrox: Equatable, Sendable {
+    enum Unite: Equatable, Sendable { case metres, repetitions, repetitionsParCote, secondes }
+    /// L'intensité : relative à la charge de course de la division pour les stations, à l'effort
+    /// ressenti (sur dix) pour le reste. Jamais un kilo : la fiche connaît la division, pas ta force.
+    enum Intensite: Equatable, Sendable {
+        case aucune, deuxTiers, troisQuarts, chargeDeCourse
+        case effort(Int)
+    }
+
+    let series: Int
+    let quantite: Int
+    let unite: Unite
+    let reposSecondes: Int
+    let intensite: Intensite
+
+    /// « 6 × 50 m · 90 s de repos · aux deux tiers de ta charge de course ».
+    var texte: String {
+        let volume: String
+        switch unite {
+        case .metres: volume = String(localized: "\(series) × \(quantite) m")
+        case .repetitions: volume = String(localized: "\(series) × \(quantite) répétitions")
+        case .repetitionsParCote: volume = String(localized: "\(series) × \(quantite) par côté")
+        case .secondes: volume = String(localized: "\(series) × \(quantite) s")
+        }
+        var morceaux = [volume, String(localized: "\(reposSecondes) s de repos")]
+        switch intensite {
+        case .aucune: break
+        case .deuxTiers: morceaux.append(String(localized: "aux deux tiers de ta charge de course"))
+        case .troisQuarts: morceaux.append(String(localized: "aux trois quarts de ta charge de course"))
+        case .chargeDeCourse: morceaux.append(String(localized: "à ta charge de course"))
+        case .effort(let sur10): morceaux.append(String(localized: "effort \(sur10) sur 10"))
+        }
+        return morceaux.joined(separator: " · ")
+    }
+}
+
 enum ProgrammeHyrox {
 
     // MARK: Les huit stations
@@ -62,6 +112,42 @@ enum ProgrammeHyrox {
             case .farmersCarry: return String(localized: "Farmers carry")
             case .fentesSandbag: return String(localized: "Fentes sandbag")
             case .wallBalls: return String(localized: "Wall balls")
+            }
+        }
+
+        /// CE QU'ON FAIT DE LA STATION CETTE SEMAINE : une prescription de préparation, pas le règlement.
+        ///
+        /// Bloc de base : plus de séries plus courtes, à une fraction de la charge de course, pour
+        /// apprendre le geste et accumuler du volume propre. Bloc spécifique : des répétitions proches
+        /// de la station réelle (sa distance, ou une moitié), à la charge de course. Voir l'en-tête de
+        /// ce fichier : ce sont des valeurs de départ courantes, pas un protocole HYROX.
+        func prescription(phase: PhaseHyrox) -> PrescriptionHyrox {
+            let base = phase == .base
+            switch self {
+            case .skiErg, .rameur:
+                return base
+                    ? PrescriptionHyrox(series: 6, quantite: 500, unite: .metres, reposSecondes: 90, intensite: .effort(7))
+                    : PrescriptionHyrox(series: 3, quantite: 1000, unite: .metres, reposSecondes: 180, intensite: .effort(8))
+            case .sledPush, .sledPull:
+                return base
+                    ? PrescriptionHyrox(series: 6, quantite: 50, unite: .metres, reposSecondes: 90, intensite: .deuxTiers)
+                    : PrescriptionHyrox(series: 4, quantite: 50, unite: .metres, reposSecondes: 120, intensite: .chargeDeCourse)
+            case .burpeeBroadJumps:
+                return base
+                    ? PrescriptionHyrox(series: 5, quantite: 20, unite: .metres, reposSecondes: 60, intensite: .aucune)
+                    : PrescriptionHyrox(series: 2, quantite: 80, unite: .metres, reposSecondes: 180, intensite: .aucune)
+            case .farmersCarry:
+                return base
+                    ? PrescriptionHyrox(series: 6, quantite: 50, unite: .metres, reposSecondes: 60, intensite: .troisQuarts)
+                    : PrescriptionHyrox(series: 3, quantite: 200, unite: .metres, reposSecondes: 120, intensite: .chargeDeCourse)
+            case .fentesSandbag:
+                return base
+                    ? PrescriptionHyrox(series: 5, quantite: 20, unite: .metres, reposSecondes: 90, intensite: .deuxTiers)
+                    : PrescriptionHyrox(series: 4, quantite: 50, unite: .metres, reposSecondes: 120, intensite: .chargeDeCourse)
+            case .wallBalls:
+                return base
+                    ? PrescriptionHyrox(series: 5, quantite: 20, unite: .repetitions, reposSecondes: 60, intensite: .aucune)
+                    : PrescriptionHyrox(series: 4, quantite: 25, unite: .repetitions, reposSecondes: 90, intensite: .aucune)
             }
         }
 
@@ -151,44 +237,58 @@ enum ProgrammeHyrox {
             allCases[(max(2, semaine) / 2 - 1) % allCases.count]
         }
 
-        /// Les gestes de la séance : leur nom, et ce qui les relie à l'épreuve quand une source le dit.
-        /// Jamais de séries, de répétitions ni de charge : aucune source ne les publie pour un
-        /// programme d'adulte, et un nombre sans source est ce que cette app s'interdit.
-        var gestes: [(nom: String, intention: String)] {
+        /// Les gestes de la séance : leur nom, ce qui les relie à l'épreuve quand une source le dit, et
+        /// la prescription de préparation du bloc. Voir l'en-tête de ce fichier : des valeurs de
+        /// départ courantes (volume modéré, effort sur dix), pas un protocole HYROX.
+        func gestes(phase: PhaseHyrox) -> [(nom: String, intention: String, prescription: PrescriptionHyrox)] {
+            let base = phase == .base
             switch self {
             case .forceDesJambes:
                 return [
                     (String(localized: "Squats"),
-                     String(localized: "descends jusqu'à passer les hanches sous les genoux, comme à chaque wall ball")),
+                     String(localized: "descends jusqu'à passer les hanches sous les genoux, comme à chaque wall ball"),
+                     base ? PrescriptionHyrox(series: 4, quantite: 8, unite: .repetitions, reposSecondes: 120, intensite: .effort(7))
+                          : PrescriptionHyrox(series: 4, quantite: 5, unite: .repetitions, reposSecondes: 150, intensite: .effort(8))),
                     (String(localized: "Fentes chargées"),
-                     String(localized: "alterne les jambes, le genou arrière touche le sol, remonte debout : le geste des fentes sandbag")),
+                     String(localized: "alterne les jambes, le genou arrière touche le sol, remonte debout : le geste des fentes sandbag"),
+                     base ? PrescriptionHyrox(series: 3, quantite: 8, unite: .repetitionsParCote, reposSecondes: 90, intensite: .effort(7))
+                          : PrescriptionHyrox(series: 3, quantite: 6, unite: .repetitionsParCote, reposSecondes: 120, intensite: .effort(8))),
                 ]
             case .gripDosGainage:
                 return [
                     (String(localized: "Suspensions"),
-                     String(localized: "accroche-toi à une barre, bras tendus, le temps que ta prise le permet")),
+                     String(localized: "accroche-toi à une barre, bras tendus, le temps que ta prise le permet"),
+                     PrescriptionHyrox(series: 4, quantite: base ? 30 : 45, unite: .secondes, reposSecondes: 60, intensite: .aucune)),
                     (String(localized: "Port de charges"),
-                     String(localized: "une kettlebell ou un haltère dans chaque main, bras le long du corps : le geste du farmers carry")),
+                     String(localized: "une kettlebell ou un haltère dans chaque main, bras le long du corps : le geste du farmers carry"),
+                     PrescriptionHyrox(series: 4, quantite: 40, unite: .metres, reposSecondes: 90, intensite: .effort(base ? 7 : 8))),
                     (String(localized: "Tirages"),
-                     String(localized: "pour le haut du dos, que le farmers carry sollicite avec le gainage et la prise")),
+                     String(localized: "pour le haut du dos, que le farmers carry sollicite avec le gainage et la prise"),
+                     PrescriptionHyrox(series: 3, quantite: base ? 10 : 8, unite: .repetitionsParCote, reposSecondes: 90, intensite: .effort(7))),
                     (String(localized: "Gainage"),
-                     String(localized: "planche et variantes, le dos droit")),
+                     String(localized: "planche et variantes, le dos droit"),
+                     PrescriptionHyrox(series: 3, quantite: 45, unite: .secondes, reposSecondes: 45, intensite: .aucune)),
                 ]
             case .pliometrie:
                 return [
                     (String(localized: "Sauts en longueur"),
-                     String(localized: "décollage et réception des deux pieds ensemble, comme au burpee broad jump")),
+                     String(localized: "décollage et réception des deux pieds ensemble, comme au burpee broad jump"),
+                     PrescriptionHyrox(series: base ? 4 : 5, quantite: 5, unite: .repetitions, reposSecondes: 90, intensite: .aucune)),
                     (String(localized: "Burpees"),
-                     String(localized: "poitrine au sol à chaque répétition, comme à l'épreuve")),
+                     String(localized: "poitrine au sol à chaque répétition, comme à l'épreuve"),
+                     PrescriptionHyrox(series: 3, quantite: 8, unite: .repetitions, reposSecondes: 60, intensite: .aucune)),
                     (String(localized: "Appuis"),
-                     String(localized: "rebonds courts et montées de genoux, pour le rythme et la coordination")),
+                     String(localized: "rebonds courts et montées de genoux, pour le rythme et la coordination"),
+                     PrescriptionHyrox(series: 3, quantite: 20, unite: .secondes, reposSecondes: 60, intensite: .aucune)),
                 ]
             case .mobilite:
                 return [
                     (String(localized: "Hanches et chevilles"),
-                     String(localized: "amplitude complète, sans charge, lentement : de quoi tenir un squat sous le parallèle")),
+                     String(localized: "amplitude complète, sans charge, lentement : de quoi tenir un squat sous le parallèle"),
+                     PrescriptionHyrox(series: 2, quantite: 8, unite: .repetitionsParCote, reposSecondes: 30, intensite: .aucune)),
                     (String(localized: "Épaules et haut du dos"),
-                     String(localized: "bras au-dessus de la tête, gestes lents : la zone que le farmers carry et les fentes chargées sollicitent")),
+                     String(localized: "bras au-dessus de la tête, gestes lents : la zone que le farmers carry et les fentes chargées sollicitent"),
+                     PrescriptionHyrox(series: 2, quantite: 10, unite: .repetitions, reposSecondes: 30, intensite: .aucune)),
                 ]
             }
         }

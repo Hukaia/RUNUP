@@ -9151,7 +9151,11 @@ Choisi avec elle : une station par séance, deux par semaine ; force des jambes,
 ### Ce qui est sourcé, et ce qui ne l'est pas
 - **Stations** : chaque séance affiche la distance et la charge de la division (règlement 26/27), et « le geste validé », reprenant les points de la section 8 du règlement qui font accepter ou refuser une répétition
   (pieds du SkiErg, couloir du sled, debout au sled pull, poitrine au sol et pieds ensemble au burpee broad jump, assis au rameur, kettlebells bras tendus, genou arrière au sol aux fentes, squat sous le parallèle aux wall balls).
-- **Complément** : aucun plan officiel pour adultes n'est publié par HYROX (seulement des programmes de partenaires). L'app ne prescrit **ni séries, ni répétitions, ni charge** pour ce travail : elle nomme les gestes et ce qui
-  les relie à l'épreuve quand une source le dit (le règlement pour le squat et la fente ; hyrox.com pour ce que le farmers carry sollicite : haut du dos, gainage, prise). Un test échoue si un chiffre y entre.
-  Le contenu n'a **pas** été relu par quelqu'un qui a couru un HYROX (voir le tableau « Ce qui attend » en haut de ce fichier).
+- **Complément** : les gestes sont nommés avec ce qui les relie à l'épreuve quand une source le dit (le règlement pour le squat et la fente ; hyrox.com pour ce que le farmers carry sollicite : haut du dos, gainage, prise).
+- **Les chiffres (séries, répétitions, mètres, repos, effort)** : première version écrite SANS (« pas de chiffres inventés »), puis Charlotte : « Tu ne sais pas générer de programme HYROX, toi ? ». Si : la prescription est écrite,
+  clairement étiquetée. HYROX ne publie aucun plan pour adultes, donc ces nombres ne viennent d'**aucun protocole officiel** : ce sont des valeurs de départ courantes en préparation physique, et la fiche le dit
+  (« valeurs de départ courantes en préparation, pas un protocole officiel : ajuste à ton ressenti »). Base : plus de séries courtes, aux deux tiers ou aux trois quarts de la charge de course (stations chargées), effort 7 sur 10
+  (ergomètres). Spécifique : distances proches de la station réelle, à la charge de course, effort 8 (`ProgrammeHyrox.Station.prescription(phase:)`, `TravailComplementaire.gestes(phase:)`). Le sled push, par exemple : 6 × 50 m à
+  deux tiers de la charge de course au bloc de base, 4 × 50 m à la charge de course au spécifique, repos 90 puis 120 s. Un test borne chaque prescription (séries 1 à 8, repos 20 à 240 s, effort 5 à 9). La phase voyage avec la séance
+  (`WorkoutSession.phaseHyrox`, optionnelle, décodage tolérant). **Pas relu par quelqu'un qui a couru un HYROX** : à faire avant de présenter ces volumes comme autre chose que des valeurs de départ.
 - **Non vérifié** : tout le Swift (nouveau fichier, moteur, fiche, tests) est écrit sans compilateur, la CI le dira ; aucun rendu de la fiche d'une séance de station ou de complément n'a été photographié.

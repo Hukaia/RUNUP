@@ -570,11 +570,17 @@ struct WorkoutSession: Codable, Equatable {
     /// mais plausible qui ne casse rien et rend les comptes faux.
     var role: SessionRole? = nil
 
+    /// La phase du programme d'une séance HYROX (base ou spécifique) : elle décide du volume et de
+    /// la charge que la fiche prescrit. Optionnelle : une séance d'un autre objectif, ou enregistrée
+    /// avant ce champ, n'en a pas, et la fiche retombe alors sur la phase de base.
+    var phaseHyrox: PhaseHyrox? = nil
+
     init(title: String, subtitle: String, durationMinutes: Int, pace: String, zone: String,
          adjustment: String? = nil, kind: SessionKind? = nil,
          intervals: IntervalStructure? = nil, adaptationNote: String? = nil,
-         role: SessionRole? = nil) {
+         role: SessionRole? = nil, phaseHyrox: PhaseHyrox? = nil) {
         self.role = role
+        self.phaseHyrox = phaseHyrox
         self.title = title
         self.subtitle = subtitle
         self.durationMinutes = durationMinutes
@@ -608,11 +614,12 @@ struct WorkoutSession: Codable, Equatable {
         intervals = (lues?.estVide ?? true) ? nil : lues
         adaptationNote = try c.decodeIfPresent(String.self, forKey: .adaptationNote)
         role = try c.decodeIfPresent(SessionRole.self, forKey: .role)
+        phaseHyrox = (try? c.decodeIfPresent(PhaseHyrox.self, forKey: .phaseHyrox)) ?? nil
     }
 
     private enum CodingKeys: String, CodingKey {
         case title, subtitle, durationMinutes, pace, zone, adjustment, kind, intervals,
-             adaptationNote, role
+             adaptationNote, role, phaseHyrox
     }
 
     /// Le titre à AFFICHER, dans la langue courante. Retombe sur le texte enregistré quand la
