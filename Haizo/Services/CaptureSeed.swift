@@ -714,9 +714,11 @@ enum CaptureSeed {
             """
             let clubsSuggeres = """
             [
-              { "id": "k1", "name": "Les Foulées du Canal", "city": "Malakoff", "memberCount": 18, "seancePrevue": true },
-              { "id": "k2", "name": "Vanves Running", "city": "Vanves", "memberCount": 64, "actifRecemment": true },
-              { "id": "k3", "name": "Paris Sud Trail", "city": "Paris", "memberCount": 41 }
+              { "id": "k1", "name": "Les Foulées du Canal", "city": "Malakoff", "memberCount": 18, "seancePrevue": true,
+                "joinMode": "open" },
+              { "id": "k2", "name": "Vanves Running", "city": "Vanves", "memberCount": 64, "actifRecemment": true,
+                "joinMode": "request" },
+              { "id": "k3", "name": "Paris Sud Trail", "city": "Paris", "memberCount": 41, "joinMode": "open" }
             ]
             """
             etat.cachedExplorerRoutes = try decodeur.decode([SharedRoute].self, from: Data(itineraires.utf8))

@@ -232,7 +232,7 @@ struct ClubView: View {
             Button("Quitter", role: .destructive) { Task { await magasin.leaveClub() } }
             Button("Annuler", role: .cancel) {}
         } message: {
-            Text("Tu devras redemander le code d'invitation pour revenir.")
+            Text("Pour revenir, tu repasseras par la façon dont ce club accueille : un toucher, une demande ou un code.")
         }
         // Block confirmation — the other half of guideline 1.2, doesn't require leaving the club.
         .alert(
@@ -425,6 +425,26 @@ struct ClubView: View {
         }
     }
 
+    /// DES GENS ATTENDENT UNE RÉPONSE : le club est sur demande, et son propriétaire a des demandes à
+    /// traiter. Une plaque en tête de l'aperçu qui ouvre la gestion, où elles sont — pas un compteur
+    /// caché derrière le bouton des options. Rien ne s'affiche sans demande : un club qui n'en a pas
+    /// n'a pas de plaque vide.
+    @ViewBuilder private var demandesAttendues: some View {
+        if club?.isOwner == true, let attente = club?.pendingRequests, attente > 0 {
+            HZPlaque {
+                Text(Pluriel.choisir(attente,
+                                     String(localized: "\(attente) personne veut rejoindre le club"),
+                                     String(localized: "\(attente) personnes veulent rejoindre le club")))
+                    .hzAffichage(.section)
+                    .foregroundStyle(HZCouleur.encre)
+                    .fixedSize(horizontal: false, vertical: true)
+                HZBoutonPilule(libelle: String(localized: "Voir les demandes"), hauteur: .petite) {
+                    showManagement = true
+                }
+            }
+        }
+    }
+
     /// Rien n'est lancé : pas un kilomètre cette semaine, pas de défi, pas de sortie prévue.
     private var clubEnSommeil: Bool {
         (magasin.board.weekStats?.totalKm ?? 0) == 0
@@ -437,6 +457,7 @@ struct ClubView: View {
     /// place à UN bloc qui dit quoi faire : trois fois « rien » ne fait pas trois sections.
     private var overviewContent: some View {
         VStack(alignment: .leading, spacing: HZEspace.entreSections) {
+            demandesAttendues
             banniere
             if let texte = club?.description, !texte.isEmpty {
                 Text(texte)
@@ -497,13 +518,20 @@ struct ClubView: View {
                     }
                 },
                 onUpdateBio: { bio in try await magasin.updateBio(bio) },
-                onSetOpen: { try await magasin.ouvrirLeClub($0, badges: badges) },
+                onSetJoinMode: { try await magasin.reglerLeMode($0, badges: badges) },
                 onSetClubProfile: { description, ville in
                     try await magasin.reglerLaFiche(description: description, ville: ville, badges: badges)
                 },
                 onSetClubCover: { try await magasin.reglerLaCouverture(dataURI: $0, badges: badges) },
                 onSetMemberRole: { memberId, organisateur in
                     try await magasin.reglerLeRole(memberId: memberId, organisateur: organisateur, badges: badges)
+                },
+                demandes: magasin.demandes,
+                demandesEnChargement: magasin.demandesEnChargement,
+                demandesEnPanne: magasin.demandesEnPanne,
+                onLoadRequests: { await magasin.chargerLesDemandes() },
+                onRespondRequest: { demande, accepter in
+                    try await magasin.repondreALaDemande(demande, accepter: accepter, badges: badges)
                 },
                 onReportClub: {
                     showManagement = false

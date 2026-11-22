@@ -11,6 +11,11 @@ import CoreLocation
 ///
 /// Honnête quand il n'y a rien : sans localisation, pas d'itinéraire en vedette (et un lien vers les
 /// Réglages si elle a été refusée) ; sans réseau, le motif réel de la panne.
+///
+/// LE FILTRE CLUBS est la découverte des clubs : une carte en aplat de couleur par club (son nom, sa
+/// ville, ses membres, et dans une pilule comment on y entre — Ouvert, Sur demande, Sur code), un
+/// champ pour en chercher un par son nom, et l'entrée « avec un code » pour un club sur code, qui ne
+/// se trouve nulle part ailleurs. Toucher une carte ouvre la fiche du club (`ClubFicheView`).
 struct ExplorerView: View {
     @Environment(AppState.self) private var appState
     @Environment(\.openURL) private var openURL
@@ -19,6 +24,16 @@ struct ExplorerView: View {
     @State private var itineraires: [SharedRoute] = []
     @State private var courses: [RaceEvent] = []
     @State private var clubs: [ClubSearchResult] = []
+    /// Pourquoi les clubs proposés n'ont pas pu être chargés, ou nil. Distinct d'une liste vide :
+    /// « aucun club à te proposer » et « impossible de charger » ne se disent pas pareil.
+    @State private var panneDesClubs: String?
+    @State private var rechercheDeClub = ""
+    @State private var clubsTrouves: [ClubSearchResult] = []
+    @State private var rechercheEnCours = false
+    @State private var panneDeRecherche: String?
+    @State private var tacheDeRecherche: Task<Void, Never>?
+    @State private var ficheOuverte: ClubFicheOuverte?
+    @State private var codeOuvert = false
     @State private var enChargement = true
     @State private var panne: String?
     @State private var itineraireOuvert: SharedRoute?
@@ -87,6 +102,17 @@ struct ExplorerView: View {
         .fullScreenCover(item: $courseOuverte) { course in
             RacePageView(race: course) { Task { await charger() } }
         }
+        // La fiche d'un club, et l'entrée par un code : deux feuilles, portées par le corps (qui est à
+        // l'écran quel que soit le filtre) et non par la liste, qui n'existe que sous « Clubs ».
+        .sheet(item: $ficheOuverte) { fiche in
+            ClubFicheView(depart: fiche, onRejoint: apresAdhesion)
+                .hzFeuille(detents: [.large])
+        }
+        .sheet(isPresented: $codeOuvert) {
+            ClubCodeSheet(onRejoint: apresAdhesion)
+                .hzFeuille(detents: [.large])
+        }
+        .onChange(of: rechercheDeClub) { _, nouveau in chercherUnClub(nouveau) }
     }
 
     private var filtres: some View {
@@ -303,34 +329,105 @@ struct ExplorerView: View {
         }
     }
 
-    @ViewBuilder private var listeDeClubs: some View {
-        if clubs.isEmpty {
-            message(String(localized: "Aucun club à te proposer pour l'instant. Cherche le tien par son nom depuis le Club."))
+    // MARK: La découverte des clubs
+
+    private var rechercheDeClubActive: Bool {
+        rechercheDeClub.trimmingCharacters(in: .whitespaces).count >= HZExplorer.caracteresMinimumDeRecherche
+    }
+
+    private var listeDeClubs: some View {
+        VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+            HZChampDeRecherche(invite: String(localized: "Chercher un club par son nom"),
+                               texte: $rechercheDeClub, enRecherche: rechercheEnCours)
+            if rechercheDeClubActive {
+                resultatsDeRecherche
+            } else {
+                clubsProposes
+            }
+            // L'entrée d'un club sur code : il n'est dans aucune liste, on y arrive avec son code.
+            ClubLigneDuCode { codeOuvert = true }
+                .padding(.top, HZEspace.entreTuiles)
+        }
+    }
+
+    /// Ce que la recherche a trouvé : des cartes, ou une phrase qui dit pourquoi il n'y en a pas.
+    @ViewBuilder private var resultatsDeRecherche: some View {
+        if let panneDeRecherche {
+            message(panneDeRecherche)
+        } else if !rechercheEnCours && clubsTrouves.isEmpty {
+            message(String(localized: "Aucun club ne porte ce nom. Un club sur code ne se trouve pas ainsi : entre son code."))
         } else {
-            VStack(alignment: .leading, spacing: 0) {
-                ForEach(Array(clubs.enumerated()), id: \.element.id) { index, club in
-                    Button { appState.go(.club) } label: {
-                        HZLigneDeListe(titre: club.name, sousTitre: ligneDeClub(club),
-                                       marge: HZMesuresDeLigne.margeDeDestination, filet: index < clubs.count - 1) {
-                            HZIcone(dessin: .groupe, cote: HZProfil.coteDeLIconeDeDestination, couleur: HZCouleur.encre)
-                                .frame(width: HZProfil.disqueDeDestination, height: HZProfil.disqueDeDestination)
-                                .background(HZCouleur.surfaceClaire, in: Circle())
-                        } queue: {
-                            HZChevron()
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
+            cartesDeClubs(clubsTrouves)
+        }
+    }
+
+    /// Les clubs proposés sans rien taper : ceux qui bougent. Une panne se dit et se relance ; une liste
+    /// vide dit quoi faire.
+    @ViewBuilder private var clubsProposes: some View {
+        if let panneDesClubs {
+            VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+                message(String(localized: "Impossible de charger les clubs : \(panneDesClubs)."))
+                HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .petite,
+                               fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
+                    Task { await rechargerLesClubs() }
+                }
+            }
+        } else if clubs.isEmpty {
+            message(String(localized: "Aucun club à te proposer pour l'instant. Cherche le tien par son nom, ou entre son code."))
+        } else {
+            HZTitreDeSection(titre: String(localized: "Clubs à rejoindre"))
+                .padding(.top, HZClubs.sousLaRecherche)
+            cartesDeClubs(clubs)
+        }
+    }
+
+    private func cartesDeClubs(_ liste: [ClubSearchResult]) -> some View {
+        LazyVStack(spacing: HZEspace.entreTuiles) {
+            ForEach(liste) { club in
+                HZCarteDeDecouverte(nom: club.name,
+                                    detail: ClubLigne.detail(ville: club.city, membres: club.memberCount),
+                                    mode: club.mode, demandeEnvoyee: club.requestPending == true,
+                                    couleur: HZIntensite.pourClub(id: club.id).couleur) {
+                    ficheOuverte = ClubFicheOuverte(club)
                 }
             }
         }
     }
 
-    private func ligneDeClub(_ club: ClubSearchResult) -> String {
-        let membres = Pluriel.choisir(club.memberCount,
-                                      String(localized: "\(club.memberCount) membre"),
-                                      String(localized: "\(club.memberCount) membres"))
-        return [club.city, membres].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
+    /// La recherche par nom, à la frappe mais pas à chaque lettre : la même temporisation que la
+    /// recherche du Club.
+    private func chercherUnClub(_ texte: String) {
+        tacheDeRecherche?.cancel()
+        let propre = texte.trimmingCharacters(in: .whitespaces)
+        guard propre.count >= HZExplorer.caracteresMinimumDeRecherche else {
+            clubsTrouves = []
+            panneDeRecherche = nil
+            rechercheEnCours = false
+            return
+        }
+        rechercheEnCours = true
+        panneDeRecherche = nil
+        tacheDeRecherche = Task {
+            try? await Task.sleep(for: .milliseconds(HZExplorer.attenteAvantLaRecherche))
+            guard !Task.isCancelled else { return }
+            do {
+                let trouves = try await service.searchClubs(query: propre)
+                guard !Task.isCancelled else { return }
+                clubsTrouves = trouves
+            } catch {
+                guard !Task.isCancelled else { return }
+                clubsTrouves = []
+                panneDeRecherche = ClubAdhesionErreur.phrase(pour: error)
+            }
+            rechercheEnCours = false
+        }
+    }
+
+    /// Une adhésion faite depuis une fiche : on va dans le club, qui se relit.
+    private func apresAdhesion() async {
+        Analytics.shared.track(.clubJoined)
+        appState.cachedClubBoard = nil
+        appState.go(.club)
     }
 
     private func message(_ texte: String) -> some View {
@@ -356,15 +453,37 @@ struct ExplorerView: View {
             return
         }
         // Les courses et les clubs ensemble : ils s'affichent ensemble.
-        async let suggeres = service.suggestedClubs()
+        async let suggeres = resultatDesClubs()
         do {
             courses = try await service.upcomingRaces()
         } catch {
             panne = PanneReseau.motif(pour: error)
         }
-        clubs = await suggeres
+        adopter(await suggeres)
         enChargement = false
         await chargerLesItineraires()
+    }
+
+    /// Les clubs proposés, en `Result` : la CAUSE d'un échec compte, parce que « aucun club à te
+    /// proposer » et « impossible de charger les clubs » demandent deux phrases.
+    private func resultatDesClubs() async -> Result<[ClubSearchResult], Error> {
+        do { return .success(try await service.fetchSuggestedClubs()) } catch { return .failure(error) }
+    }
+
+    private func adopter(_ resultat: Result<[ClubSearchResult], Error>) {
+        switch resultat {
+        case .success(let proposes):
+            clubs = proposes
+            panneDesClubs = nil
+        case .failure(let erreur):
+            clubs = []
+            panneDesClubs = PanneReseau.motif(pour: erreur)
+        }
+    }
+
+    private func rechargerLesClubs() async {
+        panneDesClubs = nil
+        adopter(await resultatDesClubs())
     }
 
     /// Les itinéraires autour d'elle, les plus gardés d'abord : enregistrer un itinéraire veut dire

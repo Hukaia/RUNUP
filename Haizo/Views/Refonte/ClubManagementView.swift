@@ -26,21 +26,34 @@ struct ClubManagementView: View {
     var onReport: (LeaderboardRow) -> Void
     var onBlock: (LeaderboardRow) -> Void
     var onUpdateBio: (String) async throws -> Void
-    /// Ouvre ou ferme le club. Comme les autres actions de cet écran, c'est l'appelante qui la
-    /// réalise et qui recharge : cette vue n'a pas de service à elle.
-    var onSetOpen: (Bool) async throws -> Void
+    /// Change la façon dont on entre dans le club (ouvert, sur demande, sur code). Comme les autres
+    /// actions de cet écran, c'est l'appelante qui la réalise et qui recharge : cette vue n'a pas
+    /// de service à elle.
+    var onSetJoinMode: (ClubJoinMode) async throws -> Void
     /// Ce que le club est, et où il court. Réservé à qui l'a créé.
     var onSetClubProfile: (String, String) async throws -> Void
     /// Sa bannière — un data URI JPEG, ou nil pour l'effacer.
     var onSetClubCover: (String?) async throws -> Void
     /// Nommer un organisateur, ou lui retirer le rôle. Réservé à qui a créé le club.
     var onSetMemberRole: (String, Bool) async throws -> Void
+    /// Les demandes pour rejoindre le club, leur chargement et leur panne : ce que l'appelante a lu
+    /// du serveur, que cette vue ne fait que montrer.
+    var demandes: [ClubJoinRequest]
+    var demandesEnChargement: Bool
+    var demandesEnPanne: String?
+    var onLoadRequests: () async -> Void
+    /// Accepter (`true`) ou refuser (`false`) une demande.
+    var onRespondRequest: (ClubJoinRequest, Bool) async throws -> Void
     var onReportClub: () -> Void
     var onLeaveClub: () -> Void
 
     @State private var showCreateChallenge = false
     @State private var membreOuvert: LeaderboardRow?
-    @State private var ouvertureEnCours = false
+    @State private var modeEnCours = false
+    /// Le mode qu'on s'apprête à choisir et qui retirerait des demandes en attente : tant que la
+    /// personne n'a pas confirmé, rien n'est changé.
+    @State private var modeAConfirmer: ClubJoinMode?
+    @State private var demandeEnCours: String?
     @State private var descriptionDuClub = ""
     @State private var villeDuClub = ""
     @State private var identiteEnregistree = false
@@ -53,7 +66,8 @@ struct ClubManagementView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: HZEspace.entreSections) {
                     identiteDuClub
-                    verrouDuClub
+                    adhesionDuClub
+                    demandesEnAttente
                     challengeSection
                     membres
                     membershipSection
@@ -65,6 +79,17 @@ struct ClubManagementView: View {
         .sheet(isPresented: $showCreateChallenge) {
             CreateChallengeSheet(onCreate: onCreateChallenge)
                 .hzFeuille(detents: [.large], gereSonBas: true)
+        }
+        .confirmationDialog(String(localized: "Retirer les demandes en attente ?"),
+                            isPresented: Binding(get: { modeAConfirmer != nil },
+                                                 set: { if !$0 { modeAConfirmer = nil } }),
+                            titleVisibility: .visible) {
+            Button(String(localized: "Changer la façon d'entrer")) {
+                if let mode = modeAConfirmer { Task { await appliquerLeMode(mode) } }
+            }
+            Button(String(localized: "Annuler"), role: .cancel) {}
+        } message: {
+            Text("Les demandes en attente seront retirées. Ces personnes devront entrer selon la nouvelle façon d'accueillir.")
         }
         .sheet(item: $membreOuvert) { member in
             ClubMemberProfileView(
@@ -199,49 +224,153 @@ struct ClubManagementView: View {
         }
     }
 
-    // MARK: - Ce que les autres voient
+    // MARK: - Comment on entre dans ce club
 
-    /// LE VERROU DU CLUB — et il a remplacé le code d'invitation à cette place.
+    /// COMMENT ON ENTRE DANS CE CLUB — et ce choix a remplacé l'interrupteur « Club ouvert ».
     ///
-    /// On rejoignait ce club avec un code à six lettres, affiché ici. On le rejoint maintenant en
-    /// cherchant son nom : le code supposait qu'on l'ait reçu de quelqu'un, donc qu'on sache déjà
-    /// que le club existe — exactement ce qu'une recherche rend inutile.
+    /// L'adhésion n'est pas automatique pour tous les clubs, et ce n'est pas à l'app de le décider :
+    /// la personne qui a créé le club choisit entre trois façons.
     ///
-    /// La contrepartie d'un club trouvable est de pouvoir le rendre introuvable. Fermé, il
-    /// n'apparaît dans aucune recherche et ne se rejoint plus. Ses membres actuels ne sont pas
-    /// touchés : fermer n'est pas vider, et c'est écrit sous l'interrupteur parce que c'est la
-    /// première question que pose un interrupteur de ce genre.
+    ///   · ouvert : n'importe qui trouve le club par son nom et le rejoint d'un toucher ;
+    ///   · sur demande : on trouve le club, on demande, et ses demandes arrivent juste en dessous,
+    ///     avec Accepter et Refuser ;
+    ///   · sur code : le club n'apparaît dans aucune recherche, on le rejoint avec son code, affiché
+    ///     ici pour qu'on puisse le donner.
+    ///
+    /// Changer de mode ne retire jamais un membre : c'est écrit sous le choix, parce que c'est la
+    /// première question que pose un réglage de ce genre.
     ///
     /// Montré à la seule personne qui a créé le club. Le serveur le revérifie de son côté.
-    @ViewBuilder private var verrouDuClub: some View {
+    @ViewBuilder private var adhesionDuClub: some View {
         if club.isOwner == true {
+            VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+                HZTitreDeSection(titre: String(localized: "Comment on entre dans ce club"))
+                ScrollView(.horizontal) {
+                    HStack(spacing: HZEspace.entrePilules) {
+                        ForEach(ClubJoinMode.allCases) { mode in
+                            HZFiltre(libelle: mode.libelle, actif: club.modeDAdhesion == mode, fond: .clair) {
+                                Haptics.selection()
+                                choisir(mode)
+                            }
+                        }
+                    }
+                }
+                .scrollIndicators(.hidden)
+                .disabled(modeEnCours)
+                Text(club.modeDAdhesion.precisionDuProprietaire)
+                    .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
+                    .foregroundStyle(HZCouleur.secondaireSurClair)
+                    .fixedSize(horizontal: false, vertical: true)
+                if club.modeDAdhesion == .code {
+                    codeDInvitation
+                }
+                Text("Changer cela ne retire personne du club.")
+                    .hzTexte(.c13, .medium)
+                    .foregroundStyle(HZCouleur.secondaireSurClair)
+            }
+        }
+    }
+
+    /// Le code à donner. Rendu par le serveur à la seule personne qui a créé le club, et seulement
+    /// quand le club est sur code : absent, la plaque ne s'affiche pas plutôt que de montrer un blanc.
+    @ViewBuilder private var codeDInvitation: some View {
+        if let code = club.inviteCode, !code.isEmpty {
             HZPlaque {
-                HZLigneDeReglage(
-                    titre: String(localized: "Club ouvert"),
-                    precision: club.isOpen ?? true
-                        ? String(localized: "N'importe qui peut trouver ce club par son nom et le rejoindre.")
-                        : String(localized: "Ce club n'apparaît dans aucune recherche et ne peut plus être rejoint. Ses membres actuels y restent."),
-                    filet: false) {
-                    Toggle("", isOn: Binding(
-                        get: { club.isOpen ?? true },
-                        set: { nouveau in Task { await changerLOuverture(nouveau) } }
-                    ))
-                    .labelsHidden()
-                    .toggleStyle(HZStyleDInterrupteur())
-                    .disabled(ouvertureEnCours)
-                    .accessibilityLabel("Club ouvert")
+                Text("Code d'invitation")
+                    .hzTexte(.c13, .semi)
+                    .foregroundStyle(HZCouleur.secondaireSurClair)
+                Text(verbatim: code)
+                    .hzAffichage(.chiffre)
+                    .foregroundStyle(HZCouleur.encre)
+                    .lineLimit(1)
+                    .minimumScaleFactor(HZClubs.reductionDuCode)
+                    .textSelection(.enabled)
+                HZBoutonPilule(libelle: String(localized: "Copier le code"), hauteur: .petite) {
+                    UIPasteboard.general.string = code
+                    appState.toast(String(localized: "Code copié"))
                 }
             }
         }
     }
 
-    private func changerLOuverture(_ ouvert: Bool) async {
-        ouvertureEnCours = true
-        defer { ouvertureEnCours = false }
+    /// Un mode qui retirerait des demandes en attente demande confirmation ; les autres passent.
+    private func choisir(_ mode: ClubJoinMode) {
+        guard mode != club.modeDAdhesion, !modeEnCours else { return }
+        if club.modeDAdhesion == .request, !demandes.isEmpty || (club.pendingRequests ?? 0) > 0 {
+            modeAConfirmer = mode
+        } else {
+            Task { await appliquerLeMode(mode) }
+        }
+    }
+
+    private func appliquerLeMode(_ mode: ClubJoinMode) async {
+        modeAConfirmer = nil
+        modeEnCours = true
+        defer { modeEnCours = false }
         do {
-            try await onSetOpen(ouvert)
+            try await onSetJoinMode(mode)
         } catch {
-            appState.toast(PanneReseau.phrase(pour: error))
+            appState.toast(ClubAdhesionErreur.phraseDuProprietaire(pour: error))
+        }
+    }
+
+    // MARK: - Les demandes pour rejoindre
+
+    /// LES DEMANDES EN ATTENTE, d'un club sur demande : qui, depuis quand, et deux réponses. Accepter
+    /// fait entrer la personne et la prévient ; refuser retire la demande sans rien lui dire. Rien
+    /// n'est écrit par la personne qui demande : il n'y a rien à lire, seulement un nom.
+    @ViewBuilder private var demandesEnAttente: some View {
+        if club.isOwner == true, club.modeDAdhesion == .request {
+            VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+                HZTitreDeSection(titre: String(localized: "Demandes pour rejoindre"))
+                if demandesEnChargement && demandes.isEmpty {
+                    ProgressView()
+                        .tint(HZCouleur.encre)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, HZEspace.groupe)
+                } else if let demandesEnPanne {
+                    HZPhrase(texte: demandesEnPanne)
+                    HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .petite,
+                                   fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
+                        Task { await onLoadRequests() }
+                    }
+                } else if demandes.isEmpty {
+                    HZPhrase(texte: Accord.selon(
+                        f: String(localized: "Aucune demande en attente. Tu seras prévenue quand quelqu'un voudra rejoindre le club."),
+                        m: String(localized: "Aucune demande en attente. Tu seras prévenu quand quelqu'un voudra rejoindre le club.")))
+                } else {
+                    LazyVStack(spacing: 0) {
+                        ForEach(Array(demandes.enumerated()), id: \.element.id) { index, demande in
+                            HZLigneDeDemande(
+                                nom: demande.nomComplet,
+                                photo: HZPhotoDePersonne(urlString: demande.avatarUrl,
+                                                         base64DataURI: demande.avatarBase64,
+                                                         initiales: HZInitiales.de(demande.name, demande.lastName)),
+                                depuis: demande.createdAt.relativeDescription,
+                                enCours: demandeEnCours == demande.id,
+                                filet: index < demandes.count - 1,
+                                accepter: { Task { await repondre(demande, accepter: true) } },
+                                refuser: { Task { await repondre(demande, accepter: false) } })
+                        }
+                    }
+                }
+            }
+            .task { await onLoadRequests() }
+        }
+    }
+
+    private func repondre(_ demande: ClubJoinRequest, accepter: Bool) async {
+        guard demandeEnCours == nil else { return }
+        demandeEnCours = demande.id
+        defer { demandeEnCours = nil }
+        do {
+            try await onRespondRequest(demande, accepter)
+            if accepter {
+                Haptics.success()
+                appState.toast(String(localized: "\(demande.name) fait maintenant partie du club."))
+            }
+        } catch {
+            appState.toast(ClubAdhesionErreur.phraseDuProprietaire(pour: error))
         }
     }
 

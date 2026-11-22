@@ -72,6 +72,11 @@ final class ClubStore {
 
     var clubResultats: [ClubSearchResult] = []
 
+    /// Les demandes pour rejoindre MON club, vues par son propriétaire.
+    var demandes: [ClubJoinRequest] = []
+    var demandesEnChargement = false
+    var demandesEnPanne: String?
+
     var clubSearchEnCours = false
 
     /// Les cinq clubs proposés quand le champ est vide. Chargés une fois par visite de l'écran :
@@ -262,12 +267,12 @@ final class ClubStore {
     /// à la vue et non au magasin — sache s'il doit se vider. C'était `newClubName = ""` ici :
     /// un magasin qui efface un champ de texte sait trop de choses sur l'écran qui l'emploie.
     @discardableResult
-    func createClub(nom: String) async -> Bool {
+    func createClub(nom: String, mode: ClubJoinMode = .open) async -> Bool {
         isLoading = true
         errorMessage = nil
         var reussi = false
         do {
-            _ = try await clubService.createClub(name: nom.trimmingCharacters(in: .whitespaces))
+            _ = try await clubService.createClub(name: nom.trimmingCharacters(in: .whitespaces), joinMode: mode)
             // Inside the `do`, after the call succeeded — an attempt that 422'd on the name, or
             // never left the device, is not a club created.
             Analytics.shared.track(.clubCreated)
@@ -326,33 +331,27 @@ final class ClubStore {
         }
     }
 
-    /// Rend `true` quand le club a bien été rejoint — même raison que `createClub` : le champ
-    /// de recherche appartient à la vue.
-    @discardableResult
-    func joinClub(_ club: ClubSearchResult) async -> Bool {
-        isLoading = true
-        var reussi = false
+    /// APRÈS UNE ADHÉSION RÉUSSIE : on relit le club qu'on vient de rejoindre.
+    ///
+    /// L'adhésion elle-même se fait dans la fiche du club (`ClubFicheView`), qui sait si c'est un
+    /// appui, un code ou une demande acceptée ; le magasin n'a plus qu'à adopter son résultat. Le
+    /// compte est fait ici, après l'appel réussi : un club fermé entre la recherche et l'appui
+    /// (404) n'est pas une adhésion. Created et joined restent comptés à part, à dessein — un club
+    /// qui se remplit et un club qui se crée sont deux signaux, et l'un sans l'autre dit que
+    /// l'invitation ne prend pas.
+    func adopterLAdhesion() async {
+        Analytics.shared.track(.clubJoined)
+        clubResultats = []
+        // Sans cela, rouvrir le Club montrerait un instant le tableau d'AVANT l'adhésion : un
+        // écran « Rejoins un club » pour quelqu'un qui vient d'en rejoindre un.
+        appState.cachedClubBoard = nil
         errorMessage = nil
         do {
-            _ = try await clubService.joinClub(clubId: club.id)
-            // Same placement rule as `createClub` — a club that closed between the search and
-            // the tap (404) isn't a join. Created vs joined are tracked apart on purpose: a club
-            // that fills up and a club that gets created are two different signals, and one
-            // without the other says the invitation isn't landing.
-            Analytics.shared.track(.clubJoined)
-            clubResultats = []
-            // Même règle que dans `createClub` : posé là où `clubQuery = ""` se trouvait.
-            reussi = true
             board = try await clubService.fetchBoard()
-        } catch ClubServiceError.badResponse(404, _) {
-            // Le club a été fermé ou supprimé entre la recherche et l'appui. Rare, mais c'est
-            // la seule chose que ce code puisse vouloir dire maintenant.
-            errorMessage = String(localized: "Ce club n'est plus ouvert.")
         } catch {
-            errorMessage = String(localized: "Impossible de rejoindre ce club.")
+            // Le club est rejoint ; seule sa relecture a échoué. Tirer pour rafraîchir la refait.
+            errorMessage = PanneReseau.phrase(pour: error)
         }
-        isLoading = false
-        return reussi
     }
 
     func leaveClub() async {
@@ -570,9 +569,50 @@ final class ClubStore {
     // que l'écran dise ce que le serveur a retenu. `badges` entre par la porte, comme partout
     // où `loadIfSignedIn` est appelé — voir `syncBadgesIfNeeded`.
 
-    func ouvrirLeClub(_ ouvert: Bool, badges: [ClubBadge]) async throws {
-        try await clubService.setClubOpen(ouvert)
+    /// Comment on entre dans le club : ouvert, sur demande, sur code. Le serveur retire les
+    /// demandes en attente quand on quitte « sur demande » ; la liste d'ici suit.
+    func reglerLeMode(_ mode: ClubJoinMode, badges: [ClubBadge]) async throws {
+        _ = try await clubService.setJoinMode(mode)
+        demandes = []
         await loadIfSignedIn(badges: badges)
+    }
+
+    // MARK: Les demandes pour rejoindre le club
+
+    /// Les demandes en attente, pour le propriétaire d'un club sur demande. À part du tableau de
+    /// bord : elles ne se chargent que quand la gestion s'ouvre, et une panne ici ne doit pas
+    /// vider le reste.
+    func chargerLesDemandes() async {
+        guard auth.isSignedIn, !Demonstration.enCours else { return }
+        demandesEnChargement = true
+        demandesEnPanne = nil
+        do {
+            demandes = try await clubService.fetchJoinRequests()
+        } catch {
+            demandesEnPanne = ClubAdhesionErreur.phraseDuProprietaire(pour: error)
+        }
+        demandesEnChargement = false
+    }
+
+    /// Accepter fait entrer la personne (et la prévient) ; refuser retire la demande sans rien lui
+    /// dire. La ligne disparaît dans les deux cas. Accepter relit le club : un membre de plus, et
+    /// il est dans le classement.
+    func repondreALaDemande(_ demande: ClubJoinRequest, accepter: Bool, badges: [ClubBadge]) async throws {
+        do {
+            try await clubService.respondToJoinRequest(userId: demande.userId, accept: accepter)
+        } catch {
+            // Une demande déjà retirée ou traitée ailleurs n'a plus de ligne à garder à l'écran.
+            if (error as? ClubServiceError)?.statut == 404 { demandes.removeAll { $0.id == demande.id } }
+            throw error
+        }
+        demandes.removeAll { $0.id == demande.id }
+        if accepter {
+            await loadIfSignedIn(badges: badges)
+        } else if var info = board.club {
+            info.pendingRequests = max(0, (info.pendingRequests ?? 1) - 1)
+            board.club = info
+            appState.cachedClubBoard = board
+        }
     }
 
     func reglerLaFiche(description: String, ville: String, badges: [ClubBadge]) async throws {

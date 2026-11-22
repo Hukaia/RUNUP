@@ -482,6 +482,10 @@ enum HZExplorer {
     static let itinerairesRetenus = 12
     static let disqueDeClub: CGFloat = 44
     static let metresDansUnKilometre: Double = 1000
+    /// La recherche d'un club par son nom : deux lettres au moins (le serveur n'en cherche pas
+    /// moins), une attente en millisecondes avant d'interroger, pour ne pas faire une requête par frappe.
+    static let caracteresMinimumDeRecherche = 2
+    static let attenteAvantLaRecherche = 300
 }
 
 /// LE BILAN DE LA SEMAINE : ce que le haut noir ajoute à celui des Stats.

@@ -134,6 +134,23 @@
         }
       }
     },
+    "%@ fait maintenant partie du club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is now part of the club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ya forma parte del club."
+          }
+        }
+      }
+    },
     "%@ kilomètres": {
       "extractionState": "manual",
       "localizations": {
@@ -1188,6 +1205,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld recorridos guardados"
+          }
+        }
+      }
+    },
+    "%lld personne veut rejoindre le club": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld person wants to join the club"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld persona quiere unirse al club"
+          }
+        }
+      }
+    },
+    "%lld personnes veulent rejoindre le club": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld people want to join the club"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld personas quieren unirse al club"
           }
         }
       }
@@ -3992,6 +4043,23 @@
         }
       }
     },
+    "Accepter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accept"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aceptar"
+          }
+        }
+      }
+    },
     "AJOUTER UNE COURSE": {
       "extractionState": "manual",
       "localizations": {
@@ -4092,6 +4160,57 @@
         }
       }
     },
+    "Aucun club ne correspond à ce code.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No club matches this code."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ningún club corresponde a este código."
+          }
+        }
+      }
+    },
+    "Aucun club ne porte ce nom. Un club sur code ne se trouve pas ainsi : entre son code.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No club goes by that name. A club with a code can't be found this way: enter its code."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ningún club se llama así. Un club con código no se encuentra así: introduce su código."
+          }
+        }
+      }
+    },
+    "Aucun club ne porte ce nom. Un club sur code se rejoint avec son code.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No club goes by that name. A club with a code is joined with its code."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ningún club se llama así. A un club con código se entra con su código."
+          }
+        }
+      }
+    },
     "Aucun club à te proposer pour l'instant. Cherche le tien par son nom depuis le Club.": {
       "extractionState": "manual",
       "localizations": {
@@ -4105,6 +4224,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ningún club que proponerte por ahora. Busca el tuyo por su nombre desde Club."
+          }
+        }
+      }
+    },
+    "Aucun club à te proposer pour l'instant. Cherche le tien par son nom, ou entre son code.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No clubs to suggest right now. Search for yours by name, or enter its code."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay clubs que proponerte por ahora. Busca el tuyo por su nombre, o introduce su código."
           }
         }
       }
@@ -4139,6 +4275,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ninguna carrera HYROX próxima por ahora."
+          }
+        }
+      }
+    },
+    "Aucune demande en attente. Tu seras prévenu quand quelqu'un voudra rejoindre le club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No requests pending. You'll be notified when someone wants to join the club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay solicitudes pendientes. Te avisaremos cuando alguien quiera unirse al club."
+          }
+        }
+      }
+    },
+    "Aucune demande en attente. Tu seras prévenue quand quelqu'un voudra rejoindre le club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No requests pending. You'll be notified when someone wants to join the club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay solicitudes pendientes. Te avisaremos cuando alguien quiera unirse al club."
           }
         }
       }
@@ -6657,6 +6827,227 @@
         }
       }
     },
+    "Ce club accepte maintenant sur demande. Demande à le rejoindre.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This club now accepts members on request. Ask to join it."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este club ahora acepta por solicitud. Solicita unirte."
+          }
+        }
+      }
+    },
+    "Ce club est maintenant ouvert. Tu peux le rejoindre tout de suite.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This club is now open. You can join it right away."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este club ahora está abierto. Puedes unirte ahora mismo."
+          }
+        }
+      }
+    },
+    "Ce club n'a pas encore écrit sa présentation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This club hasn't written its introduction yet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este club aún no ha escrito su presentación."
+          }
+        }
+      }
+    },
+    "Ce club n'apparaît dans aucune recherche. On le rejoint seulement avec son code d'invitation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This club doesn't appear in any search. People can only join it with its invite code."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este club no aparece en ninguna búsqueda. Solo se puede entrar con su código de invitación."
+          }
+        }
+      }
+    },
+    "Ce club n'est plus disponible, ou il a changé sa façon d'accueillir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This club is no longer available, or it has changed how it welcomes people."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este club ya no está disponible, o ha cambiado su forma de acoger."
+          }
+        }
+      }
+    },
+    "Ce club se rejoint avec son code d'invitation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You join this club with its invite code."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se entra a este club con su código de invitación."
+          }
+        }
+      }
+    },
+    "Ce code n'est pas le bon.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That code isn't right."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ese código no es correcto."
+          }
+        }
+      }
+    },
+    "Cette demande n'existe plus : la personne l'a peut-être retirée.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This request no longer exists: the person may have withdrawn it."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta solicitud ya no existe: puede que la persona la haya retirado."
+          }
+        }
+      }
+    },
+    "Cette personne a déjà rejoint un autre club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This person has already joined another club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta persona ya se ha unido a otro club."
+          }
+        }
+      }
+    },
+    "Changer cela ne retire personne du club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changing this doesn't remove anyone from the club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambiar esto no saca a nadie del club."
+          }
+        }
+      }
+    },
+    "Changer la façon d'entrer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change how people join"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambiar la forma de entrar"
+          }
+        }
+      }
+    },
+    "Chaque nouvelle personne est acceptée par la personne qui a créé ce club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each new member is approved by the person who created this club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada persona nueva es aceptada por quien creó este club."
+          }
+        }
+      }
+    },
+    "Chercher un club par son nom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search for a club by name"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar un club por su nombre"
+          }
+        }
+      }
+    },
     "Cible": {
       "extractionState": "manual",
       "localizations": {
@@ -6724,6 +7115,57 @@
         }
       }
     },
+    "Clubs à rejoindre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clubs to join"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clubs para unirse"
+          }
+        }
+      }
+    },
+    "Code copié": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code copied"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Código copiado"
+          }
+        }
+      }
+    },
+    "Code d'invitation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invite code"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Código de invitación"
+          }
+        }
+      }
+    },
     "COMMENCER": {
       "localizations": {
         "en": {
@@ -6753,6 +7195,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "¿Cuántos días por semana?"
+          }
+        }
+      }
+    },
+    "Comment on entre dans ce club": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How people join this club"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cómo se entra en este club"
+          }
+        }
+      }
+    },
+    "Comment on y entre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How people join"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cómo se entra"
           }
         }
       }
@@ -6836,6 +7312,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Construir mi programa"
+          }
+        }
+      }
+    },
+    "Copier le code": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy code"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiar el código"
           }
         }
       }
@@ -9860,6 +10353,23 @@
         }
       }
     },
+    "Demander à rejoindre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request to join"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solicitar unirse"
+          }
+        }
+      }
+    },
     "DEMANDER À SUIVRE": {
       "extractionState": "manual",
       "localizations": {
@@ -9890,6 +10400,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Solicitar seguir"
+          }
+        }
+      }
+    },
+    "Demandes pour rejoindre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Requests to join"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solicitudes para unirse"
           }
         }
       }
@@ -11343,6 +11870,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "GUARDAR"
+          }
+        }
+      }
+    },
+    "Entrer le code": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the code"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Introducir el código"
           }
         }
       }
@@ -13788,6 +14332,23 @@
         }
       }
     },
+    "Impossible de charger les clubs : %@.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load the clubs: %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron cargar los clubs: %@."
+          }
+        }
+      }
+    },
     "Impossible de charger les commentaires.": {
       "localizations": {
         "en": {
@@ -15236,6 +15797,57 @@
         }
       }
     },
+    "Le club a reçu ta demande. Tu seras prévenu dès qu'elle sera acceptée.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The club has received your request. You'll be notified as soon as it's accepted."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El club ha recibido tu solicitud. Te avisaremos en cuanto sea aceptada."
+          }
+        }
+      }
+    },
+    "Le club a reçu ta demande. Tu seras prévenue dès qu'elle sera acceptée.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The club has received your request. You'll be notified as soon as it's accepted."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El club ha recibido tu solicitud. Te avisaremos en cuanto sea aceptada."
+          }
+        }
+      }
+    },
+    "Le code est bon. Tu peux rejoindre ce club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The code is right. You can join this club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El código es correcto. Puedes unirte a este club."
+          }
+        }
+      }
+    },
     "Le plus rapide": {
       "extractionState": "manual",
       "localizations": {
@@ -15249,6 +15861,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Más rápido"
+          }
+        }
+      }
+    },
+    "Les demandes en attente seront retirées. Ces personnes devront entrer selon la nouvelle façon d'accueillir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pending requests will be removed. These people will have to join the new way."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se retirarán las solicitudes pendientes. Estas personas tendrán que entrar según la nueva forma de acogida."
           }
         }
       }
@@ -15338,6 +15967,23 @@
         }
       }
     },
+    "N'importe qui peut trouver ce club par son nom et le rejoindre d'un toucher.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anyone can find this club by name and join it with a tap."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cualquiera puede encontrar este club por su nombre y unirse con un toque."
+          }
+        }
+      }
+    },
     "Nouveau record": {
       "extractionState": "manual",
       "localizations": {
@@ -15351,6 +15997,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nuevo récord"
+          }
+        }
+      }
+    },
+    "On trouve ce club par son nom et on demande à le rejoindre. Tu acceptes ou tu refuses chaque demande.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "People find this club by name and ask to join it. You accept or decline each request."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se encuentra este club por su nombre y se solicita unirse. Tú aceptas o rechazas cada solicitud."
+          }
+        }
+      }
+    },
+    "Ou rejoins-en un": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Or join one"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O únete a uno"
+          }
+        }
+      }
+    },
+    "Ouvert": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abierto"
           }
         }
       }
@@ -15402,6 +16099,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Saltar la recuperación"
+          }
+        }
+      }
+    },
+    "Pour revenir, tu repasseras par la façon dont ce club accueille : un toucher, une demande ou un code.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To come back, you'll go through the way this club welcomes people: a tap, a request or a code."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para volver, pasarás por la forma en que este club acoge: un toque, una solicitud o un código."
+          }
+        }
+      }
+    },
+    "Pour un club qui ne se trouve pas par son nom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For a club that can't be found by name"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para un club que no se encuentra por su nombre"
           }
         }
       }
@@ -15474,6 +16205,40 @@
         }
       }
     },
+    "Refuser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Decline"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechazar"
+          }
+        }
+      }
+    },
+    "Rejoindre avec un code": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join with a code"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unirse con un código"
+          }
+        }
+      }
+    },
     "Retirer de mes itinéraires": {
       "extractionState": "manual",
       "localizations": {
@@ -15487,6 +16252,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quitar de mis rutas"
+          }
+        }
+      }
+    },
+    "Retirer les demandes en attente ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove pending requests?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Retirar las solicitudes pendientes?"
           }
         }
       }
@@ -15525,6 +16307,23 @@
         }
       }
     },
+    "Seule la personne qui a créé le club peut faire cela.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only the person who created the club can do that."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo la persona que creó el club puede hacerlo."
+          }
+        }
+      }
+    },
     "Suivi": {
       "extractionState": "manual",
       "localizations": {
@@ -15538,6 +16337,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Siguiendo"
+          }
+        }
+      }
+    },
+    "Sur code": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code only"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con código"
+          }
+        }
+      }
+    },
+    "Sur demande": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By request"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por solicitud"
           }
         }
       }
@@ -15610,6 +16443,40 @@
         }
       }
     },
+    "Trop d'essais pour aujourd'hui. Réessaie demain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too many tries for today. Try again tomorrow."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demasiados intentos por hoy. Vuelve a intentarlo mañana."
+          }
+        }
+      }
+    },
+    "Tu as déjà plusieurs demandes en attente. Retire-en une pour en faire une autre.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You already have several requests pending. Withdraw one to make another."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya tienes varias solicitudes pendientes. Retira una para hacer otra."
+          }
+        }
+      }
+    },
     "Tu choisiras ta course juste après.": {
       "extractionState": "manual",
       "localizations": {
@@ -15627,6 +16494,40 @@
         }
       }
     },
+    "Tu fais déjà partie d'un club. Quitte-le pour en rejoindre un autre.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're already in a club. Leave it to join another."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya formas parte de un club. Sal de él para unirte a otro."
+          }
+        }
+      }
+    },
+    "Tu peux rejoindre ce club tout de suite.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can join this club right away."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Puedes unirte a este club ahora mismo."
+          }
+        }
+      }
+    },
     "Tu pourras déplacer chaque séance.": {
       "extractionState": "manual",
       "localizations": {
@@ -15640,6 +16541,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Podrás mover cada sesión."
+          }
+        }
+      }
+    },
+    "Un club sur code n'apparaît dans aucune recherche. Demande son code à la personne qui l'a créé.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A club with a code doesn't appear in any search. Ask the person who created it for the code."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un club con código no aparece en ninguna búsqueda. Pídele el código a quien lo creó."
           }
         }
       }
@@ -31761,6 +32679,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ver comentarios"
+          }
+        }
+      }
+    },
+    "Voir les demandes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See requests"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver las solicitudes"
           }
         }
       }
