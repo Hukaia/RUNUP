@@ -30,10 +30,6 @@ struct PlanSemaineView: View {
     /// Le jour regardé. `nil` tant qu'on n'a rien touché : c'est alors aujourd'hui.
     @State private var choix: Int?
     @State private var planCompletOuvert = false
-    /// Jusqu'à quand le défilement vient d'un appui sur la rangée des jours, et non du doigt : le
-    /// système rapporte alors les cartes qu'il traverse, et les prendre pour des choix ferait
-    /// parcourir la rangée des jours une à une.
-    @State private var defilementProgramme = Date.distantPast
 
     private var profile: UserProfile { appState.profile }
     private var planDebloque: Bool { subscriptions.unlocks(.adaptivePlan) }
@@ -66,6 +62,9 @@ struct PlanSemaineView: View {
         let voulu = planDebloque ? (choix ?? aujourdHui) : aujourdHui
         return visibles.contains { $0.id == voulu } ? voulu : (visibles.first?.id ?? aujourdHui)
     }
+
+    /// Plus d'une carte à faire défiler : faux pour un plan verrouillé ou la course libre.
+    private var aPlusieursCartes: Bool { !visibles.dropFirst().isEmpty }
 
     private var position: Int {
         visibles.firstIndex { $0.id == choisi } ?? 0
@@ -231,9 +230,7 @@ struct PlanSemaineView: View {
     /// Les appelants ont déjà tenu compte du verrou : la rangée est éteinte quand le plan l'est, et
     /// le glissement le vérifie lui-même.
     private func selectionner(_ jour: Int) {
-        defilementProgramme = Date().addingTimeInterval(HZCarrousel.dureeDuDefilement)
         withAnimation(HZCarrousel.animation) { choix = jour }
-        Haptics.selection()
     }
 
     // MARK: - Le carrousel
@@ -255,13 +252,14 @@ struct PlanSemaineView: View {
                 HStack(spacing: HZEspace.entreTuiles) {
                     HStack(spacing: HZEspace.entreTuiles) {
                         ForEach(visibles) { jour in
-                            Button {
-                                toucher(jour)
-                            } label: {
-                                carte(jour)
-                            }
-                            .buttonStyle(.plain)
-                            .id(jour.id)
+                            // Un toucher, et non un `Button` : un bouton posé sur chaque carte se
+                            // dispute le geste avec le défilement qui les porte (la rangée des
+                            // jours faisait glisser la carte, le doigt non, sur l'appareil).
+                            carte(jour)
+                                .contentShape(Rectangle())
+                                .onTapGesture { toucher(jour) }
+                                .accessibilityAddTraits(.isButton)
+                                .id(jour.id)
                         }
                     }
                     .scrollTargetLayout()
@@ -276,27 +274,23 @@ struct PlanSemaineView: View {
             }
             .contentMargins(.leading, HZPlan.departDeLaCarte, for: .scrollContent)
             .scrollTargetBehavior(.viewAligned)
-            .scrollPosition(id: positionDuCarrousel, anchor: .leading)
+            // `choix` LUI-MÊME, sans liaison fabriquée : le système l'écrit quand le doigt pose une
+            // carte au bord, et défile quand la rangée des jours l'écrit. Une liaison calculée
+            // (lue depuis `choisi`, écrite avec des garde-fous) ne bougeait que pour la rangée.
+            .scrollPosition(id: $choix, anchor: .leading)
             .scrollIndicators(.hidden)
-            // Verrouillé : une seule carte, rien à faire défiler.
-            .scrollDisabled(!planDebloque)
+            // Une seule carte (plan verrouillé, course libre) : rien à faire défiler.
+            .scrollDisabled(!aPlusieursCartes)
             .frame(height: HZCarteAffiche.hauteur)
             // Ouvert sur le jour choisi (aujourd'hui) : la position initiale du système n'est pas
             // toujours honorée avant la première mise en page.
-            .onAppear { lecteur.scrollTo(choisi, anchor: .leading) }
+            .onAppear {
+                if choix == nil { choix = choisi }
+                lecteur.scrollTo(choisi, anchor: .leading)
+            }
+            // Le cran du doigt ou de la rangée : un seul endroit pour le retour tactile.
+            .onChange(of: choix) { Haptics.selection() }
         }
-    }
-
-    /// Le jour que le doigt a posé au bord gauche : c'est lui le jour choisi.
-    private var positionDuCarrousel: Binding<Int?> {
-        Binding(
-            get: { choisi },
-            set: { nouveau in
-                guard planDebloque, let nouveau, nouveau != choisi,
-                      Date() >= defilementProgramme else { return }
-                choix = nouveau
-                Haptics.selection()
-            })
     }
 
     private func toucher(_ jour: PlanSemaineModele.Jour) {

@@ -50,6 +50,5 @@ struct HZColonneDeJour: View {
 /// le défilement natif du système (voir `PlanSemaineView.carrousel`) : il n'a plus de seuil ni de résistance
 /// à lui, c'est le système qui en décide.
 enum HZCarrousel {
-    static let animation = Animation.timingCurve(0.2, 0.8, 0.2, 1, duration: dureeDuDefilement)
-    static let dureeDuDefilement: TimeInterval = 0.34
+    static let animation = Animation.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.34)
 }

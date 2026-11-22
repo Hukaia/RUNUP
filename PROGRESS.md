@@ -9024,3 +9024,12 @@ barre, et la page se défile. Laissé tel quel.
 
 **Widget moyen :** l'anneau passe de 84 à 78 points et « bouclés » reprend son écart (le rendu CI le montrait collé). **Île dynamique :** son chrono prend la
 fonte d'affichage de la carte. **DESIGN.md** décrit désormais le widget, la Live Activity et leur contrôle en image (§ 4.6).
+
+## Le balayage du Plan, quatrième essai (22 novembre) : « toujours pas fonctionnel » (build 682)
+
+Charlotte, sur le build 682 : plusieurs cartes, la rangée des jours fait glisser la carte, le doigt ne la fait pas bouger. Le défilement
+PROGRAMMÉ marche, le défilement au doigt non : la capture CI (balayage par coordonnées) ne peut donc pas l'attraper. Deux suspects, retirés ensemble
+faute de pouvoir les séparer d'ici : (1) la liaison `scrollPosition` FABRIQUÉE (lue depuis `choisi`, écrite avec des garde-fous), remplacée par
+`$choix` lui-même, avec le retour tactile dans un `onChange` ; (2) un `Button` par carte, remplacé par un toucher (`onTapGesture`) : un bouton
+posé sur chaque carte peut se disputer le geste avec le défilement qui les porte. `scrollDisabled` ne coupe plus que s'il n'y a qu'une carte.
+Non vérifié : tout ce qui touche au doigt. À essayer sur l'appareil avec le build suivant.
