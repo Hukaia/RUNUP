@@ -9043,3 +9043,12 @@ dès qu'il y a plusieurs cartes ; le sous-titre compte les séances visibles sur
 **Confirmé sur l'appareil (22 novembre, build 684) : le balayage du Plan fonctionne**, au doigt, et la semaine entière est revenue en course libre. Cause la plus
 probable du défaut des builds 679 à 682, non isolée : la liaison `scrollPosition` fabriquée et/ou le `Button` par carte (retirés ensemble). Le ressenti
 (élan, reprise du geste) est validé par Charlotte : « ça fonctionne parfaitement ».
+
+## Le rose de l'app devient celui du logo (22 novembre) : choix « B » de Charlotte
+
+Charlotte : « le logo n'a plus du tout la même couleur que l'app, j'aimais bien le rose du logo ». L'icône est un dégradé de `#FC105E` à `#7F5AFB` ; l'app avait
+`#FF2E6E` (le rose du canvas) depuis le 19 novembre. Trois options montrées sur une planche ; elle a choisi B : l'icône garde son dégradé (c'est le logo, le
+seul dégradé de Haizo), l'app reste en aplats et prend `#FC105E`. Changé : `HZAccent.rose`, `AccentColor`, `WG.rose` (widget, Live Activity), `WT.rose` (montre),
+`DESIGN.md` § 2.1 et § 10. L'encre sombre sur le rose (`#2B0011`) tient : 4,8:1 dessus, contre 3,9:1 pour du blanc ; le grand chiffre dans l'accent passe 3:1 sur
+blanc et 5,4:1 sur noir. Le choix d'accent (violet, bleu, vert) et les teintes d'intensité du Plan ne changent pas. À recapturer : la montre (empreinte du code), et les
+captures de la fiche App Store qui montrent l'ancien rose, au prochain passage de `captures.yml`.

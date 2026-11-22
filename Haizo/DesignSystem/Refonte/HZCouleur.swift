@@ -120,6 +120,9 @@ enum HZIntensite: CaseIterable {
 ///
 ///     ink = accent === '#FF2E6E' ? '#2B0011' : '#FFFFFF'
 ///
+/// (`#FF2E6E` est le rose du canvas ; depuis le 22 novembre le rose de l'app est `#FC105E`, celui du
+/// logo — le contraste de l'encre sombre dessus vaut 4,8:1, le blanc seul 3,9:1 : la règle tient.)
+///
 /// L'encre sombre n'accompagne donc QUE le rose. Sur le violet, le bleu et le vert, les petits
 /// libellés restent blancs. Ce n'est pas un oubli à corriger : le rose est le seul des quatre
 /// assez clair pour qu'un petit texte blanc y devienne illisible.
@@ -130,7 +133,7 @@ enum HZAccent: String, CaseIterable, Identifiable {
 
     var couleur: Color {
         switch self {
-        case .rose: return Color(hex: 0xFF2E6E)
+        case .rose: return Color(hex: 0xFC105E)
         case .violet: return Color(hex: 0x7B3FE4)
         case .bleu: return Color(hex: 0x2F6BFF)
         case .vert: return Color(hex: 0x12A56B)

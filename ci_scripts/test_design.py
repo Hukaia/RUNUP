@@ -61,7 +61,7 @@ def _():
 
 @cas_test("un accent dont la couleur a dérivé est refusé")
 def _():
-    assert any("accent Rose" in quoi for _, quoi, _ in _sur(_fausse("`#FF2E6E`", "`#FF2E6F`")))
+    assert any("accent Rose" in quoi for _, quoi, _ in _sur(_fausse("`#FC105E`", "`#FC105F`")))
 
 
 @cas_test("une teinte d'intensité qui a dérivé est refusée")

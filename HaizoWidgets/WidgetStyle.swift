@@ -39,10 +39,10 @@ enum WG {
     static let secondaireSurClair = Color(hex: 0x6E6E73)
     static let secondaireSurSombre = Color(hex: 0xA1A1A6)
 
-    /// `HZAccent.rose` : le rose de l'app, `#FF2E6E`. Il valait `#FF0A78` jusqu'au 20 novembre
+    /// `HZAccent.rose` : le rose de l'app, `#FC105E` depuis le 22 novembre (celui du logo). Il valait `#FF2E6E` du 20 au 22 novembre, et `#FF0A78` avant
     /// (décision de Charlotte de le laisser), puis elle a demandé de l'aligner sur l'app : les
     /// quatre accents de ce fichier sont désormais ceux de l'app, au bit près.
-    static let rose = Color(hex: 0xFF2E6E)
+    static let rose = Color(hex: 0xFC105E)
 
     // MARK: La fonte
 

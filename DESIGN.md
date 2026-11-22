@@ -78,7 +78,7 @@ n'ont **qu'une valeur** : le canvas ne dessine qu'un rendu de chaque écran. Des
 
 | Choix | Couleur | Encre d'un petit texte posé dessus |
 | --- | --- | --- |
-| Rose | `#FF2E6E` | `#2B0011` |
+| Rose | `#FC105E` | `#2B0011` |
 | Violet | `#7B3FE4` | `#FFFFFF` |
 | Bleu | `#2F6BFF` | `#FFFFFF` |
 | Vert | `#12A56B` | `#FFFFFF` |
@@ -592,6 +592,7 @@ Ce qu'aucun garde ne voit, et que la comparaison côte à côte avec le canvas a
 | **Tout passe sous la nouvelle DA, par lots**, chacun vérifié par captures : « tu mets tout sous la nouvelle DA ». Fin de la méthode « un écran, une validation, puis le suivant ». | 18 novembre 2026 |
 | **La photo de profil reste modifiable** : le crayon sur l'avatar est conservé, c'est ce que voit tout le club. | 18 novembre 2026 |
 | **Le fil rend le double-tape pour applaudir**, la ligne « Aimé par … » et l'aperçu du dernier commentaire sous Bravo et Commenter. | 18 novembre 2026 |
+| **Le rose de l'app est celui du logo, `#FC105E`** (il valait `#FF2E6E`, celui du canvas, depuis le 19 novembre). L'icône garde son dégradé du rose au violet : c'est le seul dégradé de Haizo, et le logo. L'app reste en aplats. Le choix d'accent (violet, bleu, vert) et les teintes d'intensité du Plan ne changent pas. | 22 novembre 2026 |
 
 ### Ce que le canvas a renversé
 
