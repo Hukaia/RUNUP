@@ -161,7 +161,7 @@ enum ProgrammeHyrox {
             case .skiErg:
                 return String(localized: "les deux pieds reviennent sur la plateforme, même si tu sautes · les talons peuvent dépasser, sans toucher le sol")
             case .sledPush:
-                return String(localized: "le sled et toi restez dans votre couloir · le sled dépasse entièrement la ligne de fin de couloir avant de changer de sens")
+                return String(localized: "reste dans ton couloir, sled compris · le sled dépasse entièrement la ligne de fin de couloir avant de changer de sens")
             case .sledPull:
                 return String(localized: "tu restes debout, jamais assis ni à genoux · tu restes dans ta zone de travail · le sled dépasse entièrement la ligne avant de changer de sens")
             case .burpeeBroadJumps:

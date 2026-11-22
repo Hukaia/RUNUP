@@ -40395,23 +40395,6 @@
         }
       }
     },
-    "le sled et toi restez dans votre couloir · le sled dépasse entièrement la ligne de fin de couloir avant de changer de sens": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "the sled and you stay in your lane · the sled passes the end-of-lane line completely before you change direction"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "el trineo y tú os quedáis en vuestro carril · el trineo supera por completo la línea del final del carril antes de cambiar de sentido"
-          }
-        }
-      }
-    },
     "tu restes debout, jamais assis ni à genoux · tu restes dans ta zone de travail · le sled dépasse entièrement la ligne avant de changer de sens": {
       "extractionState": "manual",
       "localizations": {
@@ -41139,6 +41122,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "valores de partida habituales en la preparación, no un protocolo oficial: ajusta a tu sensación y para antes de que el gesto se deteriore"
+          }
+        }
+      }
+    },
+    "reste dans ton couloir, sled compris · le sled dépasse entièrement la ligne de fin de couloir avant de changer de sens": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stay in your lane, sled included · the sled passes the end-of-lane line completely before you change direction"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "quédate en tu carril, con el trineo · el trineo supera por completo la línea del final del carril antes de cambiar de sentido"
           }
         }
       }

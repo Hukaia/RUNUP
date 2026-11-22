@@ -292,10 +292,11 @@ enum CaptureSeed {
         ProcessInfo.processInfo.arguments.contains("--phase=specifique") ? .specifique : .base
     }
 
-    /// Pose, dans le plan de la semaine ET comme séance du jour, la séance HYROX demandée.
+    /// Pose la séance HYROX demandée comme séance du jour.
     ///
-    /// Dans les deux, parce que la génération recopie la séance du jour depuis le plan de la semaine :
-    /// poser la seule séance du jour, c'était la voir écrasée au premier rafraîchissement.
+    /// La semaine du plan n'est PAS touchée (`check_entrees.py` l'interdit : une séance écrite à la main
+    /// dans la semaine est effacée par la prochaine génération). La séance du jour, elle, est reposée
+    /// juste avant l'ouverture de la feuille, après le premier rafraîchissement du programme.
     @MainActor
     static func poserLaSeanceHyrox(sur profil: UserProfile) {
         guard let brut = hyroxDemande, brut != "semaine", let kind = SessionKind(rawValue: brut) else { return }
@@ -307,10 +308,6 @@ enum CaptureSeed {
             adjustment: nil, kind: kind, role: estUneStation ? .speed : .easy,
             phaseHyrox: phaseHyroxDemandee
         )
-        let aujourdhui = AdaptivePlanEngine.currentWeekdayIndex()
-        if let i = profil.weekSessions.firstIndex(where: { $0.weekday == aujourdhui }) {
-            profil.weekSessions[i].session = seance
-        }
         profil.todaySession = seance
     }
 
