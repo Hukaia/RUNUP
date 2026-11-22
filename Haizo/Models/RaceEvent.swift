@@ -154,6 +154,9 @@ struct RaceEvent: Decodable, Identifiable, Hashable {
     /// Le nom du pays dans la langue du téléphone, jamais écrit à la main : « Japon », « Japan ».
     var paysLisible: String? {
         guard let country, !country.isEmpty else { return nil }
+        // `localizedString` rend « Unknown Region » pour un code qu'il ne connaît pas, jamais nil : sans ce
+        // test, un code inconnu s'écrirait tel quel sur la page d'une course.
+        guard Self.codesDePaysConnus.contains(country) else { return nil }
         return Locale.current.localizedString(forRegionCode: country)
     }
 
@@ -283,6 +286,9 @@ struct RaceEvent: Decodable, Identifiable, Hashable {
         let nom: String
         var id: String { code }
     }
+
+    /// Les codes que le système connaît : le reste n'a pas de nom à afficher.
+    static let codesDePaysConnus: Set<String> = Set(Locale.Region.isoRegions.map(\.identifier))
 
     /// Les pays qu'on peut choisir : les régions ISO 3166-1, nommées dans la langue du téléphone (jamais
     /// écrites à la main) et triées par ce nom. Les codes à trois chiffres (« 150 », l'Europe) sont des

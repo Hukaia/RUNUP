@@ -9121,3 +9121,6 @@ Charlotte : « l'adhésion à un club n'est pas automatique », et l'esthétique
 - **Vérifié** : 54 tests Node d'adhésion (faux `sql`), contrôles du dépôt. **Non vu** : le Swift n'a jamais été compilé (CI à lire), le SQL n'a pas tourné sur Postgres, aucun rendu (largeur des trois pilules
   sur 390 pt, en/es), les notifications. Ordre de mise en ligne : migration, puis serveur, puis app.
 - Fusionné avec les courses du monde (un conflit dans `ExplorerView.charger`, résolu en gardant les deux).
+
+Premier build qui compile tout le Swift des courses et des clubs (#693) : un seul test rouge, un vrai défaut. `localizedString(forRegionCode:)` rend « Unknown Region » (jamais nil) pour un code
+inconnu, que la page d'une course aurait écrit tel quel. Corrigé : `paysLisible` ne nomme que les codes ISO connus (`codesDePaysConnus`).
