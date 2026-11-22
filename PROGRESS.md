@@ -9183,3 +9183,22 @@ Les « couleurs » : question posée à Charlotte (quelles couleurs précisémen
 Premier relevé des fiches HYROX en image (`hyrox-*.png`) : la séance posée est bien la bonne (sled push au bloc de base et spécifique, wall balls, force des jambes, prise/dos/gainage), les prescriptions s'affichent (« 4 × 50 m · 120 s de repos · à ta charge de course » au spécifique), avec la charge de la division (152 kg), « le geste validé » et la ligne « valeurs de départ… pas un protocole officiel ». Défaut vu et corrigé : la phrase du sled disait « le sled et toi restez dans votre couloir » (accord faux) ; elle dit maintenant « reste dans ton couloir, sled compris ». La capture de la semaine du plan montre la sortie longue du dimanche (course compromise 3 × 1 000) ; la semaine entière n'est pas encore photographiée jour par jour.
 
 **Décision de Charlotte (22 novembre) : le rose de l'app reste `#FC105E`** (le A de la planche, face aux `#E51E7B`, `#D8258B`, `#C42FA0`). Aucun changement de couleur. Le logo à l'ouverture, lui, porte le dégradé de l'icône (`HZMarque.degrade`) et non l'accent.
+
+## HYROX : « il ne veut rien dire » (22 novembre), refait
+
+Charlotte, après avoir vu les fiches : « Il veut rien dire le programme HYROX », et, à ma question, elle a coché les quatre : les stations sans course, la semaine entière, les durées et les chiffres, les textes et la présentation.
+Elle avait raison sur le fond : une séance « Sled push · 6 × 50 m » est un exercice de salle, pas un entraînement HYROX, qui enchaîne huit fois « 1 km de course, puis une station ».
+
+### Ce qui change
+- **Chaque séance de station devient des tours de « course, puis la station »** (`ProgrammeHyrox.Station.format(phase:)`, `FormatDeStation`). Bloc de base : 4 tours, 800 m de course facile, la moitié de la station aux deux tiers de la charge de
+  course, 60 s de repos. Bloc spécifique : 3 tours, 1 km à allure d'épreuve, les trois quarts de la station à la charge de course, 90 s de repos. La station entière n'est faite qu'à l'épreuve et aux courses compromises.
+  Ex. SkiErg au bloc de base : « 4 × (800 m de course + 500 m) · 60 s de repos après la station · course à allure facile · effort 7 sur 10 ».
+- **La durée est écrite d'après le contenu** : 10 min d'échauffement + tours (course à 6 min/km facile ou 5 min 30 à allure d'épreuve, station estimée, repos) + 5 min de retour au calme, arrondi à 5 min : 40 à 50 min selon la station (elles
+  affichaient 40 min pour 12 min de travail). L'allure de la carte est celle de la course contenue (facile, ou allure marathon).
+- **La course compromise est un tour par station dans l'ordre de l'épreuve** : 3 tours = SkiErg, sled push, sled pull ; 6 tours = jusqu'au farmers carry ; 2 tours en décharge. La fiche liste chaque tour (« Tour 2 · 1 km + Sled push », puis
+  l'allure et la charge de ta division). Il n'y a plus de « bloc fonctionnel » vague.
+- **Titres et sous-titres** : « Course + sled push », « Course puis sled push, en tours : dans ton couloir »… (fr/en/es). La fiche garde la station telle qu'à l'épreuve (« À l'épreuve : 50 m en 4 allers · 152 kg »), le geste validé, et la ligne « valeurs de départ ».
+- **La semaine** (inchangée dans sa composition, mais lisible maintenant) : 4 jours = course+station A, footing (ou travail complémentaire une semaine sur deux), course+station B, course compromise ; 5 jours : plus un travail complémentaire ;
+  3 jours : course+station A, footing, course compromise.
+- **Toujours vrai** : ce sont des valeurs de départ courantes en préparation, pas un protocole HYROX officiel, et personne qui a couru un HYROX ne les a relues. Une semaine détaillée jour par jour n'est pas encore photographiée.
+- **Non vérifié** : le Swift (`FormatDeStation`, la fiche des courses compromises) est écrit sans compilateur, la CI le dira.

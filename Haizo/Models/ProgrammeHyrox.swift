@@ -71,6 +71,58 @@ struct PrescriptionHyrox: Equatable, Sendable {
     }
 }
 
+/// UNE SÉANCE DE STATION : des tours de « course, puis la station », comme l'épreuve.
+struct FormatDeStation: Equatable, Sendable {
+    enum Unite: Equatable, Sendable { case metres, allers, repetitions }
+    enum AllureDeCourse: Equatable, Sendable { case facile, epreuve }
+
+    let tours: Int
+    let courseM: Int
+    let quantite: Int
+    let unite: Unite
+    let reposSecondes: Int
+    let intensite: PrescriptionHyrox.Intensite
+    let allure: AllureDeCourse
+    /// Les secondes que prend une unité de la station (voir `Station.secondesParUnite`).
+    let secondesParUnite: Double
+
+    /// « 4 × (800 m de course + 500 m) · 60 s de repos après la station · course à allure facile ·
+    /// effort 7 sur 10 ».
+    var texte: String {
+        let tour: String
+        switch unite {
+        case .metres: tour = String(localized: "\(tours) × (\(courseM) m de course + \(quantite) m)")
+        case .allers: tour = String(localized: "\(tours) × (\(courseM) m de course + \(quantite) allers)")
+        case .repetitions: tour = String(localized: "\(tours) × (\(courseM) m de course + \(quantite) répétitions)")
+        }
+        var morceaux = [tour, String(localized: "\(reposSecondes) s de repos après la station")]
+        morceaux.append(allure == .facile
+                        ? String(localized: "course à allure facile")
+                        : String(localized: "course à allure d'épreuve"))
+        switch intensite {
+        case .aucune: break
+        case .deuxTiers: morceaux.append(String(localized: "aux deux tiers de ta charge de course"))
+        case .troisQuarts: morceaux.append(String(localized: "aux trois quarts de ta charge de course"))
+        case .chargeDeCourse: morceaux.append(String(localized: "à ta charge de course"))
+        case .effort(let sur10): morceaux.append(String(localized: "effort \(sur10) sur 10"))
+        }
+        return morceaux.joined(separator: " · ")
+    }
+
+    /// La durée de la séance, au multiple de cinq minutes le plus proche : dix minutes d'échauffement, les
+    /// tours (course à 6 min le kilomètre au bloc de base, 5 min 30 à allure d'épreuve, station, repos) et
+    /// cinq minutes de retour au calme. Écrite d'après le contenu : une séance annoncée « 40 minutes » qui
+    /// n'en contient que douze était l'un des défauts relevés.
+    var dureeMinutes: Int {
+        let minutesParKm = allure == .facile ? 6.0 : 5.5
+        let course = Double(courseM) / 1000 * minutesParKm
+        let station = Double(quantite) * secondesParUnite / 60
+        let tour = course + station + Double(reposSecondes) / 60
+        let total = 10 + Double(tours) * tour + 5
+        return Int((total / 5).rounded()) * 5
+    }
+}
+
 enum ProgrammeHyrox {
 
     // MARK: Les huit stations
@@ -115,39 +167,53 @@ enum ProgrammeHyrox {
             }
         }
 
-        /// CE QU'ON FAIT DE LA STATION CETTE SEMAINE : une prescription de préparation, pas le règlement.
+        /// CE QU'ON FAIT DE LA STATION CETTE SEMAINE : des tours de « 1 km de course, puis la station »,
+        /// comme l'épreuve, en plus court.
         ///
-        /// Bloc de base : plus de séries plus courtes, à une fraction de la charge de course, pour
-        /// apprendre le geste et accumuler du volume propre. Bloc spécifique : des répétitions proches
-        /// de la station réelle (sa distance, ou une moitié), à la charge de course. Voir l'en-tête de
-        /// ce fichier : ce sont des valeurs de départ courantes, pas un protocole HYROX.
-        func prescription(phase: PhaseHyrox) -> PrescriptionHyrox {
+        /// UNE STATION SANS COURSE N'EST PAS UN ENTRAÎNEMENT HYROX : l'épreuve enchaîne huit fois un
+        /// kilomètre et une station, et c'est la fatigue de l'un qui change l'autre. La première version
+        /// de cette séance posait la station seule (« 6 × 50 m de sled »), et Charlotte l'a refusée.
+        ///
+        /// Bloc de base : quatre tours, 800 m de course facile, la moitié de la station aux deux tiers de
+        /// la charge, pour apprendre le geste en gardant du souffle. Bloc spécifique : trois tours, 1 km
+        /// à allure d'épreuve, les trois quarts de la station à la charge de course. La station entière
+        /// n'est faite qu'à l'épreuve et à la simulation (voir `HyroxCompromisedRun6`).
+        ///
+        /// Voir l'en-tête de ce fichier : des valeurs de départ courantes, pas un protocole HYROX.
+        func format(phase: PhaseHyrox) -> FormatDeStation {
             let base = phase == .base
+            let course = base ? 800 : 1000
+            let tours = base ? 4 : 3
+            let repos = base ? 60 : 90
+            let allure: FormatDeStation.AllureDeCourse = base ? .facile : .epreuve
+            func f(_ quantite: Int, _ unite: FormatDeStation.Unite, _ intensite: PrescriptionHyrox.Intensite)
+                -> FormatDeStation {
+                FormatDeStation(tours: tours, courseM: course, quantite: quantite, unite: unite,
+                                reposSecondes: repos, intensite: intensite, allure: allure,
+                                secondesParUnite: secondesParUnite)
+            }
             switch self {
-            case .skiErg, .rameur:
-                return base
-                    ? PrescriptionHyrox(series: 6, quantite: 500, unite: .metres, reposSecondes: 90, intensite: .effort(7))
-                    : PrescriptionHyrox(series: 3, quantite: 1000, unite: .metres, reposSecondes: 180, intensite: .effort(8))
-            case .sledPush, .sledPull:
-                return base
-                    ? PrescriptionHyrox(series: 6, quantite: 50, unite: .metres, reposSecondes: 90, intensite: .deuxTiers)
-                    : PrescriptionHyrox(series: 4, quantite: 50, unite: .metres, reposSecondes: 120, intensite: .chargeDeCourse)
-            case .burpeeBroadJumps:
-                return base
-                    ? PrescriptionHyrox(series: 5, quantite: 20, unite: .metres, reposSecondes: 60, intensite: .aucune)
-                    : PrescriptionHyrox(series: 2, quantite: 80, unite: .metres, reposSecondes: 180, intensite: .aucune)
-            case .farmersCarry:
-                return base
-                    ? PrescriptionHyrox(series: 6, quantite: 50, unite: .metres, reposSecondes: 60, intensite: .troisQuarts)
-                    : PrescriptionHyrox(series: 3, quantite: 200, unite: .metres, reposSecondes: 120, intensite: .chargeDeCourse)
-            case .fentesSandbag:
-                return base
-                    ? PrescriptionHyrox(series: 5, quantite: 20, unite: .metres, reposSecondes: 90, intensite: .deuxTiers)
-                    : PrescriptionHyrox(series: 4, quantite: 50, unite: .metres, reposSecondes: 120, intensite: .chargeDeCourse)
-            case .wallBalls:
-                return base
-                    ? PrescriptionHyrox(series: 5, quantite: 20, unite: .repetitions, reposSecondes: 60, intensite: .aucune)
-                    : PrescriptionHyrox(series: 4, quantite: 25, unite: .repetitions, reposSecondes: 90, intensite: .aucune)
+            case .skiErg: return f(base ? 500 : 750, .metres, .effort(base ? 7 : 8))
+            case .rameur: return f(base ? 500 : 750, .metres, .effort(base ? 7 : 8))
+            case .sledPush, .sledPull: return f(base ? 2 : 3, .allers, base ? .deuxTiers : .chargeDeCourse)
+            case .burpeeBroadJumps: return f(base ? 40 : 60, .metres, .aucune)
+            case .farmersCarry: return f(base ? 100 : 150, .metres, base ? .deuxTiers : .chargeDeCourse)
+            case .fentesSandbag: return f(base ? 50 : 75, .metres, base ? .deuxTiers : .chargeDeCourse)
+            case .wallBalls: return f(base ? 50 : 75, .repetitions, .aucune)
+            }
+        }
+
+        /// Le temps qu'une unité de la station prend à quelqu'un qui la fait sans se précipiter, en
+        /// secondes : sert à écrire la DURÉE de la séance d'après son contenu. Une estimation de
+        /// planification, pas une mesure.
+        private var secondesParUnite: Double {
+            switch self {
+            case .skiErg, .rameur: return 0.24     // 4 min pour 1 000 m
+            case .sledPush, .sledPull: return 12   // un aller de 12,5 m
+            case .burpeeBroadJumps: return 3
+            case .farmersCarry: return 0.7
+            case .fentesSandbag: return 1.8
+            case .wallBalls: return 3.5
             }
         }
 

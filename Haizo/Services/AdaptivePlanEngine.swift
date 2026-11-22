@@ -1039,15 +1039,21 @@ enum AdaptivePlanEngine {
             subtitle: "endurance de fond : construit le volume de course du format",
             pace: zones.easy, zone: "Z2", baseDuration: 30, kind: .hyroxBaseFooting
         )
+        let phase: PhaseHyrox = block == .base ? .base : .specifique
         func archetype(_ place: ProgrammeHyrox.Place) -> SessionArchetype {
             switch place {
             case .footing:
                 return footing
             case .station(let station):
+                // UNE SÉANCE DE STATION EST DES TOURS DE « COURSE, PUIS LA STATION » : la durée est celle de
+                // son contenu, l'allure celle de la course qu'elle contient (facile au bloc de base,
+                // d'épreuve au spécifique). Voir `ProgrammeHyrox.Station.format`.
                 return SessionArchetype(
                     role: .speed, title: station.nom,
-                    subtitle: "la station seule, à charge de course",
-                    pace: "—", zone: "Z3-4", baseDuration: 40, kind: station.kind
+                    subtitle: "1 km de course, puis la station, répétés : le rythme de l'épreuve",
+                    pace: phase == .base ? zones.easy : zones.marathon,
+                    zone: phase == .base ? "Z2-3" : "Z3",
+                    baseDuration: station.format(phase: phase).dureeMinutes, kind: station.kind
                 )
             case .complement(let travail):
                 return SessionArchetype(
@@ -1059,7 +1065,6 @@ enum AdaptivePlanEngine {
                 )
             }
         }
-        let phase: PhaseHyrox = block == .base ? .base : .specifique
         let autres = places.map { place -> SessionArchetype in
             var a = archetype(place)
             a.phaseHyrox = phase

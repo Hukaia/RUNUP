@@ -89,12 +89,6 @@ struct SessionDetailSheet: View {
             : String(localized: "\(session.zone) · récupération entre chaque")
     }
 
-    private var detailDeLaCourseCompromise: String {
-        allure != nil
-            ? String(localized: "\(session.pace) /km entre les blocs · \(session.zone) · enchaîne course et mouvement, sans repos complet")
-            : String(localized: "\(session.zone) · enchaîne course et mouvement, sans repos complet")
-    }
-
     private func detailDuTempoSled(_ sled: String) -> String {
         allure != nil
             ? String(localized: "\(minutesDeBloc)′ · \(session.pace) /km · \(session.zone) · allure seuil entrecoupée de \(sled)")
@@ -172,8 +166,8 @@ struct SessionDetailSheet: View {
                   HZCouleur.secondaireSurClair)
             return [
                 warmup,
-                (String(localized: "La séance"), station.prescription(phase: phase).texte, HZCouleur.accent),
-                ligne,
+                (String(localized: "La séance"), station.format(phase: phase).texte, HZCouleur.accent),
+                (String(localized: "À l'épreuve"), "\(ligne.0) · \(ligne.1)", HZCouleur.secondaireSurClair),
                 (String(localized: "Le geste validé"), station.standard, HZCouleur.secondaireSurClair),
                 (String(localized: "Comment l'ajuster"), valeursDeDepart, HZCouleur.secondaireSurClair),
                 cooldown
@@ -201,11 +195,25 @@ struct SessionDetailSheet: View {
 
         switch kind {
         case .hyroxCompromisedRun3, .hyroxCompromisedRun6, .hyroxCompromisedRunLight2:
-            return [
-                warmup,
-                (String(localized: "\(intervalDescription) + fonctionnel"),
-                 detailDeLaCourseCompromise,
-                 HZCouleur.accent),
+            // UN TOUR PAR STATION, DANS L'ORDRE DE L'ÉPREUVE : 1 km de course, puis la station. Trois tours,
+            // c'est le SkiErg, le sled push et le sled pull ; six, c'est jusqu'au farmers carry ; deux (la
+            // semaine de décharge), le SkiErg et le sled push.
+            let tours = session.intervals?.reps ?? ChargesHyrox.Format.segmentsDeCourse
+            let dansLOrdre = Array(ProgrammeHyrox.Station.allCases.prefix(tours))
+            let lignes: [(String, String, Color)] = dansLOrdre.map { etape in
+                let apres: String
+                if let charges, charges.stations.indices.contains(etape.rang) {
+                    apres = charges.stations[etape.rang].prescription
+                } else {
+                    apres = String(localized: "choisis ta division pour voir ta charge")
+                }
+                let suite = allure != nil
+                    ? String(localized: "\(session.pace) /km, puis \(apres)")
+                    : String(localized: "puis \(apres)")
+                return (String(localized: "Tour \(etape.rang + 1) · 1 km + \(etape.nom)"), suite, HZCouleur.accent)
+            }
+            return [warmup] + lignes + [
+                (String(localized: "Comment l'ajuster"), valeursDeDepart, HZCouleur.secondaireSurClair),
                 cooldown
             ]
 

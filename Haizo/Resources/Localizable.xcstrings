@@ -35,22 +35,6 @@
         }
       }
     },
-    "%@ + fonctionnel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ + functional"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ + funcional"
-          }
-        }
-      }
-    },
     "%@ / semaine": {
       "extractionState": "manual",
       "localizations": {
@@ -81,22 +65,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ /km"
-          }
-        }
-      }
-    },
-    "%@ /km entre les blocs · %@ · enchaîne course et mouvement, sans repos complet": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ /km between blocks · %@ · run and movement back-to-back, no full rest"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ /km entre bloques · %@ · encadena carrera y movimiento, sin descanso completo"
           }
         }
       }
@@ -550,23 +518,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ · objetivo"
-          }
-        }
-      }
-    },
-    "%@ · enchaîne course et mouvement, sans repos complet": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ · run and movement back-to-back, no full rest"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ · encadena carrera y movimiento, sin descanso completo"
           }
         }
       }
@@ -39832,19 +39783,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "SkiErg"
+            "value": "Course + SkiErg"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "SkiErg"
+            "value": "Run + SkiErg"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "SkiErg"
+            "value": "Carrera + SkiErg"
           }
         }
       }
@@ -39855,19 +39806,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "mille mètres, les deux pieds sur la plateforme"
+            "value": "Course puis SkiErg, en tours : les deux pieds sur la plateforme"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "one thousand metres, both feet on the platform"
+            "value": "Run then SkiErg, in rounds: both feet on the platform"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "mil metros, los dos pies sobre la plataforma"
+            "value": "Carrera y luego SkiErg, en vueltas: los dos pies sobre la plataforma"
           }
         }
       }
@@ -39878,19 +39829,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sled push"
+            "value": "Course + sled push"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sled push"
+            "value": "Run + sled push"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Empuje de trineo"
+            "value": "Carrera + empuje de trineo"
           }
         }
       }
@@ -39901,19 +39852,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "cinquante mètres en quatre allers, à ta charge de course"
+            "value": "Course puis sled push, en tours : dans ton couloir"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "fifty metres in four lengths, at your race weight"
+            "value": "Run then sled push, in rounds: stay in your lane"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "cincuenta metros en cuatro tramos, a tu peso de carrera"
+            "value": "Carrera y luego empuje de trineo, en vueltas: en tu carril"
           }
         }
       }
@@ -39924,19 +39875,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sled pull"
+            "value": "Course + sled pull"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sled pull"
+            "value": "Run + sled pull"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arrastre de trineo"
+            "value": "Carrera + arrastre de trineo"
           }
         }
       }
@@ -39947,19 +39898,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "cinquante mètres en quatre allers, debout, à ta charge de course"
+            "value": "Course puis sled pull, en tours : toujours debout"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "fifty metres in four lengths, standing, at your race weight"
+            "value": "Run then sled pull, in rounds: always standing"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "cincuenta metros en cuatro tramos, de pie, a tu peso de carrera"
+            "value": "Carrera y luego arrastre de trineo, en vueltas: siempre de pie"
           }
         }
       }
@@ -39970,19 +39921,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Burpee broad jumps"
+            "value": "Course + burpee broad jumps"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Burpee broad jumps"
+            "value": "Run + burpee broad jumps"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Burpees con salto"
+            "value": "Carrera + burpees con salto"
           }
         }
       }
@@ -39993,19 +39944,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "quatre-vingts mètres, la poitrine touche le sol à chaque burpee"
+            "value": "Course puis burpee broad jumps, en tours : poitrine au sol"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "eighty metres, chest on the ground at every burpee"
+            "value": "Run then burpee broad jumps, in rounds: chest on the ground"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "ochenta metros, el pecho toca el suelo en cada burpee"
+            "value": "Carrera y luego burpees con salto, en vueltas: pecho en el suelo"
           }
         }
       }
@@ -40016,19 +39967,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rameur"
+            "value": "Course + rameur"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rowing"
+            "value": "Run + rowing"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remo"
+            "value": "Carrera + remo"
           }
         }
       }
@@ -40039,19 +39990,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "mille mètres, assis jusqu'au bout"
+            "value": "Course puis rameur, en tours : assis jusqu'au bout"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "one thousand metres, seated all the way"
+            "value": "Run then rowing, in rounds: seated all the way"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "mil metros, sentado hasta el final"
+            "value": "Carrera y luego remo, en vueltas: sentado hasta el final"
           }
         }
       }
@@ -40062,19 +40013,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Farmers carry"
+            "value": "Course + farmers carry"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Farmers carry"
+            "value": "Run + farmers carry"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Farmers carry"
+            "value": "Carrera + farmers carry"
           }
         }
       }
@@ -40085,19 +40036,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "deux cents mètres, une kettlebell dans chaque main, bras le long du corps"
+            "value": "Course puis farmers carry, en tours : bras le long du corps"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "two hundred metres, a kettlebell in each hand, arms by your sides"
+            "value": "Run then farmers carry, in rounds: arms by your sides"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "doscientos metros, una kettlebell en cada mano, los brazos a los lados"
+            "value": "Carrera y luego farmers carry, en vueltas: brazos a los lados"
           }
         }
       }
@@ -40108,19 +40059,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fentes sandbag"
+            "value": "Course + fentes sandbag"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sandbag lunges"
+            "value": "Run + sandbag lunges"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zancadas con saco"
+            "value": "Carrera + zancadas con saco"
           }
         }
       }
@@ -40131,19 +40082,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "cent mètres, le genou arrière touche le sol à chaque fente"
+            "value": "Course puis fentes sandbag, en tours : genou arrière au sol"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "one hundred metres, the back knee touches the ground on every lunge"
+            "value": "Run then sandbag lunges, in rounds: back knee to the ground"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "cien metros, la rodilla de atrás toca el suelo en cada zancada"
+            "value": "Carrera y luego zancadas con saco, en vueltas: rodilla de atrás al suelo"
           }
         }
       }
@@ -40154,19 +40105,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wall balls"
+            "value": "Course + wall balls"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wall balls"
+            "value": "Run + wall balls"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wall balls"
+            "value": "Carrera + wall balls"
           }
         }
       }
@@ -40177,19 +40128,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "cent répétitions, squat sous le parallèle, balle sur la cible"
+            "value": "Course puis wall balls, en tours : sous le parallèle"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "one hundred reps, squat below parallel, ball on the target"
+            "value": "Run then wall balls, in rounds: below parallel"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "cien repeticiones, sentadilla por debajo del paralelo, balón en la diana"
+            "value": "Carrera y luego wall balls, en vueltas: por debajo del paralelo"
           }
         }
       }
@@ -41139,6 +41090,176 @@
           "stringUnit": {
             "state": "translated",
             "value": "quédate en tu carril, con el trineo · el trineo supera por completo la línea del final del carril antes de cambiar de sentido"
+          }
+        }
+      }
+    },
+    "%lld × (%lld m de course + %lld m)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × (%lld m run + %lld m)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × (%lld m de carrera + %lld m)"
+          }
+        }
+      }
+    },
+    "%lld × (%lld m de course + %lld allers)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × (%lld m run + %lld lengths)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × (%lld m de carrera + %lld tramos)"
+          }
+        }
+      }
+    },
+    "%lld × (%lld m de course + %lld répétitions)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × (%lld m run + %lld reps)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × (%lld m de carrera + %lld repeticiones)"
+          }
+        }
+      }
+    },
+    "%lld s de repos après la station": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld s rest after the station"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld s de descanso tras la estación"
+          }
+        }
+      }
+    },
+    "course à allure facile": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "easy-pace running"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "carrera a ritmo suave"
+          }
+        }
+      }
+    },
+    "course à allure d'épreuve": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "race-pace running"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "carrera a ritmo de prueba"
+          }
+        }
+      }
+    },
+    "À l'épreuve": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In the race"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En la prueba"
+          }
+        }
+      }
+    },
+    "Tour %lld · 1 km + %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Round %lld · 1 km + %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vuelta %lld · 1 km + %@"
+          }
+        }
+      }
+    },
+    "%@ /km, puis %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ /km, then %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ /km, luego %@"
+          }
+        }
+      }
+    },
+    "puis %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "then %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "luego %@"
           }
         }
       }

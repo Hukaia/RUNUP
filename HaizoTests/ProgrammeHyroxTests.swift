@@ -185,10 +185,9 @@ final class ProgrammeHyroxTests: XCTestCase {
     /// Un volume de départ n'a pas de bonne valeur unique, mais il a des valeurs absurdes : zéro série,
     /// dix minutes de repos, un effort de onze sur dix. Ce cas les écarte, et il échoue si quelqu'un
     /// dérape en éditant le tableau.
-    func testLesPrescriptionsRestentDansDesBornes() {
+    func testLesPrescriptionsDesComplementsRestentDansDesBornes() {
         var toutes: [PrescriptionHyrox] = []
         for phase in [PhaseHyrox.base, .specifique] {
-            toutes += ProgrammeHyrox.Station.allCases.map { $0.prescription(phase: phase) }
             toutes += ProgrammeHyrox.TravailComplementaire.allCases.flatMap {
                 $0.gestes(phase: phase).map(\.prescription)
             }
@@ -205,17 +204,47 @@ final class ProgrammeHyroxTests: XCTestCase {
         }
     }
 
-    /// LE BLOC SPÉCIFIQUE PRESCRIT LA CHARGE DE COURSE, LE BLOC DE BASE MOINS, pour les stations chargées.
-    func testLeBlocDeBaseChargeMoinsQueLeBlocSpecifique() {
-        for station in [ProgrammeHyrox.Station.sledPush, .sledPull, .farmersCarry, .fentesSandbag] {
-            XCTAssertEqual(station.prescription(phase: .specifique).intensite, .chargeDeCourse, "\(station)")
-            XCTAssertNotEqual(station.prescription(phase: .base).intensite, .chargeDeCourse, "\(station)")
-            XCTAssertNotEqual(station.prescription(phase: .base).intensite, .aucune, "\(station)")
+    /// UNE SÉANCE DE STATION EST DES TOURS DE « COURSE, PUIS LA STATION » — JAMAIS LA STATION SEULE.
+    ///
+    /// La première version posait « 6 × 50 m de sled » sans une foulée, et Charlotte l'a refusée : l'épreuve
+    /// enchaîne huit fois un kilomètre et une station. Chaque séance de station, dans les deux phases, a
+    /// donc de la course, des tours, un repos, et une DURÉE écrite d'après son contenu.
+    func testChaqueSeanceDeStationCourtEtDureCeQuElleContient() {
+        for phase in [PhaseHyrox.base, .specifique] {
+            for station in ProgrammeHyrox.Station.allCases {
+                let f = station.format(phase: phase)
+                XCTAssertTrue((2...6).contains(f.tours), "\(station) \(phase) : \(f.tours) tours")
+                XCTAssertTrue((400...1000).contains(f.courseM), "\(station) \(phase) : \(f.courseM) m de course")
+                XCTAssertGreaterThan(f.quantite, 0, "\(station) \(phase)")
+                XCTAssertTrue((30...120).contains(f.reposSecondes), "\(station) \(phase) : repos")
+                XCTAssertTrue((30...60).contains(f.dureeMinutes), "\(station) \(phase) : \(f.dureeMinutes) min")
+                XCTAssertEqual(f.dureeMinutes % 5, 0, "la durée est un multiple de cinq minutes")
+                XCTAssertNil(f.texte.range(of: "%"), "une chaîne non résolue : \(f.texte)")
+                XCTAssertNotNil(f.texte.rangeOfCharacter(from: .decimalDigits), f.texte)
+            }
         }
-        // Les stations d'ergomètre se règlent à l'effort : plus haut au bloc spécifique.
+    }
+
+    /// LE BLOC DE BASE FAIT MOINS DE STATION QUE LE SPÉCIFIQUE, ET À UNE FRACTION DE LA CHARGE.
+    func testLeBlocDeBaseEstPlusLegerQueLeBlocSpecifique() {
+        for station in ProgrammeHyrox.Station.allCases {
+            let base = station.format(phase: .base)
+            let spe = station.format(phase: .specifique)
+            XCTAssertLessThan(base.quantite, spe.quantite, "\(station) : la station entière approche au spécifique")
+            XCTAssertEqual(base.allure, .facile)
+            XCTAssertEqual(spe.allure, .epreuve)
+            XCTAssertLessThan(base.courseM, spe.courseM)
+            XCTAssertGreaterThan(base.tours, spe.tours, "plus de tours courts au bloc de base")
+        }
+        for station in [ProgrammeHyrox.Station.sledPush, .sledPull, .farmersCarry, .fentesSandbag] {
+            XCTAssertEqual(station.format(phase: .specifique).intensite, .chargeDeCourse, "\(station)")
+            XCTAssertNotEqual(station.format(phase: .base).intensite, .chargeDeCourse, "\(station)")
+            XCTAssertNotEqual(station.format(phase: .base).intensite, .aucune, "\(station)")
+        }
+        // Les ergomètres se règlent à l'effort : plus haut au bloc spécifique.
         for station in [ProgrammeHyrox.Station.skiErg, .rameur] {
-            guard case .effort(let base) = station.prescription(phase: .base).intensite,
-                  case .effort(let spe) = station.prescription(phase: .specifique).intensite else {
+            guard case .effort(let base) = station.format(phase: .base).intensite,
+                  case .effort(let spe) = station.format(phase: .specifique).intensite else {
                 return XCTFail("\(station) : un effort sur dix attendu")
             }
             XCTAssertLessThan(base, spe)
