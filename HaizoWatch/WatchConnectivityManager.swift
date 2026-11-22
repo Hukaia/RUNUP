@@ -116,3 +116,14 @@ private struct SessionContext: Sendable {
         runLayout = (context["runLayout"] as? String).flatMap(WatchRunLayout.init(wireValue:))
     }
 }
+
+#if DEBUG
+extension WatchConnectivityManager {
+    /// La séance du jour telle que le téléphone l'enverrait : voir `WatchCaptureSeed`.
+    func installerPourCapture(titre: String, allure: String, minutes: Int) {
+        sessionTitle = titre
+        sessionPace = allure
+        sessionDurationMinutes = minutes
+    }
+}
+#endif

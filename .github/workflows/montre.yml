@@ -284,6 +284,30 @@ jobs:
               exit 1
             fi
             echo "→ $langue : $taille octets"
+
+            # LA COURSE, LA PAUSE ET LE RÉSUMÉ : les trois écrans que personne n'avait jamais vus.
+            #
+            # Ils ne s'affichent que dans l'état d'une vraie séance HealthKit, qu'un simulateur ne sait
+            # pas produire. La graine de lancement (`HaizoWatch/WatchCaptureSeed.swift`, sous
+            # `#if DEBUG`) pose cet état à la main : ce sont des chiffres de démonstration, jamais ceux
+            # de quelqu'un. Photographiés dans les trois langues : les libellés (« Temps », « /km »,
+            # « ✓ Terminé ») se traduisent, et c'est ce qu'on veut voir.
+            for ecran in course pause resume; do
+              case "$ecran" in
+                course) nom="2-course.png" ;;
+                pause) nom="3-pause.png" ;;
+                resume) nom="4-resume.png" ;;
+              esac
+              xcrun simctl launch --terminate-running-process "$udid" com.hicsuntco.runup.watchkitapp --ecran="$ecran"
+              sleep 6
+              xcrun simctl io "$udid" screenshot "$dossier/$nom"
+              taille=$(wc -c < "$dossier/$nom")
+              if [ "$taille" -lt 5000 ]; then
+                echo "✗ $langue / $ecran : capture de $taille octets — l'écran n'était pas dessiné."
+                exit 1
+              fi
+              echo "→ $langue / $ecran : $taille octets"
+            done
           done
 
           # TROIS LANGUES NE DOIVENT PAS RENDRE LA MÊME IMAGE — SANS COMPTER L'HORLOGE.

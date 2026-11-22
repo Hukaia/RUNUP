@@ -270,3 +270,17 @@ extension WatchWorkoutManager: HKLiveWorkoutBuilderDelegate {
         Task { @MainActor in self.elapsedSeconds = elapsed }
     }
 }
+
+#if DEBUG
+extension WatchWorkoutManager {
+    /// Pose l'état d'une sortie en cours, en pause ou terminée, sans capteur : voir `WatchCaptureSeed`.
+    func installerPourCapture(_ etat: State) {
+        self.state = etat
+        elapsedSeconds = 1_458
+        distanceMeters = 4_320
+        heartRate = 148
+        avgHeartRate = 146
+        activeCalories = 312
+    }
+}
+#endif
