@@ -100,7 +100,9 @@ private enum WT {
         static let entreBoutons: CGFloat = 6
         static let entreMesures: CGFloat = 14
         static let sousLeFilet: CGFloat = 6
-        static let dansLAnneau: CGFloat = 14
+        /// Le jeu entre le trait de l'anneau et le grand chiffre : 10, pour que « 4,32 » ne rétrécisse
+        /// pas dans un anneau plus petit.
+        static let dansLAnneau: CGFloat = 10
         static let entreLEtatEtLePoint: CGFloat = 6
         static let entreValeurEtUnite: CGFloat = 2
     }
@@ -115,7 +117,11 @@ private enum WT {
         /// Le filet au-dessus des mesures. Les glyphes des boutons de la course, eux, suivent
         /// `m.buttonIcon`, que `WatchRunMetrics` met à l'échelle de l'écran.
         static let filet: CGFloat = 1
-        static let anneau: CGFloat = 108
+        /// 92 et non 108 : sur un 46 mm, la phrase du bas du résumé (« Your debrief is waiting on the
+        /// iPhone. », sur deux lignes) était coupée en deux par le bord de l'écran (capture CI du
+        /// 22 novembre, la première du résumé). Seize points de moins la remontent en entier ; le bouton
+        /// « OK » reste sous la ligne de flottaison, atteint à la couronne.
+        static let anneau: CGFloat = 92
         static let traitDeLAnneau: CGFloat = 5
         static let hauteurDeBouton: CGFloat = 44
     }
