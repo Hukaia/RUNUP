@@ -9052,3 +9052,12 @@ seul dégradé de Haizo), l'app reste en aplats et prend `#FC105E`. Changé : `H
 `DESIGN.md` § 2.1 et § 10. L'encre sombre sur le rose (`#2B0011`) tient : 4,8:1 dessus, contre 3,9:1 pour du blanc ; le grand chiffre dans l'accent passe 3:1 sur
 blanc et 5,4:1 sur noir. Le choix d'accent (violet, bleu, vert) et les teintes d'intensité du Plan ne changent pas. À recapturer : la montre (empreinte du code), et les
 captures de la fiche App Store qui montrent l'ancien rose, au prochain passage de `captures.yml`.
+
+## La montre : la course, la pause et le résumé, photographiés pour la première fois (22 novembre)
+
+Une graine de lancement DEBUG (`HaizoWatch/WatchCaptureSeed.swift`, `--ecran=course|pause|resume`) pose l'état d'une sortie sans capteur ; `montre.yml` les
+photographie dans les trois langues (`appstore/raw-montre/<langue>/2-course.png`, `3-pause.png`, `4-resume.png`, chiffres de démonstration : 24:18, 4,32 km).
+Défaut vu à la première capture du résumé : la phrase du bas (« Your debrief is waiting on the iPhone. », deux lignes) était coupée par le bord de l'écran sur un
+46 mm. Anneau 108 → 92, jeu intérieur 14 → 10 : la phrase est entière dans les trois langues, le haut du bouton « OK » paraît dessous (il se rejoint à la
+couronne). Course et pause : rien à redire, y compris en pause (chrono et barre en gris). Recapture des images livrables (`requis/montre`, `SOURCES.json`) avec le rose
+`#FC105E`. Non vu : la montre réelle (couronne, lisibilité au poignet).
