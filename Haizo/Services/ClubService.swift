@@ -1184,8 +1184,15 @@ struct ClubService {
 
     /// Ce qu'on propose quand rien n'est tapé : les courses les plus suivies qui approchent, et
     /// jamais celles qu'on prépare déjà. La meilleure recherche est celle qu'on n'a pas à taper.
-    func upcomingRaces() async throws -> [RaceEvent] {
-        let response: RaceListResponse = try await send(path: "api/races/upcoming", method: "GET")
+    ///
+    /// `discipline` (« run », « trail », « hyrox »…) restreint la liste : le serveur ne rend que les
+    /// vingt plus proches, et filtrer ces vingt-là sur l'appareil ferait croire qu'il n'y a pas de
+    /// trail à venir parce que les vingt prochaines sont des marathons. Un serveur plus ancien
+    /// ignore le paramètre et rend tout : l'appelant qui filtre déjà de son côté reste juste.
+    func upcomingRaces(discipline: String? = nil) async throws -> [RaceEvent] {
+        var query: [String: String]?
+        if let discipline, !discipline.isEmpty { query = ["discipline": discipline] }
+        let response: RaceListResponse = try await send(path: "api/races/upcoming", method: "GET", query: query)
         return response.items
     }
 
@@ -1206,13 +1213,23 @@ struct ClubService {
     /// `created: false`. Toute la valeur de la fonctionnalité tient à ce que deux personnes qui
     /// préparent la même course atterrissent sur la MÊME page — un refus les laisserait chacune
     /// sur la sienne.
+    ///
+    /// Les caractéristiques (`country`, `surface`, `profile`, `registrationUrl`) sont facultatives et
+    /// ne partent que renseignées : un serveur plus ancien ignore les clés qu'il ne connaît pas, et
+    /// le nouveau les contrôle une à une (listes fermées, http(s) seulement).
     func createRace(name: String, city: String?, raceDate: String, distanceKm: Double?,
-                    elevationGainM: Int?, discipline: String, website: String?) async throws -> RaceEvent {
+                    elevationGainM: Int?, discipline: String, website: String?,
+                    country: String? = nil, surface: String? = nil, profile: String? = nil,
+                    registrationUrl: String? = nil) async throws -> RaceEvent {
         var body: [String: Any] = ["name": name, "raceDate": raceDate, "discipline": discipline]
         if let city, !city.isEmpty { body["city"] = city }
         if let distanceKm { body["distanceKm"] = distanceKm }
         if let elevationGainM { body["elevationGainM"] = elevationGainM }
         if let website, !website.isEmpty { body["website"] = website }
+        if let country, !country.isEmpty { body["country"] = country }
+        if let surface, !surface.isEmpty { body["surface"] = surface }
+        if let profile, !profile.isEmpty { body["profile"] = profile }
+        if let registrationUrl, !registrationUrl.isEmpty { body["registrationUrl"] = registrationUrl }
         let response: RaceCreatedResponse = try await send(path: "api/races/create", method: "POST", body: body)
         return response.race
     }

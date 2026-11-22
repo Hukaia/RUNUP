@@ -12,7 +12,10 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-const { DISCIPLINES, nettoyerCourse } = require('../lib/courses');
+const {
+  DISCIPLINES, SURFACES, PROFILS, STATUTS_INSCRIPTION, FORMATS_MAXIMUM,
+  nettoyerCourse, codesPourPays,
+} = require('../lib/courses');
 
 // Toutes les entrées de ces tests se situent par rapport à une date fixe, passée en second
 // argument : un test qui dépendrait de la vraie date d'aujourd'hui finirait par échouer tout seul.
@@ -215,4 +218,143 @@ test('sans jour donné, la fonction prend aujourd\'hui sans se plaindre', () => 
   const dansDixAns = new Date(Date.now() + 10 * 365 * 86400000).toISOString().slice(0, 10);
   assert.strictEqual(nettoyerCourse({ ...base, raceDate: dansDixAns }).erreur, undefined);
   assert.strictEqual(nettoyerCourse({ ...base, raceDate: '2000-01-01' }).erreur, 'past_date');
+});
+
+// --- Les caractéristiques : où, quoi, comment, et comment s'y inscrire ---------------------------
+//
+// Même règle que `website` : des valeurs CONTRÔLÉES. Une valeur qu'on ne reconnaît pas est effacée,
+// jamais corrigée, jamais devinée, et ne bloque pas la création de la course.
+
+test('LE PAYS EST UN CODE ISO EN CAPITALES, SINON RIEN', () => {
+  assert.strictEqual(course({ country: 'fr' }).country, 'FR');
+  assert.strictEqual(course({ country: ' jp ' }).country, 'JP');
+  assert.strictEqual(course({ country: 'RE' }).country, 'RE');
+  // Pas un nom de pays : ce serait deviner le code.
+  assert.strictEqual(course({ country: 'France' }).country, null);
+  assert.strictEqual(course({ country: 'F' }).country, null);
+  assert.strictEqual(course({ country: 'FRA' }).country, null);
+  assert.strictEqual(course({ country: 42 }).country, null);
+  assert.strictEqual(course({ country: undefined }).country, null);
+  // Deux lettres de la bonne forme qui ne sont pas un pays.
+  assert.strictEqual(course({ country: 'ZZ' }).country, null);
+  assert.strictEqual(course({ country: 'UK' }).country, null);
+  assert.strictEqual(course({ country: 'DD' }).country, null);
+});
+
+test('la recherche par pays comprend les trois langues de l\'app', () => {
+  assert.deepStrictEqual(codesPourPays('japon'), ['JP']);
+  assert.deepStrictEqual(codesPourPays('japan'), ['JP']);
+  assert.deepStrictEqual(codesPourPays('japón'.normalize('NFC').replace('ó', 'o')), ['JP']);
+  assert.ok(codesPourPays('allemagne').includes('DE'));
+  assert.ok(codesPourPays('germany').includes('DE'));
+  assert.ok(codesPourPays('alemania').includes('DE'));
+  assert.ok(codesPourPays('etats').includes('US'));
+  // « united » : trois pays, et pas l'Union européenne ni les Nations unies.
+  assert.deepStrictEqual(codesPourPays('united'), ['AE', 'GB', 'US']);
+});
+
+test('on ne cherche pas un pays avec deux lettres', () => {
+  // « fr » est le début d'un nom de course, pas une recherche de pays.
+  assert.deepStrictEqual(codesPourPays('fr'), []);
+  assert.deepStrictEqual(codesPourPays(''), []);
+  assert.deepStrictEqual(codesPourPays(undefined), []);
+  assert.deepStrictEqual(codesPourPays('zzzzzz'), []);
+});
+
+test('plusieurs distances : triées, sans doublon, bornées', () => {
+  assert.deepStrictEqual(course({ distancesKm: [42.195, 10, 21.0975, 10] }).distancesKm, [10, 21.0975, 42.195]);
+  assert.deepStrictEqual(course({ distancesKm: ['10', 5] }).distancesKm, [5, 10]);
+  // Le garbage est ignoré, le reste est gardé.
+  assert.deepStrictEqual(course({ distancesKm: [0, -3, 'x', null, 99999, 21] }).distancesKm, [21]);
+  const trop = Array.from({ length: 40 }, (_, i) => i + 1);
+  assert.strictEqual(course({ distancesKm: trop }).distancesKm.length, FORMATS_MAXIMUM);
+});
+
+test('aucune distance valable donne null, pas une liste vide', () => {
+  assert.strictEqual(course({ distancesKm: [] }).distancesKm, null);
+  assert.strictEqual(course({ distancesKm: [0, 'x'] }).distancesKm, null);
+  assert.strictEqual(course({ distancesKm: 'dix' }).distancesKm, null);
+  assert.strictEqual(course({ distancesKm: undefined }).distancesKm, null);
+});
+
+test('UN SEUL FORMAT EST AUSSI LA DISTANCE, PLUSIEURS NE LA CHOISISSENT PAS', () => {
+  // Compatibilité : une app d'avant les formats multiples ne lit que `distanceKm`.
+  assert.strictEqual(course({ distancesKm: [42.195] }).distanceKm, 42.195);
+  // Plusieurs formats : on n'en annonce pas un seul à la place de l'organisateur.
+  assert.strictEqual(course({ distancesKm: [10, 21.0975, 42.195] }).distanceKm, null);
+  // Une distance donnée explicitement reste ce qu'elle est.
+  assert.strictEqual(course({ distanceKm: 21, distancesKm: [10, 21] }).distanceKm, 21);
+});
+
+test('la surface et le profil viennent d\'une liste fermée', () => {
+  for (const v of SURFACES) assert.strictEqual(course({ surface: v }).surface, v);
+  for (const v of PROFILS) assert.strictEqual(course({ profile: v }).profile, v);
+  assert.strictEqual(course({ surface: 'sable' }).surface, null);
+  assert.strictEqual(course({ surface: 'ROUTE' }).surface, null);
+  assert.strictEqual(course({ profile: 'extrême' }).profile, null);
+  assert.strictEqual(course({ surface: undefined }).surface, null);
+  assert.strictEqual(course({ profile: {} }).profile, null);
+});
+
+test('l\'heure de départ est HH:MM, de 00:00 à 23:59', () => {
+  assert.strictEqual(course({ startTime: '08:30' }).startTime, '08:30');
+  assert.strictEqual(course({ startTime: ' 05:00 ' }).startTime, '05:00');
+  assert.strictEqual(course({ startTime: '23:59' }).startTime, '23:59');
+  assert.strictEqual(course({ startTime: '24:00' }).startTime, null);
+  assert.strictEqual(course({ startTime: '8:30' }).startTime, null);
+  assert.strictEqual(course({ startTime: '08:60' }).startTime, null);
+  assert.strictEqual(course({ startTime: '8h30' }).startTime, null);
+  assert.strictEqual(course({ startTime: 830 }).startTime, null);
+});
+
+test('le statut d\'inscription vient d\'une liste fermée', () => {
+  for (const v of STATUTS_INSCRIPTION) assert.strictEqual(course({ registrationStatus: v }).registrationStatus, v);
+  assert.strictEqual(course({ registrationStatus: 'open' }).registrationStatus, null);
+  assert.strictEqual(course({ registrationStatus: 'Ouverte' }).registrationStatus, null);
+  assert.strictEqual(course({ registrationStatus: undefined }).registrationStatus, null);
+});
+
+test('L\'ADRESSE D\'INSCRIPTION SUIT LA RÈGLE DU SITE : JAMAIS javascript:', () => {
+  assert.strictEqual(course({ registrationUrl: 'javascript:alert(1)' }).registrationUrl, null);
+  assert.strictEqual(course({ registrationUrl: 'data:text/html,<script>0</script>' }).registrationUrl, null);
+  assert.strictEqual(course({ registrationUrl: 'exemple.fr/inscription' }).registrationUrl, null);
+  assert.strictEqual(course({ registrationUrl: 'https://exemple.fr/a b' }).registrationUrl, null);
+  assert.strictEqual(course({ registrationUrl: 'https://exemple.fr/inscription' }).registrationUrl,
+    'https://exemple.fr/inscription');
+  // Trop longue : coupée, comme le site, pas refusée.
+  assert.strictEqual(course({ registrationUrl: 'https://exemple.fr/' + 'a'.repeat(500) }).registrationUrl.length, 300);
+});
+
+test('le jour d\'ouverture est une vraie date, ou rien', () => {
+  assert.strictEqual(course({ registrationOpens: '2027-01-11' }).registrationOpens, '2027-01-11');
+  assert.strictEqual(course({ registrationOpens: '2027-01-11T10:00:00Z' }).registrationOpens, '2027-01-11');
+  assert.strictEqual(course({ registrationOpens: '2027-02-31' }).registrationOpens, null);
+  assert.strictEqual(course({ registrationOpens: '11/01/2027' }).registrationOpens, null);
+  assert.strictEqual(course({ registrationOpens: undefined }).registrationOpens, null);
+});
+
+test('UNE VALEUR MAL FORMÉE NE BLOQUE PAS LA CRÉATION', () => {
+  const c = course({
+    country: 'Narnia', distancesKm: 'beaucoup', surface: 'lave', profile: 'raide', startTime: 'à l\'aube',
+    registrationStatus: 'peut-être', registrationUrl: 'bientôt', registrationOpens: 'demain',
+  });
+  assert.strictEqual(c.name, 'Marathon de Paris');
+  for (const champ of ['country', 'distancesKm', 'surface', 'profile', 'startTime',
+    'registrationStatus', 'registrationUrl', 'registrationOpens']) {
+    assert.strictEqual(c[champ], null, champ);
+  }
+});
+
+test('une course sans caractéristique les rend toutes null', () => {
+  // Compatibilité dans l'autre sens : un client d'avant ces champs crée toujours une course.
+  const c = course({});
+  for (const champ of ['country', 'distancesKm', 'surface', 'profile', 'startTime',
+    'registrationStatus', 'registrationUrl', 'registrationOpens']) {
+    assert.strictEqual(c[champ], null, champ);
+  }
+});
+
+test('verifiedOn n\'entre jamais par la porte de création', () => {
+  // La date de vérification est la parole du générateur de courses semées, pas celle d'un coureur.
+  assert.strictEqual(course({ verifiedOn: '2026-11-22' }).verifiedOn, undefined);
 });

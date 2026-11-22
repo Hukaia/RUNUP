@@ -628,6 +628,43 @@ CREATE UNIQUE INDEX IF NOT EXISTS uniq_races_name_date ON races (name_key, race_
 -- La recherche porte sur le nom replié ; la liste « bientôt » porte sur la date.
 CREATE INDEX IF NOT EXISTS idx_races_date ON races (race_date);
 
+-- LES CARACTÉRISTIQUES D'UNE COURSE : où, quoi, comment, et comment s'y inscrire.
+--
+-- « Plus de courses dans le monde entier, avec leurs caractéristiques. » Tout ce bloc est
+-- FACULTATIF et NULL tant que personne ne l'a publié : une valeur absente est un champ que l'app
+-- ne montre pas, jamais une estimation. Les anciennes lignes gardent donc NULL partout.
+--
+-- Les valeurs sont CONTRÔLÉES (voir lib/courses.js), pas libres : une ligne qui n'affiche que ce
+-- qu'elle reconnaît ne peut pas être détournée par un champ qu'on a oublié de borner.
+--
+-- `country`   code ISO 3166-1 alpha-2 en capitales (« FR », « JP »). L'app le met en mots dans la
+--             langue du téléphone ; la recherche l'accepte aussi par le nom du pays.
+-- `distances_km`  les formats d'un même événement (10, 21.0975, 42.195), du plus court au plus
+--             long. `distance_km` reste la distance d'une épreuve à format unique : elle n'est
+--             PAS remplie quand il y a plusieurs formats, pour ne pas en annoncer un seul.
+-- `surface`   'route' | 'trail' | 'piste' | 'mixte'.
+-- `profile`   'plat' | 'vallonne' | 'montagneux'.
+-- `start_time` l'heure de départ LOCALE, « HH:MM », sans fuseau : c'est l'heure qu'on lit sur le
+--             dossard, pas un instant.
+-- `registration_status`  'ouverte' | 'tirage_au_sort' | 'bientot' | 'complete' | 'fermee'. C'est
+--             une PHOTO, datée par `verified_on` : une inscription ouverte un 22 novembre peut être
+--             complète le 23. L'app dit « vérifié le … » à côté.
+-- `registration_url` l'adresse d'inscription, quand elle diffère du site (même règle que `website`).
+-- `registration_opens` le jour d'ouverture annoncé quand les inscriptions ne sont pas encore ouvertes.
+-- `verified_on` le jour où les caractéristiques d'une course SEMÉE ont été relues à la source.
+--             Jamais renseigné pour une course créée par un coureur.
+ALTER TABLE races ADD COLUMN IF NOT EXISTS country TEXT;
+ALTER TABLE races ADD COLUMN IF NOT EXISTS distances_km NUMERIC[];
+ALTER TABLE races ADD COLUMN IF NOT EXISTS surface TEXT;
+ALTER TABLE races ADD COLUMN IF NOT EXISTS profile TEXT;
+ALTER TABLE races ADD COLUMN IF NOT EXISTS start_time TEXT;
+ALTER TABLE races ADD COLUMN IF NOT EXISTS registration_status TEXT;
+ALTER TABLE races ADD COLUMN IF NOT EXISTS registration_url TEXT;
+ALTER TABLE races ADD COLUMN IF NOT EXISTS registration_opens DATE;
+ALTER TABLE races ADD COLUMN IF NOT EXISTS verified_on DATE;
+-- La recherche par pays.
+CREATE INDEX IF NOT EXISTS idx_races_country ON races (country);
+
 -- QUI PRÉPARE CETTE COURSE.
 --
 -- `shares_training` est un OPT-IN EXPLICITE, et il est faux par défaut. Montrer à des inconnus

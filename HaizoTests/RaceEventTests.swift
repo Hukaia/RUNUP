@@ -151,3 +151,244 @@ final class RaceEventTests: XCTestCase {
         }
     }
 }
+
+/// Les caractéristiques d'une course : pays, formats, surface, profil, départ, inscription.
+///
+/// # LA RÈGLE QUE CES TESTS TIENNENT : UNE VALEUR ABSENTE N'EST PAS UNE LIGNE
+///
+/// Chaque champ est facultatif et `nil` veut dire « personne ne l'a publié ». La page n'affiche
+/// jamais une ligne vide ni un tiret : une course saisie à la main n'a que son nom et sa date, et
+/// c'est la bonne page, pas une page à moitié remplie. Et un serveur plus ancien, ou plus récent,
+/// ne doit pas faire tomber le décodage : les clés qui manquent sont `nil`, celles qu'on ne connaît
+/// pas sont ignorées.
+final class RaceEventCaracteristiquesTests: XCTestCase {
+
+    private func decoder(_ json: String) throws -> RaceEvent {
+        try JSONDecoder().decode(RaceEvent.self, from: Data(json.utf8))
+    }
+
+    private let minimale = """
+    {"id":"1","name":"Marathon de Paris","raceDate":"2027-04-04","discipline":"run"}
+    """
+
+    // MARK: - Le décodage
+
+    func testUneCourseDAvantLesCaracteristiquesSeDecodeEncore() throws {
+        // Ce que rend un serveur qui ne connaît pas les nouveaux champs, ou qu'une app plus ancienne
+        // a mis en cache : aucune des clés ajoutées.
+        let course = try decoder(minimale)
+        XCTAssertNil(course.country)
+        XCTAssertNil(course.distancesKm)
+        XCTAssertNil(course.surface)
+        XCTAssertNil(course.profile)
+        XCTAssertNil(course.startTime)
+        XCTAssertNil(course.registrationStatus)
+        XCTAssertNil(course.registrationUrl)
+        XCTAssertNil(course.registrationOpens)
+        XCTAssertNil(course.verifiedOn)
+        XCTAssertNil(course.officialDate)
+    }
+
+    func testLesClesNullesDuServeurSontDesAbsences() throws {
+        let course = try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","country":null,"distancesKm":null,
+         "surface":null,"profile":null,"startTime":null,"registrationStatus":null,"registrationUrl":null,
+         "registrationOpens":null,"verifiedOn":null,"officialDate":null}
+        """)
+        XCTAssertTrue(course.rubriques.isEmpty)
+    }
+
+    func testUneCleInconnueEstIgnoree() throws {
+        // Un serveur plus récent que l'app envoie des champs que celle-ci ne connaît pas.
+        XCTAssertNoThrow(try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","champDeDemain":{"a":[1,2]}}
+        """))
+    }
+
+    func testUneCourseCompleteSeDecode() throws {
+        let course = try decoder("""
+        {"id":"1","name":"Rome Marathon","city":"Rome","raceDate":"2027-03-14","discipline":"run",
+         "country":"IT","distancesKm":[21.0975,42.195],"surface":"route","profile":"plat",
+         "startTime":"08:30","registrationStatus":"ouverte","registrationUrl":"https://exemple.fr/inscription",
+         "registrationOpens":null,"verifiedOn":"2026-11-22","officialDate":true}
+        """)
+        XCTAssertEqual(course.country, "IT")
+        XCTAssertEqual(course.distancesKm, [21.0975, 42.195])
+        XCTAssertEqual(course.startTime, "08:30")
+        XCTAssertTrue(course.dateEstAnnoncee)
+    }
+
+    // MARK: - Une ligne n'existe que si elle a une valeur
+
+    func testUneCourseSansCaracteristiqueNAfficheAucuneLigne() throws {
+        XCTAssertTrue(try decoder(minimale).rubriques.isEmpty)
+    }
+
+    func testLaVilleSeuleFaitUneLigneLieu() throws {
+        let course = try decoder("""
+        {"id":"1","name":"X","city":"Paris","raceDate":"2027-04-04","discipline":"run"}
+        """)
+        XCTAssertEqual(course.rubriques, [.lieu])
+        XCTAssertEqual(course.lieuLisible, "Paris")
+    }
+
+    func testLePaysSeNommeDansLaLangueDuTelephone() throws {
+        let course = try decoder("""
+        {"id":"1","name":"X","city":"Rome","raceDate":"2027-04-04","discipline":"run","country":"IT"}
+        """)
+        // Jamais écrit à la main : c'est `Locale` qui nomme, donc le test compare à `Locale`.
+        let pays = Locale.current.localizedString(forRegionCode: "IT")
+        XCTAssertNotNil(pays)
+        XCTAssertEqual(course.lieuLisible, "Rome, \(pays ?? "")")
+    }
+
+    func testUnCodeDePaysInconnuNeDonneAucuneLigne() throws {
+        let course = try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","country":"ZZ"}
+        """)
+        XCTAssertNil(course.paysLisible)
+        XCTAssertNil(course.lieuLisible)
+    }
+
+    func testUneValeurInconnueNeDonneAucuneLigne() throws {
+        // Un serveur plus récent peut ajouter une surface ou un statut : l'app n'invente pas de mot.
+        let course = try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","surface":"glace",
+         "profile":"vertical","registrationStatus":"liste_d_attente","startTime":"tôt"}
+        """)
+        XCTAssertNil(course.surfaceLisible)
+        XCTAssertNil(course.profilLisible)
+        XCTAssertNil(course.inscriptionLisible)
+        XCTAssertNil(course.departLisible)
+        XCTAssertTrue(course.rubriques.isEmpty)
+    }
+
+    func testLesRubriquesSuiventLOrdreDeLaPage() throws {
+        let course = try decoder("""
+        {"id":"1","name":"X","city":"Rome","raceDate":"2027-04-04","discipline":"run","country":"IT",
+         "distancesKm":[42.195],"elevationGainM":80,"surface":"route","profile":"plat","startTime":"08:30",
+         "registrationStatus":"complete"}
+        """)
+        XCTAssertEqual(course.rubriques, [.lieu, .distances, .denivele, .surface, .profil, .depart, .inscription])
+    }
+
+    // MARK: - Les distances
+
+    func testLesFormatsSontLusDuPlusCourtAuPlusLong() throws {
+        let course = try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","distancesKm":[42.195,10,21.0975]}
+        """)
+        XCTAssertEqual(course.formats, [10, 21.0975, 42.195])
+        XCTAssertEqual(course.grandeEtiquette, Distances.valeur(42.195))
+    }
+
+    func testUneSeuleDistanceEstUnFormat() throws {
+        // Compatibilité : une course d'avant les formats multiples n'a que `distanceKm`.
+        let course = try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","distanceKm":10}
+        """)
+        XCTAssertEqual(course.formats, [10])
+        XCTAssertEqual(course.rubriques, [.distances])
+    }
+
+    func testPlusieursFormatsNeChoisissentPasUneDistanceALaPlaceDeLOrganisateur() throws {
+        // Le sous-titre dit combien de formats, pas lequel : « 120 km » pour une EcoTrail qui en
+        // propose sept serait faux pour six personnes sur sept.
+        let course = try decoder("""
+        {"id":"1","name":"X","city":"Paris","raceDate":"2027-04-04","discipline":"trail",
+         "distancesKm":[10,20,30,35,45,80,120]}
+        """)
+        XCTAssertNil(course.distanceKm)
+        XCTAssertTrue(course.sousTitre.hasPrefix("Paris · "))
+        XCTAssertTrue(course.sousTitre.contains("7"))
+        XCTAssertFalse(course.sousTitre.contains("120"))
+    }
+
+    func testSansDistanceLaGrandeEtiquetteEstLeTypeDEpreuveEtPasUnTiret() throws {
+        for discipline in ["run", "trail", "hyrox", "triathlon", "duathlon"] {
+            let course = try decoder("""
+            {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"\(discipline)"}
+            """)
+            XCTAssertFalse(course.grandeEtiquette.isEmpty)
+            XCTAssertFalse(course.grandeEtiquette.contains("—"), "un tiret pour « \(discipline) »")
+        }
+    }
+
+    // MARK: - L'heure et l'inscription
+
+    func testLHeureDeDepartNeDependPasDuFuseauDuTelephone() throws {
+        let course = try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","startTime":"08:30"}
+        """)
+        let lisible = try XCTUnwrap(course.departLisible)
+        XCTAssertTrue(lisible.contains("8") && lisible.contains("30"), "« \(lisible) »")
+    }
+
+    func testUneHeureMalFormeeNEstPasAffichee() throws {
+        for mauvaise in ["8h30", "25:00", "08:60", "", "08:30:00"] {
+            let course = try decoder("""
+            {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","startTime":"\(mauvaise)"}
+            """)
+            XCTAssertNil(course.departLisible, "« \(mauvaise) » ne devrait rien afficher")
+        }
+    }
+
+    func testLeBoutonDInscriptionNeMentPas() throws {
+        func course(_ statut: String, site: String?, inscription: String? = nil) throws -> RaceEvent {
+            let website = site.map { "\"website\":\"\($0)\"," } ?? ""
+            let lien = inscription.map { "\"registrationUrl\":\"\($0)\"," } ?? ""
+            return try decoder("""
+            {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run",\(website)\(lien)
+             "registrationStatus":"\(statut)"}
+            """)
+        }
+        // Ouverte ou au tirage : le site mène à l'inscription.
+        XCTAssertEqual(try course("ouverte", site: "https://exemple.fr").adresseDInscription, "https://exemple.fr")
+        XCTAssertEqual(try course("tirage_au_sort", site: "https://exemple.fr").adresseDInscription, "https://exemple.fr")
+        // Complète, fermée, pas encore ouverte : un bouton « s'inscrire » promettrait ce que le site ne tient pas.
+        XCTAssertNil(try course("complete", site: "https://exemple.fr").adresseDInscription)
+        XCTAssertNil(try course("fermee", site: "https://exemple.fr").adresseDInscription)
+        XCTAssertNil(try course("bientot", site: "https://exemple.fr").adresseDInscription)
+        // Pas de site : pas de bouton.
+        XCTAssertNil(try course("ouverte", site: nil).adresseDInscription)
+        // Une adresse d'inscription propre à la course passe avant le site, quel que soit le statut.
+        XCTAssertEqual(try course("bientot", site: "https://exemple.fr", inscription: "https://exemple.fr/i").adresseDInscription,
+                       "https://exemple.fr/i")
+    }
+
+    func testUneInscriptionPasEncoreOuverteNommeSonJourQuandOnLeConnait() throws {
+        let avecJour = try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-06-06","discipline":"trail",
+         "registrationStatus":"bientot","registrationOpens":"2027-01-11"}
+        """)
+        let lisible = try XCTUnwrap(avecJour.inscriptionLisible)
+        XCTAssertTrue(lisible.contains("2027"), "« \(lisible) » ne dit pas quand")
+        let sansJour = try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-06-06","discipline":"trail","registrationStatus":"bientot"}
+        """)
+        XCTAssertNotNil(sansJour.inscriptionLisible)
+        XCTAssertFalse(try XCTUnwrap(sansJour.inscriptionLisible).contains("2027"))
+    }
+
+    // MARK: - La date annoncée
+
+    func testSeuleUneDateReleveeChezLOrganisateurSeDitAnnoncee() throws {
+        XCTAssertFalse(try decoder(minimale).dateEstAnnoncee)
+        XCTAssertFalse(try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","officialDate":false}
+        """).dateEstAnnoncee)
+        XCTAssertTrue(try decoder("""
+        {"id":"1","name":"X","raceDate":"2027-04-04","discipline":"run","officialDate":true}
+        """).dateEstAnnoncee)
+    }
+
+    // MARK: - Les pays proposés à la création
+
+    func testLesPaysProposesSontDesCodesATroisLettresExclus() {
+        let codes = RaceEvent.paysProposes.map(\.code)
+        XCTAssertTrue(codes.contains("FR"))
+        XCTAssertTrue(codes.contains("JP"))
+        XCTAssertTrue(codes.allSatisfy { $0.count == 2 }, "une zone (trois chiffres) s'est glissée dans les pays")
+        XCTAssertEqual(codes.count, Set(codes).count, "un pays en double")
+    }
+}

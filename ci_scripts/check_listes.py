@@ -84,6 +84,10 @@ DISPENSES = {
     ("StatsView.swift", "barres"):
         "Les barres de la charge d'entraînement : `HZStats.semainesDeCharge`, soit huit semaines, "
         "jamais plus. Des barres de largeur partagée ; rien n'y croît avec l'usage.",
+    ("CreateRaceSheet.swift", "RaceEvent"):
+        "Les pays du menu « Pays » de la création d'une course : les régions ISO 3166-1, environ "
+        "deux cent cinquante, bornées par la norme et non par l'usage. Les lignes d'un `Menu` ne "
+        "se construisent qu'à son ouverture ; rien n'y croît avec l'usage.",
     ("AccueilView.swift", "prochaines"):
         "« La suite » de l'accueil : les séances de la semaine EN COURS, après aujourd'hui. "
         "`weekSessions` a exactement sept jours, donc six tuiles au plus, de largeur fixe, en "
