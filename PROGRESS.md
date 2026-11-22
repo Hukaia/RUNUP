@@ -9033,3 +9033,9 @@ faute de pouvoir les séparer d'ici : (1) la liaison `scrollPosition` FABRIQUÉE
 `$choix` lui-même, avec le retour tactile dans un `onChange` ; (2) un `Button` par carte, remplacé par un toucher (`onTapGesture`) : un bouton
 posé sur chaque carte peut se disputer le geste avec le défilement qui les porte. `scrollDisabled` ne coupe plus que s'il n'y a qu'une carte.
 Non vérifié : tout ce qui touche au doigt. À essayer sur l'appareil avec le build suivant.
+
+**Correction (22 novembre) : la course libre garde SA SEMAINE.** Le build 682 réduisait « Ta semaine » à une seule carte en course libre ; Charlotte :
+« il n'y a plus qu'une seule carte là ». C'était une décision que je n'avais pas à prendre : les sept cartes se parcourent, c'est le carrousel. Maintenant
+`joursEnCourseLibre(semaine:seance:…)` laisse la semaine telle quelle et fait seulement prendre à AUJOURD'HUI la séance proposée (la carte ne dit plus « Off »
+quand la feuille décrit un footing). Il ne reste qu'une carte que sans semaine du tout. La rangée des sept jours, le bandeau et « Déplacer » reviennent
+dès qu'il y a plusieurs cartes ; le sous-titre compte les séances visibles sur les cartes.

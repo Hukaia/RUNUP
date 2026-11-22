@@ -72,18 +72,22 @@ enum PlanSemaineModele {
         }
     }
 
-    /// COURSE LIBRE : UNE SEULE CARTE, celle d'aujourd'hui, faite de la séance qu'on propose.
+    /// COURSE LIBRE : LA SEMAINE, ET AUJOURD'HUI DIT CE QU'ON PROPOSE.
     ///
-    /// En course libre il n'y a pas de semaine planifiée : `todaySession` est un modèle choisi
-    /// indépendamment de `weekSessions` (voir `UserProfile.seanceDoneToday`), qui garde la semaine
-    /// d'un ancien programme. La lire pour dessiner « Ta semaine » montrait sept cartes d'un plan qui
-    /// n'existe plus, dont un « Off / Jour de repos » AUJOURD'HUI, et toucher cette carte ouvrait la
-    /// feuille d'une séance qu'elle disait ne pas exister (vu sur la vidéo du 21 novembre). La
-    /// séance proposée aujourd'hui est la seule qu'on puisse dire.
-    static func joursEnCourseLibre(seance: WorkoutSession, faite: Bool, aujourdHui: Int, lundi: Date,
-                                   titreDuRepos: String, calendrier: Calendar = .current) -> [Jour] {
-        jours([PlannedDay(weekday: aujourdHui, session: seance, completed: faite)],
-              aujourdHui: aujourdHui, lundi: lundi, titreDuRepos: titreDuRepos, calendrier: calendrier)
+    /// En course libre `todaySession` est un modèle choisi indépendamment de `weekSessions` (voir
+    /// `UserProfile.seanceDoneToday`) : la carte d'aujourd'hui lisait l'une, la feuille et « Démarrer »
+    /// l'autre. Vu le 21 novembre : la carte disait « Off / Jour de repos » et la feuille « Footing
+    /// récap ». La semaine reste donc la semaine (les autres jours se parcourent, c'est ce qu'on
+    /// attend d'un carrousel), et c'est seulement le jour d'aujourd'hui qui prend la séance proposée.
+    ///
+    /// Sans semaine du tout, il ne reste que cette carte.
+    static func joursEnCourseLibre(semaine: [PlannedDay], seance: WorkoutSession, faite: Bool,
+                                   aujourdHui: Int, lundi: Date, titreDuRepos: String,
+                                   calendrier: Calendar = .current) -> [Jour] {
+        var jours = semaine.filter { $0.weekday != aujourdHui }
+        jours.append(PlannedDay(weekday: aujourdHui, session: seance, completed: faite))
+        return Self.jours(jours, aujourdHui: aujourdHui, lundi: lundi, titreDuRepos: titreDuRepos,
+                          calendrier: calendrier)
     }
 
     private static func etat(du jour: PlannedDay, aujourdHui: Int) -> Etat {

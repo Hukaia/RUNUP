@@ -45,8 +45,9 @@ struct PlanSemaineView: View {
     private var jours: [PlanSemaineModele.Jour] {
         if estEnCourseLibre {
             return PlanSemaineModele.joursEnCourseLibre(
-                seance: profile.todaySession, faite: profile.seanceDoneToday, aujourdHui: aujourdHui,
-                lundi: lundi, titreDuRepos: String(localized: "Jour de repos"))
+                semaine: profile.weekSessions, seance: profile.todaySession,
+                faite: profile.seanceDoneToday, aujourdHui: aujourdHui, lundi: lundi,
+                titreDuRepos: String(localized: "Jour de repos"))
         }
         return PlanSemaineModele.jours(profile.weekSessions, aujourdHui: aujourdHui, lundi: lundi,
                                        titreDuRepos: String(localized: "Jour de repos"))
@@ -165,8 +166,9 @@ struct PlanSemaineView: View {
         let dates = periode.surDeuxMois
             ? String(localized: "\(periode.premierJour) \(periode.moisDuPremier) au \(periode.dernierJour) \(periode.moisDuDernier)")
             : String(localized: "\(periode.premierJour) au \(periode.dernierJour) \(periode.moisDuPremier)")
-        // En course libre, `weekSessions` est celle d'un ancien programme : n'en compter aucune séance.
-        let seances = estEnCourseLibre ? 0 : PlanSemaineModele.nombreDeSeances(profile.weekSessions)
+        // Les séances qu'on voit sur les cartes, pas celles de `weekSessions` : en course libre
+        // la carte d'aujourd'hui est la séance proposée.
+        let seances = jours.filter { !$0.estUnRepos }.count
         guard seances > 0 else { return dates }
         let compte = Pluriel.choisir(seances,
                                      String(localized: "\(seances) séance"),
@@ -361,7 +363,7 @@ struct PlanSemaineView: View {
             // glissement et de faire sauter la mise en page.
             .disabled(choisi != aujourdHui)
             .opacity(choisi == aujourdHui ? HZPlan.pleine : HZPlan.eteint)
-            if planDebloque && !estEnCourseLibre {
+            if planDebloque && aPlusieursCartes {
                 HZBoutonPilule(libelle: String(localized: "Déplacer"), dessin: .deplacer,
                                fond: HZCouleur.surfaceSombre) {
                     appState.openMoveSession()
@@ -377,7 +379,7 @@ struct PlanSemaineView: View {
     private var feuille: some View {
         HZFeuille {
             if planDebloque {
-                if !estEnCourseLibre {
+                if aPlusieursCartes {
                     HZBandeauDuCoach(texte: String(localized: "Glisse une carte pour changer de jour. Déplacer te laisse changer le jour d'une séance de cette semaine."))
                 }
                 objectifs

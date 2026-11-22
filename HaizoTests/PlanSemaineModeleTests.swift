@@ -202,23 +202,28 @@ final class PlanSemaineModeleTests: XCTestCase {
 
     // MARK: - La course libre
 
-    /// En course libre la semaine du plan n'existe pas : une seule carte, la séance proposée
-    /// aujourd'hui, jamais un repos issu de l'ancien programme.
-    func testEnCourseLibreUneSeuleCarteAvecLaSeanceDuJour() {
+    /// En course libre, la semaine reste la semaine, et AUJOURD'HUI prend la séance proposée : la carte
+    /// ne dit plus « repos » quand la feuille et « Démarrer » parlent d'un footing.
+    func testEnCourseLibreAujourdhuiPrendLaSeanceProposee() {
+        let plan = semaine([seance("Footing"), nil, nil, nil, nil, nil, seance("Sortie longue", minutes: 80)])
         let cartes = PlanSemaineModele.joursEnCourseLibre(
-            seance: seance("Footing récap", minutes: 30, zone: "Z1-2"), faite: false, aujourdHui: 5,
-            lundi: lundi, titreDuRepos: "Jour de repos", calendrier: calendrier)
-        XCTAssertEqual(cartes.count, 1)
-        XCTAssertEqual(cartes.first?.id, 5)
-        XCTAssertEqual(cartes.first?.etat, .aujourdhui)
-        XCTAssertFalse(cartes.first?.estUnRepos ?? true)
-        XCTAssertEqual(cartes.first?.nombre, .valeur("30'"))
+            semaine: plan, seance: seance("Footing récap", minutes: 30, zone: "Z1-2"), faite: false,
+            aujourdHui: 5, lundi: lundi, titreDuRepos: "Jour de repos", calendrier: calendrier)
+        XCTAssertEqual(cartes.map(\.id), [0, 1, 2, 3, 4, 5, 6])
+        let aujourdhui = cartes.first { $0.id == 5 }
+        XCTAssertEqual(aujourdhui?.etat, .aujourdhui)
+        XCTAssertFalse(aujourdhui?.estUnRepos ?? true)
+        XCTAssertEqual(aujourdhui?.nombre, .valeur("30'"))
+        // Les autres jours restent ceux du plan.
+        XCTAssertTrue(cartes.first { $0.id == 1 }?.estUnRepos ?? false)
+        XCTAssertFalse(cartes.first { $0.id == 6 }?.estUnRepos ?? true)
     }
 
-    func testEnCourseLibreLaSeanceFaiteSeDitFaite() {
+    func testEnCourseLibreSansSemaineIlNeResteQueAujourdhui() {
         let cartes = PlanSemaineModele.joursEnCourseLibre(
-            seance: seance("Footing récap", minutes: 30), faite: true, aujourdHui: 2,
+            semaine: [], seance: seance("Footing récap", minutes: 30), faite: true, aujourdHui: 2,
             lundi: lundi, titreDuRepos: "Jour de repos", calendrier: calendrier)
+        XCTAssertEqual(cartes.count, 1)
         XCTAssertEqual(cartes.first?.faite, true)
     }
 }
