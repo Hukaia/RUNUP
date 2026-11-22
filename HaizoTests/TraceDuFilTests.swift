@@ -1,4 +1,5 @@
 import XCTest
+import SwiftUI
 @testable import Haizo
 
 /// Le lissage du tracé GPS du fil du club : un tracé dentelé devient une courbe, sans bouger ses extrémités

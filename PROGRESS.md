@@ -9085,3 +9085,5 @@ Deux regroupements, sans rien retirer :
    et « Publier l'itinéraire » reste réservé à qui peut vraiment publier. Textes inchangés, donc aucune nouvelle traduction.
 Nouvelle mesure `HZResume.hauteurDeLaLigne` ; aucun nombre en dur dans la vue. Vérifié : les contrôles de dépôt (valeurs, chaînes, listes, câblage) passent. Pas encore vu :
 le rendu, à relire sur la capture Refonte (`resume.png`, `resume-bas.png`) au prochain build.
+
+Correction : le build #689 (commit Club) était rouge à la compilation des tests, `TraceDuFilTests` utilisait `EmptyView` sans `import SwiftUI`. Ajouté ; les tests du lissage n'avaient donc pas tourné.
