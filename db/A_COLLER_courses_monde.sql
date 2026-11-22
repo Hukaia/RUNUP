@@ -2,7 +2,7 @@
 -- GÉNÉRÉ PAR db/semer_courses.js — NE PAS MODIFIER À LA MAIN.
 --
 -- Deux temps : les colonnes des caractéristiques d'une course (pays, formats, surface, profil,
--- heure de départ, statut d'inscription), puis les 53 courses que l'app connaît d'avance.
+-- heure de départ, statut d'inscription), puis les 52 courses que l'app connaît d'avance.
 -- Tout est idempotent — `ADD COLUMN IF NOT EXISTS`, `ON CONFLICT … DO UPDATE` limité aux colonnes
 -- nouvelles — donc le relancer ne crée rien en double, n'efface rien, et ne touche à aucune valeur
 -- qu'un coureur a saisie.
@@ -41,16 +41,15 @@ FROM (VALUES
   ('Marathon du Mont-Blanc', 'marathon du mont blanc', 'Chamonix', '2027-06-27', NULL, NULL, 'trail', 'https://www.marathonmontblanc.fr', 'FR', NULL, 'trail', 'montagneux', NULL, 'tirage_au_sort', NULL, NULL, '2026-11-22'),
   ('MaXi-Race Annecy', 'maxi race annecy', 'Annecy', '2027-05-29', NULL, NULL, 'trail', 'https://www.maxi-race.org/en/', 'FR', NULL, 'trail', 'montagneux', NULL, 'fermee', NULL, NULL, '2026-11-22'),
   ('TCS London Marathon', 'tcs london marathon', 'London', '2027-04-25', 42.195, NULL, 'run', 'https://www.tcslondonmarathon.com', 'GB', '{42.195}', 'route', NULL, NULL, 'fermee', NULL, NULL, '2026-11-22'),
-  ('Edinburgh Marathon', 'edinburgh marathon', 'Edinburgh', '2027-05-30', 42.195, NULL, 'run', 'https://www.edinburghmarathon.com', 'GB', '{42.195}', 'route', NULL, NULL, 'ouverte', NULL, NULL, '2026-11-22'),
-  ('Great North Run', 'great north run', 'Newcastle', '2027-09-12', 21.0975, NULL, 'run', 'https://www.greatrun.org', 'GB', '{21.0975}', 'route', NULL, NULL, 'fermee', NULL, NULL, '2026-11-22'),
+  ('Edinburgh Marathon', 'edinburgh marathon', 'Edinburgh', '2027-05-30', NULL, NULL, 'run', 'https://www.edinburghmarathon.com', 'GB', '{5,10,21.0975,42.195}', 'route', NULL, '10:00', NULL, NULL, NULL, '2026-11-22'),
+  ('Great North Run', 'great north run', 'Newcastle', '2027-09-12', 21.0975, NULL, 'run', 'https://www.greatrun.org/events/great-north-run/', 'GB', '{21.0975}', 'route', NULL, NULL, 'fermee', NULL, NULL, '2026-11-22'),
   ('Generali Berlin Marathon', 'generali berlin marathon', 'Berlin', '2027-09-26', 42.195, NULL, 'run', NULL, 'DE', '{42.195}', 'route', NULL, NULL, 'tirage_au_sort', NULL, NULL, '2026-11-22'),
   ('Berlin Half Marathon', 'berlin half marathon', 'Berlin', '2027-04-04', 21.0975, NULL, 'run', 'https://www.generali-berliner-halbmarathon.de', 'DE', '{21.0975}', 'route', NULL, NULL, 'fermee', NULL, NULL, '2026-11-22'),
   ('DATEV Challenge Roth', 'datev challenge roth', 'Roth', '2027-07-04', NULL, NULL, 'triathlon', 'https://www.challenge-roth.com', 'DE', NULL, NULL, NULL, NULL, 'complete', NULL, NULL, '2026-11-22'),
   ('Rotterdam Marathon', 'rotterdam marathon', 'Rotterdam', '2027-04-11', NULL, NULL, 'run', 'https://www.nnmarathonrotterdam.nl/en/', 'NL', '{10.55,42.195}', 'route', 'plat', NULL, 'complete', NULL, NULL, '2026-11-22'),
-  ('Amsterdam Marathon', 'amsterdam marathon', 'Amsterdam', '2027-10-31', NULL, NULL, 'run', 'https://www.tcsamsterdammarathon.eu', 'NL', '{7.5,21.0975,42.195}', 'route', 'plat', NULL, 'bientot', NULL, NULL, '2026-11-22'),
-  ('Vienna City Marathon', 'vienna city marathon', 'Vienna', '2027-04-18', NULL, NULL, 'run', 'https://www.vienna-marathon.com', 'AT', '{21.0975,42.195}', 'route', NULL, NULL, 'ouverte', NULL, NULL, '2026-11-22'),
+  ('Vienna City Marathon', 'vienna city marathon', 'Vienna', '2027-04-18', NULL, NULL, 'run', 'https://www.vienna-marathon.com', 'AT', '{5,10,21.0975,42.195}', 'route', NULL, NULL, 'complete', NULL, NULL, '2026-11-22'),
   ('Prague Marathon', 'prague marathon', 'Prague', '2027-05-02', 42.195, NULL, 'run', 'https://www.runczech.com', 'CZ', '{42.195}', 'route', NULL, NULL, NULL, NULL, NULL, '2026-11-22'),
-  ('Copenhagen Marathon', 'copenhagen marathon', 'Copenhagen', '2027-05-09', 42.195, NULL, 'run', 'https://copenhagenmarathon.dk', 'DK', '{42.195}', 'route', NULL, NULL, 'tirage_au_sort', NULL, NULL, '2026-11-22'),
+  ('Copenhagen Marathon', 'copenhagen marathon', 'Copenhagen', '2027-05-09', 42.195, NULL, 'run', 'https://copenhagenmarathon.dk', 'DK', '{42.195}', 'route', NULL, '09:30', 'fermee', NULL, NULL, '2026-11-22'),
   ('Rome Marathon', 'rome marathon', 'Rome', '2027-03-14', 42.195, NULL, 'run', 'https://www.runromethemarathon.com', 'IT', '{42.195}', 'route', NULL, '08:30', 'ouverte', NULL, NULL, '2026-11-22'),
   ('Florence Marathon', 'florence marathon', 'Florence', '2026-11-29', 42.195, NULL, 'run', 'https://www.firenzemarathon.it/en/', 'IT', '{42.195}', 'route', NULL, '08:30', 'complete', NULL, NULL, '2026-11-22'),
   ('Barcelona Marathon', 'barcelona marathon', 'Barcelona', '2027-03-14', 42.195, NULL, 'run', 'https://www.zurichmaratobarcelona.es/en', 'ES', '{42.195}', 'route', 'plat', NULL, 'complete', NULL, NULL, '2026-11-22'),
@@ -102,7 +101,7 @@ ON CONFLICT (name_key, race_date) DO UPDATE SET
   website = COALESCE(races.website, EXCLUDED.website);
 
 -- ===== 3. VÉRIFICATION (facultatif) =====
--- Devrait rendre 53 lignes, de la plus proche à la plus lointaine.
+-- Devrait rendre 52 lignes, de la plus proche à la plus lointaine.
 SELECT name, city, country, race_date, distances_km, registration_status, verified_on
 FROM races
 WHERE is_seeded

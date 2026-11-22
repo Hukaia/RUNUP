@@ -32,7 +32,9 @@
 // Melbourne 2027, Auckland 2027, Marine Corps 2027, Toronto 2027, Marathon de Mexico 2027 (aucune
 // date 2027 annoncée), Ironman Hawaï 2027 (date donnée par les calendriers, pas encore confirmée par
 // Ironman), Singapour 2026 (le jour du marathon n'est pas écrit sur la page), Seoul, Kigali, Tel
-// Aviv, Buenos Aires, Francfort, MIUT, UTMF (une seule source, ou des sources qui se contredisent).
+// Aviv, Buenos Aires, Francfort, MIUT, UTMF (une seule source, ou des sources qui se contredisent),
+// Amsterdam 2027 (le site écrit « samedi 30 et dimanche 31 octobre » sans dire quel jour est celui
+// du marathon).
 // Une course absente se rajoute ; une date fausse se retrouve sur un plan d'entraînement.
 //
 // LES COURSES DÉJÀ SEMÉES REÇOIVENT LEURS CARACTÉRISTIQUES. Le script est idempotent, et il
@@ -153,18 +155,19 @@ const COURSES = [
   },
   {
     name: 'Edinburgh Marathon',
-    // Le week-end du 29 et 30 mai ; le marathon est le dimanche 30.
-    city: 'Edinburgh', country: 'GB', raceDate: '2027-05-30', distancesKm: [42.195], discipline: 'run',
-    surface: 'route', registrationStatus: 'ouverte', website: 'https://www.edinburghmarathon.com',
-    source: 'https://www.bhf.org.uk/edinburghmarathon', verifie: '2026-11-22',
+    // Le week-end du 29 et 30 mai ; le marathon est le dimanche 30 à 10 h, le semi à 8 h, le 10 km et
+    // le 5 km le samedi. Le site ne dit pas si les inscriptions sont ouvertes : pas de statut.
+    city: 'Edinburgh', country: 'GB', raceDate: '2027-05-30', distancesKm: [5, 10, 21.0975, 42.195],
+    discipline: 'run', surface: 'route', startTime: '10:00', website: 'https://www.edinburghmarathon.com',
+    source: 'https://www.edinburghmarathon.com/', verifie: '2026-11-22',
   },
   {
     name: 'Great North Run',
     // Le semi-marathon de Newcastle à South Shields. Tirage de septembre 2026 passé ; un second
     // tirage en janvier, dates non annoncées.
     city: 'Newcastle', country: 'GB', raceDate: '2027-09-12', distancesKm: [21.0975], discipline: 'run',
-    surface: 'route', registrationStatus: 'fermee', website: 'https://www.greatrun.org',
-    source: 'https://www.ageuk.org.uk/northumberland/get-involved/great-north-run-2027/', verifie: '2026-11-22',
+    surface: 'route', registrationStatus: 'fermee', website: 'https://www.greatrun.org/events/great-north-run/',
+    source: 'https://www.greatrun.org/events/great-north-run/', verifie: '2026-11-22',
   },
   // =============================================== Europe : Allemagne, Pays-Bas, Autriche, Italie, Espagne... ===============================================
   {
@@ -199,17 +202,10 @@ const COURSES = [
     source: 'https://www.nnmarathonrotterdam.nl/en/', verifie: '2026-11-22',
   },
   {
-    name: 'Amsterdam Marathon',
-    // « Edition 2027 : samedi 30 et dimanche 31 octobre » (l'organisateur) ; le marathon est le dimanche.
-    city: 'Amsterdam', country: 'NL', raceDate: '2027-10-31', distancesKm: [7.5, 21.0975, 42.195],
-    discipline: 'run', surface: 'route', profile: 'plat', registrationStatus: 'bientot',
-    website: 'https://www.tcsamsterdammarathon.eu',
-    source: 'https://www.tcsamsterdammarathon.eu/', verifie: '2026-11-22',
-  },
-  {
     name: 'Vienna City Marathon',
-    city: 'Vienna', country: 'AT', raceDate: '2027-04-18', distancesKm: [21.0975, 42.195],
-    discipline: 'run', surface: 'route', registrationStatus: 'ouverte', website: 'https://www.vienna-marathon.com',
+    // Marathon, semi et relais : liste d'attente seulement ; le 10 km et le 5 km restent ouverts.
+    city: 'Vienna', country: 'AT', raceDate: '2027-04-18', distancesKm: [5, 10, 21.0975, 42.195],
+    discipline: 'run', surface: 'route', registrationStatus: 'complete', website: 'https://www.vienna-marathon.com',
     source: 'https://www.vienna-marathon.com/', verifie: '2026-11-22',
   },
   {
@@ -220,9 +216,10 @@ const COURSES = [
   },
   {
     name: 'Copenhagen Marathon',
-    // Les dossards passent au tirage au sort à partir de cette édition.
+    // Les dossards passent au tirage au sort à partir de cette édition ; il a eu lieu au printemps
+    // 2026 (plus de 80 000 candidats). Départ à 9 h 30.
     city: 'Copenhagen', country: 'DK', raceDate: '2027-05-09', distancesKm: [42.195], discipline: 'run',
-    surface: 'route', registrationStatus: 'tirage_au_sort', website: 'https://copenhagenmarathon.dk',
+    surface: 'route', startTime: '09:30', registrationStatus: 'fermee', website: 'https://copenhagenmarathon.dk',
     source: 'https://copenhagenmarathon.dk/en/entries-for-copenhagen-marathon-2027-will-be-allocated-through-a-lottery/',
     verifie: '2026-11-22',
   },
@@ -297,7 +294,7 @@ const COURSES = [
     city: 'Sierre', country: 'CH', raceDate: '2027-08-07', distanceKm: 31, distancesKm: [31],
     elevationGainM: 2200, discipline: 'trail', surface: 'trail', profile: 'montagneux',
     website: 'https://www.sierre-zinal.com',
-    source: 'https://www.myswitzerland.com/en/experiences/events/sierre-zinal/', verifie: '2026-11-22',
+    source: 'https://www.sierre-zinal.com/en/sierre-zinal-2026-dates-2840.html', verifie: '2026-11-22',
   },
   {
     name: 'Grand Raid de La Réunion',
