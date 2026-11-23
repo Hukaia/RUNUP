@@ -29,8 +29,6 @@ enum HZMouvement {
     /// translater une page entière oblige le système à composer deux calques plein cadre pendant
     /// qu'il construit déjà l'écran qui arrive.
     static let decalageDePage: CGFloat = 28
-    /// L'échelle d'un onglet qui se fond : à peine plus petit qu'au repos.
-    static let echelleDOnglet: CGFloat = 0.98
 
     /// La même animation, ou AUCUNE si la personne a demandé moins de mouvement.
     static func respecter(_ reduireLeMouvement: Bool, _ animation: Animation) -> Animation? {
@@ -43,9 +41,12 @@ extension AppScreen {
     /// autre entre par la droite et sort par la droite, la racine d'un onglet ne bouge pas — elle
     /// se fond. Rien ne se croise, parce qu'un seul des deux écrans se déplace.
     var transitionDecran: AnyTransition {
-        guard !estRacineDOnglet else {
-            return .opacity.combined(with: .scale(scale: HZMouvement.echelleDOnglet))
-        }
+        // UN ONGLET SE FOND, ET RIEN D'AUTRE. Il passait en plus par une échelle de 0,98 : pendant
+        // qu'une vue est mise à l'échelle, SwiftUI ne la laisse plus déborder sous la barre d'état,
+        // donc l'écran entrait soixante points trop bas, une bande blanche au-dessus de son en-tête,
+        // puis remontait d'un coup à la fin de l'animation. C'est le « sursaut » que Charlotte a
+        // filmé (23 novembre). Un fondu ne déplace rien, donc rien ne peut sauter.
+        guard !estRacineDOnglet else { return .opacity }
         return .asymmetric(
             insertion: .opacity.combined(with: .offset(x: HZMouvement.decalageDePage)),
             removal: .opacity.combined(with: .offset(x: HZMouvement.decalageDePage))

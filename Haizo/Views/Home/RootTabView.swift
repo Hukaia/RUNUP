@@ -50,18 +50,28 @@ struct RootTabView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
+            // LES TROIS ÉTAGES ONT UN RANG ÉCRIT : le fond, l'écran, ce qui flotte dessus.
+            //
+            // Sans rang, un écran qu'on quitte était renvoyé TOUT AU FOND de la pile pendant sa
+            // sortie, donc derrière le fond blanc : il disparaissait d'un coup, et l'écran suivant
+            // se fondait depuis une page blanche. Vu image par image sur une vidéo de Charlotte
+            // (23 novembre). Avec un rang, l'écran qui sort reste au-dessus du fond et se fond
+            // pendant que l'autre arrive.
             HZCouleur.blanc.ignoresSafeArea()
+                .zIndex(HZRangDansLaPile.fond)
 
             currentScreen
                 // Chaque écran emporte sa transition : voir `AppScreen.transitionDecran`.
                 .transition(appState.screen.transitionDecran)
                 .id(appState.screen)
+                .zIndex(HZRangDansLaPile.ecran)
 
             if showBar && appState.isRunActive {
                 HZCourseEnCours(ecoule: appState.liveRun.map { PaceModel.formatDuration($0.elapsedSeconds) } ?? "0:00") {
                     appState.go(.live)
                 }
                 .padding(.bottom, HZEspace.sousLaBarre + HZMesuresDeLaCourse.hauteurDeLaBarre + HZMesuresDeLaCourse.souffle)
+                .zIndex(HZRangDansLaPile.flottant)
             }
 
             if showBar {
@@ -78,15 +88,18 @@ struct RootTabView: View {
                             .padding(.bottom, HZEspace.sousLaBarre)
                     }
                     .ignoresSafeArea(edges: .bottom)
+                    .zIndex(HZRangDansLaPile.flottant)
             }
         }
         // Un jeu de bords VIDE plutôt qu'un `if` autour du modificateur : la valeur change, pas
         // la structure de la vue. Un `if` en donnerait deux différentes, et SwiftUI recréerait
         // tout l'arbre — donc l'écran courant — à chaque passage sur le Coach.
         .ignoresSafeArea(.keyboard, edges: typesText ? [] : .bottom)
-        // `HZMouvement.ressort` : « ce qui arrive à l'écran » se pose au lieu de freiner. Et il
-        // respecte « Réduire les animations » : la valeur saute, elle ne s'anime pas plus vite.
-        .animation(HZMouvement.respecter(reduceMotion, HZMouvement.ressort), value: appState.screen)
+        // `HZMouvement.ecran`, SANS REBOND. C'était `ressort` : sur une page entière, son rebond
+        // faisait dépasser l'écran qui arrive avant de le ramener, un sursaut à chaque changement.
+        // Un ressort est pour ce qui se pose DANS un écran, pas pour l'écran. Et il respecte
+        // « Réduire les animations » : la valeur saute, elle ne s'anime pas plus vite.
+        .animation(HZMouvement.respecter(reduceMotion, HZMouvement.ecran), value: appState.screen)
         // Un seul point d'émission pour toute l'app : chaque écran passe par ce `switch`, donc
         // rien ne peut être oublié ni compté deux fois. `onChange` plutôt qu'un `onAppear` par
         // écran, qui se serait redéclenché à chaque retour de feuille modale.

@@ -9261,3 +9261,12 @@ division à chaque tour), à l'affûtage (3 tours d'un quart), simulation (100 m
 
 **Décision de Charlotte (23 novembre) : une station par semaine, avec le fractionné.** La semaine HYROX reste donc : fractionné, séance de station, course compromise, puis footing et travail complémentaire selon le nombre de jours. Le choix
 d'origine (deux stations par semaine, sans fractionné) est abandonné.
+
+## Le sursaut à chaque changement de page (23 novembre)
+
+Charlotte, vidéo à l'appui : « Les pages s'affichent toutes avec un petit sursaut. » Lu image par image (60 images par seconde), sur quatre changements d'onglet. Trois causes, toutes dans la racine (`RootTabView`, `HZMouvement`) :
+- **L'écran entrait 62 points trop bas, puis remontait d'un coup.** La transition d'un onglet passait par une échelle de 0,98 ; pendant qu'une vue est mise à l'échelle, SwiftUI ne la laisse plus déborder sous la barre d'état. Sur la vidéo : une bande
+  blanche au-dessus de l'en-tête pendant toute l'animation, puis un saut à la dernière image. L'onglet se fond maintenant, sans échelle.
+- **L'écran quitté disparaissait d'un coup, et laissait une page blanche.** Sans rang écrit dans la pile, il passait derrière le fond pendant sa sortie. Les trois étages ont un rang (`HZRangDansLaPile`) : l'écran qui sort se fond pendant que l'autre arrive.
+- **Le changement d'écran s'animait avec un ressort** (rebond 0,12) au lieu de `ecran` (0,22 s, sans rebond), que `HZMouvement` réservait pourtant à cet usage.
+- **Non vérifié** : aucune capture ne montre une animation, donc rien ne le prouve avant le prochain build sur un téléphone. Les pages ouvertes depuis une autre (décalage de 28 points) ne sont pas dans la vidéo : à regarder aussi.

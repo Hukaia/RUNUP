@@ -507,9 +507,10 @@ Une feuille ne s'ouvre jamais avec l'habillage du système : fond blanc, coins d
 | `trace` | courbe (0,22 ; 0,61 ; 0,36 ; 1), 700 ms | un tracé qui se dessine : il doit être fini avant qu'on ait besoin de le lire |
 | `choix` | ressort, 260 ms, rebond 0,26 | un choix qui s'ouvre sous le doigt, avec un léger rebond |
 
-Une page ouverte depuis une autre se décale de 28 points en entrant (`decalageDePage`) ; la racine d'un onglet se fond en passant par
-une échelle de 0,98 (`echelleDOnglet`). Chaque écran emporte sa transition (`AppScreen.transitionDecran`) : rien ne se croise, parce
-qu'un seul des deux écrans se déplace. Le carrousel du plan a son mouvement propre (`HZCarrousel`) : 340 ms, la courbe du canvas
+Une page ouverte depuis une autre se décale de 28 points en entrant (`decalageDePage`) ; la racine d'un onglet se fond, sans échelle ni
+déplacement (une échelle empêche l'écran de déborder sous la barre d'état pendant l'animation : il entrait trop bas puis sautait). Le
+changement d'écran s'anime avec `ecran`, jamais avec un ressort : un rebond sur une page entière se lit comme un sursaut. Chaque écran
+emporte sa transition (`AppScreen.transitionDecran`) : rien ne se croise, parce qu'un seul des deux écrans se déplace. Le carrousel du plan a son mouvement propre (`HZCarrousel`) : 340 ms, la courbe du canvas
 (0,2 ; 0,8 ; 0,2 ; 1), qui part vite et se pose doucement, quand c'est la rangée des jours qui le commande. Le geste du doigt est le défilement horizontal natif
 du système, calé sur les cartes (`viewAligned`) : il n'a ni seuil ni résistance qui lui soient propres.
 

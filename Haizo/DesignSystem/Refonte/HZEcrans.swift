@@ -551,3 +551,12 @@ enum HZPaywall {
     static let moisParAn: Double = 12
     static let moisParAnEntier = 12
 }
+
+/// Le rang de chaque étage de la racine de l'app : le fond, l'écran, ce qui flotte dessus (la barre,
+/// le bandeau de course en cours). Voir `RootTabView.body` : sans rang écrit, un écran qu'on quitte
+/// passait derrière le fond pendant sa sortie et disparaissait d'un coup.
+enum HZRangDansLaPile {
+    static let fond: Double = 0
+    static let ecran: Double = 1
+    static let flottant: Double = 2
+}
