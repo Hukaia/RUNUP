@@ -312,15 +312,22 @@ final class RefonteUITests: XCTestCase {
         let plan = lancer(arguments: ["--ecran=plan", "--hyrox=semaine"])
         photographier("hyrox-plan", app: plan)
         plan.terminate()
-        let fiches: [(String, String, String?)] = [
-            ("hyrox-fiche-sled-push-base", "hyrox_station_sled_push", nil),
-            ("hyrox-fiche-sled-push-specifique", "hyrox_station_sled_push", "--phase=specifique"),
-            ("hyrox-fiche-wall-balls", "hyrox_station_wall_balls", "--phase=specifique"),
-            ("hyrox-fiche-force-jambes", "hyrox_force_jambes", nil),
-            ("hyrox-fiche-grip-dos-gainage", "hyrox_grip_dos_gainage", nil),
+        // Une fiche par sorte de séance du programme, à des paliers qui montrent la progression :
+        // la même station au début du bloc de base et à la fin du spécifique, la course compromise à
+        // trois moments, le fractionné, la simulation, un travail complémentaire.
+        let fiches: [(String, String, [String])] = [
+            ("hyrox-fiche-fractionne", "hyrox_intervalles", []),
+            ("hyrox-fiche-sled-push-base", "hyrox_station_sled_push", []),
+            ("hyrox-fiche-sled-push-specifique", "hyrox_station_sled_push", ["--phase=specifique", "--palier=2"]),
+            ("hyrox-fiche-wall-balls", "hyrox_station_wall_balls", ["--phase=specifique", "--palier=1"]),
+            ("hyrox-fiche-compromise-base", "hyrox_course_compromise", ["--palier=1"]),
+            ("hyrox-fiche-compromise-specifique", "hyrox_course_compromise", ["--phase=specifique", "--palier=1"]),
+            ("hyrox-fiche-compromise-affutage", "hyrox_course_compromise", ["--phase=affutage"]),
+            ("hyrox-fiche-simulation", "hyrox_simulation", ["--phase=specifique", "--palier=2"]),
+            ("hyrox-fiche-force-jambes", "hyrox_force_jambes", []),
         ]
-        for (nom, kind, phase) in fiches {
-            let app = lancer(arguments: ["--ecran=prog", "--seance", "--hyrox=\(kind)"] + (phase.map { [$0] } ?? []))
+        for (nom, kind, drapeaux) in fiches {
+            let app = lancer(arguments: ["--ecran=prog", "--seance", "--hyrox=\(kind)"] + drapeaux)
             photographier(nom, app: app)
             defiler(app)
             photographier("\(nom)-bas", app: app)

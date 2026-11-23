@@ -9202,3 +9202,50 @@ Elle avait raison sur le fond : une séance « Sled push · 6 × 50 m » est un 
   3 jours : course+station A, footing, course compromise.
 - **Toujours vrai** : ce sont des valeurs de départ courantes en préparation, pas un protocole HYROX officiel, et personne qui a couru un HYROX ne les a relues. Une semaine détaillée jour par jour n'est pas encore photographiée.
 - **Non vérifié** : le Swift (`FormatDeStation`, la fiche des courses compromises) est écrit sans compilateur, la CI le dira.
+
+## HYROX : un programme construit sur des mesures (23 novembre)
+
+Charlotte, après les fiches : « Tu n'as pas la possibilité de créer un programme HYROX toi-même, ultra fiable et pertinent ? » Elle avait raison de le demander : je renvoyais la fiabilité à « quelqu'un qui a couru un HYROX » au lieu de la
+porter. HYROX ne publie aucun plan pour adultes, donc rien n'est « officiel » ; mais l'épreuve est mesurée, et le programme est maintenant construit sur ces mesures (`ProgrammeHyrox`, en-tête).
+
+### Sur quoi il repose
+- **La course est la colonne vertébrale.** 52 % du temps d'une épreuve est de la course, 40 % les stations, 8 % les transitions (12 479 arrivées de la saison 8, HyroxDataLab). Dans la seule étude de physiologie de l'épreuve (Brandt, Ebel,
+  Lebahn, Schmidt, *Frontiers in Physiology*, 2025, onze athlètes de loisir), le temps final est lié à la VO2max (rho −0,71) et au volume d'endurance (rho −0,68) ; ni la force de préhension ni le volume de musculation ne le sont.
+- **L'épreuve se court fatigué** : 79,5 % du temps au-dessus de 90 % de la fréquence cardiaque maximale. Les wall balls sont la station la plus coûteuse (fréquence cardiaque, lactate, effort perçu).
+- **Ce que j'ai lu moi-même** : les chiffres de l'étude (résultats et tableaux, lus dans le texte). Les 52 / 40 / 8 % de HyroxDataLab viennent d'un résumé de recherche : la page elle-même n'a pas pu être ouverte (erreur de réseau), donc ce chiffre est à
+  recouper. L'étude dit la même chose dans son propre échantillon (51 min de course sur 86,5).
+- **Limite dite** : l'étude est petite (onze personnes). Elle oriente le programme, elle ne fixe pas un nombre de séries. Le nombre exact de tours de chaque palier est un choix de construction, tenu par des règles écrites et testées.
+
+### La semaine
+| Jours de course | Séances |
+|---|---|
+| 3 | fractionné · séance de station · course compromise |
+| 4 | fractionné · footing · séance de station · course compromise |
+| 5 | fractionné · footing · séance de station · travail complémentaire · course compromise |
+| 6 | les mêmes, plus un second footing |
+
+L'ordre du fractionné et de la station s'inverse une semaine sur deux (quelqu'un qui pratique deux autres sports porteurs ne garde qu'une séance de qualité : ce ne sera pas toujours la même). **Une station par semaine, et non plus deux** : la
+seconde place de qualité va au fractionné, parce que c'est la course qui prédit le temps final. Chaque station garde sa séance (les huit en huit semaines de travail, wall balls d'abord), et toutes repassent en plus dans la course compromise.
+
+### Ce qui progresse, semaine de travail après semaine de travail
+- **Fractionné** (`hyrox_intervalles`, nouveau) : des kilomètres au seuil, 200 m de récupération. 4, 5, 6 au bloc de base ; 6, 7, 8 au spécifique : les huit kilomètres de l'épreuve au bout du plan.
+- **Séance de station** : la quantité se compte en parts de l'épreuve (un quart, la moitié, les trois quarts). Base : 3, 4, 5 tours d'un quart puis 3 tours d'une moitié, 800 m faciles, charges aux deux tiers. Spécifique : 2 puis 3 tours d'une moitié,
+  puis 2 tours de trois quarts, 1 km à allure d'épreuve, charge de course. **Jamais plus d'une fois et demie le volume de l'épreuve dans une séance** (la version d'avant posait 225 wall balls).
+- **Course compromise** (`hyrox_course_compromise`, nouveau) : 3, 4, 5 tours au bloc de base (la moitié de chaque station, aux deux tiers de la charge), 5 puis 6 au spécifique (les trois quarts, charge et allure de l'épreuve). Les stations
+  tournent : la séance reprend où la précédente s'est arrêtée, donc les huit passent, au lieu de répéter SkiErg, sled push, sled pull chaque semaine à pleine charge.
+- **Simulation complète** (`hyrox_simulation`, nouveau) : une seule fois, à la dernière semaine de travail du bloc spécifique (deux à trois semaines avant l'épreuve), si le bloc compte au moins trois semaines de travail et si la personne a
+  dit avoir le temps (une heure quarante).
+- **Affûtage** : plus de « simulation allégée » (huit kilomètres et huit stations la semaine de l'épreuve). Un rappel de 3 puis 2 tours, un quart de station, à l'allure et à la charge de l'épreuve.
+- **Décharge** : deux tours d'un quart, faciles.
+
+### Dans la fiche
+- La phase et le palier voyagent avec la séance (`WorkoutSession.phaseHyrox`, `palierHyrox`, décodage tolérant).
+- Course compromise : un tour par ligne, avec la part de la station (« 500 m », « 2 allers ») et les kilos de la division quand c'est la charge de course ; une ligne « Les charges » quand elles sont aux deux tiers.
+- Durées écrites d'après le contenu. Les temps des sleds et du farmers carry viennent des médianes de l'étude ; les autres sont des estimations de planification.
+- « Séance clé » n'est plus écrit que sur une séance de qualité ou la séance longue (« Séance du jour » sinon) : il était écrit sur toutes, footing et mobilité compris.
+- Travail complémentaire : la phrase sur les volumes est passée à la fin, sous « Comment l'ajuster ». Elle dit maintenant quoi faire (« allège d'un tour ou d'un cran de charge si le geste se dégrade, et ne dépasse pas ce qui est écrit »).
+
+### Non vérifié à l'écriture
+- Le Swift est écrit sans compilateur : la CI compile et lance les tests (`ProgrammeHyroxTests`, `AdaptivePlanEngineSafetyTests`).
+- Les anciens types (`hyrox_compromised_run_3`, `_6`, `_light_2`, `hyrox_light_simulation`) ne sont plus produits ; ils restent lisibles pour un plan enregistré.
+- L'« allure d'épreuve » est l'allure marathon du profil, un repère et non une mesure de l'allure HYROX de la personne.

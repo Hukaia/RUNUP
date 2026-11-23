@@ -108,11 +108,11 @@ struct SessionDetailSheet: View {
     }
 
 
-    /// Ce que la séance dit de ses chiffres : des valeurs de départ, pas un protocole officiel. HYROX
-    /// ne publie aucun plan pour adultes ; le volume vient de pratiques courantes de préparation, et
-    /// l'effort se règle au ressenti. Le geste, lui, doit rester propre.
+    /// Ce que la séance dit de ses chiffres, en une ligne : un point de départ, que la coureuse allège
+    /// si le geste se dégrade, et qu'elle ne dépasse pas. Le programme est construit sur des mesures
+    /// (voir `ProgrammeHyrox`), pas recopié d'un protocole officiel : HYROX n'en publie pas.
     private var valeursDeDepart: String {
-        String(localized: "valeurs de départ courantes en préparation, pas un protocole officiel : ajuste à ton ressenti, et arrête avant que le geste ne se dégrade")
+        String(localized: "ces volumes sont un point de départ : allège d'un tour ou d'un cran de charge si le geste se dégrade, et ne dépasse pas ce qui est écrit")
     }
 
     /// Le découpage des séances HYROX, par `kind`.
@@ -163,6 +163,7 @@ struct SessionDetailSheet: View {
         // Afficher les huit sur une séance qui en travaille une ferait lire une liste dont sept
         // lignes ne concernent pas le jour.
         let phase = session.phaseHyrox ?? .base
+        let palier = session.palierHyrox ?? 0
         if let kind, let station = ProgrammeHyrox.Station.pour(kind) {
             let ligne = charges.flatMap { charges -> (String, String, Color)? in
                 let toutes = charges.stations
@@ -172,7 +173,7 @@ struct SessionDetailSheet: View {
                   HZCouleur.secondaireSurClair)
             return [
                 warmup,
-                (String(localized: "La séance"), station.format(phase: phase).texte, HZCouleur.accent),
+                (String(localized: "La séance"), station.format(phase: phase, palier: palier).texte, HZCouleur.accent),
                 (String(localized: "À l'épreuve"), "\(ligne.0) · \(ligne.1)", HZCouleur.secondaireSurClair),
                 (String(localized: "Le geste validé"), station.standard, HZCouleur.secondaireSurClair),
                 (String(localized: "Comment l'ajuster"), valeursDeDepart, HZCouleur.secondaireSurClair),
@@ -182,12 +183,16 @@ struct SessionDetailSheet: View {
 
         // LE TRAVAIL COMPLÉMENTAIRE : les gestes, ce qui les relie à l'épreuve, et leur volume.
         if let kind, let travail = ProgrammeHyrox.TravailComplementaire.pour(kind) {
+            // LA PHRASE DE PRUDENCE EST À LA FIN, sous son propre titre. Elle était posée sous
+            // « 35′ · travail complémentaire », où elle se lisait comme la description de la séance.
+            let gestes = travail.gestes(phase: phase.estFacile ? .base : .specifique)
             return [(String(localized: "\(session.durationMinutes)′ · travail complémentaire"),
-                     valeursDeDepart,
+                     String(localized: "\(gestes.count) gestes, dans l'ordre · la technique avant la charge"),
                      HZCouleur.accent)]
-                + travail.gestes(phase: phase).map {
+                + gestes.map {
                     ($0.nom, "\($0.intention) · \($0.prescription.texte)", HZCouleur.secondaireSurClair)
                 }
+                + [(String(localized: "Comment l'ajuster"), valeursDeDepart, HZCouleur.secondaireSurClair)]
         }
 
         // UN PLAN ENREGISTRÉ AVANT LES SÉANCES PAR STATION peut porter l'ancienne séance de deux
@@ -200,6 +205,57 @@ struct SessionDetailSheet: View {
         }
 
         switch kind {
+        case .hyroxIntervalles:
+            // DES KILOMÈTRES AU SEUIL. La récupération est celle que porte la séance, en mètres : c'est
+            // elle que l'écran de course guide.
+            let reps = session.intervals?.reps ?? ProgrammeHyrox.repetitionsDesIntervalles(phase: phase, palier: palier)
+            let recup = session.intervals?.recoveryMeters ?? ProgrammeHyrox.recuperationDesIntervallesM
+            let detail = allure != nil
+                ? String(localized: "\(session.pace) /km · allure seuil, soutenue mais tenable · \(recup) m en trottinant entre chaque")
+                : String(localized: "allure seuil, soutenue mais tenable · \(recup) m en trottinant entre chaque")
+            return [
+                warmup,
+                (String(localized: "\(reps) × 1 km"), detail, HZCouleur.accent),
+                (String(localized: "Pourquoi"),
+                 String(localized: "la course fait plus de la moitié du temps d'un HYROX : c'est la séance qui la rend plus rapide, dans l'unité de l'épreuve"),
+                 HZCouleur.secondaireSurClair),
+                cooldown
+            ]
+
+        case .hyroxCourseCompromise, .hyroxSimulation:
+            // UN TOUR PAR STATION, DANS L'ORDRE DE L'ÉPREUVE. Les stations, la part de chacune et la charge
+            // viennent du palier de la semaine (voir `ProgrammeHyrox.courseCompromise`) : la séance ne
+            // répète pas toujours les trois premières stations à la charge de course.
+            let seance = ProgrammeHyrox.courseCompromise(phase: phase, palier: palier,
+                                                         simulation: kind == .hyroxSimulation)
+            let stationsDuJour = Array(seance.stations.prefix(session.intervals?.reps ?? seance.tours))
+            let lignes: [(String, String, Color)] = stationsDuJour.enumerated().map { rang, station in
+                var apres = station.texte(seance.part)
+                // Les kilos ne s'écrivent que quand ce sont ceux de l'épreuve : aux deux tiers, la
+                // ligne « Les charges » le dit une fois pour toutes.
+                if seance.intensite == .chargeDeCourse, let kilos = charges?.charge(de: station) {
+                    apres += " · \(kilos)"
+                }
+                let suite = allure != nil
+                    ? String(localized: "\(session.pace) /km, puis \(apres)")
+                    : String(localized: "puis \(apres)")
+                return (String(localized: "Tour \(rang + 1) · 1 km + \(station.nom)"), suite, HZCouleur.accent)
+            }
+            var fin: [(String, String, Color)] = []
+            if seance.estLaSimulation {
+                fin.append((String(localized: "L'intention"),
+                            String(localized: "une répétition générale, pas un chrono : pars moins vite que tu n'en as envie, et note où tu perds du temps"),
+                            HZCouleur.secondaireSurClair))
+            } else if seance.intensite == .deuxTiers {
+                fin.append((String(localized: "Les charges"),
+                            String(localized: "sleds, kettlebells et sac aux deux tiers de ta charge de course : ici, c'est repartir en courant qui se travaille"),
+                            HZCouleur.secondaireSurClair))
+            }
+            return [warmup] + lignes + fin + [
+                (String(localized: "Comment l'ajuster"), valeursDeDepart, HZCouleur.secondaireSurClair),
+                cooldown
+            ]
+
         case .hyroxCompromisedRun3, .hyroxCompromisedRun6, .hyroxCompromisedRunLight2:
             // UN TOUR PAR STATION, DANS L'ORDRE DE L'ÉPREUVE : 1 km de course, puis la station. Trois tours,
             // c'est le SkiErg, le sled push et le sled pull ; six, c'est jusqu'au farmers carry ; deux (la
@@ -362,9 +418,20 @@ struct SessionDetailSheet: View {
 
     // MARK: - Le haut
 
+    /// « Séance clé » pour une séance de qualité ou la séance longue, « Séance du jour » pour le reste.
+    /// Elle l'écrivait sur TOUTES les séances, y compris un footing ou un travail de mobilité : un mot
+    /// qui ne distingue plus rien ne dit plus rien.
+    private var legende: String {
+        if isRestDay { return String(localized: "Aujourd'hui") }
+        switch session.role {
+        case .speed, .longRun: return String(localized: "Séance clé")
+        case .easy, .none: return String(localized: "Séance du jour")
+        }
+    }
+
     private var entete: some View {
         HStack(alignment: .center, spacing: HZEspace.entreCommandes) {
-            Text(isRestDay ? String(localized: "Aujourd'hui") : String(localized: "Séance clé"))
+            Text(legende)
                 .hzTexte(.c13, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
             Spacer(minLength: 0)

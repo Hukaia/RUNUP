@@ -185,6 +185,14 @@ enum SessionKind: String, Codable, Equatable, CaseIterable {
     case hyroxGripDosGainage = "hyrox_grip_dos_gainage"
     case hyroxPliometrie = "hyrox_pliometrie"
     case hyroxMobilite = "hyrox_mobilite"
+    /// Le programme fondé sur les sources (voir `ProgrammeHyrox`) : le fractionné d'un kilomètre, la
+    /// course compromise dont le nombre de tours et les stations changent chaque semaine, et la
+    /// simulation complète. Les trois types de course compromise plus bas (`…Run3`, `…Run6`,
+    /// `…RunLight2`) portaient leur nombre de tours dans leur nom : ils ne restent que pour relire
+    /// un plan enregistré.
+    case hyroxIntervalles = "hyrox_intervalles"
+    case hyroxCourseCompromise = "hyrox_course_compromise"
+    case hyroxSimulation = "hyrox_simulation"
     /// Les deux séances fonctionnelles existent en version standard et « charge renforcée »
     /// (division pro). C'était une interpolation dans le sous-titre — deux cas distincts plutôt
     /// qu'une phrase à trous, parce qu'une phrase à trous se traduit mal : l'espagnol et l'anglais
@@ -378,7 +386,9 @@ enum SessionKind: String, Codable, Equatable, CaseIterable {
              // des mètres mesurés au GPS, et il n'y a pas de GPS sous l'eau. L'écran de course
              // ne le verra jamais de toute façon : une nage ne se démarre pas depuis le
              // téléphone (voir `Discipline.seDemarreDepuisLeTelephone`).
-             .triSwimIntervals:
+             .triSwimIntervals,
+             // Des kilomètres au seuil : un fractionné, qui se trouve préparer un HYROX.
+             .hyroxIntervalles:
             return .intervals
 
         case .longRun, .specificLongRun, .easedLongRun,
@@ -393,6 +403,7 @@ enum SessionKind: String, Codable, Equatable, CaseIterable {
              .hyroxStationSkiErg, .hyroxStationSledPush, .hyroxStationSledPull, .hyroxStationBurpee,
              .hyroxStationRameur, .hyroxStationFarmers, .hyroxStationFentes, .hyroxStationWallBalls,
              .hyroxForceJambes, .hyroxGripDosGainage, .hyroxPliometrie, .hyroxMobilite,
+             .hyroxCourseCompromise, .hyroxSimulation,
              // La technique de nage et les transitions : hors de l'axe d'effort, comme le
              // renforcement HYROX. Ce qu'on y travaille n'est pas une filière énergétique, c'est
              // un geste — et dans les deux cas, c'est là que se trouvent les minutes les moins
@@ -452,7 +463,8 @@ enum SessionKind: String, Codable, Equatable, CaseIterable {
              .hyroxSleds, .hyroxPort, .hyroxSolDebout, .hyroxErgometres,
              .hyroxStationSkiErg, .hyroxStationSledPush, .hyroxStationSledPull, .hyroxStationBurpee,
              .hyroxStationRameur, .hyroxStationFarmers, .hyroxStationFentes, .hyroxStationWallBalls,
-             .hyroxForceJambes, .hyroxGripDosGainage, .hyroxPliometrie, .hyroxMobilite:
+             .hyroxForceJambes, .hyroxGripDosGainage, .hyroxPliometrie, .hyroxMobilite,
+             .hyroxIntervalles, .hyroxCourseCompromise, .hyroxSimulation:
             return [.run]
 
         case .ultraEnduranceFooting, .ultraHillRepeats, .ultraPowerHike, .ultraLongRun,
@@ -515,7 +527,9 @@ enum SessionKind: String, Codable, Equatable, CaseIterable {
              // Le fractionné en bassin, pour que `family == .intervals` et ce drapeau disent la
              // même chose — l'invariant que `SessionFamilyTests` vérifie. Sans structure
              // associée : voir le commentaire dans `family`.
-             .triSwimIntervals:
+             .triSwimIntervals,
+             // Les kilomètres au seuil du plan HYROX : un vrai fractionné, avec sa structure.
+             .hyroxIntervalles:
             return true
         default:
             return false
@@ -575,12 +589,18 @@ struct WorkoutSession: Codable, Equatable {
     /// avant ce champ, n'en a pas, et la fiche retombe alors sur la phase de base.
     var phaseHyrox: PhaseHyrox? = nil
 
+    /// Le palier d'une séance HYROX dans sa phase : 0 à la première semaine de travail du bloc, 1 à la
+    /// suivante… Il décide du nombre de tours et de la part de chaque station (voir `ProgrammeHyrox`).
+    /// Optionnel pour la même raison que la phase : sans lui, la fiche prend le premier palier.
+    var palierHyrox: Int? = nil
+
     init(title: String, subtitle: String, durationMinutes: Int, pace: String, zone: String,
          adjustment: String? = nil, kind: SessionKind? = nil,
          intervals: IntervalStructure? = nil, adaptationNote: String? = nil,
-         role: SessionRole? = nil, phaseHyrox: PhaseHyrox? = nil) {
+         role: SessionRole? = nil, phaseHyrox: PhaseHyrox? = nil, palierHyrox: Int? = nil) {
         self.role = role
         self.phaseHyrox = phaseHyrox
+        self.palierHyrox = palierHyrox
         self.title = title
         self.subtitle = subtitle
         self.durationMinutes = durationMinutes
@@ -615,11 +635,12 @@ struct WorkoutSession: Codable, Equatable {
         adaptationNote = try c.decodeIfPresent(String.self, forKey: .adaptationNote)
         role = try c.decodeIfPresent(SessionRole.self, forKey: .role)
         phaseHyrox = (try? c.decodeIfPresent(PhaseHyrox.self, forKey: .phaseHyrox)) ?? nil
+        palierHyrox = (try? c.decodeIfPresent(Int.self, forKey: .palierHyrox)) ?? nil
     }
 
     private enum CodingKeys: String, CodingKey {
         case title, subtitle, durationMinutes, pace, zone, adjustment, kind, intervals,
-             adaptationNote, role, phaseHyrox
+             adaptationNote, role, phaseHyrox, palierHyrox
     }
 
     /// Le titre à AFFICHER, dans la langue courante. Retombe sur le texte enregistré quand la

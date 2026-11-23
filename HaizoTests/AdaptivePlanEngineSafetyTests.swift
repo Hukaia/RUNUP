@@ -263,56 +263,117 @@ final class AdaptivePlanEngineSafetyTests: XCTestCase {
         }
     }
 
-    /// DEUX STATIONS PAR SEMAINE AU PLUS, JAMAIS SUR DEUX JOURS DE COURSE CONSÉCUTIFS.
+    /// UN FRACTIONNÉ ET UNE STATION PAR SEMAINE DE TRAVAIL, JAMAIS SUR DEUX JOURS DE SUITE.
     ///
-    /// La répartition choisie par Charlotte : chaque station a sa séance, deux par semaine. Elles
-    /// prennent les deux places de qualité que le plafond autorise ; une troisième serait remplacée
-    /// par un footing, et deux stations dos à dos seraient deux jours durs de suite. Éprouvé pour
-    /// trois à six jours de course, sur toutes les semaines du bloc de build.
+    /// Ce sont les deux séances de qualité que le plafond autorise. Dès quatre jours de course un
+    /// footing les sépare ; à trois jours elles tombent sur deux jours de course différents. Éprouvé
+    /// pour trois à six jours de course, sur toutes les semaines de travail du bloc de build.
     @MainActor
-    func testDeuxStationsParSemaineAuPlusEtJamaisDosADos() {
+    func testUnFractionneEtUneStationParSemaineJamaisDosADos() {
         for jours in [[0, 2, 6], [0, 2, 4, 6], [0, 1, 3, 4, 6], [0, 1, 2, 4, 5, 6]] {
             let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15, runningDays: jours)
             let s = shape(for: profile)
-            let buildWeeks = s.baseWeeks + s.specificWeeks
-            guard buildWeeks > 0 else { return XCTFail("un HYROX daté doit avoir des semaines de build") }
+            guard s.baseWeeks + s.specificWeeks > 0 else {
+                return XCTFail("un HYROX daté doit avoir des semaines de build")
+            }
 
-            for week in 1...buildWeeks {
+            for week in semainesDeTravail(s) {
                 let semaine = AdaptivePlanEngine
                     .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
-                let jourDesStations = semaine.filter {
-                    $0.session?.kind.flatMap(ProgrammeHyrox.Station.pour) != nil
-                }.map(\.weekday)
-                XCTAssertLessThanOrEqual(jourDesStations.count, 2,
-                                         "\(jours.count) jours, S\(week) : \(jourDesStations.count) séances de stations")
-                if jourDesStations.count == 2 {
-                    XCTAssertGreaterThan(abs(jourDesStations[0] - jourDesStations[1]), 1,
-                                         "\(jours.count) jours, S\(week) : deux stations sur deux jours de suite")
+                let stations = semaine.filter { $0.session?.kind.flatMap(ProgrammeHyrox.Station.pour) != nil }
+                let fractionnes = semaine.filter { $0.session?.kind == .hyroxIntervalles }
+                XCTAssertEqual(stations.count, 1, "\(jours.count) jours, S\(week) : une séance de station")
+                XCTAssertEqual(fractionnes.count, 1, "\(jours.count) jours, S\(week) : un fractionné")
+                if let station = stations.first, let fractionne = fractionnes.first {
+                    XCTAssertGreaterThan(abs(station.weekday - fractionne.weekday), 1,
+                                         "\(jours.count) jours, S\(week) : deux séances dures sur deux jours de suite")
                 }
+                // Le fractionné porte sa structure : c'est elle que l'écran de course guide.
+                XCTAssertEqual(fractionnes.first?.session?.intervals?.repMeters, 1000)
+                XCTAssertNotNil(fractionnes.first?.session?.intervals?.recoveryMeters)
             }
         }
     }
 
-    /// QUATRE JOURS DE COURSE : LES DEUX STATIONS CHAQUE SEMAINE DE TRAVAIL, ET LES HUIT PASSENT.
+    /// CHAQUE STATION A SA SÉANCE : les huit passent en huit semaines de travail, une par semaine.
     ///
-    /// Sur quatre semaines de travail du bloc de build, les huit stations passent chacune une fois. Le
-    /// cas échouait quand la rotation comptait les décharges : une famille tombait toujours dessus.
+    /// Le cas échouait quand la rotation comptait les décharges : une station tombait toujours dessus.
     @MainActor
-    func testLesHuitStationsPassentSurQuatreSemainesDeTravail() {
+    func testLesHuitStationsOntLeurSeanceEnHuitSemainesDeTravail() {
         let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15, runningDays: [0, 2, 4, 6])
         let travail = semainesDeTravail(shape(for: profile))
-        guard travail.count >= 4 else { return XCTFail("quatre semaines de travail au moins") }
+        guard travail.count >= 8 else { return XCTFail("huit semaines de travail au moins") }
 
         var vues: [ProgrammeHyrox.Station] = []
-        for week in travail.prefix(4) {
+        for week in travail.prefix(8) {
             let kinds = AdaptivePlanEngine
                 .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
                 .compactMap { $0.session?.kind }
-            let stations = kinds.compactMap(ProgrammeHyrox.Station.pour)
-            XCTAssertEqual(stations.count, 2, "S\(week) : deux stations avec quatre jours de course")
-            vues += stations
+            vues += kinds.compactMap(ProgrammeHyrox.Station.pour)
         }
-        XCTAssertEqual(Set(vues).count, 8, "les huit stations sur quatre semaines de travail")
+        XCTAssertEqual(vues.count, 8)
+        XCTAssertEqual(Set(vues).count, 8, "les huit stations sur huit semaines de travail")
+    }
+
+    /// LA COURSE COMPROMISE GRANDIT, LA SIMULATION N'ARRIVE QU'UNE FOIS, ET L'AFFÛTAGE N'EN PORTE PAS.
+    ///
+    /// Chaque semaine du plan a sa course compromise, le jour de la sortie longue. Ses tours ne
+    /// diminuent jamais d'une semaine de travail à la suivante ; la simulation complète tombe à la
+    /// dernière semaine de travail du bloc spécifique, et nulle part ailleurs ; l'affûtage ne garde
+    /// qu'un rappel de trois tours au plus.
+    @MainActor
+    func testLaCourseCompromiseGranditEtLaSimulationArriveUneFois() {
+        let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15, runningDays: [0, 2, 4, 6])
+        let s = shape(for: profile)
+        guard let total = s.totalWeeks else { return XCTFail("un HYROX daté a une durée totale") }
+        func longue(_ week: Int) -> WorkoutSession? {
+            AdaptivePlanEngine
+                .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
+                .compactMap { $0.session }
+                .first { $0.role == .longRun }
+        }
+
+        let travail = semainesDeTravail(s)
+        var tours: [Int] = []
+        var simulations: [Int] = []
+        for week in travail {
+            guard let seance = longue(week) else { return XCTFail("S\(week) : pas de course compromise") }
+            if seance.kind == .hyroxSimulation {
+                simulations.append(week)
+                XCTAssertEqual(seance.intervals?.reps, 8, "la simulation fait les huit tours")
+            } else {
+                XCTAssertEqual(seance.kind, .hyroxCourseCompromise, "S\(week)")
+            }
+            XCTAssertNotNil(seance.phaseHyrox, "S\(week)")
+            XCTAssertNotNil(seance.palierHyrox, "S\(week)")
+            tours.append(seance.intervals?.reps ?? 0)
+        }
+        XCTAssertEqual(tours, tours.sorted(), "les tours ne diminuent jamais : \(tours)")
+        XCTAssertEqual(tours.first, 3)
+        XCTAssertEqual(simulations, [travail.last].compactMap { $0 }, "une simulation, à la dernière semaine de travail")
+
+        for week in (s.baseWeeks + s.specificWeeks + 1)...total {
+            guard let seance = longue(week) else { return XCTFail("S\(week) : pas de rappel") }
+            XCTAssertEqual(seance.kind, .hyroxCourseCompromise, "S\(week) : aucune simulation dans l'affûtage")
+            XCTAssertEqual(seance.phaseHyrox, .affutage)
+            XCTAssertLessThanOrEqual(seance.intervals?.reps ?? 99, 3, "S\(week)")
+        }
+    }
+
+    /// QUELQU'UN QUI N'A PAS UNE HEURE QUARANTE NE REÇOIT PAS LA SIMULATION : la course compromise de six
+    /// tours reste, plutôt qu'une séance annoncée qu'on ne peut pas faire.
+    @MainActor
+    func testLaSimulationNEstPasPoseeSansLeTempsDeLaFaire() {
+        let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15, runningDays: [0, 2, 4, 6])
+        profile.tempsSemaineMin = 60
+        profile.tempsWeekEndMin = 75
+        let s = shape(for: profile)
+        for week in 1...(s.totalWeeks ?? 1) {
+            let kinds = AdaptivePlanEngine
+                .generateWeekSessions(weekNumber: week, tier: profile.weekTier, profile: profile)
+                .compactMap { $0.session?.kind }
+            XCTAssertFalse(kinds.contains(.hyroxSimulation), "S\(week)")
+        }
     }
 
     /// UNE DÉCHARGE NE PORTE AUCUNE STATION : la semaine est allégée, pas un jour de plus de charge.
@@ -354,8 +415,8 @@ final class AdaptivePlanEngineSafetyTests: XCTestCase {
 
     /// LE TRAVAIL COMPLÉMENTAIRE ENTRE DANS LE PLAN, ET LE PLAFOND DE QUALITÉ TIENT TOUJOURS.
     ///
-    /// À cinq jours, un travail complémentaire chaque semaine. Il est de rôle facile : ajouté aux deux
-    /// stations, il ne doit pas faire sauter le plafond de deux séances dures.
+    /// À cinq jours, un travail complémentaire chaque semaine. Il est de rôle facile : ajouté au
+    /// fractionné et à la station, il ne doit pas faire sauter le plafond de deux séances dures.
     @MainActor
     func testLeTravailComplementaireEntreSansFaireSauterLePlafond() {
         let profile = makeProfile(goal: .hyrox, distance: nil, weeksUntilRace: 15,

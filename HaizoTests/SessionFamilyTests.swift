@@ -58,6 +58,7 @@ final class SessionFamilyTests: XCTestCase {
             .hyroxStationSkiErg, .hyroxStationSledPush, .hyroxStationSledPull, .hyroxStationBurpee,
             .hyroxStationRameur, .hyroxStationFarmers, .hyroxStationFentes, .hyroxStationWallBalls,
             .hyroxForceJambes, .hyroxGripDosGainage, .hyroxPliometrie, .hyroxMobilite,
+            .hyroxCourseCompromise, .hyroxSimulation,
         ]
         for kind in expected {
             XCTAssertEqual(kind.family, .functional, "\(kind.rawValue)")
@@ -70,6 +71,9 @@ final class SessionFamilyTests: XCTestCase {
         XCTAssertEqual(SessionKind.hyroxMaintenanceFooting.family, .endurance)
         XCTAssertEqual(SessionKind.hyroxRecoveryFooting.family, .recovery)
         XCTAssertEqual(SessionKind.hyroxTempoSled.family, .tempo)
+        // Les kilomètres au seuil sont un fractionné, et l'écran de course les guide comme tel.
+        XCTAssertEqual(SessionKind.hyroxIntervalles.family, .intervals)
+        XCTAssertTrue(SessionKind.hyroxIntervalles.isIntervalWorkout)
     }
 
     // MARK: Le repli des plans enregistrés avant `kind`

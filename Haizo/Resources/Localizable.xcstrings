@@ -41060,23 +41060,6 @@
         }
       }
     },
-    "valeurs de départ courantes en préparation, pas un protocole officiel : ajuste à ton ressenti, et arrête avant que le geste ne se dégrade": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "common starting values in training, not an official protocol: adjust to how it feels, and stop before the movement breaks down"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "valores de partida habituales en la preparación, no un protocolo oficial: ajusta a tu sensación y para antes de que el gesto se deteriore"
-          }
-        }
-      }
-    },
     "reste dans ton couloir, sled compris · le sled dépasse entièrement la ligne de fin de couloir avant de changer de sens": {
       "extractionState": "manual",
       "localizations": {
@@ -41260,6 +41243,433 @@
           "stringUnit": {
             "state": "translated",
             "value": "luego %@"
+          }
+        }
+      }
+    },
+    "%lld × (%lld m de course + 1 aller)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × (%lld m run + 1 length)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × (%lld m de carrera + 1 tramo)"
+          }
+        }
+      }
+    },
+    "%lld allers": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld lengths"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld tramos"
+          }
+        }
+      }
+    },
+    "1 aller": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 length"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 tramo"
+          }
+        }
+      }
+    },
+    "%lld répétitions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld reps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld repeticiones"
+          }
+        }
+      }
+    },
+    "%lld kg": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld kg"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld kg"
+          }
+        }
+      }
+    },
+    "%lld kg dans chaque main": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld kg in each hand"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld kg en cada mano"
+          }
+        }
+      }
+    },
+    "%lld gestes, dans l'ordre · la technique avant la charge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld movements, in order · technique before load"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld gestos, en orden · la técnica antes que la carga"
+          }
+        }
+      }
+    },
+    "%@ /km · allure seuil, soutenue mais tenable · %lld m en trottinant entre chaque": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ /km · threshold pace, hard but sustainable · %lld m easy jog between each"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ /km · ritmo umbral, exigente pero sostenible · %lld m de trote suave entre cada uno"
+          }
+        }
+      }
+    },
+    "allure seuil, soutenue mais tenable · %lld m en trottinant entre chaque": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "threshold pace, hard but sustainable · %lld m easy jog between each"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ritmo umbral, exigente pero sostenible · %lld m de trote suave entre cada uno"
+          }
+        }
+      }
+    },
+    "%lld × 1 km": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × 1 km"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld × 1 km"
+          }
+        }
+      }
+    },
+    "Pourquoi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Why"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por qué"
+          }
+        }
+      }
+    },
+    "la course fait plus de la moitié du temps d'un HYROX : c'est la séance qui la rend plus rapide, dans l'unité de l'épreuve": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "running is more than half of a HYROX finish time: this is the session that makes it faster, in the race's own unit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "la carrera es más de la mitad del tiempo de un HYROX: esta es la sesión que la hace más rápida, en la unidad de la prueba"
+          }
+        }
+      }
+    },
+    "L'intention": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The intent"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La intención"
+          }
+        }
+      }
+    },
+    "une répétition générale, pas un chrono : pars moins vite que tu n'en as envie, et note où tu perds du temps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a dress rehearsal, not a time trial: start slower than you want to, and note where you lose time"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "un ensayo general, no una contrarreloj: sal más despacio de lo que te apetece y anota dónde pierdes tiempo"
+          }
+        }
+      }
+    },
+    "Les charges": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The loads"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las cargas"
+          }
+        }
+      }
+    },
+    "sleds, kettlebells et sac aux deux tiers de ta charge de course : ici, c'est repartir en courant qui se travaille": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sleds, kettlebells and sandbag at two thirds of your race load: here, the work is getting back to running"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "trineos, kettlebells y saco a dos tercios de tu carga de competición: aquí se trabaja volver a correr"
+          }
+        }
+      }
+    },
+    "ces volumes sont un point de départ : allège d'un tour ou d'un cran de charge si le geste se dégrade, et ne dépasse pas ce qui est écrit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "these volumes are a starting point: drop a round or a notch of load if your form breaks down, and do not go beyond what is written"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "estos volúmenes son un punto de partida: quita una vuelta o baja la carga si el gesto se degrada, y no superes lo que está escrito"
+          }
+        }
+      }
+    },
+    "session.hyrox_intervalles.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fractionné 1 km"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 km intervals"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Series de 1 km"
+          }
+        }
+      }
+    },
+    "session.hyrox_intervalles.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Des kilomètres au seuil : l'unité de course de l'épreuve"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilometres at threshold: the race's own running unit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilómetros al umbral: la unidad de carrera de la prueba"
+          }
+        }
+      }
+    },
+    "session.hyrox_course_compromise.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Course compromise"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compromised run"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carrera comprometida"
+          }
+        }
+      }
+    },
+    "session.hyrox_course_compromise.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 km de course, puis une station, enchaînés : le format de l'épreuve"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 km run, then a station, back to back: the race format"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 km de carrera y luego una estación, seguidos: el formato de la prueba"
+          }
+        }
+      }
+    },
+    "session.hyrox_simulation.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simulation HYROX"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HYROX simulation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simulación HYROX"
+          }
+        }
+      }
+    },
+    "session.hyrox_simulation.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les huit tours de l'épreuve, en répétition générale"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All eight rounds of the race, as a dress rehearsal"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las ocho vueltas de la prueba, como ensayo general"
           }
         }
       }

@@ -93,20 +93,13 @@ struct ChargesHyrox: Equatable, Sendable {
     /// affirmation physiologique n'est portée ici : le règlement donne un format, pas une méthode,
     /// et ce que la source ne dit pas, ce fichier ne l'invente pas.
     ///
-    /// # LES FAMILLES NE SONT PLUS DES SÉANCES : ELLES SONT LES PAIRES DE LA ROTATION
+    /// # LES FAMILLES NE SERVENT PLUS QU'À RELIRE UN PLAN ENREGISTRÉ
     ///
-    /// Depuis le 22 novembre, chaque station a SA séance (`ProgrammeHyrox.Station`). Les quatre
-    /// familles restent comme paires : une semaine travaille les deux stations d'une famille, chacune
-    /// dans sa séance, et la rotation passe par les quatre familles en quatre semaines.
-    ///
-    /// # DEUX STATIONS PAR SEMAINE, À CHARGE RÉELLE
-    ///
-    /// Le plafond du moteur autorise deux séances de qualité par semaine : les deux stations les
-    /// prennent. La qualité EN COURANT vient de la course compromise, la sortie longue du bloc, que
-    /// ce plafond ne compte pas. Il n'y a plus de tempo séparé : avec deux stations, il aurait été
-    /// la troisième séance dure et le moteur l'aurait remplacé en silence par un footing. C'est un
-    /// arbitrage de Charlotte (22 novembre) : l'épreuve compte la moitié de course, et la semaine
-    /// porte maintenant moins de course de qualité qu'avant. À relire sur le retour de qui s'entraîne.
+    /// Le programme ne produit plus de séance de deux stations, et ne se sert plus des familles pour
+    /// faire tourner les stations : chaque station a sa séance, une par semaine de travail, dans
+    /// l'ordre de `ProgrammeHyrox.ordreDesStations`. Les familles restent pour une seule raison : un
+    /// plan enregistré avant peut porter une séance « Sleds » ou « Ergomètres », et la fiche doit
+    /// pouvoir l'afficher (voir `enregistree`).
     enum FamilleDeStations: String, CaseIterable, Equatable, Sendable {
         /// Sled push et sled pull : les deux charges les plus lourdes.
         case pousserTirer
@@ -177,6 +170,19 @@ struct ChargesHyrox: Equatable, Sendable {
     ///
     /// Fonction pure, et c'est voulu : elle se vérifie sans écran. La fiche détail s'en sert, et
     /// n'a donc pas à savoir dans quel ordre les stations tombent.
+    /// La charge de course d'une station pour cette division, en clair, ou `nil` pour les stations
+    /// qui n'en ont pas (ergomètres, burpees). La course compromise l'écrit à côté de chaque tour.
+    func charge(de station: ProgrammeHyrox.Station) -> String? {
+        switch station {
+        case .sledPush: return String(localized: "\(sledPushKg) kg")
+        case .sledPull: return String(localized: "\(sledPullKg) kg")
+        case .farmersCarry: return String(localized: "\(kettlebellKg) kg dans chaque main")
+        case .fentesSandbag: return String(localized: "\(sandbagKg) kg")
+        case .wallBalls: return String(localized: "\(wallBallKg) kg")
+        case .skiErg, .rameur, .burpeeBroadJumps: return nil
+        }
+    }
+
     var stations: [(nom: String, prescription: String)] {
         [
             (String(localized: "SkiErg"), String(localized: "\(Format.skiErgM) m")),

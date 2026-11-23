@@ -278,8 +278,8 @@ enum CaptureSeed {
     /// `semaine` ne pose que l'objectif (division Hommes, quatorze semaines devant) : le plan montre
     /// alors la vraie semaine HYROX que le moteur génère. Toute autre valeur est la valeur brute d'un
     /// `SessionKind` (`hyrox_station_sled_push`, `hyrox_force_jambes`…) et pose en plus CETTE séance
-    /// aujourd'hui, pour photographier sa fiche avec `--seance`. `--phase=specifique` la pose au bloc
-    /// spécifique (le bloc de base sinon).
+    /// aujourd'hui, pour photographier sa fiche avec `--seance`. `--phase=<phase>` et `--palier=<n>` la
+    /// posent à ce moment du programme (premier palier du bloc de base sinon).
     ///
     /// Jamais lu hors de la démonstration : ce drapeau n'existe que dans le chemin `--captures`.
     static var hyroxDemande: String? {
@@ -289,7 +289,9 @@ enum CaptureSeed {
     }
 
     static var phaseHyroxDemandee: PhaseHyrox {
-        ProcessInfo.processInfo.arguments.contains("--phase=specifique") ? .specifique : .base
+        ProcessInfo.processInfo.arguments
+            .first { $0.hasPrefix("--phase=") }
+            .flatMap { PhaseHyrox(rawValue: String($0.dropFirst("--phase=".count))) } ?? .base
     }
 
     /// La séance HYROX demandée, pour photographier sa fiche avec `--seance`.
@@ -303,14 +305,53 @@ enum CaptureSeed {
     /// compromise du dimanche sous cinq noms de fichier différents.
     static var seanceHyroxDemandee: WorkoutSession? {
         guard let brut = hyroxDemande, brut != "semaine", let kind = SessionKind(rawValue: brut) else { return nil }
-        let estUneStation = ProgrammeHyrox.Station.pour(kind) != nil
-        return WorkoutSession(
-            title: brut, subtitle: "",
-            durationMinutes: estUneStation ? 40 : 35, pace: "—",
-            zone: estUneStation ? "Z3-4" : "Technique",
-            adjustment: nil, kind: kind, role: estUneStation ? .speed : .easy,
-            phaseHyrox: phaseHyroxDemandee
-        )
+        let phase = phaseHyroxDemandee
+        let palier = palierHyroxDemande
+        // LA DURÉE EST CELLE DU PROGRAMME, calculée comme le moteur la calcule : la première version
+        // écrivait « 40 minutes » en dur, et la capture ne prouvait donc rien de la durée affichée.
+        if let station = ProgrammeHyrox.Station.pour(kind) {
+            return WorkoutSession(
+                title: brut, subtitle: "",
+                durationMinutes: station.format(phase: phase, palier: palier).dureeMinutes,
+                pace: phase.estFacile ? "6:20" : "5:45", zone: phase.estFacile ? "Z2-3" : "Z3-4",
+                adjustment: nil, kind: kind, role: .speed, phaseHyrox: phase, palierHyrox: palier
+            )
+        }
+        switch kind {
+        case .hyroxIntervalles:
+            let reps = ProgrammeHyrox.repetitionsDesIntervalles(phase: phase, palier: palier)
+            return WorkoutSession(
+                title: "Fractionné \(reps) × 1 km", subtitle: "",
+                durationMinutes: ProgrammeHyrox.dureeDesIntervalles(phase: phase, palier: palier),
+                pace: "5:05", zone: "Z3", adjustment: nil, kind: kind,
+                intervals: IntervalStructure(reps: reps, repMeters: 1000,
+                                             recoveryMeters: ProgrammeHyrox.recuperationDesIntervallesM),
+                role: .speed, phaseHyrox: phase, palierHyrox: palier
+            )
+        case .hyroxCourseCompromise, .hyroxSimulation:
+            let c = ProgrammeHyrox.courseCompromise(phase: phase, palier: palier,
+                                                    simulation: kind == .hyroxSimulation)
+            return WorkoutSession(
+                title: "Course compromise \(c.tours) × 1 km", subtitle: "",
+                durationMinutes: c.dureeMinutes,
+                pace: c.allure == .facile ? "6:20" : "5:45", zone: c.allure == .facile ? "Z2-3" : "Z3-4",
+                adjustment: nil, kind: kind,
+                intervals: IntervalStructure(reps: c.tours, repMeters: 1000, recoveryMeters: nil),
+                role: .longRun, phaseHyrox: phase, palierHyrox: palier
+            )
+        default:
+            return WorkoutSession(
+                title: brut, subtitle: "", durationMinutes: 35, pace: "—", zone: "Technique",
+                adjustment: nil, kind: kind, role: .easy, phaseHyrox: phase, palierHyrox: palier
+            )
+        }
+    }
+
+    /// `--palier=<n>` : le palier de la séance HYROX demandée dans sa phase (0 sans le drapeau).
+    static var palierHyroxDemande: Int {
+        ProcessInfo.processInfo.arguments
+            .first { $0.hasPrefix("--palier=") }
+            .flatMap { Int($0.dropFirst("--palier=".count)) } ?? 0
     }
 
     /// `--feuille=<nom>` : ouvrir une feuille que l'état de l'app suffit à présenter, pour la photographier.

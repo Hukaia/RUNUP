@@ -1,37 +1,61 @@
 import Foundation
 
-/// LE PROGRAMME HYROX : une séance par station, et le travail qui n'est pas une station.
+/// LE PROGRAMME HYROX : ce qu'on fait chaque semaine, et pourquoi.
 ///
-/// # CE QUE CHARLOTTE A DEMANDÉ, ET CE QUE ÇA CHANGE
+/// # SUR QUOI IL EST CONSTRUIT
 ///
-/// Deux choses, le 22 novembre. D'abord, que chacune des huit stations ait SA séance : jusqu'ici
-/// elles se travaillaient par paires (« Sleds », « Porter », « Sol-debout », « Ergomètres »), et
-/// une paire ne dit pas ce que chaque geste exige. Ensuite, que le programme ne se limite pas aux
-/// stations de l'épreuve : la force des jambes, la prise, le dos et le gainage, la pliométrie et
-/// les appuis, la mobilité y ont leur place.
+/// HYROX ne publie aucun plan pour adultes : il n'existe pas de « protocole officiel » à recopier. Le
+/// programme est donc CONSTRUIT, à partir de ce qui est mesuré sur l'épreuve, et chaque choix ci-dessous
+/// dit d'où il vient.
 ///
-/// # CE QUI EST SOURCÉ, ET CE QUI EST UNE PRESCRIPTION DE PRÉPARATION
+/// 1. LA COURSE EST LA COLONNE VERTÉBRALE. Sur 12 479 arrivées de la saison 8 (HyroxDataLab, chiffre lu
+///    dans un résumé et non sur la page), la course fait 52 % du temps, les stations 40 %, les
+///    transitions 8 % ; l'étude ci-dessous mesure la même chose (51 min de course sur 86,5). Et dans la seule étude de physiologie
+///    de l'épreuve (Brandt, Ebel, Lebahn, Schmidt, Frontiers in Physiology, 2025, onze athlètes de
+///    loisir), le temps final est lié à la VO2max (rho −0,71) et au volume d'endurance hebdomadaire
+///    (rho −0,68) ; ni la force de préhension ni le volume de musculation ne le sont. Chaque semaine
+///    porte donc une séance de course de qualité (des kilomètres au seuil, l'unité de l'épreuve), de la
+///    course facile, et de la course dans la séance de station et dans la course compromise.
 ///
-/// Deux sortes de contenu, et la séance les distingue à l'écran.
+/// 2. L'ENCHAÎNEMENT SE RÉPÈTE CHAQUE SEMAINE. La même étude mesure 79,5 % du temps au-dessus de 90 %
+///    de la fréquence cardiaque maximale : l'épreuve se court fatigué. La course compromise (un
+///    kilomètre, une station, sans s'arrêter) revient chaque semaine, grandit de trois tours à six,
+///    et passe par les huit stations à tour de rôle. La simulation complète n'est faite qu'une fois,
+///    à la dernière semaine du bloc spécifique.
+///
+/// 3. CHAQUE STATION A SA SÉANCE, mesurée en parts de l'épreuve. Un tour demande un quart, la moitié ou
+///    les trois quarts de la station ; une séance n'en demande jamais plus d'une fois et demie le
+///    volume de l'épreuve. Au bloc de base, les stations lestées sont aux deux tiers de la charge de
+///    course et la course est facile ; au bloc spécifique, tout est à la charge et à l'allure de
+///    l'épreuve, avec moins de volume. Les wall balls passent en premier dans la rotation : c'est la
+///    station la plus coûteuse de l'étude (fréquence cardiaque, lactate, effort perçu).
+///
+/// 4. LA CHARGE MONTE PAR PALIERS, une semaine de travail après l'autre, et redescend aux semaines de
+///    décharge que le moteur pose toutes les quatre semaines. L'affûtage ne contient aucune
+///    simulation : seulement un rappel court, à l'allure et à la charge de l'épreuve.
+///
+/// # CE QUI EST SOURCÉ, ET CE QUI EST UN CHOIX DE CONSTRUCTION
 ///
 /// SOURCÉ : les standards de chaque station (HYROX Single Rulebook 26/27, section 8, voir
-/// `ChargesHyrox`) — ce que le juge valide, ce qu'il refuse — et les distances et charges par division.
+/// `ChargesHyrox`), les distances et les charges par division, la part de la course dans l'épreuve,
+/// ce qui prédit le temps final, les temps de passage des sleds et du farmers carry (Brandt 2025).
 ///
-/// PRESCRIPTION DE PRÉPARATION : le nombre de séries, de répétitions, de mètres et le repos. HYROX ne
-/// publie aucun plan pour adultes (seulement des programmes de partenaires), donc ces nombres ne
-/// viennent d'aucun protocole officiel. Ce sont des valeurs de départ COURANTES en préparation
-/// physique — volume modéré au bloc de base, charge et distance de course au bloc spécifique,
-/// repos qui laisse le geste propre — écrites pour être ajustées au ressenti (effort sur dix). La
-/// fiche le dit en toutes lettres : « valeurs de départ, pas un protocole officiel ». Elles n'ont
-/// pas été relues par quelqu'un qui a couru un HYROX.
-///
-/// Les charges des stations sont relatives à la charge de course de la division (aux deux tiers, aux
-/// trois quarts, à la charge de course) : la fiche connaît la division, donc les kilos.
-/// La phase du programme d'où vient une séance HYROX : elle décide du volume et de la charge.
-/// Portée par la séance (`WorkoutSession.phaseHyrox`) pour que la fiche sache de quelle semaine
-/// elle parle sans recalculer le plan.
+/// CHOIX DE CONSTRUCTION : le nombre exact de tours et de répétitions de chaque palier. Ils suivent les
+/// règles écrites ci-dessus (parts de l'épreuve, plafond d'une fois et demie, progression d'un palier
+/// par semaine de travail) et se vérifient dans `ProgrammeHyroxTests`. L'étude est petite (onze
+/// athlètes) : elle oriente le programme, elle ne fixe pas un nombre de séries. La fiche le dit à la
+/// coureuse en une ligne, et lui laisse la main sur l'effort.
+
+/// La phase du programme d'où vient une séance HYROX : elle décide de l'allure et de la charge. Portée
+/// par la séance (`WorkoutSession.phaseHyrox`), avec son palier (`WorkoutSession.palierHyrox`), pour
+/// que la fiche sache de quelle semaine elle parle sans recalculer le plan.
 enum PhaseHyrox: String, Codable, Equatable, Sendable {
-    case base, specifique
+    case base, specifique, affutage, decharge
+
+    /// La phase se court-elle à allure facile, stations lestées aux deux tiers de la charge ? Le bloc
+    /// de base et les semaines de décharge ; le spécifique et l'affûtage sont à l'allure et à la
+    /// charge de l'épreuve.
+    var estFacile: Bool { self == .base || self == .decharge }
 }
 
 /// Ce qu'une séance prescrit : combien de séries de quoi, à quelle intensité, avec quel repos.
@@ -71,6 +95,12 @@ struct PrescriptionHyrox: Equatable, Sendable {
     }
 }
 
+/// La part de la station de l'épreuve qu'un tour demande, en quarts : toutes les quantités de
+/// l'épreuve (1 000 m, 4 allers, 80 m, 200 m, 100 m, 100 répétitions) se divisent par quatre sans reste.
+enum PartDeStation: Int, CaseIterable, Equatable, Sendable {
+    case quart = 1, moitie, troisQuarts, entiere
+}
+
 /// UNE SÉANCE DE STATION : des tours de « course, puis la station », comme l'épreuve.
 struct FormatDeStation: Equatable, Sendable {
     enum Unite: Equatable, Sendable { case metres, allers, repetitions }
@@ -92,7 +122,11 @@ struct FormatDeStation: Equatable, Sendable {
         let tour: String
         switch unite {
         case .metres: tour = String(localized: "\(tours) × (\(courseM) m de course + \(quantite) m)")
-        case .allers: tour = String(localized: "\(tours) × (\(courseM) m de course + \(quantite) allers)")
+        case .allers:
+            // « 1 allers » ne se dit pas : le quart d'un sled est un seul aller.
+            tour = Pluriel.choisir(quantite,
+                                   String(localized: "\(tours) × (\(courseM) m de course + 1 aller)"),
+                                   String(localized: "\(tours) × (\(courseM) m de course + \(quantite) allers)"))
         case .repetitions: tour = String(localized: "\(tours) × (\(courseM) m de course + \(quantite) répétitions)")
         }
         var morceaux = [tour, String(localized: "\(reposSecondes) s de repos après la station")]
@@ -167,53 +201,116 @@ enum ProgrammeHyrox {
             }
         }
 
-        /// CE QU'ON FAIT DE LA STATION CETTE SEMAINE : des tours de « 1 km de course, puis la station »,
-        /// comme l'épreuve, en plus court.
+        /// La quantité de la station À L'ÉPREUVE, et son unité (règlement, voir `ChargesHyrox.Format`).
+        var deLEpreuve: (quantite: Int, unite: FormatDeStation.Unite) {
+            switch self {
+            case .skiErg: return (ChargesHyrox.Format.skiErgM, .metres)
+            case .rameur: return (ChargesHyrox.Format.rameurM, .metres)
+            case .sledPush, .sledPull: return (ChargesHyrox.Format.sledAllers, .allers)
+            case .burpeeBroadJumps: return (ChargesHyrox.Format.burpeeBroadJumpM, .metres)
+            case .farmersCarry: return (ChargesHyrox.Format.farmersCarryM, .metres)
+            case .fentesSandbag: return (ChargesHyrox.Format.fentesM, .metres)
+            case .wallBalls: return (ChargesHyrox.Format.wallBallsReps, .repetitions)
+            }
+        }
+
+        /// Ce qu'une part de la station représente : la moitié du SkiErg, c'est 500 m ; les trois
+        /// quarts d'un sled, trois allers.
+        func quantite(_ part: PartDeStation) -> Int {
+            deLEpreuve.quantite * part.rawValue / PartDeStation.entiere.rawValue
+        }
+
+        /// « 500 m », « 2 allers », « 50 répétitions » : ce qu'une part de la station demande, en clair.
+        func texte(_ part: PartDeStation) -> String {
+            let q = quantite(part)
+            switch deLEpreuve.unite {
+            case .metres: return String(localized: "\(q) m")
+            case .allers: return Pluriel.choisir(q, String(localized: "1 aller"), String(localized: "\(q) allers"))
+            case .repetitions: return String(localized: "\(q) répétitions")
+            }
+        }
+
+        /// La station se fait-elle avec une charge qui change par division (sled, kettlebells, sac) ?
+        /// Ce sont celles qu'on allège au bloc de base. La balle des wall balls est déjà légère.
+        var estLestee: Bool {
+            switch self {
+            case .sledPush, .sledPull, .farmersCarry, .fentesSandbag: return true
+            case .skiErg, .rameur, .burpeeBroadJumps, .wallBalls: return false
+            }
+        }
+
+        /// LES PALIERS D'UNE SÉANCE DE STATION : combien de tours, et quelle part de la station par tour.
+        ///
+        /// Bloc de base : on apprend le geste sous une fatigue légère, avec du volume qui monte de
+        /// 75 % à 150 % de celui de l'épreuve (3, 4, 5 tours d'un quart, puis 3 tours d'une moitié).
+        /// Bloc spécifique : la charge et l'allure montent à celles de l'épreuve, donc le volume
+        /// REDESCEND à 100 % avant de remonter (2 puis 3 tours d'une moitié, puis 2 tours de trois
+        /// quarts). Le plafond d'une fois et demie l'épreuve n'est jamais dépassé.
+        static func palierDeStation(phase: PhaseHyrox, palier: Int) -> (tours: Int, part: PartDeStation) {
+            let p = max(0, palier)
+            switch phase {
+            case .base:
+                switch p {
+                case 0: return (3, .quart)
+                case 1: return (4, .quart)
+                case 2: return (5, .quart)
+                default: return (3, .moitie)
+                }
+            case .specifique:
+                switch p {
+                case 0: return (2, .moitie)
+                case 1: return (3, .moitie)
+                default: return (2, .troisQuarts)
+                }
+            case .affutage, .decharge:
+                return (2, .quart)
+            }
+        }
+
+        /// CE QU'ON FAIT DE LA STATION CETTE SEMAINE : des tours de « course, puis la station », comme
+        /// l'épreuve, en plus court.
         ///
         /// UNE STATION SANS COURSE N'EST PAS UN ENTRAÎNEMENT HYROX : l'épreuve enchaîne huit fois un
         /// kilomètre et une station, et c'est la fatigue de l'un qui change l'autre. La première version
         /// de cette séance posait la station seule (« 6 × 50 m de sled »), et Charlotte l'a refusée.
         ///
-        /// Bloc de base : quatre tours, 800 m de course facile, la moitié de la station aux deux tiers de
-        /// la charge, pour apprendre le geste en gardant du souffle. Bloc spécifique : trois tours, 1 km
-        /// à allure d'épreuve, les trois quarts de la station à la charge de course. La station entière
-        /// n'est faite qu'à l'épreuve et à la simulation (voir `HyroxCompromisedRun6`).
-        ///
-        /// Voir l'en-tête de ce fichier : des valeurs de départ courantes, pas un protocole HYROX.
-        func format(phase: PhaseHyrox) -> FormatDeStation {
-            let base = phase == .base
-            let course = base ? 800 : 1000
-            let tours = base ? 4 : 3
-            let repos = base ? 60 : 90
-            let allure: FormatDeStation.AllureDeCourse = base ? .facile : .epreuve
-            func f(_ quantite: Int, _ unite: FormatDeStation.Unite, _ intensite: PrescriptionHyrox.Intensite)
-                -> FormatDeStation {
-                FormatDeStation(tours: tours, courseM: course, quantite: quantite, unite: unite,
-                                reposSecondes: repos, intensite: intensite, allure: allure,
-                                secondesParUnite: secondesParUnite)
-            }
+        /// Bloc de base : 800 m de course facile, stations lestées aux deux tiers de la charge. Bloc
+        /// spécifique et affûtage : 1 km à allure d'épreuve, charge de course. Le nombre de tours et la
+        /// part de la station viennent du palier (voir `palierDeStation`).
+        func format(phase: PhaseHyrox, palier: Int = 0) -> FormatDeStation {
+            let base = phase.estFacile
+            let (tours, part) = Station.palierDeStation(phase: phase, palier: palier)
+            let intensite: PrescriptionHyrox.Intensite
             switch self {
-            case .skiErg: return f(base ? 500 : 750, .metres, .effort(base ? 7 : 8))
-            case .rameur: return f(base ? 500 : 750, .metres, .effort(base ? 7 : 8))
-            case .sledPush, .sledPull: return f(base ? 2 : 3, .allers, base ? .deuxTiers : .chargeDeCourse)
-            case .burpeeBroadJumps: return f(base ? 40 : 60, .metres, .aucune)
-            case .farmersCarry: return f(base ? 100 : 150, .metres, base ? .deuxTiers : .chargeDeCourse)
-            case .fentesSandbag: return f(base ? 50 : 75, .metres, base ? .deuxTiers : .chargeDeCourse)
-            case .wallBalls: return f(base ? 50 : 75, .repetitions, .aucune)
+            case .skiErg, .rameur: intensite = .effort(base ? 7 : 8)
+            case .burpeeBroadJumps, .wallBalls: intensite = .aucune
+            case .sledPush, .sledPull, .farmersCarry, .fentesSandbag:
+                intensite = base ? .deuxTiers : .chargeDeCourse
             }
+            return FormatDeStation(tours: tours, courseM: base ? 800 : 1000,
+                                   quantite: quantite(part), unite: deLEpreuve.unite,
+                                   reposSecondes: base ? 60 : 90, intensite: intensite,
+                                   allure: base ? .facile : .epreuve,
+                                   secondesParUnite: secondesParUnite)
         }
 
-        /// Le temps qu'une unité de la station prend à quelqu'un qui la fait sans se précipiter, en
-        /// secondes : sert à écrire la DURÉE de la séance d'après son contenu. Une estimation de
-        /// planification, pas une mesure.
-        private var secondesParUnite: Double {
+        /// Le temps qu'une unité de la station prend à une athlète de loisir, en secondes : sert à
+        /// écrire la DURÉE de la séance d'après son contenu.
+        ///
+        /// Les sleds et le farmers carry viennent des médianes de Brandt 2025 (sled push 128 s et sled
+        /// pull 155 s pour quatre allers, farmers carry 2,7 min pour 200 m). Les autres sont des
+        /// estimations de planification (4 min 30 à 4 min 50 pour 1 000 m d'ergomètre, 6 min pour cent
+        /// wall balls) : elles règlent une durée affichée, pas une cible.
+        var secondesParUnite: Double {
             switch self {
-            case .skiErg, .rameur: return 0.24     // 4 min pour 1 000 m
-            case .sledPush, .sledPull: return 12   // un aller de 12,5 m
-            case .burpeeBroadJumps: return 3
-            case .farmersCarry: return 0.7
-            case .fentesSandbag: return 1.8
-            case .wallBalls: return 3.5
+            case .skiErg: return 0.27
+            case .rameur: return 0.29
+            case .sledPush: return 32
+            case .sledPull: return 39
+            case .burpeeBroadJumps: return 3.5
+            case .farmersCarry: return 0.8
+            case .fentesSandbag: return 2.8
+            case .wallBalls: return 3.6
             }
         }
 
@@ -249,31 +346,132 @@ enum ProgrammeHyrox {
     /// LE RANG DE LA SEMAINE PARMI LES SEMAINES DE TRAVAIL, c'est-à-dire sans compter les décharges.
     ///
     /// Le moteur pose une décharge toutes les quatre semaines (voir `AdaptivePlanEngine.trainingBlock` :
-    /// les semaines 4, 8, 12…). Une rotation de quatre semaines indexée sur le numéro brut de la semaine
-    /// tombait donc, pour l'une des quatre familles, TOUJOURS sur une décharge — qui ne porte aucune
-    /// station — et cette famille (les ergomètres) n'était jamais travaillée. Elle est maintenant indexée
-    /// sur le nombre de semaines de travail : les semaines 1, 2, 3, 5, 6, 7, 9… valent 1, 2, 3, 4, 5, 6, 7…
+    /// les semaines 4, 8, 12…). Une rotation indexée sur le numéro brut de la semaine tombait donc,
+    /// pour une station sur quatre, TOUJOURS sur une décharge — qui ne porte aucune station — et cette
+    /// station n'était jamais travaillée. Elle est indexée sur le nombre de semaines de travail : les
+    /// semaines 1, 2, 3, 5, 6, 7, 9… valent 1, 2, 3, 4, 5, 6, 7…
     static func semaineDeTravail(_ semaine: Int) -> Int {
         let s = max(1, semaine)
         return s - s / 4
     }
 
-    /// Les deux stations d'une semaine : la première, puis la seconde.
+    /// L'ORDRE DANS LEQUEL LES STATIONS REÇOIVENT LEUR SÉANCE, une par semaine de travail.
     ///
-    /// Les paires viennent des quatre familles de `ChargesHyrox.FamilleDeStations`, qui tournent sur
-    /// quatre semaines DE TRAVAIL (les décharges ne comptent pas, voir `semaineDeTravail`) : chaque
-    /// station revient donc une fois par cycle de quatre semaines de travail quand la semaine compte au
-    /// moins quatre jours de course.
+    /// Les wall balls d'abord : c'est la station la plus coûteuse de l'épreuve (Brandt 2025), et
+    /// celle qui revient donc la première quand le programme dépasse huit semaines de travail. La
+    /// suite alterne ce qui pousse, ce qui tire et ce qui porte, pour que deux semaines de suite ne
+    /// chargent pas les mêmes muscles.
+    static let ordreDesStations: [Station] = [
+        .wallBalls, .sledPush, .rameur, .fentesSandbag,
+        .sledPull, .skiErg, .burpeeBroadJumps, .farmersCarry,
+    ]
+
+    /// La station qui a sa séance la semaine `semaine` du programme.
+    static func stationDeLaSemaine(_ semaine: Int) -> Station {
+        ordreDesStations[(semaineDeTravail(semaine) - 1) % ordreDesStations.count]
+    }
+
+    // MARK: Le fractionné
+
+    /// LA SÉANCE DE COURSE DE QUALITÉ : des kilomètres au seuil, l'unité de course de l'épreuve.
     ///
-    /// L'ORDRE DE LA PAIRE S'INVERSE À CHAQUE CYCLE, et c'est pour les semaines de trois jours : elles
-    /// ne portent qu'UNE séance de station (la première), et sans cette alternance la seconde station
-    /// de chaque paire — sled pull, fentes, wall balls, rameur — ne serait jamais travaillée. Avec
-    /// elle, chacune revient tous les huit semaines. Voir `lesAutresSeances`.
-    static func duo(semaine: Int) -> (premiere: Station, seconde: Station) {
-        let travail = semaineDeTravail(semaine)
-        let deux = ChargesHyrox.FamilleDeStations.pourLaSemaine(travail).stations
-        let cycle = (travail - 1) / ChargesHyrox.FamilleDeStations.allCases.count
-        return cycle % 2 == 0 ? (deux[0], deux[1]) : (deux[1], deux[0])
+    /// Quatre répétitions au premier palier du bloc de base, huit au dernier du bloc spécifique :
+    /// les huit kilomètres de l'épreuve, sans les stations. L'allure est le seuil du profil
+    /// (`PaceModel`), soutenue mais tenable. La récupération est en mètres, comme tous les
+    /// fractionnés de l'app : c'est ce que l'écran de course sait guider.
+    static let recuperationDesIntervallesM = 200
+
+    static func repetitionsDesIntervalles(phase: PhaseHyrox, palier: Int) -> Int {
+        let p = min(max(0, palier), 2)
+        switch phase {
+        case .base: return 4 + p
+        case .specifique: return 6 + p
+        case .affutage, .decharge: return 3
+        }
+    }
+
+    /// La durée d'un fractionné : dix minutes d'échauffement, les répétitions (cinq minutes par
+    /// kilomètre au seuil et une minute et demie de récupération, des estimations de planification),
+    /// cinq minutes de retour au calme. Au multiple de cinq le plus proche.
+    static func dureeDesIntervalles(phase: PhaseHyrox, palier: Int) -> Int {
+        let reps = repetitionsDesIntervalles(phase: phase, palier: palier)
+        let total = 10 + Double(reps) * 6.5 + 5
+        return Int((total / 5).rounded()) * 5
+    }
+
+    // MARK: La course compromise
+
+    /// UNE COURSE COMPROMISE : des tours d'un kilomètre suivis d'une station, sans s'arrêter.
+    struct CourseCompromise: Equatable, Sendable {
+        /// Les stations de la séance, DANS L'ORDRE DE L'ÉPREUVE : une par tour.
+        let stations: [Station]
+        /// La part de chaque station qu'un tour demande.
+        let part: PartDeStation
+        /// La charge des stations lestées.
+        let intensite: PrescriptionHyrox.Intensite
+        let allure: FormatDeStation.AllureDeCourse
+        /// Les huit tours entiers de l'épreuve ?
+        let estLaSimulation: Bool
+
+        var tours: Int { stations.count }
+
+        /// La durée, d'après le contenu : dix minutes d'échauffement, un kilomètre par tour (6 min à
+        /// allure facile, 5 min 30 à allure d'épreuve), la part de chaque station, une minute de
+        /// transition par tour, cinq minutes de retour au calme. Au multiple de cinq le plus proche.
+        var dureeMinutes: Int {
+            let minutesParKm = allure == .facile ? 6.0 : 5.5
+            let stationsMin = stations.reduce(0.0) {
+                $0 + Double($1.quantite(part)) * $1.secondesParUnite / 60
+            }
+            let total = 10 + Double(tours) * (minutesParKm + 1) + stationsMin + 5
+            return Int((total / 5).rounded()) * 5
+        }
+    }
+
+    /// Le nombre de tours de la course compromise d'un palier (hors simulation).
+    static func toursDeCourseCompromise(phase: PhaseHyrox, palier: Int) -> Int {
+        let p = max(0, palier)
+        switch phase {
+        case .base: return [3, 4, 5][min(p, 2)]
+        case .specifique: return [5, 6][min(p, 1)]
+        case .affutage: return p == 0 ? 3 : 2
+        case .decharge: return 2
+        }
+    }
+
+    /// LA COURSE COMPROMISE D'UNE SEMAINE.
+    ///
+    /// LES STATIONS TOURNENT : la séance reprend là où la précédente du même bloc s'est arrêtée (trois
+    /// tours au premier palier : SkiErg, sled push, sled pull ; quatre au suivant : burpees, rameur,
+    /// farmers carry, fentes…). Les huit stations passent donc toutes, en deux ou trois semaines, au
+    /// lieu que la séance répète toujours les trois premières. Dans la séance, elles restent dans
+    /// l'ordre de l'épreuve.
+    ///
+    /// Bloc de base : la moitié de chaque station, aux deux tiers de la charge, course facile — on
+    /// apprend à repartir. Bloc spécifique : les trois quarts, à la charge et à l'allure de l'épreuve.
+    /// Affûtage : un quart, pour le rythme, sans fatigue. Décharge : deux tours d'un quart, faciles.
+    /// `simulation` : les huit tours entiers.
+    static func courseCompromise(phase: PhaseHyrox, palier: Int, simulation: Bool = false) -> CourseCompromise {
+        if simulation {
+            return CourseCompromise(stations: Station.allCases, part: .entiere,
+                                    intensite: .chargeDeCourse, allure: .epreuve, estLaSimulation: true)
+        }
+        let p = max(0, palier)
+        let tours = toursDeCourseCompromise(phase: phase, palier: p)
+        let debut = (0..<p).reduce(0) { $0 + toursDeCourseCompromise(phase: phase, palier: $1) }
+        let nombre = Station.allCases.count
+        let stations = (0..<tours)
+            .compactMap { Station(rawValue: (debut + $0) % nombre) }
+            .sorted { $0.rang < $1.rang }
+        let part: PartDeStation
+        switch phase {
+        case .base: part = .moitie
+        case .specifique: part = .troisQuarts
+        case .affutage, .decharge: part = .quart
+        }
+        return CourseCompromise(stations: stations, part: part,
+                                intensite: phase.estFacile ? .deuxTiers : .chargeDeCourse,
+                                allure: phase.estFacile ? .facile : .epreuve, estLaSimulation: false)
     }
 
     // MARK: Le travail complémentaire
@@ -309,12 +507,6 @@ enum ProgrammeHyrox {
         /// Le travail de la semaine DE TRAVAIL `semaine` (voir `semaineDeTravail`), en rotation sur quatre.
         static func pourLaSemaine(_ semaine: Int) -> TravailComplementaire {
             allCases[(max(1, semaine) - 1) % allCases.count]
-        }
-
-        /// Le travail d'une semaine de travail PAIRE, pour les semaines de quatre jours : il n'y est
-        /// qu'une semaine sur deux, en rotation sur huit. Voir `lesAutresSeances`.
-        static func pourUneSemaineSurDeux(_ semaine: Int) -> TravailComplementaire {
-            allCases[(max(2, semaine) / 2 - 1) % allCases.count]
         }
 
         /// Les gestes de la séance : leur nom, ce qui les relie à l'épreuve quand une source le dit, et
@@ -376,48 +568,50 @@ enum ProgrammeHyrox {
 
     // MARK: La composition de la semaine
 
-    /// Ce qui occupe un jour de course d'une semaine HYROX, hors sortie longue.
+    /// Ce qui occupe un jour de course d'une semaine HYROX, hors course compromise.
     enum Place: Equatable, Sendable {
         case station(Station)
+        case intervalles
         case footing
         case complement(TravailComplementaire)
     }
 
-    /// Les séances d'une semaine HYROX hors sortie longue (la course compromise), DANS L'ORDRE où
-    /// les distribue le moteur : le premier jour de course reçoit le premier élément, et ainsi de suite.
+    /// Les séances d'une semaine HYROX hors course compromise (qui prend le jour de la sortie longue),
+    /// DANS L'ORDRE où les distribue le moteur : le premier jour de course reçoit le premier élément.
     ///
-    /// L'ORDRE EST UNE RÈGLE DE SÉCURITÉ. Les deux stations ne sont jamais sur deux jours de course
-    /// consécutifs : il y a toujours une séance entre elles. Le moteur plafonne par ailleurs les
-    /// séances de qualité à deux par semaine, et les deux stations les prennent.
+    /// DEUX SÉANCES DE QUALITÉ, PAS PLUS : le fractionné et la séance de station. C'est le plafond du
+    /// moteur (deux séances dures par semaine, la course compromise à part), et c'est ce que l'épreuve
+    /// demande : de la course rapide, et une station apprise sous fatigue. Dès que la semaine compte
+    /// quatre jours, un footing les sépare, pour qu'elles ne tombent jamais sur deux jours de course
+    /// consécutifs.
     ///
-    /// LE NOMBRE DE JOURS DE COURSE DÉCIDE :
-    /// - trois jours ou moins : une station et un footing. Une seule station, parce que deux séances
-    ///   dures sur deux jours de course sur trois laisseraient la semaine sans souffle. La paire
-    ///   s'inverse à chaque cycle (voir `duo`), pour que toutes les stations passent.
-    /// - quatre jours : les deux stations, et entre elles un footing une semaine sur deux, un travail
-    ///   complémentaire l'autre. C'est un ARBITRAGE : la semaine n'a pas la place de tout porter, et
-    ///   c'est le footing qui cède, pas une station. À relire si le volume de course paraît juste.
-    /// - cinq jours : les deux stations, un footing, un travail complémentaire chaque semaine.
-    /// - six jours et plus : en plus, un second footing.
+    /// LEUR ORDRE S'INVERSE UNE SEMAINE SUR DEUX. Quand quelqu'un pratique deux autres sports qui
+    /// pèsent sur les jambes, le moteur ne garde qu'UNE séance de qualité, la première de la liste :
+    /// sans cette alternance, ce serait toujours le fractionné, et jamais une station.
     ///
-    /// La liste fait toujours six éléments au moins : le moteur boucle dessus, et une liste trop
-    /// courte répéterait la station — une troisième séance dure, que le plafond remplacerait en
-    /// silence par un footing.
+    /// LE NOMBRE DE JOURS DE COURSE DÉCIDE DU RESTE :
+    /// - trois jours : fractionné, station, course compromise ;
+    /// - quatre jours : un footing en plus, parce que le volume d'endurance est ce qui prédit le
+    ///   mieux le temps final (voir l'en-tête) ;
+    /// - cinq jours : un travail complémentaire en plus (force, prise, pliométrie, mobilité, à tour
+    ///   de rôle) ;
+    /// - six jours et plus : un second footing.
+    ///
+    /// La liste fait toujours six éléments : le moteur boucle dessus, et une liste trop courte
+    /// répéterait une séance de qualité.
     static func lesAutresSeances(semaine: Int, joursDeCourse: Int) -> [Place] {
-        let (premiere, seconde) = duo(semaine: semaine)
         let travail = semaineDeTravail(semaine)
-        let semainePaire = travail % 2 == 0
+        let station = Place.station(stationDeLaSemaine(semaine))
+        let (premiere, seconde): (Place, Place) = travail % 2 == 1
+            ? (.intervalles, station) : (station, .intervalles)
 
         if joursDeCourse <= 3 {
-            return [.station(premiere), .footing, .footing, .footing, .footing, .footing]
+            return [premiere, seconde, .footing, .footing, .footing, .footing]
         }
         if joursDeCourse == 4 {
-            let milieu: Place = semainePaire
-                ? .complement(TravailComplementaire.pourUneSemaineSurDeux(travail))
-                : .footing
-            return [.station(premiere), milieu, .station(seconde), .footing, .footing, .footing]
+            return [premiere, .footing, seconde, .footing, .footing, .footing]
         }
         let complement = Place.complement(TravailComplementaire.pourLaSemaine(travail))
-        return [.station(premiere), .footing, .station(seconde), complement, .footing, .footing]
+        return [premiere, .footing, seconde, complement, .footing, .footing]
     }
 }

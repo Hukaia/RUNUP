@@ -682,6 +682,8 @@ enum AdaptivePlanEngine {
         var adaptationNote: String? = nil
         /// La phase d'une séance HYROX, recopiée dans la séance : la fiche en tire le volume.
         var phaseHyrox: PhaseHyrox? = nil
+        /// Le palier de la séance dans sa phase. Voir `WorkoutSession.palierHyrox`.
+        var palierHyrox: Int? = nil
     }
 
     /// Reference distance (km) the long run scales toward — the user's real race distance when
@@ -1013,85 +1015,137 @@ enum AdaptivePlanEngine {
     }
 
     private static func hyroxArchetypes(for block: TrainingBlock, profile: UserProfile,
-                                        weekNumber: Int) -> [SessionArchetype] {
+                                        weekNumber: Int, shape: ProgramShape) -> [SessionArchetype] {
         let zones = PaceModel.zones(for: profile)
         // `loadNote` A ÉTÉ RETIRÉ : IL N'A JAMAIS ATTEINT UN ÉCRAN.
         //
         // Les sous-titres interpolaient « charge standard » ou « charge renforcée ». Mais
         // `WorkoutSession.displaySubtitle` lit `kind.subtitleKey`, une clé STATIQUE du catalogue,
         // et jette le sous-titre composé ici dès que la séance porte un `kind` — ce qui est le cas
-        // de toutes. C'est le défaut exact que l'en-tête d'`adaptationNote` raconte pour les notes
-        // d'adaptation, reconduit pour la charge.
-        //
-        // Les charges s'affichent donc là où elles peuvent : la fiche détail, qui a le profil donc
-        // la division, et qui les nomme station par station (voir `ChargesHyrox.stations`).
+        // de toutes. Les charges s'affichent donc là où elles peuvent : la fiche détail, qui a le
+        // profil donc la division, et qui les nomme station par station.
 
-        // DEUX STATIONS PAR SEMAINE, CHACUNE DANS SA SÉANCE, ET LE TRAVAIL QUI N'EST PAS UNE STATION.
-        //
-        // La composition de la semaine est décidée par `ProgrammeHyrox.lesAutresSeances`, qui dit
-        // pourquoi l'ordre compte et ce que le nombre de jours de course change. Le moteur ne fait
-        // que traduire chaque place en archétype : les deux stations sont les deux séances de
-        // qualité que le plafond autorise, la course compromise est la sortie longue du bloc.
-        let places = ProgrammeHyrox.lesAutresSeances(semaine: weekNumber,
-                                                      joursDeCourse: profile.runningDays.count)
-        let footing = SessionArchetype(
-            role: .easy, title: "Footing base HYROX",
-            subtitle: "endurance de fond : construit le volume de course du format",
-            pace: zones.easy, zone: "Z2", baseDuration: 30, kind: .hyroxBaseFooting
-        )
-        let phase: PhaseHyrox = block == .base ? .base : .specifique
-        func archetype(_ place: ProgrammeHyrox.Place) -> SessionArchetype {
-            switch place {
-            case .footing:
-                return footing
-            case .station(let station):
-                // UNE SÉANCE DE STATION EST DES TOURS DE « COURSE, PUIS LA STATION » : la durée est celle de
-                // son contenu, l'allure celle de la course qu'elle contient (facile au bloc de base,
-                // d'épreuve au spécifique). Voir `ProgrammeHyrox.Station.format`.
-                return SessionArchetype(
-                    role: .speed, title: station.nom,
-                    subtitle: "1 km de course, puis la station, répétés : le rythme de l'épreuve",
-                    pace: phase == .base ? zones.easy : zones.marathon,
-                    zone: phase == .base ? "Z2-3" : "Z3",
-                    baseDuration: station.format(phase: phase).dureeMinutes, kind: station.kind
-                )
-            case .complement(let travail):
-                return SessionArchetype(
-                    role: .easy,
-                    title: travail.titreEnregistre,
-                    subtitle: "travail complémentaire, sans séries prescrites",
-                    pace: "—", zone: travail == .mobilite ? "Récup" : "Technique",
-                    baseDuration: travail == .mobilite ? 25 : 35, kind: travail.kind
-                )
-            }
+        // LE PROGRAMME EST DÉCIDÉ PAR `ProgrammeHyrox`, qui dit sur quelles mesures il repose. Le
+        // moteur ne fait que le traduire en archétypes : la PHASE (l'allure et la charge) vient du
+        // bloc, le PALIER (le volume) du rang de la semaine parmi les semaines de travail du bloc.
+        let phase: PhaseHyrox
+        let palier: Int
+        var simulation = false
+        switch block {
+        case .base:
+            phase = .base
+            // Un programme sans date n'a pas de bloc à borner : le palier suit les semaines de
+            // travail, et les formules de `ProgrammeHyrox` le plafonnent d'elles-mêmes.
+            palier = shape.totalWeeks == nil
+                ? ProgrammeHyrox.semaineDeTravail(weekNumber) - 1
+                : buildWeekPosition(week: weekNumber, blockFirstWeek: 1,
+                                    blockLastWeek: max(shape.baseWeeks, 1)).index
+        case .specifique:
+            phase = .specifique
+            let pos = buildWeekPosition(week: weekNumber, blockFirstWeek: shape.baseWeeks + 1,
+                                        blockLastWeek: shape.baseWeeks + max(shape.specificWeeks, 1))
+            palier = pos.index
+            // LA SIMULATION COMPLÈTE, UNE SEULE FOIS : à la dernière semaine de travail du bloc
+            // spécifique, donc deux à trois semaines avant l'épreuve, et seulement quand le bloc a
+            // eu au moins deux semaines pour y amener. Elle dure une heure quarante : quelqu'un qui
+            // a dit ne pas avoir ce temps garde la course compromise de six tours.
+            let duree = ProgrammeHyrox.courseCompromise(phase: .specifique, palier: palier,
+                                                        simulation: true).dureeMinutes
+            let aLeTemps = (profile.tempsSemaineMin ?? .max) >= duree
+                || (profile.tempsWeekEndMin ?? .max) >= duree
+            simulation = pos.count >= 3 && pos.index == pos.count - 1 && aLeTemps
+        case .affutage:
+            phase = .affutage
+            palier = max(0, weekNumber - shape.baseWeeks - shape.specificWeeks - 1)
+        case .deload:
+            phase = .decharge
+            palier = max(0, weekNumber / 4 - 1)
         }
-        let autres = places.map { place -> SessionArchetype in
-            var a = archetype(place)
+
+        func compromise() -> SessionArchetype {
+            let c = ProgrammeHyrox.courseCompromise(phase: phase, palier: palier, simulation: simulation)
+            var a = SessionArchetype(
+                role: .longRun,
+                title: c.estLaSimulation ? "Simulation HYROX" : "Course compromise \(c.tours) × 1 km",
+                subtitle: "1 km de course, puis une station, enchaînés : le format de l'épreuve",
+                pace: c.allure == .facile ? zones.easy : zones.marathon,
+                zone: c.allure == .facile ? "Z2-3" : "Z3-4",
+                baseDuration: c.dureeMinutes,
+                kind: c.estLaSimulation ? .hyroxSimulation : .hyroxCourseCompromise,
+                intervals: IntervalStructure(reps: c.tours, repMeters: ChargesHyrox.Format.courseParSegmentM,
+                                             recoveryMeters: nil)
+            )
             a.phaseHyrox = phase
+            a.palierHyrox = palier
             return a
         }
 
         let base: [SessionArchetype]
         switch block {
-        case .base:
-            base = autres + [
-                SessionArchetype(role: .longRun, title: "Course compromise 3 × 1 km", subtitle: "course + bloc fonctionnel entre chaque km : apprivoise la fatigue du format", pace: zones.easy, zone: "Z2-3", baseDuration: 40, kind: .hyroxCompromisedRun3, intervals: IntervalStructure(reps: 3, repMeters: 1000, recoveryMeters: nil))
-            ]
-        case .specifique:
-            base = autres + [
-                SessionArchetype(role: .longRun, title: "Course compromise 6 × 1 km", subtitle: "simulation partielle : course + fonctionnel enchaînés, rythme course visé", pace: zones.marathon, zone: "Z3", baseDuration: 55, kind: .hyroxCompromisedRun6, intervals: IntervalStructure(reps: 6, repMeters: 1000, recoveryMeters: nil))
-            ]
+        case .base, .specifique:
+            let footing = SessionArchetype(
+                role: .easy, title: "Footing base HYROX",
+                subtitle: "endurance de fond : construit le volume de course du format",
+                pace: zones.easy, zone: "Z2", baseDuration: 30, kind: .hyroxBaseFooting
+            )
+            let places = ProgrammeHyrox.lesAutresSeances(semaine: weekNumber,
+                                                          joursDeCourse: profile.runningDays.count)
+            let autres = places.map { place -> SessionArchetype in
+                var a: SessionArchetype
+                switch place {
+                case .footing:
+                    a = footing
+                case .intervalles:
+                    // DES KILOMÈTRES AU SEUIL : la séance qui travaille ce qui prédit le mieux le temps
+                    // final (voir `ProgrammeHyrox`), dans l'unité de course de l'épreuve.
+                    let reps = ProgrammeHyrox.repetitionsDesIntervalles(phase: phase, palier: palier)
+                    a = SessionArchetype(
+                        role: .speed, title: "Fractionné \(reps) × 1 km",
+                        subtitle: "des kilomètres au seuil : l'unité de course de l'épreuve",
+                        pace: zones.threshold, zone: "Z3",
+                        baseDuration: ProgrammeHyrox.dureeDesIntervalles(phase: phase, palier: palier),
+                        kind: .hyroxIntervalles,
+                        intervals: IntervalStructure(reps: reps, repMeters: ChargesHyrox.Format.courseParSegmentM,
+                                                     recoveryMeters: ProgrammeHyrox.recuperationDesIntervallesM)
+                    )
+                case .station(let station):
+                    // DES TOURS DE « COURSE, PUIS LA STATION » : la durée est celle du contenu, l'allure
+                    // celle de la course qu'elle contient. Voir `ProgrammeHyrox.Station.format`.
+                    a = SessionArchetype(
+                        role: .speed, title: station.nom,
+                        subtitle: "course puis station, en tours : le rythme de l'épreuve",
+                        pace: phase.estFacile ? zones.easy : zones.marathon,
+                        zone: phase.estFacile ? "Z2-3" : "Z3-4",
+                        baseDuration: station.format(phase: phase, palier: palier).dureeMinutes,
+                        kind: station.kind
+                    )
+                case .complement(let travail):
+                    a = SessionArchetype(
+                        role: .easy, title: travail.titreEnregistre,
+                        subtitle: "travail complémentaire",
+                        pace: "—", zone: travail == .mobilite ? "Récup" : "Technique",
+                        baseDuration: travail == .mobilite ? 25 : 35, kind: travail.kind
+                    )
+                }
+                a.phaseHyrox = phase
+                a.palierHyrox = palier
+                return a
+            }
+            base = autres + [compromise()]
         case .affutage:
+            // AUCUNE SIMULATION DANS L'AFFÛTAGE. Il portait un « format complet à intensité réduite »,
+            // y compris la semaine de l'épreuve : huit kilomètres et huit stations à quelques jours du
+            // départ. Il reste un rappel court, à l'allure et à la charge de l'épreuve.
             base = [
                 SessionArchetype(role: .easy, title: "Footing d'entretien", subtitle: "relâché, garde les jambes et les bras frais", pace: zones.easy, zone: "Z2", baseDuration: 25, kind: .hyroxMaintenanceFooting),
                 SessionArchetype(role: .speed, title: "Rappel technique stations", subtitle: "gestes affûtés, charge légère, aucune fatigue à accumuler", pace: "—", zone: "Technique", baseDuration: 25, kind: .hyroxStationsReminder),
-                SessionArchetype(role: .longRun, title: "Simulation HYROX allégée", subtitle: "format complet à intensité réduite : dernière répétition avant le jour J", pace: zones.marathon, zone: "Z2-3", baseDuration: 45, kind: .hyroxLightSimulation)
+                compromise()
             ]
         case .deload:
             base = [
                 SessionArchetype(role: .easy, title: "Footing récup", subtitle: "coupe le volume, écoute ton corps", pace: zones.easy, zone: "Z1-2", baseDuration: 22, kind: .hyroxRecoveryFooting),
                 SessionArchetype(role: .speed, title: "Fonctionnel léger", subtitle: "mobilité et gestes techniques, sans charge", pace: "—", zone: "Récup", baseDuration: 25, kind: .hyroxLightFunctional),
-                SessionArchetype(role: .longRun, title: "Course compromise légère 2 × 1 km", subtitle: "aucune pression de chrono cette semaine", pace: zones.easy, zone: "Z2", baseDuration: 30, kind: .hyroxCompromisedRunLight2, intervals: IntervalStructure(reps: 2, repMeters: 1000, recoveryMeters: nil))
+                compromise()
             ]
         }
 
@@ -1467,7 +1521,7 @@ enum AdaptivePlanEngine {
         let brut: [SessionArchetype]
         switch profile.goalId {
         case .hyrox:
-            brut = hyroxArchetypes(for: block, profile: profile, weekNumber: weekNumber)
+            brut = hyroxArchetypes(for: block, profile: profile, weekNumber: weekNumber, shape: shape)
         case .ultraTrail:
             brut = ultraTrailArchetypes(for: block, profile: profile,
                                         weekNumber: weekNumber, shape: shape)
@@ -1741,7 +1795,8 @@ enum AdaptivePlanEngine {
                 // plafond de deux séances de qualité par semaine, et le perdre à la génération
                 // rendait ce plafond invérifiable en aval.
                 role: archetype.role,
-                phaseHyrox: archetype.phaseHyrox
+                phaseHyrox: archetype.phaseHyrox,
+                palierHyrox: archetype.palierHyrox
             )
             session.adaptationNote = archetype.adaptationNote
             // L'ALLÈGEMENT DU JOUR MORD EN DERNIER, sur la séance telle qu'elle s'affichera. La
