@@ -92,6 +92,9 @@ final class AppState {
     /// Et pour les pages de course — ouvert aussi bien par la carte « Courses » du Profil que par
     /// l'écran de l'objectif, qui propose d'aller voir qui prépare la même.
     var openRacesTabOnNextVisit = false
+    /// Le filtre sur lequel Explorer doit s'ouvrir à son prochain passage, ou nil : posé par les
+    /// catégories de l'accueil, lu et effacé par `ExplorerView` à son apparition.
+    var filtreDExplorerAuProchainPassage: FiltreDExplorer?
     /// Posé à la fin de l'inscription quand la personne a répondu « Préparer une course » : le
     /// programme qu'on vient de lui construire est un programme d'attente, sans date. Dès qu'elle
     /// déclare une course qu'elle prépare, il se recale dessus sans rien lui demander (il n'y a pas
@@ -1162,6 +1165,11 @@ final class AppState {
     var logSessionPresented = false
 
     func openSessionDetail() { sessionDetailPresented = true }
+    /// Ouvre Explorer directement sur un filtre : « Trail » depuis l'accueil mène aux courses de trail.
+    func ouvrirExplorer(_ filtre: FiltreDExplorer) {
+        filtreDExplorerAuProchainPassage = filtre
+        go(.explorer)
+    }
     func openLogSession() { logSessionPresented = true }
     func openMoveSession() { moveSessionPresented = true }
     func openProgramSettings() { programSettingsPresented = true }

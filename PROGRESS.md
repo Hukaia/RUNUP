@@ -9270,3 +9270,13 @@ Charlotte, vidéo à l'appui : « Les pages s'affichent toutes avec un petit sur
 - **L'écran quitté disparaissait d'un coup, et laissait une page blanche.** Sans rang écrit dans la pile, il passait derrière le fond pendant sa sortie. Les trois étages ont un rang (`HZRangDansLaPile`) : l'écran qui sort se fond pendant que l'autre arrive.
 - **Le changement d'écran s'animait avec un ressort** (rebond 0,12) au lieu de `ecran` (0,22 s, sans rebond), que `HZMouvement` réservait pourtant à cet usage.
 - **Non vérifié** : aucune capture ne montre une animation, donc rien ne le prouve avant le prochain build sur un téléphone. Les pages ouvertes depuis une autre (décalage de 28 points) ne sont pas dans la vidéo : à regarder aussi.
+
+## Les catégories de l'accueil menaient toutes au Club (23 novembre)
+
+Charlotte, capture à l'appui (la rangée Route, Trail, HYROX, Clubs, Courses sous « Explorer ») : « Cette partie devrait mener à quelque chose de bien plus sympa que les clubs, non ? » Oui : les cinq boutons faisaient tous `go(.club)`. Le commentaire
+du code le disait lui-même (« Provisoire… l'écran Explorer les séparera »), et l'écran Explorer est arrivé sans que personne ne revienne les brancher.
+- **Route, Trail, HYROX, Clubs** ouvrent Explorer directement sur leur filtre (`AppState.ouvrirExplorer`, `FiltreDExplorer`, intention à usage unique lue à l'apparition d'Explorer). **Courses** ouvre la liste des courses, celle de « Tout voir ».
+- **Les courses de trail et de HYROX sont des affiches**, sur deux colonnes, comme « Courses à venir » et la liste des courses (`HZTuileDeCourse`). C'était une liste de lignes grises, la seule d'Explorer à ne rien montrer.
+- La note sous une affiche (« J-12 · Paris ») est écrite une fois (`RaceEvent.noteDAffiche`), pour la liste des courses et pour Explorer.
+- Test `test10CategoriesDeLAccueil` : touche « Trail » puis « Clubs » depuis l'accueil, vérifie qu'on arrive sur Explorer, photographie `accueil-vers-trail` et `accueil-vers-clubs`.
+- **Non vérifié à l'écriture** : écrit sans compilateur, la CI le dira ; le filtre HYROX peut être vide s'il n'y a pas de course HYROX à venir dans le catalogue (il le dit alors en une phrase).

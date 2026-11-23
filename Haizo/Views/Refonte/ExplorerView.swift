@@ -16,6 +16,22 @@ import CoreLocation
 /// ville, ses membres, et dans une pilule comment on y entre — Ouvert, Sur demande, Sur code), un
 /// champ pour en chercher un par son nom, et l'entrée « avec un code » pour un club sur code, qui ne
 /// se trouve nulle part ailleurs. Toucher une carte ouvre la fiche du club (`ClubFicheView`).
+/// Les cinq filtres d'Explorer. Hors de la vue parce que l'accueil les nomme aussi : ses cinq
+/// catégories ouvrent Explorer sur le filtre correspondant (`AppState.ouvrirExplorer`).
+enum FiltreDExplorer: CaseIterable, Identifiable {
+    case pourToi, route, trail, hyrox, clubs
+    var id: Self { self }
+    var libelle: String {
+        switch self {
+        case .pourToi: return String(localized: "Pour toi")
+        case .route: return String(localized: "Route")
+        case .trail: return String(localized: "Trail")
+        case .hyrox: return String(localized: "HYROX")
+        case .clubs: return String(localized: "Clubs")
+        }
+    }
+}
+
 struct ExplorerView: View {
     @Environment(AppState.self) private var appState
     @Environment(\.openURL) private var openURL
@@ -44,19 +60,7 @@ struct ExplorerView: View {
     @State private var courseOuverte: RaceEvent?
     @State private var position = LocationPermission()
 
-    private enum Filtre: CaseIterable, Identifiable {
-        case pourToi, route, trail, hyrox, clubs
-        var id: Self { self }
-        var libelle: String {
-            switch self {
-            case .pourToi: return String(localized: "Pour toi")
-            case .route: return String(localized: "Route")
-            case .trail: return String(localized: "Trail")
-            case .hyrox: return String(localized: "HYROX")
-            case .clubs: return String(localized: "Clubs")
-            }
-        }
-    }
+    private typealias Filtre = FiltreDExplorer
 
     private var service: ClubService { ClubService(auth: appState.auth) }
 
@@ -83,6 +87,15 @@ struct ExplorerView: View {
         .background(HZCouleur.blanc)
         .ignoresSafeArea(edges: .top)
         .statusBarHidden()
+        // LE FILTRE DEMANDÉ PAR L'ACCUEIL, lu une fois à l'arrivée puis effacé : une intention de
+        // navigation à usage unique, comme `openRacesTabOnNextVisit`. À l'apparition et non dans une
+        // tâche : l'écran ne doit pas s'afficher sur « Pour toi » avant de changer de filtre.
+        .onAppear {
+            if let demande = appState.filtreDExplorerAuProchainPassage {
+                filtre = demande
+                appState.filtreDExplorerAuProchainPassage = nil
+            }
+        }
         .task { await charger() }
         .task {
             // Pas en démonstration : la question du système recouvrirait l'écran photographié, et il n'y
@@ -282,30 +295,31 @@ struct ExplorerView: View {
                                String(localized: "\(suiveurs) coureurs la préparent"))
     }
 
+    /// LES COURSES D'UNE DISCIPLINE, EN AFFICHES sur deux colonnes : les mêmes tuiles de couleur que
+    /// « Courses à venir » et que la liste des courses. C'était une liste de lignes grises, la seule
+    /// d'Explorer à ne rien montrer ; depuis que l'accueil y mène (catégories Trail et HYROX), c'est
+    /// la première chose qu'on voit en arrivant.
     private func listeDeCourses(_ liste: [RaceEvent], vide: String) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             if liste.isEmpty {
                 message(panne.map { String(localized: "Impossible de charger les courses : \($0).") } ?? vide)
             }
-            ForEach(Array(liste.enumerated()), id: \.element.id) { index, course in
-                Button { courseOuverte = course } label: {
-                    HZLigneDeListe(titre: course.name, sousTitre: ligneDeCourse(course),
-                                   marge: HZMesuresDeLigne.margeDeDestination, filet: index < liste.count - 1) {
-                        HZIcone(dessin: .drapeau, cote: HZProfil.coteDeLIconeDeDestination, couleur: HZCouleur.encre)
-                            .frame(width: HZProfil.disqueDeDestination, height: HZProfil.disqueDeDestination)
-                            .background(HZCouleur.surfaceClaire, in: Circle())
-                    } queue: {
-                        HZChevron()
-                    }
-                    .contentShape(Rectangle())
+            LazyVGrid(columns: colonnesDAffiches, alignment: .leading, spacing: HZEspace.entreSections) {
+                ForEach(Array(liste.enumerated()), id: \.element.id) { index, course in
+                    HZTuileDeCourse(mois: mois(de: course),
+                                    distance: course.grandeEtiquette,
+                                    nom: course.name,
+                                    note: course.noteDAffiche,
+                                    couleur: couleur(index),
+                                    largeur: nil) { courseOuverte = course }
                 }
-                .buttonStyle(.plain)
             }
         }
     }
 
-    private func ligneDeCourse(_ course: RaceEvent) -> String {
-        [course.dateLisible, course.sousTitre].filter { !$0.isEmpty }.joined(separator: " · ")
+    private var colonnesDAffiches: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: HZEspace.entreTuiles, alignment: .top),
+              count: HZHub.colonnesDAffiches)
     }
 
     // MARK: Les itinéraires, les clubs

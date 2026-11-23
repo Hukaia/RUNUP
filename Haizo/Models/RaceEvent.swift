@@ -414,3 +414,16 @@ struct RacePage: Decodable {
     var runners: [RaceRunner]
     var posts: [RacePost]
 }
+
+extension RaceEvent {
+    /// « J-12 · Paris » : l'échéance, puis ce qu'on sait d'où elle se court. La ligne sous le nom d'une
+    /// affiche de course, la même dans la liste des courses et dans Explorer.
+    var noteDAffiche: String? {
+        var morceaux: [String] = []
+        if let jours = joursRestants, jours >= 0 {
+            morceaux.append(jours == 0 ? String(localized: "aujourd'hui") : String(localized: "J-\(jours)"))
+        }
+        if !sousTitre.isEmpty { morceaux.append(sousTitre) }
+        return morceaux.isEmpty ? nil : morceaux.joined(separator: " · ")
+    }
+}

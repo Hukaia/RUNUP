@@ -348,14 +348,19 @@ struct AccueilView: View {
         VStack(alignment: .leading, spacing: 0) {
             HZTitreDeSection(titre: String(localized: "Explorer"))
                 .padding(.top, HZAccueil.avantUneSectionBasse)
-            // Provisoire : les cinq catégories mènent au hub du Club, où vivent aujourd'hui les
-            // parcours, les courses et les clubs. L'écran Explorer les séparera.
+            // CHAQUE CATÉGORIE MÈNE À CE QU'ELLE NOMME. Les cinq menaient au hub du Club, un raccourci
+            // provisoire d'avant l'écran Explorer, resté en place : « HYROX » ouvrait la page d'un club.
+            // Route, Trail, HYROX et Clubs ouvrent Explorer sur leur filtre ; Courses ouvre la liste des
+            // courses, celle que « Tout voir » ouvre déjà depuis Explorer.
             HStack(spacing: 0) {
-                HZCategorie(dessin: .route, libelle: String(localized: "Route")) { appState.go(.club) }
-                HZCategorie(dessin: .relief, libelle: String(localized: "Trail")) { appState.go(.club) }
-                HZCategorie(dessin: .haltere, libelle: String(localized: "HYROX")) { appState.go(.club) }
-                HZCategorie(dessin: .groupe, libelle: String(localized: "Clubs")) { appState.go(.club) }
-                HZCategorie(dessin: .drapeau, libelle: String(localized: "Courses")) { appState.go(.club) }
+                HZCategorie(dessin: .route, libelle: String(localized: "Route")) { appState.ouvrirExplorer(.route) }
+                HZCategorie(dessin: .relief, libelle: String(localized: "Trail")) { appState.ouvrirExplorer(.trail) }
+                HZCategorie(dessin: .haltere, libelle: String(localized: "HYROX")) { appState.ouvrirExplorer(.hyrox) }
+                HZCategorie(dessin: .groupe, libelle: String(localized: "Clubs")) { appState.ouvrirExplorer(.clubs) }
+                HZCategorie(dessin: .drapeau, libelle: String(localized: "Courses")) {
+                    appState.openRacesTabOnNextVisit = true
+                    appState.go(.club)
+                }
             }
             .padding(.top, HZEspace.sousUnTitre)
         }

@@ -235,7 +235,7 @@ struct RaceDiscoveryView: View {
                 HZTuileDeCourse(mois: mois(de: course),
                                 distance: course.grandeEtiquette,
                                 nom: course.name,
-                                note: note(de: course),
+                                note: course.noteDAffiche,
                                 couleur: HZIntensite.allCases[index % HZIntensite.allCases.count].couleur,
                                 largeur: nil) { ouverte = course }
             }
@@ -247,16 +247,6 @@ struct RaceDiscoveryView: View {
         return jour.formatted(Date.FormatStyle(timeZone: TimeZone(identifier: "UTC") ?? .gmt,
                                                capitalizationContext: .beginningOfSentence)
             .month(.wide))
-    }
-
-    /// « J-12 · Paris » : l'échéance, puis ce qu'on sait d'où elle se court.
-    private func note(de course: RaceEvent) -> String? {
-        var morceaux: [String] = []
-        if let jours = course.joursRestants, jours >= 0 {
-            morceaux.append(jours == 0 ? String(localized: "aujourd'hui") : String(localized: "J-\(jours)"))
-        }
-        if !course.sousTitre.isEmpty { morceaux.append(course.sousTitre) }
-        return morceaux.isEmpty ? nil : morceaux.joined(separator: " · ")
     }
 
     private var videHonnete: some View {

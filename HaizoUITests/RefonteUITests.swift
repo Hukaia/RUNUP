@@ -199,6 +199,25 @@ final class RefonteUITests: XCTestCase {
         app.terminate()
     }
 
+    /// LES CATÉGORIES DE L'ACCUEIL MÈNENT À CE QU'ELLES NOMMENT. Les cinq ouvraient le hub du Club ;
+    /// « Trail » ouvre maintenant Explorer sur les courses de trail, « Clubs » sur les clubs à rejoindre.
+    func test10CategoriesDeLAccueil() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
+                          "réservé à refonte.yml")
+        for (categorie, nom) in [("Trail", "accueil-vers-trail"), ("Clubs", "accueil-vers-clubs")] {
+            let app = lancer(arguments: ["--ecran=prog"])
+            let bouton = app.buttons[categorie].firstMatch
+            XCTAssertTrue(bouton.waitForExistence(timeout: 5), "la catégorie « \(categorie) » doit être sur l'accueil")
+            bouton.tap()
+            // Le filtre « Pour toi » n'existe que sur Explorer : c'est lui qui prouve où l'on est arrivé.
+            XCTAssertTrue(app.buttons["Pour toi"].waitForExistence(timeout: 5),
+                          "« \(categorie) » doit ouvrir Explorer, pas le hub du Club")
+            Thread.sleep(forTimeInterval: 1.0)
+            photographier(nom, app: app)
+            app.terminate()
+        }
+    }
+
     /// EXPLORER (la graine pose deux itinéraires, quatre courses, trois clubs) : « Pour toi », puis le
     /// filtre « Trail » et le filtre « Clubs », dont l'image doit changer.
     func test11Explorer() throws {
