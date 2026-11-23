@@ -208,12 +208,22 @@ struct WallView: View {
                     .hzAffichage(.titreDEcran)
                     .foregroundStyle(HZCouleur.blanc)
                 Spacer(minLength: 0)
-                if appState.auth.isSignedIn, club != nil {
-                    // « Inviter » mène au club, où se trouve le lien à partager.
-                    HZBoutonPilule(libelle: String(localized: "Inviter"), hauteur: .petite,
-                                   fond: HZCouleur.blanc, couleur: HZCouleur.noir) {
-                        appState.go(.club)
+                if appState.auth.isSignedIn, let club {
+                    // « INVITER » PARTAGE LE LIEN DU CLUB. Il menait à l'écran du club, où aucun
+                    // partage n'attendait : le seul lien à partager était sur la carte d'un club
+                    // d'une seule personne. Même pilule qu'avant, mais c'est la feuille de partage
+                    // qui s'ouvre.
+                    ShareLink(item: Liens.invitationAuClub(nom: club.name, id: club.id)) {
+                        Text("Inviter")
+                            .hzTexte(HZHauteurDeBouton.petite.corps, .gras)
+                            .foregroundStyle(HZCouleur.noir)
+                            .lineLimit(1)
+                            .padding(.horizontal, HZHauteurDeBouton.petite.marge)
+                            .frame(height: HZHauteurDeBouton.petite.rawValue)
+                            .background(HZCouleur.blanc, in: Capsule())
+                            .contentShape(Capsule())
                     }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, HZEspace.marge)

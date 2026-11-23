@@ -145,8 +145,17 @@ struct DebriefSheet: View {
 
     // MARK: - Valider
 
+    /// « Mettre à jour le programme » ne se dit qu'à qui en a un qui s'adapte : sans l'abonnement,
+    /// ou en course libre, le bouton et le message annonçaient une mise à jour que la personne ne
+    /// pouvait voir nulle part.
+    private var aUnProgrammeQuiSAdapte: Bool {
+        subscriptions.unlocks(.adaptivePlan) && appState.profile.programPhase == .active
+    }
+
     private var boutonDeValidation: some View {
-        HZBoutonPilule(libelle: String(localized: "Valider et mettre à jour"), etendu: true, action: valider)
+        HZBoutonPilule(libelle: aUnProgrammeQuiSAdapte ? String(localized: "Valider et mettre à jour")
+                                                      : String(localized: "Valider"),
+                       etendu: true, action: valider)
             .padding(.horizontal, HZEspace.marge)
             .padding(.top, HZEspace.entreCommandes)
             .padding(.bottom, HZHub.basDeFeuille)
@@ -258,7 +267,9 @@ struct DebriefSheet: View {
         // Today's session is done — an evening reminder for it would be stale now.
         NotificationService.shared.rescheduleDailyReminder(for: appState.profile)
         appState.publishWidgetSnapshot()
-        appState.toast(String(localized: "Programme mis à jour · +120 XP"))
+        appState.toast(aUnProgrammeQuiSAdapte
+                       ? String(localized: "Programme mis à jour · +120 XP")
+                       : String(localized: "Séance validée · +120 XP"))
         // Ask for a rating right after a run that felt good, not on a fixed schedule —
         // `shouldRequestReview` also caps this to real milestones and a 90-day cooldown.
         if appState.shouldRequestReview(rpe: rpe) {

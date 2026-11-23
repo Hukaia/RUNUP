@@ -30,6 +30,14 @@ enum Liens {
     /// La fiche App Store de Haizo : le même identifiant que `public/club.html`.
     static let appStore = URL(string: "https://apps.apple.com/app/id6790719663")!
 
+    /// Ce qu'on partage pour faire entrer quelqu'un dans SON club : le lien du club, que l'app
+    /// ouvre quand elle est installée et que la page web accueille sinon (`public/club.html`).
+    /// Déclaré une fois : la carte « seule dans son club » et le bouton « Inviter » du fil disent
+    /// la même chose.
+    static func invitationAuClub(nom: String, id: String) -> String {
+        String(localized: "Rejoins mon club \(nom) sur Haizo : https://runup-nu.vercel.app/club/\(id)")
+    }
+
     /// Ce que « Inviter un ami » partage. Le texte portait `runup-nu.vercel.app`, la racine du
     /// serveur, qui ne sert aucune page et répond 404 : l'invitation menait à une erreur. Qui
     /// reçoit ce message n'a pas l'app, donc la fiche App Store est la seule destination utile.

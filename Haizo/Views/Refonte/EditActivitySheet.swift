@@ -71,8 +71,11 @@ struct EditActivitySheet: View {
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 HZBasDeFeuille {
                     HZBoutonPilule(libelle: String(localized: "Enregistrer"), etendu: true) { save() }
-                        .opacity(saving ? HZHub.opaciteEteinte : HZHub.opaciteNormale)
-                        .disabled(saving)
+                        // Éteint aussi PENDANT QUE LA PHOTO SE PRÉPARE : `chargementPhoto` était écrit
+                        // et jamais lu, donc enregistrer à ce moment-là partait sans la photo qu'on
+                        // venait de choisir, sans rien dire.
+                        .opacity(saving || chargementPhoto ? HZHub.opaciteEteinte : HZHub.opaciteNormale)
+                        .disabled(saving || chargementPhoto)
                 }
             }
         }
@@ -247,13 +250,22 @@ struct EditActivitySheet: View {
                 // filtre de modération, l'image par un stockage et un plafond quotidien. Les
                 // joindre ferait perdre un titre corrigé parce qu'une photo était trop lourde.
                 // Même ordre et même raison que la publication d'un itinéraire.
+                // …mais il se DIT. Les deux appels étaient des `try?` : une photo refusée (trop lourde,
+                // plafond du jour atteint, réseau coupé entre les deux requêtes) laissait la feuille
+                // se refermer comme si tout était passé.
+                var photoEchouee = false
                 if let photoDataURI {
-                    _ = try? await clubService.setActivityPhoto(activityId: item.id, dataURI: photoDataURI)
+                    do { _ = try await clubService.setActivityPhoto(activityId: item.id, dataURI: photoDataURI) }
+                    catch { photoEchouee = true }
                 } else if photoRetiree {
-                    _ = try? await clubService.setActivityPhoto(activityId: item.id, dataURI: nil)
+                    do { _ = try await clubService.setActivityPhoto(activityId: item.id, dataURI: nil) }
+                    catch { photoEchouee = true }
                 }
                 onSaved()
                 dismiss()
+                if photoEchouee {
+                    appState.toast(String(localized: "Texte enregistré, mais la photo n'a pas pu l'être."))
+                }
             } catch {
                 // Le message de modération mérite d'être distingué d'une panne réseau : dans un
                 // cas il faut réécrire, dans l'autre réessayer. Les confondre en « une erreur est

@@ -10,6 +10,7 @@ struct HistoryView: View {
     @State private var showAddRun = false
     @State private var pendingDelete: RunRecord?
     @State private var selectedRun: RunRecord?
+    @State private var connexionOuverte = false
 
     /// Un mois de sorties : son titre, ses kilomètres, ses lignes.
     private struct Mois: Identifiable {
@@ -207,10 +208,24 @@ struct HistoryView: View {
                 .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
                 .foregroundStyle(HZCouleur.secondaireSurClair)
                 .fixedSize(horizontal: false, vertical: true)
-            HZBoutonPilule(libelle: String(localized: "Réessayer maintenant"), hauteur: .petite) {
-                Haptics.selection()
-                appState.retryPendingClubActivities()
+            // LE BOUTON SUIT LA CAUSE. Quand la session a expiré, la phrase disait « reconnecte-toi »
+            // au-dessus d'un bouton « Réessayer maintenant » qui ne pouvait pas réussir : rejouer
+            // l'envoi sans session échoue de la même façon. Il propose ce que la phrase demande.
+            if appState.pendingActivityBlocker == .session || !appState.auth.isSignedIn {
+                HZBoutonPilule(libelle: String(localized: "Se connecter"), hauteur: .petite) {
+                    Haptics.selection()
+                    connexionOuverte = true
+                }
+            } else {
+                HZBoutonPilule(libelle: String(localized: "Réessayer maintenant"), hauteur: .petite) {
+                    Haptics.selection()
+                    appState.retryPendingClubActivities()
+                    appState.toast(String(localized: "Nouvelle tentative en cours"))
+                }
             }
+        }
+        .sheet(isPresented: $connexionOuverte, onDismiss: { appState.retryPendingClubActivities() }) {
+            SignInView().hzFeuille(detents: [.large])
         }
     }
 

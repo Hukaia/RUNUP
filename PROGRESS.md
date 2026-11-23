@@ -9369,11 +9369,20 @@ Corrigé dans ce lot :
 - **Signalements** (fil, page de course, itinéraire) : « envoyé » seulement si c'est vrai, et un motif vide le dit au lieu de ne rien faire.
 - **Notifications refusées** : à l'inscription, les deux interrupteurs s'éteignent ; « Prévenir s'il va pleuvoir » revient en arrière s'il ne peut pas tenir.
 
+### Lot 4 (enregistré, poussé après la campagne de captures App Store)
+
+- **« Inviter »** (fil du club) ouvre la feuille de partage avec le lien du club. Il menait à l'écran du club, où aucun partage n'attendait.
+- **Courses non synchronisées** : quand la session a expiré, le bouton propose « Se connecter », plus « Réessayer maintenant » sous une phrase qui demandait de se reconnecter.
+- **Modifier une sortie** : « Enregistrer » attend que la photo soit prête, et un échec de la photo se dit.
+- **Bilan de la semaine** : toucher une sortie l'ouvre, comme dans l'historique.
+- **Amis** : « Suivi » demande confirmation avant de désabonner.
+- **Ressenti** : sans programme qui s'adapte (sans abonnement, ou en course libre), le bouton dit « Valider » et le message « Séance validée », plus « Programme mis à jour ».
+
 ### Constaté, pas encore corrigé
 
 - Explorer : filtre « Route » qui liste des itinéraires alors que Trail et HYROX listent des courses ; « Garder cet itinéraire » sans liste des gardés.
 - Page de course : répondre à un message ne fait rien de visible.
-- Club : « Inviter » mène au club sans partage ; le lien d'invitation d'un club ne fait que préremplir une recherche ; pas de retrait de membre, de régénération de code ni de suppression de club ; la créatrice peut quitter son club et le laisser sans propriétaire.
+- Club : le lien d'invitation d'un club ne fait que préremplir une recherche ; pas de retrait de membre, de régénération de code ni de suppression de club ; la créatrice peut quitter son club et le laisser sans propriétaire.
 - Course : pas de « ne pas enregistrer » à la fin ; supprimer une sortie ne la retire ni d'Apple Santé ni du club.
 - Réglages : pas de « mot de passe oublié » ; « Nous écrire » ouvre une adresse personnelle.
 - À confirmer sur téléphone : ouvrir une sortie depuis un profil (deux couvertures plein écran sur la même racine).

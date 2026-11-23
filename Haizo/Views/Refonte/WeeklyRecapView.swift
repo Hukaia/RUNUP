@@ -15,6 +15,7 @@ struct WeeklyRecapView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query(sort: \RunRecord.date, order: .reverse) private var allRuns: [RunRecord]
     @State private var chartRevealed = false
+    @State private var sortieChoisie: RunRecord?
     private var profile: UserProfile { appState.profile }
 
     private var bilan: BilanDeLaSemaine {
@@ -228,18 +229,30 @@ struct WeeklyRecapView: View {
             HZTitreDeSection(titre: String(localized: "Courses de la semaine"))
             LazyVStack(spacing: 0) {
                 ForEach(Array(bilan.seances.enumerated()), id: \.element.persistentModelID) { index, run in
-                    HZLigneDeListe(titre: run.titreAffiche,
-                                   sousTitre: run.date.formatted(.dateTime.weekday(.wide).day().month().locale(Locale.current)),
-                                   filet: index < bilan.seances.count - 1) {
-                        HZVignette {
-                            HZMiniatureDeSortie(points: run.route.map { (lat: $0.lat, lng: $0.lng) })
+                    // UNE LIGNE DE SORTIE S'OUVRE, ICI COMME DANS L'HISTORIQUE. Les mêmes lignes, avec
+                    // la même miniature de tracé, ouvrent le résumé de la sortie dans l'historique ;
+                    // ici elles ne réagissaient pas.
+                    Button {
+                        sortieChoisie = run
+                    } label: {
+                        HZLigneDeListe(titre: run.titreAffiche,
+                                       sousTitre: run.date.formatted(.dateTime.weekday(.wide).day().month().locale(Locale.current)),
+                                       filet: index < bilan.seances.count - 1) {
+                            HZVignette {
+                                HZMiniatureDeSortie(points: run.route.map { (lat: $0.lat, lng: $0.lng) })
+                            }
+                        } queue: {
+                            HZValeurDeLigne(valeur: String(format: "%.2f km", locale: Locale.current, run.distanceKm),
+                                            precision: rythmeAffiche(run))
                         }
-                    } queue: {
-                        HZValeurDeLigne(valeur: String(format: "%.2f km", locale: Locale.current, run.distanceKm),
-                                        precision: rythmeAffiche(run))
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                 }
             }
+        }
+        .sheet(item: $sortieChoisie) { run in
+            RecapView(historicalRun: run).hzFeuille(detents: [.large], gereSonBas: true)
         }
     }
 

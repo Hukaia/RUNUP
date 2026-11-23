@@ -16,7 +16,7 @@ struct ClubAloneCard: View {
                     .hzParagraphe(.c14, .medium, interligne: HZBandeauDuCoach.interligne)
                     .foregroundStyle(HZCouleur.secondaireSurClair)
                     .fixedSize(horizontal: false, vertical: true)
-                ShareLink(item: String(localized: "Rejoins mon club \(club.name) sur Haizo : https://runup-nu.vercel.app/club/\(club.id)")) {
+                ShareLink(item: Liens.invitationAuClub(nom: club.name, id: club.id)) {
                     HStack(spacing: HZBoutonPilule.ecart) {
                         HZIcone(dessin: .partager, cote: HZBoutonPilule.coteDeLecture, couleur: HZCouleur.blanc)
                         Text("Partager")

@@ -42,6 +42,9 @@ struct FriendsView: View {
     @State private var contactMatches: [PublicUser]?
 
     @State private var showSignIn = false
+    /// Ne plus suivre se confirme : « Suivi » est un état affiché, et le toucher désabonnait
+    /// aussitôt. Sur un compte privé, revenir en arrière demande une nouvelle demande.
+    @State private var personneAQuitter: PublicUser?
     @State private var peopleSheet: PeopleSheetKind?
     @State private var reportTarget: ReportTarget?
     @State private var pendingBlock: (userId: String, name: String)?
@@ -66,6 +69,14 @@ struct FriendsView: View {
         .onChange(of: query) { _, newValue in scheduleSearch(newValue) }
         .onChange(of: auth.isSignedIn) { _, signedIn in if signedIn { Task { await load() } } }
         .sheet(isPresented: $showSignIn) { SignInView().hzFeuille(detents: [.large]) }
+        .confirmationDialog(personneAQuitter.map { String(localized: "Ne plus suivre \($0.name) ?") } ?? "",
+                            isPresented: Binding(get: { personneAQuitter != nil },
+                                                 set: { if !$0 { personneAQuitter = nil } }),
+                            titleVisibility: .visible,
+                            presenting: personneAQuitter) { personne in
+            Button("Se désabonner", role: .destructive) { Task { await unfollow(personne) } }
+            Button("Annuler", role: .cancel) {}
+        }
         .sheet(item: $peopleSheet) { kind in
             PeopleListSheet(
                 // `PeopleListSheet` reçoit des `String` : sans `String(localized:)` ils ne
@@ -236,7 +247,7 @@ struct FriendsView: View {
                 ForEach(Array(following.enumerated()), id: \.element.id) { index, user in
                     personRow(user, detail: derniereSortie(de: user), filet: index < following.count - 1) {
                         HZBoutonSuivre(libelle: String(localized: "Suivi"), suivi: true) {
-                            Task { await unfollow(user) }
+                            personneAQuitter = user
                         }
                     }
                 }
