@@ -24,6 +24,7 @@ struct ChoiceView: View {
         }
         .fullScreenCover(isPresented: $showNewGoal) {
             NewGoalWizardView()
+                .toastDeModale()
         }
     }
 

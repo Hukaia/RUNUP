@@ -32,6 +32,17 @@ struct PublicProfileView: View {
     @State private var selectedBadge: ClubBadge?
     @State private var signalementPresente = false
     @State private var motif = ""
+    /// Ce que vise le signalement en cours : `nil` pour la personne (menu du haut), sinon la
+    /// sortie dont on a ouvert le menu. « Signaler cette activité » signalait la personne.
+    @State private var sortieSignalee: FeedItem?
+    /// Les trois gestes des cartes de sortie, présentés D'ICI : cet écran est une couverture, et
+    /// une feuille présentée par la racine resterait derrière lui. Ils étaient branchés sur des
+    /// fermetures vides, donc « Commenter », « Modifier ma sortie » et « Supprimer cette
+    /// activité » s'affichaient et ne faisaient rien.
+    @State private var commentairesDe: FeedItem?
+    @State private var sortieEnModification: FeedItem?
+    @State private var sortieASupprimer: FeedItem?
+    @State private var blocageDemande = false
 
     private var clubService: ClubService { ClubService(auth: appState.auth) }
     private var profil: PublicProfile? { page?.profile }
@@ -57,9 +68,41 @@ struct PublicProfileView: View {
         .alert("Signaler", isPresented: $signalementPresente) {
             TextField("Pourquoi ?", text: $motif)
             Button("Envoyer") { signaler() }
-            Button("Annuler", role: .cancel) { motif = "" }
+            Button("Annuler", role: .cancel) { motif = ""; sortieSignalee = nil }
         } message: {
             Text("Ce signalement sera examiné. Merci de préciser ce qui pose problème.")
+        }
+        // Bloquer se confirme, comme sur le fil, le club et les amis : c'est un geste qui coupe
+        // deux personnes l'une de l'autre partout dans l'app, et il partait au premier appui.
+        .alert("Bloquer cette personne ?", isPresented: $blocageDemande) {
+            Button("Bloquer", role: .destructive) { Task { await bloquer() } }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Vous ne verrez plus rien l'un de l'autre, nulle part dans l'app.")
+        }
+        .alert("Supprimer cette activité ?",
+               isPresented: Binding(get: { sortieASupprimer != nil },
+                                    set: { if !$0 { sortieASupprimer = nil } })) {
+            // La sortie est lue AVANT la fermeture de l'alerte, qui remet l'état à `nil`.
+            Button("Supprimer", role: .destructive) {
+                if let sortie = sortieASupprimer { Task { await supprimer(sortie) } }
+            }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Elle disparaîtra du fil du club, avec ses applaudissements et commentaires. Tes XP restent acquis.")
+        }
+        .sheet(item: $commentairesDe) { item in
+            ActivityCommentsSheet(
+                activityId: item.id,
+                currentUserId: appState.auth.currentUser?.id,
+                clubService: clubService,
+                onCommentPosted: { Task { await charger() } }
+            )
+            .hzFeuille(detents: [.medium, .large], gereSonBas: true)
+        }
+        .sheet(item: $sortieEnModification) { item in
+            EditActivitySheet(item: item, onSaved: { Task { await charger() } })
+                .hzFeuille(detents: [.large], gereSonBas: true)
         }
     }
 
@@ -92,9 +135,10 @@ struct PublicProfileView: View {
             Menu {
                 Button("Signaler cette personne") {
                     motif = ""
+                    sortieSignalee = nil
                     signalementPresente = true
                 }
-                Button("Bloquer", role: .destructive) { Task { await bloquer() } }
+                Button("Bloquer", role: .destructive) { blocageDemande = true }
             } label: {
                 HZIcone(dessin: .options, cote: HZClubGestion.coteDesOptions, couleur: HZCouleur.blanc)
                     .frame(width: HZDiametre.commande.rawValue, height: HZDiametre.commande.rawValue)
@@ -270,14 +314,15 @@ struct PublicProfileView: View {
                             item: item,
                             estLaMienne: profil.isMe,
                             applaudir: { Task { await applaudir(item) } },
-                            commenter: {},
-                            modifier: {},
-                            supprimer: {},
+                            commenter: { commentairesDe = item },
+                            modifier: { sortieEnModification = item },
+                            supprimer: { sortieASupprimer = item },
                             signaler: {
                                 motif = ""
+                                sortieSignalee = item
                                 signalementPresente = true
                             },
-                            bloquer: { Task { await bloquer() } })
+                            bloquer: { blocageDemande = true })
                     }
                 }
             }
@@ -336,13 +381,38 @@ struct PublicProfileView: View {
         }
     }
 
+    /// Le signalement vise ce qu'on a désigné : la sortie quand il vient du menu d'une carte, la
+    /// personne quand il vient du menu du haut. Et il ne dit « envoyé » que s'il l'a été : un
+    /// `try?` suivi du message de succès annonçait l'envoi même hors ligne.
     private func signaler() {
         let raison = motif.trimmingCharacters(in: .whitespacesAndNewlines)
+        let sortie = sortieSignalee
         motif = ""
-        guard !raison.isEmpty else { return }
+        sortieSignalee = nil
+        guard !raison.isEmpty else {
+            appState.toast(String(localized: "Écris ce qui pose problème pour envoyer le signalement."))
+            return
+        }
         Task {
-            try? await clubService.report(targetType: "user", targetId: userId, reason: raison)
-            appState.toast(String(localized: "Signalement envoyé"))
+            do {
+                if let sortie {
+                    try await clubService.report(targetType: "activity", targetId: sortie.id, reason: raison)
+                } else {
+                    try await clubService.report(targetType: "user", targetId: userId, reason: raison)
+                }
+                appState.toast(String(localized: "Signalement envoyé"))
+            } catch {
+                appState.toast(String(localized: "Signalement non envoyé. Réessaie."))
+            }
+        }
+    }
+
+    private func supprimer(_ item: FeedItem) async {
+        do {
+            try await clubService.deleteActivity(activityId: item.id)
+            page?.items.removeAll { $0.id == item.id }
+        } catch {
+            appState.toast(String(localized: "Impossible de supprimer. Réessaie."))
         }
     }
 

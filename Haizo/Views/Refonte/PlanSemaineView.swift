@@ -97,6 +97,7 @@ struct PlanSemaineView: View {
         .statusBarHidden()
         .fullScreenCover(isPresented: $planCompletOuvert) {
             PlanView(retour: { planCompletOuvert = false })
+                .toastDeModale()
         }
     }
 
@@ -363,7 +364,7 @@ struct PlanSemaineView: View {
             // glissement et de faire sauter la mise en page.
             .disabled(choisi != aujourdHui)
             .opacity(choisi == aujourdHui ? HZPlan.pleine : HZPlan.eteint)
-            if planDebloque && aPlusieursCartes {
+            if planDebloque && aPlusieursCartes && appState.peutDeplacerUneSeance {
                 HZBoutonPilule(libelle: String(localized: "Déplacer"), dessin: .deplacer,
                                fond: HZCouleur.surfaceSombre) {
                     appState.openMoveSession()
@@ -401,10 +402,11 @@ struct PlanSemaineView: View {
     // MARK: - Passer à un objectif
 
     /// Les objectifs que l'app propose, hors celui qu'on suit déjà. Toucher une tuile ouvre
-    /// l'assistant de programme : il pose les questions de l'objectif, et l'objectif choisi n'y est
-    /// pas encore présélectionné.
+    /// l'assistant de programme SUR CET OBJECTIF (`AppState.ouvrirLAssistant(sur:)`).
+    /// Sans « (Re)commencer » : l'assistant ne le propose pas, la tuile menait à une liste où il
+    /// n'était pas.
     private var autresObjectifs: [GoalType] {
-        Array(GoalType.allCases.filter { $0.estProposable && $0 != profile.goalId }
+        Array(GoalType.allCases.filter { $0.estProposable && $0 != .restart && $0 != profile.goalId }
             .prefix(HZPlan.objectifsAffiches))
     }
 
@@ -424,7 +426,7 @@ struct PlanSemaineView: View {
                         ForEach(autresObjectifs) { objectif in
                             let rang = autresObjectifs.firstIndex(of: objectif) ?? 0
                             Button {
-                                appState.newGoalWizardPresented = true
+                                appState.ouvrirLAssistant(sur: objectif)
                             } label: {
                                 HZTuile(libelle: precision(de: objectif), valeur: objectif.title,
                                         format: .objectif,

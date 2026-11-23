@@ -15,14 +15,28 @@ struct ActivityCommentsSheet: View {
     /// Called once a comment is successfully posted, so `ClubView` can bump the feed's local
     /// `commentsCount` without a full refetch.
     var onCommentPosted: () -> Void
-    var onReport: (CommentItem) -> Void
-    var onBlock: (CommentItem) -> Void
+    /// SIGNALER ET BLOQUER SE FONT D'ICI, sauf si l'appelant veut s'en charger.
+    ///
+    /// Les deux gestes étaient délégués à l'écran du dessous, qui posait une alerte… sous cette
+    /// feuille : elle n'apparaissait qu'une fois la feuille refermée. Deux appelants sur quatre
+    /// passaient même des fermetures vides, donc « Signaler ce commentaire » et « Bloquer » ne
+    /// faisaient rien du tout depuis la page d'une sortie. La feuille a le service et le
+    /// commentaire sous la main : elle demande le motif, confirme le blocage, et répond.
+    /// `ClubView` garde ses deux fermetures (il referme la feuille avant de demander).
+    var onReport: ((CommentItem) -> Void)? = nil
+    var onBlock: ((CommentItem) -> Void)? = nil
+    /// Après un blocage fait d'ici : l'écran du dessous a peut-être des cartes de cette personne
+    /// à retirer.
+    var onBlocked: (() -> Void)? = nil
 
     @State private var comments: [CommentItem] = []
     @State private var isLoading = true
     @State private var newText = ""
     @State private var isSending = false
     @State private var errorMessage: String?
+    @State private var commentaireSignale: CommentItem?
+    @State private var motif = ""
+    @State private var personneABloquer: CommentItem?
 
     private var peutEnvoyer: Bool {
         !newText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isSending
@@ -34,6 +48,53 @@ struct ActivityCommentsSheet: View {
                 .safeAreaInset(edge: .bottom, spacing: 0) { bas }
         }
         .task { await load() }
+        .alert("Signaler", isPresented: Binding(get: { commentaireSignale != nil },
+                                                set: { if !$0 { commentaireSignale = nil } })) {
+            TextField("Pourquoi ?", text: $motif)
+            // Le commentaire est lu AVANT la fermeture de l'alerte, qui remet l'état à `nil`.
+            Button("Envoyer") { if let cible = commentaireSignale { signaler(cible) } }
+            Button("Annuler", role: .cancel) { motif = "" }
+        } message: {
+            Text("Ce signalement sera examiné. Merci de préciser ce qui pose problème.")
+        }
+        .alert("Bloquer cette personne ?", isPresented: Binding(get: { personneABloquer != nil },
+                                                                set: { if !$0 { personneABloquer = nil } })) {
+            Button("Bloquer", role: .destructive) {
+                if let cible = personneABloquer { Task { await bloquer(cible) } }
+            }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Vous ne verrez plus rien l'un de l'autre, nulle part dans l'app.")
+        }
+    }
+
+    private func signaler(_ commentaire: CommentItem) {
+        let raison = motif.trimmingCharacters(in: .whitespacesAndNewlines)
+        motif = ""
+        guard !raison.isEmpty else {
+            errorMessage = String(localized: "Écris ce qui pose problème pour envoyer le signalement.")
+            return
+        }
+        errorMessage = nil
+        Task {
+            do {
+                try await clubService.report(targetType: "comment", targetId: commentaire.id, reason: raison)
+                appState.toast(String(localized: "Signalement envoyé"))
+            } catch {
+                errorMessage = String(localized: "Signalement non envoyé. Réessaie.")
+            }
+        }
+    }
+
+    private func bloquer(_ commentaire: CommentItem) async {
+        errorMessage = nil
+        do {
+            try await clubService.blockUser(userId: commentaire.userId)
+            comments.removeAll { $0.userId == commentaire.userId }
+            onBlocked?()
+        } catch {
+            errorMessage = String(localized: "Impossible de bloquer cette personne.")
+        }
     }
 
     @ViewBuilder private var corps: some View {
@@ -78,8 +139,12 @@ struct ActivityCommentsSheet: View {
             ouvrir: { if !moi { appState.ouvrirLeProfil(comment.userId) } })
         .contextMenu {
             if comment.userId != currentUserId {
-                Button("Signaler ce commentaire") { onReport(comment) }
-                Button("Bloquer \(comment.name)", role: .destructive) { onBlock(comment) }
+                Button("Signaler ce commentaire") {
+                    if let onReport { onReport(comment) } else { motif = ""; commentaireSignale = comment }
+                }
+                Button("Bloquer \(comment.name)", role: .destructive) {
+                    if let onBlock { onBlock(comment) } else { personneABloquer = comment }
+                }
             }
         }
     }

@@ -79,7 +79,7 @@ struct HistoryView: View {
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HZCommandesDuHaut(retour: { appState.go(.stats) }) {
+            HZCommandesDuHaut(retour: { appState.retour(parDefaut: .stats) }) {
                 HZBoutonPilule(libelle: String(localized: "Ajouter"), hauteur: .petite,
                                fond: HZCouleur.blanc, couleur: HZCouleur.noir) { showAddRun = true }
                     .accessibilityLabel(String(localized: "Ajouter une séance"))

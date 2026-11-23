@@ -12,4 +12,6 @@ enum HZToast {
     static let rayonDeLOmbre: CGFloat = 16
     static let decalageDeLOmbre: CGFloat = 8
     static let souffle: CGFloat = 14
+    /// Deux lignes au plus : au-delà, c'est une alerte qu'il faut, pas un message passager.
+    static let lignes = 2
 }

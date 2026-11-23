@@ -4,7 +4,23 @@ import SwiftUI
 struct SessionDetailSheet: View {
     @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
+    @Environment(SubscriptionService.self) private var subscriptions
     @State private var moved = false
+
+    /// « Déplacer à demain » ne s'affiche que s'il peut réussir.
+    ///
+    /// Il était là tout le temps, et répondait « dernier jour de la semaine » un jour de repos, sur
+    /// une séance déjà faite ou en course libre : un bouton qui échoue en donnant une fausse raison.
+    /// Les quatre conditions sont celles que le moteur vérifie (`moveTodaySessionToTomorrow`), plus
+    /// l'abonnement, comme le « Déplacer » de l'accueil.
+    private var peutDeplacerADemain: Bool {
+        let profil = appState.profile
+        return subscriptions.unlocks(.adaptivePlan)
+            && appState.peutDeplacerUneSeance
+            && !profil.isRestDayToday
+            && !profil.seanceDoneToday
+            && AdaptivePlanEngine.currentWeekdayIndex() < HZHub.dernierJourDeLaSemaine
+    }
 
     private var session: WorkoutSession {
         #if DEBUG
@@ -540,9 +556,11 @@ struct SessionDetailSheet: View {
                     .background(HZCouleur.surfaceClaire, in: Capsule())
             } else {
                 HStack(spacing: HZEspace.entreCommandes) {
-                    HZBoutonPilule(libelle: String(localized: "Déplacer à demain"), hauteur: .moyenne,
-                                   fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre,
-                                   etendu: true, action: deplacerADemain)
+                    if peutDeplacerADemain {
+                        HZBoutonPilule(libelle: String(localized: "Déplacer à demain"), hauteur: .moyenne,
+                                       fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre,
+                                       etendu: true, action: deplacerADemain)
+                    }
                     HZBoutonPilule(libelle: String(localized: "Démarrer"), dessin: .lecture,
                                    hauteur: .moyenne, etendu: true,
                                    cote: HZBoutonPilule.coteDeLecture, action: demarrer)
@@ -565,7 +583,9 @@ struct SessionDetailSheet: View {
             appState.publishWidgetSnapshot()
             appState.toast(String(localized: "Séance déplacée à demain"))
         } else {
-            appState.toast(String(localized: "Impossible de déplacer cette séance : dernier jour de la semaine."))
+            // Le bouton ne s'affiche plus quand le déplacement est impossible ; s'il échoue quand
+            // même, on ne prétend pas en connaître la raison.
+            appState.toast(String(localized: "Cette séance n'a pas pu être déplacée."))
         }
     }
 

@@ -53,9 +53,7 @@ struct ActivityDetailView: View {
                 activityId: activityId,
                 currentUserId: appState.auth.currentUser?.id,
                 clubService: clubService,
-                onCommentPosted: { Task { await charger() } },
-                onReport: { _ in },
-                onBlock: { _ in }
+                onCommentPosted: { Task { await charger() } }
             )
             .hzFeuille(detents: [.large], gereSonBas: true)
         }

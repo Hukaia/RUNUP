@@ -64,7 +64,7 @@ struct HeatmapView: View {
         VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
             HZBoutonRond(dessin: .retour, nom: String(localized: "Retour"), diametre: .filtre,
                          fond: HZCouleur.blanc, couleur: HZCouleur.encre,
-                         trait: HZBoutonRond.traitDuRetour) { appState.go(.stats) }
+                         trait: HZBoutonRond.traitDuRetour) { appState.retour(parDefaut: .stats) }
                 .shadow(color: HZCouleur.encre.opacity(HZHub.opaciteDeLOmbre), radius: HZHub.flouDeLOmbre,
                         y: HZHub.decalageDeLOmbre)
             HStack(spacing: HZEspace.entrePilules) {

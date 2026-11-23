@@ -231,7 +231,7 @@ struct AccueilView: View {
                      cote: HZAction.coteDeLecture, encreDuLibelle: HZCouleur.blanc) {
                 appState.startRun()
             }
-            if planDebloque {
+            if planDebloque && appState.peutDeplacerUneSeance {
                 HZAction(dessin: .deplacer, libelle: String(localized: "Déplacer"),
                          fondDeLaPastille: HZCouleur.surfaceSombre, encreDuLibelle: HZCouleur.blanc) {
                     appState.openMoveSession()
@@ -395,7 +395,9 @@ struct AccueilView: View {
         VStack(alignment: .leading, spacing: 0) {
             HZTitreDeSection(titre: String(localized: "Dernières sorties"),
                              lien: String(localized: "Tout voir")) {
-                appState.go(.stats)
+                // L'historique, et non les Stats : « Tout voir » sous deux sorties promet la liste
+                // des sorties. Son retour ramène ici (`AppState.retour`).
+                appState.go(.history)
             }
             .padding(.top, HZAccueil.avantUneSectionBasse)
             if dernieres.isEmpty {

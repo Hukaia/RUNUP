@@ -125,7 +125,7 @@ struct RingsView: View {
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HZCommandesDuHaut(retour: { appState.go(.home) }) { EmptyView() }
+            HZCommandesDuHaut(retour: { appState.retour(parDefaut: .home) }) { EmptyView() }
             VStack(alignment: .leading, spacing: 0) {
                 Text(isToday ? String(localized: "Aujourd'hui") : String(localized: "Journée passée"))
                     .hzTexte(.c15, .semi)

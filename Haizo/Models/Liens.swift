@@ -23,4 +23,14 @@ enum Liens {
 
     static let confidentialite = URL(string: "\(base)/privacy.html")!
     static let assistance = URL(string: "\(base)/support.html")!
+
+    /// La fiche App Store de Haizo : le même identifiant que `public/club.html`.
+    static let appStore = URL(string: "https://apps.apple.com/app/id6790719663")!
+
+    /// Ce que « Inviter un ami » partage. Le texte portait `runup-nu.vercel.app`, la racine du
+    /// serveur, qui ne sert aucune page et répond 404 : l'invitation menait à une erreur. Qui
+    /// reçoit ce message n'a pas l'app, donc la fiche App Store est la seule destination utile.
+    static var invitation: String {
+        String(localized: "Rejoins-moi sur Haizo, mon appli de coaching running : \(appStore.absoluteString)")
+    }
 }

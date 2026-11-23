@@ -38,6 +38,11 @@ struct WallView: View {
     @State private var reportTarget: ReportTarget?
     @State private var reportReason = ""
     @State private var pendingBlock: (id: String, name: String)?
+    /// Supprimer se confirme : la sortie part avec ses bravos et ses commentaires, l'annonce avec
+    /// ses réponses. Les deux partaient au premier appui dans un menu, alors que le mur du club
+    /// demandait déjà confirmation pour le même geste.
+    @State private var sortieASupprimer: FeedItem?
+    @State private var annonceASupprimer: WallRacePost?
     /// LE FIL EST UN ONGLET, DONC IL S'OUVRE AUSSI DÉCONNECTÉE.
     ///
     /// Tant qu'il était une carte du Profil, cette carte vivait DANS la branche
@@ -142,11 +147,9 @@ struct WallView: View {
                 currentUserId: appState.auth.currentUser?.id,
                 clubService: clubService,
                 onCommentPosted: { Task { await charger() } },
-                onReport: { commentaire in
-                    reportTarget = ReportTarget(targetType: "comment", targetId: commentaire.id,
-                                                displayName: commentaire.nomComplet)
-                },
-                onBlock: { commentaire in pendingBlock = (commentaire.userId, commentaire.name) }
+                // Signaler et bloquer se font dans la feuille : posées d'ici, les deux alertes
+                // restaient sous elle jusqu'à ce qu'on la referme.
+                onBlocked: { Task { await charger() } }
             )
             .hzFeuille(detents: [.medium, .large], gereSonBas: true)
         }
@@ -172,6 +175,27 @@ struct WallView: View {
             Button("Annuler", role: .cancel) { pendingBlock = nil }
         } message: {
             Text("Vous ne verrez plus rien l'un de l'autre, nulle part dans l'app.")
+        }
+        .alert("Supprimer cette activité ?",
+               isPresented: Binding(get: { sortieASupprimer != nil },
+                                    set: { if !$0 { sortieASupprimer = nil } })) {
+            // Lue AVANT la fermeture de l'alerte, qui remet l'état à `nil`.
+            Button("Supprimer", role: .destructive) {
+                if let sortie = sortieASupprimer { Task { await supprimer(sortie) } }
+            }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Elle disparaîtra du fil du club, avec ses applaudissements et commentaires. Tes XP restent acquis.")
+        }
+        .alert("Supprimer cette annonce ?",
+               isPresented: Binding(get: { annonceASupprimer != nil },
+                                    set: { if !$0 { annonceASupprimer = nil } })) {
+            Button("Supprimer", role: .destructive) {
+                if let annonce = annonceASupprimer { Task { await supprimerLAnnonce(annonce) } }
+            }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Si quelqu'un y a déjà répondu, elle sera close plutôt que supprimée.")
         }
     }
 
@@ -340,7 +364,7 @@ struct WallView: View {
                        applaudir: { Task { await applaudir(item) } },
                        commenter: { commentsFor = item },
                        modifier: { editing = item },
-                       supprimer: { Task { await supprimer(item) } },
+                       supprimer: { sortieASupprimer = item },
                        signaler: {
                            reportTarget = ReportTarget(targetType: "activity", targetId: item.id,
                                                        displayName: item.nomComplet)
@@ -354,13 +378,22 @@ struct WallView: View {
     /// milieu des sorties ne voudrait rien dire — et elle mène à la page, où se tient la
     /// conversation. Deux cibles distinctes : un geste de tape DANS un bouton est avalé par lui, donc
     /// l'applaudissement n'est pas posé sur le bouton qui ouvre la page.
+    /// La page DE CETTE COURSE, et non la liste des courses : l'annonce nomme une course, la toucher
+    /// menait à une liste où il fallait la retrouver. Hors ligne, ou si la course n'existe plus,
+    /// la liste reste mieux que rien.
+    private func ouvrirLaCourse(de post: WallRacePost) async {
+        if let page = try? await clubService.racePage(raceId: post.raceId) {
+            appState.ouvrirLaCourse(page.race)
+        } else {
+            appState.openRacesTabOnNextVisit = true
+            appState.go(.club)
+        }
+    }
+
     private func carteDeCourse(_ post: WallRacePost) -> some View {
         VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
             HStack(spacing: 0) {
-                Button(action: {
-                    appState.openRacesTabOnNextVisit = true
-                    appState.go(.club)
-                }) {
+                Button(action: { Task { await ouvrirLaCourse(de: post) } }) {
                     HStack(spacing: HZEspace.entreCommandes) {
                         HZIcone(dessin: .drapeau, cote: HZFil.coteDuDrapeau, couleur: HZCouleur.encre)
                             .frame(width: HZFil.disqueDuDrapeau, height: HZFil.disqueDuDrapeau)
@@ -426,9 +459,7 @@ struct WallView: View {
         if post.author.id == appState.auth.currentUser?.id, !post.closed {
             Menu {
                 Button("Modifier cette annonce") { annonceEnModification = post }
-                Button("Supprimer cette annonce", role: .destructive) {
-                    Task { await supprimerLAnnonce(post) }
-                }
+                Button("Supprimer cette annonce", role: .destructive) { annonceASupprimer = post }
             } label: {
                 HZIcone(dessin: .options, cote: HZFil.coteDuBravo, couleur: HZCouleur.secondaireSurClair)
                     .frame(width: HZBoutonRond.zoneTactile, height: HZBoutonRond.zoneTactile)

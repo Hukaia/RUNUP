@@ -14430,22 +14430,6 @@
         }
       }
     },
-    "Impossible de déplacer cette séance : dernier jour de la semaine.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Can't move this session: it's the last day of the week."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se puede mover esta sesión: es el último día de la semana."
-          }
-        }
-      }
-    },
     "Impossible de lire cette photo. Choisis-en une autre.": {
       "extractionState": "manual",
       "localizations": {
@@ -24964,23 +24948,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Únete a uno, o crea el tuyo"
-          }
-        }
-      }
-    },
-    "Rejoins-moi sur Haizo, mon appli de coaching running : https://runup-nu.vercel.app": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Join me on Haizo, my running coaching app: https://runup-nu.vercel.app"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Únete a mí en Haizo, mi app de entrenamiento para correr: https://runup-nu.vercel.app"
           }
         }
       }
@@ -41773,6 +41740,227 @@
           "stringUnit": {
             "state": "translated",
             "value": "Semana ajustada a «%@» según tu forma de la semana pasada."
+          }
+        }
+      }
+    },
+    "Rejoins-moi sur Haizo, mon appli de coaching running : %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join me on Haizo, my running coach app: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Únete a mí en Haizo, mi app de entrenamiento de running: %@"
+          }
+        }
+      }
+    },
+    "Cette séance n'a pas pu être déplacée.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This session couldn't be moved."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se ha podido mover esta sesión."
+          }
+        }
+      }
+    },
+    "Écris ce qui pose problème pour envoyer le signalement.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Write what's wrong to send the report."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escribe qué pasa para enviar el aviso."
+          }
+        }
+      }
+    },
+    "Signalement non envoyé. Réessaie.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report not sent. Try again."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aviso no enviado. Inténtalo de nuevo."
+          }
+        }
+      }
+    },
+    "Passer en course libre ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch to free running?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Pasar a carrera libre?"
+          }
+        }
+      }
+    },
+    "Terminer le programme ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End the programme?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Terminar el programa?"
+          }
+        }
+      }
+    },
+    "Se déconnecter ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign out?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cerrar sesión?"
+          }
+        }
+      }
+    },
+    "Ton programme s'arrête et ton objectif est retiré. Tu pourras en refaire un quand tu veux.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your programme stops and your goal is removed. You can build a new one whenever you like."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu programa se detiene y tu objetivo se elimina. Podrás crear otro cuando quieras."
+          }
+        }
+      }
+    },
+    "Le programme s'arrête maintenant et une période de récupération commence.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The programme stops now and a recovery period begins."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El programa se detiene ahora y empieza un periodo de recuperación."
+          }
+        }
+      }
+    },
+    "Tes données restent sur ce téléphone. Les sorties pas encore envoyées au club ne le seront pas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your data stays on this phone. Runs not yet sent to the club won't be sent."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus datos se quedan en este teléfono. Las salidas que aún no se han enviado al club no se enviarán."
+          }
+        }
+      }
+    },
+    "Passer en course libre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch to free running"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasar a carrera libre"
+          }
+        }
+      }
+    },
+    "Supprimer cette annonce ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this post?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Eliminar este anuncio?"
+          }
+        }
+      }
+    },
+    "Si quelqu'un y a déjà répondu, elle sera close plutôt que supprimée.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If someone has already replied, it will be closed rather than deleted."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si alguien ya ha respondido, se cerrará en lugar de eliminarse."
           }
         }
       }

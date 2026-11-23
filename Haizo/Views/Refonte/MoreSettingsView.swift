@@ -23,6 +23,56 @@ struct MoreSettingsView: View {
 
     @State private var ficheAdminOuverte = false
     @State private var showDeleteAccountConfirm = false
+    /// LES TROIS GESTES DE CETTE PAGE QUI DÉFONT QUELQUE CHOSE, et qui partaient au premier appui :
+    /// la course libre retire l'objectif, « Terminer » arrête le programme, la déconnexion abandonne
+    /// les sorties qui attendaient d'être envoyées au club. Une ligne de réglages touchée par
+    /// erreur en faisant défiler ne doit pas coûter un programme.
+    @State private var gesteAConfirmer: GesteAConfirmer?
+
+    private enum GesteAConfirmer {
+        case courseLibre, terminerLeProgramme, deconnexion
+
+        var titre: String {
+            switch self {
+            case .courseLibre: return String(localized: "Passer en course libre ?")
+            case .terminerLeProgramme: return String(localized: "Terminer le programme ?")
+            case .deconnexion: return String(localized: "Se déconnecter ?")
+            }
+        }
+
+        var explication: String {
+            switch self {
+            case .courseLibre:
+                return String(localized: "Ton programme s'arrête et ton objectif est retiré. Tu pourras en refaire un quand tu veux.")
+            case .terminerLeProgramme:
+                return String(localized: "Le programme s'arrête maintenant et une période de récupération commence.")
+            case .deconnexion:
+                return String(localized: "Tes données restent sur ce téléphone. Les sorties pas encore envoyées au club ne le seront pas.")
+            }
+        }
+
+        var bouton: String {
+            switch self {
+            case .courseLibre: return String(localized: "Passer en course libre")
+            case .terminerLeProgramme: return String(localized: "Terminer le programme")
+            case .deconnexion: return String(localized: "Se déconnecter")
+            }
+        }
+    }
+
+    private func executer(_ geste: GesteAConfirmer) {
+        switch geste {
+        case .courseLibre:
+            AdaptivePlanEngine.chooseFreeRun(profile)
+            appState.toast(String(localized: "Mode course libre activé : suggestions sans objectif de perf"))
+        case .terminerLeProgramme:
+            AdaptivePlanEngine.endProgram(profile)
+            appState.toast(String(localized: "Programme terminé · récupération en cours"))
+        case .deconnexion:
+            appState.auth.signOut()
+        }
+        dismiss()
+    }
     @State private var isDeletingAccount = false
     @State private var firstNameText = ""
     @State private var usernameText = ""
@@ -89,6 +139,16 @@ struct MoreSettingsView: View {
         }
         .sheet(isPresented: $ficheAdminOuverte) {
             AdminSheet().hzFeuille(detents: [.large])
+        }
+        .confirmationDialog(gesteAConfirmer?.titre ?? "",
+                            isPresented: Binding(get: { gesteAConfirmer != nil },
+                                                 set: { if !$0 { gesteAConfirmer = nil } }),
+                            titleVisibility: .visible,
+                            presenting: gesteAConfirmer) { geste in
+            Button(geste.bouton, role: .destructive) { executer(geste) }
+            Button("Annuler", role: .cancel) { gesteAConfirmer = nil }
+        } message: { geste in
+            Text(geste.explication)
         }
     }
 
@@ -340,16 +400,12 @@ struct MoreSettingsView: View {
                 // l'offrait enfin — ce qui ressemble à une app qui impose du repos pour qu'on
                 // puisse courir librement.
                 plusDestination(String(localized: "Passer en mode course libre"), filet: terminer) {
-                    AdaptivePlanEngine.chooseFreeRun(profile)
-                    appState.toast(String(localized: "Mode course libre activé : suggestions sans objectif de perf"))
-                    dismiss()
+                    gesteAConfirmer = .courseLibre
                 }
             }
             if terminer {
                 plusDestination(String(localized: "Terminer le programme"), filet: false) {
-                    AdaptivePlanEngine.endProgram(profile)
-                    appState.toast(String(localized: "Programme terminé · récupération en cours"))
-                    dismiss()
+                    gesteAConfirmer = .terminerLeProgramme
                 }
             }
         }
@@ -546,7 +602,7 @@ struct MoreSettingsView: View {
                     .hzParagraphe(.c13, .medium, interligne: HZReglages.interligne)
                     .foregroundStyle(HZCouleur.secondaireSurClair)
                     .fixedSize(horizontal: false, vertical: true)
-                ShareLink(item: String(localized: "Rejoins-moi sur Haizo, mon appli de coaching running : https://runup-nu.vercel.app")) {
+                ShareLink(item: Liens.invitation) {
                     Text("Inviter un ami")
                         .hzTexte(HZHauteurDeBouton.moyenne.corps, .gras)
                         .foregroundStyle(HZCouleur.blanc)
@@ -577,7 +633,7 @@ struct MoreSettingsView: View {
                     }
                     adresseDuCompte(user)
                 }
-                plusDestination(String(localized: "Se déconnecter")) { appState.auth.signOut(); dismiss() }
+                plusDestination(String(localized: "Se déconnecter")) { gesteAConfirmer = .deconnexion }
                 supprimerLeCompte
             }
             identite

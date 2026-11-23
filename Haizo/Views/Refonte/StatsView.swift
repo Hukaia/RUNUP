@@ -501,8 +501,11 @@ struct StatsView: View {
 
     private var longestRun: RunRecord? { runs.onFoot.max(by: { $0.distanceKm < $1.distanceKm }) }
 
+    /// SUR LA COURSE SUR ROUTE SEULE. Lue sur toutes les sorties, une sortie à vélo de 20 km posait un
+    /// « record » à 2:24 que personne ne battrait jamais à pied ; et le trail ne se compare pas au
+    /// plat (voir `onFoot`).
     private var bestPaceSecPerKm: Double? {
-        runs.compactMap { run -> Double? in
+        runs.only(.run).compactMap { run -> Double? in
             guard run.distanceKm >= 1 else { return nil }
             return PaceModel.parseSecPerKm(run.avgPace)
         }.min()
@@ -513,8 +516,10 @@ struct StatsView: View {
     private var bestWeekKm: Double {
         // Monday-first weeks via the engine's own range — `Calendar.current` weeks start on the
         // device region's day (Sunday on en-US), which made this disagree with the week card.
+        // À PIED : la même définition que la carte de la semaine (`SemaineComparable`), sans quoi
+        // une semaine de vélo devenait la « meilleure semaine » de course.
         var weekTotals: [Date: Double] = [:]
-        for run in runs {
+        for run in runs.onFoot {
             weekTotals[AdaptivePlanEngine.currentWeekRange(from: run.date).lowerBound, default: 0] += run.distanceKm
         }
         return weekTotals.values.max() ?? 0
@@ -525,7 +530,9 @@ struct StatsView: View {
     /// race times from. Sans historique, `predictedSeconds(forKm:)` repart du VDOT du profil,
     /// celui dont le plan tire déjà ses allures.
     private var bestRecentPerformance: (km: Double, secPerKm: Double)? {
-        let candidates = runs.prefix(HZStats.sortiesRetenuesPourUnePrediction).compactMap { run -> (Double, Double)? in
+        // SUR ROUTE SEULEMENT : une prédiction de 10 km tirée d'une vitesse de vélo, ou d'une allure
+        // de trail en montée, serait un nombre faux présenté comme un temps possible.
+        let candidates = runs.only(.run).prefix(HZStats.sortiesRetenuesPourUnePrediction).compactMap { run -> (Double, Double)? in
             guard run.distanceKm >= HZStats.distanceMinimaleDUnePrediction, let pace = PaceModel.parseSecPerKm(run.avgPace) else { return nil }
             return (run.distanceKm, pace)
         }
@@ -608,9 +615,11 @@ struct StatsView: View {
 
     private var weeklyDistances: [Double] {
         // Same Monday-first anchoring as `bestWeekKm` — see comment there.
+        // À PIED, comme `bestWeekKm` : la charge est un marqueur de blessure de course, et des
+        // kilomètres de vélo la gonflaient d'un facteur trois sans rien dire des jambes.
         let cal = Calendar.current
         var weekTotals: [Date: Double] = [:]
-        for run in runs {
+        for run in runs.onFoot {
             weekTotals[AdaptivePlanEngine.currentWeekRange(from: run.date).lowerBound, default: 0] += run.distanceKm
         }
         let thisWeekStart = AdaptivePlanEngine.currentWeekRange().lowerBound

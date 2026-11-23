@@ -9325,3 +9325,27 @@ clairs en haut). J'ai regardé les six images : aucune bannière, six écrans d�
 - Vérifié sur les captures réelles de la campagne 264 : 96 captures sombres regardées, au plus 17 % (plafond 25). Deux cas de plus dans `test_banniere.py` (13 sur 13).
 - Effet de bord attendu : la reprise « une langue à refaire » se déclenchait à chaque langue pour ces faux positifs ; la campagne devrait raccourcir.
 - **Pas encore vu** : les étapes qui suivent (mesure des bascules, comparaison, film d'aperçu) n'ont pas tourné depuis le 18 novembre.
+
+## Contrôle de tous les liens et boutons (23 novembre), lot 1
+
+Question de Charlotte : « Tous les liens ont les bonnes fonctions ? Toutes les fonctions sont pertinentes et vraiment bien ? ». Réponse honnête : non. Cinq relectures par zone (accueil, plan et coach ; course et stats ; Explorer et courses ; club et amis ; profil, réglages et abonnement) ont remonté une soixantaine de défauts. Chacun est relu dans le code avant d'être corrigé. Rien de ce lot n'est vérifiable en capture : ce sont des gestes, pas des images.
+
+Corrigé dans ce lot :
+
+- **Les retours ramènent d'où l'on vient.** Chaque écran écrivait son retour en dur (Courses, Club, Itinéraires, Chaussures vers le Profil ; Historique, Carte de chaleur, Bilan vers les Stats). `AppState` note maintenant d'où chaque écran a été ouvert (`origines`, `retour(parDefaut:)`), et les onglets de la barre n'ont pas d'origine (`allerALOnglet`).
+- **Records et prédictions des Stats faussés par le vélo.** « Meilleure allure », « Meilleure semaine », la charge sur 8 semaines et les temps possibles lisaient toutes les sorties. Une sortie à vélo posait un record d'allure imbattable et des prédictions tirées d'une vitesse de vélo. Allure et prédictions : course sur route seule ; kilomètres : à pied.
+- **« Tout voir » sous « Dernières sorties »** ouvre l'historique, plus les Stats.
+- **« Déplacer »** ne s'affiche que sur un programme en cours (accueil, « Ta semaine », plan complet). En course libre il ouvrait une feuille où rien ne se passait.
+- **« Déplacer à demain »** (fiche de séance) ne s'affiche que s'il peut réussir. Il répondait « dernier jour de la semaine » un jour de repos ou sur une séance faite.
+- **Le plan complet a ses propres feuilles.** C'est une couverture plein écran : « Déplacer une séance », « Les modifier » et la ligne du jour ouvraient leur feuille derrière elle.
+- **« Passer à un objectif »** : la tuile ouvre l'assistant sur cet objectif. Plus de tuile « (Re)commencer », que l'assistant ne propose pas. Le retour de l'assistant ne reste plus sur place depuis l'étape des jours.
+- **Annonce de course sur le fil** : ouvre la page de cette course, plus la liste des courses.
+- **Les messages passagers se voient dans les feuilles et les couvertures** (`ToastDeModale`, posé par `hzFeuille`). « Achat restauré », « Compte supprimé », « Signalement envoyé » partaient derrière la modale. Deux lignes au lieu d'une.
+- **Profil public** : « Commenter », « Modifier ma sortie » et « Supprimer cette activité » étaient branchés sur du vide. « Bloquer » se confirme. « Signaler cette activité » signale l'activité, plus la personne, et ne dit « envoyé » que si c'est vrai.
+- **Commentaires** : signaler et bloquer se font dans la feuille (ils ne faisaient rien depuis la page d'une sortie).
+- **Fil** : supprimer une activité ou une annonce se confirme.
+- **Réglages** : course libre, « Terminer le programme » et « Se déconnecter » se confirment.
+- **Fiche admin** : `adminListConfigured` absent valait « non configurée », ce qui ouvrait la fiche à tout le monde entre la connexion et le premier rafraîchissement. Absent vaut maintenant « on ne sait pas ».
+- **« Inviter un ami »** partageait `runup-nu.vercel.app`, qui répond 404. Il partage la fiche App Store (`Liens.appStore`).
+
+Reste à traiter : voir la suite de cette section au prochain lot.

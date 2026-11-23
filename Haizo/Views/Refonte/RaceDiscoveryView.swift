@@ -87,6 +87,7 @@ struct RaceDiscoveryView: View {
         .onChange(of: epreuve) { _, _ in Task { await charger() } }
         .fullScreenCover(item: $ouverte) { course in
             RacePageView(race: course) { Task { await charger() } }
+                .toastDeModale()
         }
         .sheet(isPresented: $creationPresentee) {
             CreateRaceSheet(nomPropose: recherche) { creee in
@@ -113,7 +114,7 @@ struct RaceDiscoveryView: View {
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HZCommandesDuHaut(retour: { appState.go(.profile) }) { EmptyView() }
+            HZCommandesDuHaut(retour: { appState.retour(parDefaut: .profile) }) { EmptyView() }
             Text("Courses")
                 .hzAffichage(.titreDEcran)
                 .foregroundStyle(HZCouleur.blanc)

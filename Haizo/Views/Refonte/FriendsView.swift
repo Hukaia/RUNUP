@@ -111,7 +111,7 @@ struct FriendsView: View {
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HZCommandesDuHaut(retour: { appState.go(.profile) }) { EmptyView() }
+            HZCommandesDuHaut(retour: { appState.retour(parDefaut: .profile) }) { EmptyView() }
             Text("Amis")
                 .hzAffichage(.titreDEcran)
                 .foregroundStyle(HZCouleur.blanc)
@@ -220,7 +220,7 @@ struct FriendsView: View {
                 VStack(alignment: .leading, spacing: HZEspace.groupe) {
                     HZPhrase(texte: String(localized: "Cherche quelqu'un par son nom ou son pseudo juste au-dessus. Ou invite ceux avec qui tu cours déjà."),
                              titre: String(localized: "Personne à suivre pour l'instant"))
-                    ShareLink(item: String(localized: "Rejoins-moi sur Haizo, mon appli de coaching running : https://runup-nu.vercel.app")) {
+                    ShareLink(item: Liens.invitation) {
                         Text("Inviter un ami")
                             .hzTexte(HZHauteurDeBouton.moyenne.corps, .gras)
                             .foregroundStyle(HZCouleur.blanc)

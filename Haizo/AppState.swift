@@ -168,6 +168,20 @@ final class AppState {
     /// recovery/choice first. Replaces the old "Refaire l'onboarding" action, which re-asked her
     /// name/sexe/date de naissance/blessures — everything, not just the goal — to get a new plan.
     var newGoalWizardPresented = false
+    /// L'objectif que l'assistant doit trouver déjà choisi en s'ouvrant : celui de la tuile
+    /// touchée dans « Passer à un objectif ». Lu une fois par l'assistant, puis remis à `nil`.
+    var objectifDeLAssistant: GoalType?
+
+    func ouvrirLAssistant(sur objectif: GoalType? = nil) {
+        objectifDeLAssistant = objectif
+        newGoalWizardPresented = true
+    }
+
+    /// Déplacer une séance n'a de sens que sur un programme en cours : en course libre, en
+    /// récupération ou au moment du choix, il n'y a pas de semaine posée à réarranger, et
+    /// `AdaptivePlanEngine.enregistrerDeplacement` refuse. Les boutons « Déplacer » lisent ceci
+    /// plutôt que de s'afficher puis de ne rien faire.
+    var peutDeplacerUneSeance: Bool { profile.programPhase == .active }
     /// Runs waiting for their RPE debrief — a session logged by hand (`markTodaySessionDone`,
     /// depuis la feuille « Séance déjà faite ») or a run
     /// delivered from the Watch (`WatchSessionService.handleCompletedRun`) appends here rather
@@ -1023,7 +1037,41 @@ final class AppState {
     /// qu'une septième se glisse ailleurs et reparte sans animation, ce qui ramènerait le trou
     /// de trois images décrit dans `HZMouvement.ecran`.
     func go(_ screen: AppScreen) {
+        noterLOrigine(de: screen)
         withAnimation(HZMouvement.ecran) { self.screen = screen }
+    }
+
+    /// D'OÙ CHAQUE ÉCRAN A ÉTÉ OUVERT, pour que son bouton de retour y ramène.
+    ///
+    /// Chaque écran écrivait son retour en dur : les Courses et le Club ramenaient au Profil,
+    /// l'Historique aux Stats. C'était juste tant qu'il n'y avait qu'une porte. Depuis l'accueil
+    /// (« Courses », « Tout voir ») ou Explorer, le retour envoyait sur un écran d'où l'on ne venait
+    /// pas.
+    private var origines: [AppScreen: AppScreen] = [:]
+
+    private func noterLOrigine(de arrivee: AppScreen) {
+        let depart = screen
+        // Pas d'origine depuis la course en direct ni depuis son résumé : y « revenir » relancerait
+        // un écran qui n'a peut-être plus rien à montrer.
+        guard depart != arrivee, depart != .live, depart != .recap else { return }
+        // A ouvre B, puis B ramène à A par un lien et non par son retour : A garde l'origine qu'il
+        // avait, sans quoi les deux retours se renverraient l'un à l'autre sans fin.
+        guard origines[depart] != arrivee else { return }
+        origines[arrivee] = depart
+    }
+
+    /// Un onglet de la barre n'a pas d'origine : on y arrive de partout, et son retour, s'il en a
+    /// un, garde sa destination par défaut.
+    func allerALOnglet(_ screen: AppScreen) {
+        origines[screen] = nil
+        withAnimation(HZMouvement.ecran) { self.screen = screen }
+    }
+
+    /// Le bouton de retour d'un écran : là d'où l'on vient, sinon sa destination par défaut.
+    func retour(parDefaut: AppScreen) {
+        let cible = origines[screen] ?? parDefaut
+        origines[screen] = nil
+        withAnimation(HZMouvement.ecran) { self.screen = cible }
     }
 
     /// `discipline` par défaut `.run` : les deux autres entrées — la carte de séance de

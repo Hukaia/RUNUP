@@ -196,7 +196,7 @@ struct RaceGoalView: View {
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HZCommandesDuHaut(retour: { appState.go(.profile) }) { EmptyView() }
+            HZCommandesDuHaut(retour: { appState.retour(parDefaut: .profile) }) { EmptyView() }
             Text("Ton objectif")
                 .hzTexte(.c15, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurSombre)

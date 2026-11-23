@@ -118,6 +118,7 @@ struct ExplorerView: View {
         // pas une parenthèse.
         .fullScreenCover(item: $courseOuverte) { course in
             RacePageView(race: course) { Task { await charger() } }
+                .toastDeModale()
         }
         // La fiche d'un club, et l'entrée par un code : deux feuilles, portées par le corps (qui est à
         // l'écran quel que soit le filtre) et non par la liste, qui n'existe que sous « Clubs ».

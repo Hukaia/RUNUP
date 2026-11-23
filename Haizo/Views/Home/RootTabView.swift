@@ -39,11 +39,11 @@ struct RootTabView: View {
             set: { onglet in
                 Haptics.selection()
                 switch onglet {
-                case .aujourdhui: appState.go(.home)
-                case .explorer: appState.go(.explorer)
-                case .club: appState.go(.fil)
-                case .stats: appState.go(.stats)
-                case .coach: appState.go(.coach)
+                case .aujourdhui: appState.allerALOnglet(.home)
+                case .explorer: appState.allerALOnglet(.explorer)
+                case .club: appState.allerALOnglet(.fil)
+                case .stats: appState.allerALOnglet(.stats)
+                case .coach: appState.allerALOnglet(.coach)
                 }
             })
     }
@@ -140,6 +140,7 @@ struct RootTabView: View {
         // open on top of it, not nested one level inside where dismissing would fight it.
         .fullScreenCover(isPresented: Binding(get: { appState.newGoalWizardPresented }, set: { appState.newGoalWizardPresented = $0 })) {
             NewGoalWizardView()
+                .toastDeModale()
         }
         // Presented from the ROOT, not HomeView's session card — a debrief can be triggered while
         // she's on any tab (a run arriving from the Apple Watch, "Marquer comme faite" flows),

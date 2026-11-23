@@ -360,6 +360,7 @@ private struct ContentRouterView: View {
         // construction qui marche jusqu'au jour où les deux se déclenchent ensemble.
         .fullScreenCover(isPresented: $showIntro) {
             PaywallView(subscriptions: subscriptions, onClose: { showIntro = false })
+                .toastDeModale()
         }
         // LA PAGE DE QUELQU'UN, POSÉE UNE SEULE FOIS POUR TOUTE L'APP.
         //
@@ -375,6 +376,7 @@ private struct ContentRouterView: View {
             set: { appState.profilOuvert = $0 }
         )) { ouvert in
             PublicProfileView(userId: ouvert.id)
+                .toastDeModale()
         }
         // La sortie déroulée, présentée exactement comme la page de quelqu'un et pour les mêmes
         // raisons : une destination atteinte depuis quatre écrans, donc une présentation unique.
@@ -383,12 +385,14 @@ private struct ContentRouterView: View {
             set: { appState.sortieOuverte = $0 }
         )) { ouverte in
             ActivityDetailView(activityId: ouverte.id)
+                .toastDeModale()
         }
         .fullScreenCover(item: Binding(
             get: { appState.courseOuverte },
             set: { appState.courseOuverte = $0 }
         )) { course in
             RacePageView(race: course)
+                .toastDeModale()
         }
         .onChange(of: appState.profile.onboarded) { _, onboarded in
             guard onboarded, !introShown else { return }

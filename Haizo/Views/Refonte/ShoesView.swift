@@ -65,7 +65,7 @@ struct ShoesView: View {
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HZCommandesDuHaut(retour: { appState.go(.profile) }) { EmptyView() }
+            HZCommandesDuHaut(retour: { appState.retour(parDefaut: .profile) }) { EmptyView() }
             Text("Matériel")
                 .hzTexte(.c15, .semi)
                 .foregroundStyle(HZCouleur.secondaireSurSombre)

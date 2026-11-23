@@ -55,7 +55,7 @@ final class AdminTests: XCTestCase {
         let compte = try JSONDecoder().decode(AuthenticatedUser.self, from: Data(ancien.utf8))
         XCTAssertEqual(compte.id, "u1")
         XCTAssertFalse(compte.isAdmin, "un champ absent a été lu comme vrai")
-        XCTAssertFalse(compte.adminListConfigured)
+        XCTAssertNil(compte.adminListConfigured, "un champ absent n'est pas « liste non configurée » : la fiche admin s'ouvrirait à tous")
         XCTAssertNil(compte.email)
     }
 
@@ -67,7 +67,7 @@ final class AdminTests: XCTestCase {
         """
         let compte = try JSONDecoder().decode(AuthenticatedUser.self, from: Data(neuf.utf8))
         XCTAssertTrue(compte.isAdmin)
-        XCTAssertTrue(compte.adminListConfigured)
+        XCTAssertEqual(compte.adminListConfigured, true)
         XCTAssertEqual(compte.email, "a@b.com")
     }
 

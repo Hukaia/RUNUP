@@ -33,7 +33,11 @@ struct AuthenticatedUser: Codable, Equatable, Nomme {
     var isAdmin: Bool = false
     /// Y a-t-il seulement une liste de comptes de la maison ? « Tu n'es pas dedans » et « il n'y
     /// en a pas » se ressemblent à l'écran et se corrigent à deux endroits différents.
-    var adminListConfigured: Bool = false
+    /// `nil` : le serveur ne l'a pas dit (les réponses de connexion et d'inscription ne portent pas
+    /// ce champ, seul `/api/me` le renvoie). Il valait `false` par défaut, et « liste non
+    /// configurée » ouvrait la fiche admin à TOUT LE MONDE entre la connexion et le premier
+    /// rafraîchissement. Ne pas savoir n'est pas « non ».
+    var adminListConfigured: Bool?
 
     private enum CodingKeys: String, CodingKey {
         case id, name, xpTotal, lastName, username, email, isAdmin, adminListConfigured
@@ -48,12 +52,12 @@ struct AuthenticatedUser: Codable, Equatable, Nomme {
         username = try c.decodeIfPresent(String.self, forKey: .username)
         email = try c.decodeIfPresent(String.self, forKey: .email)
         isAdmin = try c.decodeIfPresent(Bool.self, forKey: .isAdmin) ?? false
-        adminListConfigured = try c.decodeIfPresent(Bool.self, forKey: .adminListConfigured) ?? false
+        adminListConfigured = try c.decodeIfPresent(Bool.self, forKey: .adminListConfigured)
     }
 
     init(id: String, name: String, xpTotal: Int,
          lastName: String? = nil, username: String? = nil, email: String? = nil,
-         isAdmin: Bool = false, adminListConfigured: Bool = false) {
+         isAdmin: Bool = false, adminListConfigured: Bool? = nil) {
         self.id = id
         self.name = name
         self.xpTotal = xpTotal
@@ -245,7 +249,7 @@ final class AuthService {
             id: decoded.id, name: decoded.name, xpTotal: decoded.xpTotal,
             lastName: decoded.lastName, username: decoded.username, email: decoded.email,
             isAdmin: decoded.isAdmin ?? false,
-            adminListConfigured: decoded.adminListConfigured ?? false
+            adminListConfigured: decoded.adminListConfigured
         )
         currentUser = user
         onAuthenticated?(user)

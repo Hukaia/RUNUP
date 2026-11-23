@@ -8,6 +8,9 @@ import MapKit
 /// ne pas être récrites écran par écran.
 
 enum HZHub {
+    /// Dimanche, compté de 0 (lundi) : le dernier jour d'une semaine de plan, d'où l'on ne peut
+    /// plus déplacer une séance « à demain ».
+    static let dernierJourDeLaSemaine = 6
     /// Du dernier élément du haut noir au bord de la feuille (avant le rayon, que la feuille remonte).
     static let sousLeHaut: CGFloat = 22
     static let sousLesCommandes: CGFloat = 16
@@ -382,6 +385,8 @@ struct HZReglageDeFeuille: ViewModifier {
                 }
             }
         }
+        // Les messages passagers se voient DANS la feuille : voir `ToastDeModale`.
+        .toastDeModale()
         .presentationDetents(detents)
         .presentationDragIndicator(.visible)
         .presentationBackground(HZCouleur.blanc)

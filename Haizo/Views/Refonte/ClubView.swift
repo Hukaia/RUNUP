@@ -286,7 +286,7 @@ struct ClubView: View {
 
     private var hautDePage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HZCommandesDuHaut(retour: { appState.go(.profile) }) {
+            HZCommandesDuHaut(retour: { appState.retour(parDefaut: .profile) }) {
                 if club != nil {
                     // Le nom du club est aussi l'entrée de « Gestion du club » (code d'invitation,
                     // membres, réglages) : la carte l'ouvre, et ce bouton la rend visible.

@@ -34,6 +34,16 @@ struct PlanView: View {
     /// La semaine que la page détaille. `nil` avant le premier calcul, puis toujours une valeur —
     /// la semaine en cours à l'ouverture.
     @State private var selectedWeek: Int?
+    /// LES TROIS FEUILLES DE CET ÉCRAN SONT LES SIENNES.
+    ///
+    /// Elles passaient par les drapeaux d'`AppState`, dont les feuilles sont accrochées à
+    /// `RootTabView`. Or cet écran s'ouvre en couverture plein écran par-dessus la racine : une
+    /// feuille présentée par la racine restait DERRIÈRE la couverture. « Déplacer une séance »,
+    /// « Les modifier » et la ligne d'aujourd'hui ne montraient rien, puis la feuille surgissait
+    /// au moment de fermer le plan. Présentées d'ici, elles s'ouvrent au-dessus.
+    @State private var deplacementOuvert = false
+    @State private var reglagesDuProgrammeOuverts = false
+    @State private var seanceOuverte = false
     /// Instantané de `computeWeekSummaries()`, calculé au premier affichage et rafraîchi seulement
     /// quand la semaine avance. En propriété calculée, il relancerait
     /// `AdaptivePlanEngine.generateWeekSessions` pour CHAQUE semaine du plan à la moindre
@@ -127,6 +137,18 @@ struct PlanView: View {
             // laisser la page détailler une semaine qui vient de devenir passée.
             selectedWeek = week
             refreshSelectedDays()
+        }
+        .sheet(isPresented: $deplacementOuvert) {
+            MoveSessionSheet()
+                .hzFeuille(detents: [.medium, .large])
+        }
+        .sheet(isPresented: $reglagesDuProgrammeOuverts) {
+            ProgramSettingsSheet()
+                .hzFeuille(detents: [.large], gereSonBas: true)
+        }
+        .sheet(isPresented: $seanceOuverte) {
+            SessionDetailSheet()
+                .hzFeuille(detents: [.medium, .large], gereSonBas: true)
         }
     }
 
@@ -482,15 +504,15 @@ struct PlanView: View {
     /// conflit revient chaque semaine, ce sont les jours de course qui se règlent, une fois pour
     /// toutes.
     @ViewBuilder private func weekAction(_ week: WeekSummary) -> some View {
-        if week.isCurrent && plannedCount > 0 {
+        if week.isCurrent && plannedCount > 0 && appState.peutDeplacerUneSeance {
             HZBoutonPilule(libelle: String(localized: "Déplacer une séance"), dessin: .deplacer,
                            hauteur: .moyenne, fond: HZCouleur.surfaceClaire,
                            couleur: HZCouleur.encre, etendu: true) {
                 Haptics.selection()
-                appState.openMoveSession()
+                deplacementOuvert = true
             }
         } else if !week.isCurrent && !week.isDone {
-            Button(action: { Haptics.selection(); appState.programSettingsPresented = true }) {
+            Button(action: { Haptics.selection(); reglagesDuProgrammeOuverts = true }) {
                 HStack(spacing: HZMesuresDeLigne.ecart) {
                     HZIcone(dessin: .calendrier, cote: HZPlanComplet.coteDeLIcone, couleur: HZCouleur.encre)
                     Text(String(localized: "Cette semaine suit tes jours de course · Les modifier"))
@@ -600,7 +622,7 @@ struct PlanView: View {
         // archétype : on ouvre cette feuille plutôt que d'en dupliquer une version appauvrie ici.
         // Seule la ligne d'aujourd'hui réagit : c'est la seule séance dont `todaySession` décrit
         // vraiment le contenu.
-        .onTapGesture { if isToday { appState.openSessionDetail() } }
+        .onTapGesture { if isToday { seanceOuverte = true } }
         // Chaque ligne était 3 à 5 arrêts VoiceOver sans lien (jour, titre, sous-titre, durée,
         // allure), et « aujourd'hui » / « faite » ne vivaient plus que dans la couleur.
         .accessibilityElement(children: .combine)

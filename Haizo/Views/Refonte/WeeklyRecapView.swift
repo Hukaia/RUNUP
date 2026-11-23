@@ -58,7 +58,7 @@ struct WeeklyRecapView: View {
     private var hautDePage: some View {
         let kilometres = bilan.kilometres
         return VStack(alignment: .leading, spacing: 0) {
-            HZCommandesDuHaut(retour: { appState.go(.stats) }) { EmptyView() }
+            HZCommandesDuHaut(retour: { appState.retour(parDefaut: .stats) }) { EmptyView() }
             VStack(alignment: .leading, spacing: 0) {
                 Text(bilan.estLaMeilleureSemaine ? "Ta meilleure semaine" : "Bilan de la semaine")
                     .hzAffichage(.titreDEcran)

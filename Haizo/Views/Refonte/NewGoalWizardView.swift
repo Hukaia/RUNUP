@@ -114,6 +114,15 @@ struct NewGoalWizardView: View {
                 content
             }
         }
+        .onAppear {
+            // Ouvert depuis une tuile « Passer à un objectif » : l'objectif est déjà choisi, on
+            // arrive sur sa première question. Le retour ramène à la liste des objectifs.
+            if let demande = appState.objectifDeLAssistant, goals.contains(demande), goal == nil {
+                goal = demande
+                step = aUneDeuxiemeEtape ? 1 : HZObjectif.etapeDesJours
+            }
+            appState.objectifDeLAssistant = nil
+        }
     }
 
     /// Le fond blanc de l'inscription, la barre d'état masquée, le contenu qui part du haut.
@@ -151,7 +160,17 @@ struct NewGoalWizardView: View {
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: HZEspace.entreCommandes) {
-                boutonDeRetour { if step == 0 { dismiss() } else { step -= 1 } }
+                boutonDeRetour {
+                    // Sans deuxième étape, les jours sont à l'étape 2 et l'étape 1 les redessine :
+                    // « step -= 1 » y laissait l'écran identique, le retour semblait mort.
+                    if step == 0 {
+                        dismiss()
+                    } else if step == HZObjectif.etapeDesJours && !aUneDeuxiemeEtape {
+                        step = 0
+                    } else {
+                        step -= 1
+                    }
+                }
                 HZSegments(total: segments, courant: rang)
             }
             .frame(minHeight: HZDiametre.outil.rawValue)
