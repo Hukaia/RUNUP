@@ -38,7 +38,6 @@ import subprocess
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-import couleurs  # noqa: E402
 import screenshots as S  # noqa: E402
 from PIL import Image, ImageDraw, ImageFilter  # noqa: E402
 
@@ -290,10 +289,15 @@ def main() -> int:
     # de `simctl`, et il n'y a plus rien à corriger ici.
     a.add_argument("--decalage", type=float, default=0.0)
     a.add_argument("--travail", type=pathlib.Path, default=None)
-    # Le fond des planches App Store EST le fond de l'app, et il était recopié ici. Le jour où le
-    # fond clair est passé du froid au chaud, cette valeur aurait continué à composer les images de
-    # la fiche sur l'ancien gris-lavande — une fiche qui ne montre plus l'app qu'elle vend.
-    a.add_argument("--fond", default=f"0x{couleurs.fond_neutre('clair'):06X}")
+    # LA COULEUR DES MARGES, s'il en reste une fois le plan mis au format d'Apple : le papier de
+    # la fiche, lu dans `screenshots.py`, qui dessine déjà le décor de chaque plan.
+    #
+    # Elle était lue dans `Colors.swift` (« le fond de la fiche est le fond de l'app »). Ce
+    # fichier est parti avec l'ancien design system le 19 novembre, et le montage plantait sur
+    # son absence : la campagne 271 a passé le découpage, huit plans sur huit sur le bon écran,
+    # puis s'est arrêtée ici. Et la raison ne tenait plus : la fiche est composée sur un papier
+    # os, pas sur le fond de l'app.
+    a.add_argument("--fond", default="0x%02X%02X%02X" % S.PAPIER[0][1])
     options = a.parse_args()
 
     if shutil.which("ffmpeg") is None or shutil.which("ffprobe") is None:

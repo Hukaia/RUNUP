@@ -298,6 +298,21 @@ jobs:
           python3 -m venv --system-site-packages "$RUNNER_TEMP/venv"
           "$RUNNER_TEMP/venv/bin/python" -m pip install --quiet --upgrade pillow
 
+      # LES OUTILS DU FILM SE CHARGENT-ILS ? Demandé ICI, avant une heure de photos, et non après.
+      #
+      # Le 23 novembre, la campagne 271 a photographié trois langues, passé le grand texte, la
+      # bannière et le découpage du film, puis `montage.py` a planté en lisant ses arguments : sa
+      # couleur par défaut venait d'un fichier parti avec l'ancien design system. Soixante minutes
+      # de machine pour une erreur que `--help` montre en une seconde, parce qu'il évalue les
+      # mêmes valeurs par défaut.
+      - name: Les outils du film se chargent-ils
+        run: |
+          set -euo pipefail
+          for outil in montage.py bascules.py; do
+            "$RUNNER_TEMP/venv/bin/python" "ci_scripts/$outil" --help > /dev/null
+            echo "ci_scripts/$outil se charge."
+          done
+
       - name: Photographier, langue par langue
         run: |
           set -euo pipefail
