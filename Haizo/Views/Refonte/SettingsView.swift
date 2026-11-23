@@ -156,9 +156,7 @@ struct SettingsView: View {
                 titre: String(localized: "Prévenir s'il va pleuvoir"),
                 precision: String(localized: "Quand ton créneau habituel tombe sous l'averse et qu'un autre moment de la journée est au sec."),
                 filet: false) {
-                Toggle("", isOn: Binding(
-                    get: { profile.weatherAlertsEnabled },
-                    set: { profile.weatherAlertsEnabled = $0 }))
+                Toggle("", isOn: alertesDePluie)
                     .labelsHidden()
                     .toggleStyle(HZStyleDInterrupteur())
                     .accessibilityLabel("Prévenir s'il va pleuvoir")
@@ -173,6 +171,27 @@ struct SettingsView: View {
                     .frame(minHeight: HZBoutonRond.zoneTactile, alignment: .leading)
             }
         }
+    }
+
+    /// Même règle que « Notifications du coach » juste en dessous : sans l'autorisation du système
+    /// l'alerte de pluie ne peut pas partir (`WeatherAdviceService` s'arrête en silence), donc
+    /// l'interrupteur ne reste pas allumé sur une promesse qu'il ne tiendra pas.
+    private var alertesDePluie: Binding<Bool> {
+        Binding(
+            get: { profile.weatherAlertsEnabled },
+            set: { on in
+                profile.weatherAlertsEnabled = on
+                guard on else { return }
+                Task {
+                    let accordees = await NotificationService.shared.requestAuthorization()
+                    if !accordees {
+                        await MainActor.run {
+                            profile.weatherAlertsEnabled = false
+                            appState.toast(String(localized: "Notifications refusées côté iPhone : active-les dans Réglages > Haizo."))
+                        }
+                    }
+                }
+            })
     }
 
     private var notificationsDuCoach: Binding<Bool> {

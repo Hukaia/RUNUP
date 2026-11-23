@@ -23,6 +23,9 @@ struct ClubWallView: View {
 
     @Binding var reportTarget: ReportTarget?
     @Binding var pendingBlock: (userId: String, name: String)?
+    /// Supprimer un message emporte ses réponses : il se confirme, comme la suppression d'une
+    /// activité juste à côté. Il partait au premier appui dans le menu.
+    @State private var messageASupprimer: ClubPost?
 
     private var auth: AuthService { appState.auth }
 
@@ -56,6 +59,17 @@ struct ClubWallView: View {
                     blocDeMessage(post)
                 }
             }
+        }
+        .alert("Supprimer ce message ?",
+               isPresented: Binding(get: { messageASupprimer != nil },
+                                    set: { if !$0 { messageASupprimer = nil } })) {
+            // Lu AVANT la fermeture de l'alerte, qui remet l'état à `nil`.
+            Button("Supprimer", role: .destructive) {
+                if let message = messageASupprimer { Task { await magasin.supprimerLeMessage(message) } }
+            }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Ses réponses partent avec lui.")
         }
     }
 
@@ -193,9 +207,7 @@ struct ClubWallView: View {
                 Menu {
                     if message.isMine {
                         Button("Modifier ce message") { mur.messageEnModification = message }
-                        Button("Supprimer ce message", role: .destructive) {
-                            Task { await magasin.supprimerLeMessage(message) }
-                        }
+                        Button("Supprimer ce message", role: .destructive) { messageASupprimer = message }
                     } else {
                         Button("Signaler ce message") {
                             reportTarget = ReportTarget(targetType: "club_post", targetId: message.id,

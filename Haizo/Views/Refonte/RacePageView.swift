@@ -65,6 +65,8 @@ struct RacePageView: View {
     @State private var signalementPresente = false
     @State private var motifDuSignalement = ""
     @State private var cibleDuSignalement: CibleSignalee?
+    /// Bloquer se confirme, comme partout ailleurs dans l'app : il partait au premier appui.
+    @State private var coureurABloquer: RaceRunner?
 
     private struct CibleSignalee: Identifiable {
         var id: String { targetId }
@@ -251,6 +253,16 @@ struct RacePageView: View {
         // deux boutons lui-même, et VoiceOver annonce lequel retire. Le texte dit ce qu'on perd
         // ET que c'est réversible — sans la seconde phrase, une confirmation fait hésiter sur un
         // geste qui ne coûte rien à défaire.
+        .alert("Bloquer cette personne ?",
+               isPresented: Binding(get: { coureurABloquer != nil },
+                                    set: { if !$0 { coureurABloquer = nil } })) {
+            Button("Bloquer", role: .destructive) {
+                if let coureur = coureurABloquer { Task { await bloquer(coureur) } }
+            }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Vous ne verrez plus rien l'un de l'autre, nulle part dans l'app.")
+        }
         .alert("Te retirer de cette course ?", isPresented: $retraitAConfirmer) {
             Button("Me retirer", role: .destructive) { Task { await nePlusPreparer() } }
             Button("Annuler", role: .cancel) { }
@@ -493,9 +505,7 @@ struct RacePageView: View {
                     Button("Signaler ce coureur") {
                         demanderUnSignalement(type: "user", id: coureur.id)
                     }
-                    Button("Bloquer", role: .destructive) {
-                        Task { await bloquer(coureur) }
-                    }
+                    Button("Bloquer", role: .destructive) { coureurABloquer = coureur }
                 } label: {
                     iconeDOptions
                 }
@@ -864,10 +874,19 @@ struct RacePageView: View {
         let motif = motifDuSignalement.trimmingCharacters(in: .whitespacesAndNewlines)
         cibleDuSignalement = nil
         motifDuSignalement = ""
-        guard !motif.isEmpty else { return }
+        // Un motif vide ne part pas, et on le dit. Et « envoyé » seulement si c'est vrai : un
+        // `try?` suivi du message de succès annonçait l'envoi même hors ligne.
+        guard !motif.isEmpty else {
+            appState.toast(String(localized: "Écris ce qui pose problème pour envoyer le signalement."))
+            return
+        }
         Task {
-            try? await clubService.report(targetType: cible.targetType, targetId: cible.targetId, reason: motif)
-            appState.toast(String(localized: "Signalement envoyé"))
+            do {
+                try await clubService.report(targetType: cible.targetType, targetId: cible.targetId, reason: motif)
+                appState.toast(String(localized: "Signalement envoyé"))
+            } catch {
+                appState.toast(String(localized: "Signalement non envoyé. Réessaie."))
+            }
         }
     }
 

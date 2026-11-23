@@ -43,11 +43,15 @@ struct NewGoalWizardView: View {
     private var estDuathlon: Bool { goal == .duathlon }
     /// Le minimum exigé par l'objectif en cours de choix. Voir `GoalType.joursMinimumParSemaine`.
     private var minimumJours: Int { goal?.joursMinimumParSemaine ?? HZObjectif.joursMinimumParDefaut }
-    /// Les trois objectifs qui ont une deuxième étape. `periodiseVersUneDate` dit presque la
-    /// même chose et pas tout à fait : HYROX a une date et n'a jamais eu d'étape ici, son format
-    /// étant fixe. Garder les deux notions distinctes évite de donner au triathlon la mauvaise
-    /// étape le jour où HYROX en gagnerait une.
-    private var aUneDeuxiemeEtape: Bool { estCourseOuUltra || estTriathlon || estDuathlon }
+    /// Les objectifs qui ont une deuxième étape : tous ceux qui se préparent VERS UNE DATE.
+    ///
+    /// HYROX N'EN AVAIT PAS, ET SON PROGRAMME N'AVAIT DONC PAS DE DATE. Son format est fixe, donc
+    /// rien à demander sur l'épreuve, et l'étape avait été sautée. Mais sans date le moteur ne peut
+    /// poser ni bloc spécifique ni affûtage (`GoalType.periodiseVersUneDate`) : un HYROX choisi
+    /// d'ici donnait un plan ouvert, sans simulation, et la page de l'objectif affichait « Date à
+    /// définir » sans aucun moyen de la définir. L'étape ne demande que la date.
+    private var estHyrox: Bool { goal == .hyrox }
+    private var aUneDeuxiemeEtape: Bool { estCourseOuUltra || estTriathlon || estDuathlon || estHyrox }
 
     /// Les formats à proposer, selon l'objectif. « Autre distance » n'en fait pas partie : cet
     /// assistant n'a pas de champ de texte libre, contrairement à l'inscription.
@@ -67,7 +71,7 @@ struct NewGoalWizardView: View {
 
     /// L'écran qu'on voit, selon l'étape et l'objectif choisi.
     private enum Ecran {
-        case objectif, course, triathlon, duathlon, jours
+        case objectif, course, triathlon, duathlon, hyrox, jours
     }
 
     private var ecran: Ecran {
@@ -76,6 +80,7 @@ struct NewGoalWizardView: View {
         case 1 where estCourseOuUltra: return .course
         case 1 where estTriathlon: return .triathlon
         case 1 where estDuathlon: return .duathlon
+        case 1 where estHyrox: return .hyrox
         default: return .jours
         }
     }
@@ -187,6 +192,7 @@ struct NewGoalWizardView: View {
         case .course: raceStep
         case .triathlon: triathlonStep
         case .duathlon: duathlonStep
+        case .hyrox: hyroxStep
         case .jours: daysStep
         }
     }
@@ -202,7 +208,7 @@ struct NewGoalWizardView: View {
             boutonDuPied(String(localized: "Continuer"), actif: !deniveleManquant) { step = HZObjectif.etapeDesJours }
         case .triathlon:
             boutonDuPied(String(localized: "Continuer"), actif: !nageManquante) { step = HZObjectif.etapeDesJours }
-        case .duathlon:
+        case .duathlon, .hyrox:
             boutonDuPied(String(localized: "Continuer"), actif: true) { step = HZObjectif.etapeDesJours }
         case .jours:
             // Le minimum vient de l'objectif CHOISI ICI, et pas de celui en cours : c'est
@@ -352,6 +358,13 @@ struct NewGoalWizardView: View {
     /// se serait construit sans distances ni temps d'effort, sous le bon nom.
     ///
     /// Rien sur le vélo, pour la raison écrite partout dans ce lot : l'app le mesure.
+    /// L'étape du HYROX : sa date, et rien d'autre. Le format est le même partout.
+    private var hyroxStep: some View {
+        questionDuWizard((goal ?? .hyrox).etapeTitre) {
+            choixDeLaDate(String(localized: "Date de l'épreuve"))
+        }
+    }
+
     private var duathlonStep: some View {
         questionDuWizard((goal ?? .duathlon).etapeTitre) {
             blocDeQuestion(String(localized: "Format")) {
@@ -495,7 +508,9 @@ struct NewGoalWizardView: View {
             // ni bloc spécifique, ni affûtage, donc aucun enchaînement vélo→course et aucune
             // séance de transition. Exactement le défaut que `periodiseVersUneDate` décrit pour
             // l'ultra-trail, reproduit un objectif plus loin.
-            chrono: aUneDeuxiemeEtape ? chrono : nil,
+            // Pas de chrono pour HYROX : son étape ne le demande pas, et celui qui traîne dans
+            // l'état est le préréglage d'un 10 km.
+            chrono: aUneDeuxiemeEtape && !estHyrox ? chrono : nil,
             raceDate: aUneDeuxiemeEtape ? raceDate : nil,
             runningDays: Array(days),
             raceElevationGainM: goal == .ultraTrail ? Int(raceElevationGain.trimmingCharacters(in: .whitespaces)) : nil,

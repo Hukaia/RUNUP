@@ -371,6 +371,14 @@ struct RaceGoalView: View {
             }
         } else if let strategie = strategieStructurelle {
             strategieStructuree(strategie)
+        } else if profile.goalId == .triathlon || profile.goalId == .duathlon {
+            // NI TABLEAU D'ALLURE, NI « SPRINT FINAL ». Un triathlon et un duathlon tombaient dans
+            // la branche des courses sur route : un découpage au kilomètre, bâti sur 10 km par
+            // défaut faute de distance de course à pied, pour une épreuve qui se nage et se roule.
+            // Un tableau faux d'apparence précise. Et leurs feuilles « Jour J » (ravitaillement,
+            // transitions), écrites et testées, n'étaient rendues nulle part : la seule branche
+            // qui dessine `portesDuJourJ` était celle du HYROX et de l'ultra.
+            portesDuJourJ
         } else {
             strategieDAllure
         }

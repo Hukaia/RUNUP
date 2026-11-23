@@ -298,14 +298,21 @@ struct RouteDetailSheet: View {
         let cible = cibleSignalee
         cibleSignalee = nil
         reportReason = ""
-        guard !reason.isEmpty else { return }
+        guard !reason.isEmpty else {
+            appState.toast(String(localized: "Écris ce qui pose problème pour envoyer le signalement."))
+            return
+        }
         Task {
-            try? await ClubService(auth: appState.auth).report(
-                targetType: cible?.targetType ?? "route",
-                targetId: cible?.targetId ?? current.id,
-                reason: reason
-            )
-            appState.toast(String(localized: "Signalement envoyé"))
+            do {
+                try await ClubService(auth: appState.auth).report(
+                    targetType: cible?.targetType ?? "route",
+                    targetId: cible?.targetId ?? current.id,
+                    reason: reason
+                )
+                appState.toast(String(localized: "Signalement envoyé"))
+            } catch {
+                appState.toast(String(localized: "Signalement non envoyé. Réessaie."))
+            }
         }
     }
 }

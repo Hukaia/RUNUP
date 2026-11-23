@@ -304,6 +304,18 @@ struct ExplorerView: View {
         VStack(alignment: .leading, spacing: 0) {
             if liste.isEmpty {
                 message(panne.map { String(localized: "Impossible de charger les courses : \($0).") } ?? vide)
+                // UNE SUITE, PAS UN MUR. « Aucune course HYROX à venir » laissait la personne devant
+                // une phrase, alors que l'accueil venait de l'envoyer ici. La liste de toutes les
+                // courses a la recherche et « Ajouter une course » : c'est là qu'on la trouve ou qu'on
+                // la crée.
+                if panne == nil {
+                    HZBoutonPilule(libelle: String(localized: "Chercher ou ajouter une course"), hauteur: .petite,
+                                   fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
+                        appState.openRacesTabOnNextVisit = true
+                        appState.go(.club)
+                    }
+                    .padding(.top, HZEspace.entreCommandes)
+                }
             }
             LazyVGrid(columns: colonnesDAffiches, alignment: .leading, spacing: HZEspace.entreSections) {
                 ForEach(Array(liste.enumerated()), id: \.element.id) { index, course in

@@ -9358,13 +9358,22 @@ Corrigé dans ce lot :
 - **Coach** : l'envoi et les suggestions s'éteignent pendant que le coach répond (l'appui était perdu). Plus de « Réessayer » sous un refus.
 - **Amis** : « Suivre » change d'état dans « Tu connais peut-être » et dans les contacts. L'échec de la recherche de contacts se voit.
 
+### Lot 3
+
+- **« Séance déjà faite » a retrouvé une porte.** La feuille qui note une séance sans GPS n'avait plus aucun appelant dans l'app livrée. « Je l'ai déjà faite » l'ouvre depuis la fiche de séance, sous « Démarrer ».
+- **Objectif HYROX depuis l'assistant** : une étape demande la date. Sans elle le programme n'avait ni bloc spécifique, ni affûtage, ni simulation, et la page de l'objectif affichait « Date à définir » sans moyen de la définir.
+- **Objectif triathlon ou duathlon** : plus de tableau d'allure au kilomètre (il était bâti sur 10 km par défaut et finissait par « Sprint final »). Leurs feuilles « Jour J », jamais rendues, s'ouvrent.
+- **Explorer** : un filtre Trail ou HYROX vide propose « Chercher ou ajouter une course ».
+- **Page de course** : pas de bouton d'inscription sur une course complète ou fermée, même avec une adresse d'inscription. Test ajouté. « Bloquer » se confirme.
+- **Club** : supprimer un message et annuler une sortie se confirment.
+- **Signalements** (fil, page de course, itinéraire) : « envoyé » seulement si c'est vrai, et un motif vide le dit au lieu de ne rien faire.
+- **Notifications refusées** : à l'inscription, les deux interrupteurs s'éteignent ; « Prévenir s'il va pleuvoir » revient en arrière s'il ne peut pas tenir.
+
 ### Constaté, pas encore corrigé
 
-- Explorer : état vide HYROX et Trail sans suite ; filtre « Route » qui liste des itinéraires alors que Trail et HYROX listent des courses ; « Garder cet itinéraire » sans liste des gardés.
-- Objectif : triathlon et duathlon affichent un tableau d'allure bâti sur 10 km par défaut, et leurs feuilles « Jour J » sont inaccessibles ; HYROX choisi depuis l'assistant n'a pas de date.
-- Page de course : « Inscription » affichée sur une course complète ; répondre à un message ne fait rien de visible.
+- Explorer : filtre « Route » qui liste des itinéraires alors que Trail et HYROX listent des courses ; « Garder cet itinéraire » sans liste des gardés.
+- Page de course : répondre à un message ne fait rien de visible.
 - Club : « Inviter » mène au club sans partage ; le lien d'invitation d'un club ne fait que préremplir une recherche ; pas de retrait de membre, de régénération de code ni de suppression de club ; la créatrice peut quitter son club et le laisser sans propriétaire.
 - Course : pas de « ne pas enregistrer » à la fin ; supprimer une sortie ne la retire ni d'Apple Santé ni du club.
-- Réglages : notifications refusées, interrupteurs toujours allumés ; pas de « mot de passe oublié » ; « Nous écrire » ouvre une adresse personnelle.
-- « Séance déjà faite » n'a plus d'entrée dans l'app livrée.
+- Réglages : pas de « mot de passe oublié » ; « Nous écrire » ouvre une adresse personnelle.
 - À confirmer sur téléphone : ouvrir une sortie depuis un profil (deux couvertures plein écran sur la même racine).

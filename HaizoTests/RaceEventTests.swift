@@ -351,9 +351,12 @@ final class RaceEventCaracteristiquesTests: XCTestCase {
         XCTAssertNil(try course("bientot", site: "https://exemple.fr").adresseDInscription)
         // Pas de site : pas de bouton.
         XCTAssertNil(try course("ouverte", site: nil).adresseDInscription)
-        // Une adresse d'inscription propre à la course passe avant le site, quel que soit le statut.
+        // Une adresse d'inscription propre à la course passe avant le site, y compris avant l'ouverture.
         XCTAssertEqual(try course("bientot", site: "https://exemple.fr", inscription: "https://exemple.fr/i").adresseDInscription,
                        "https://exemple.fr/i")
+        // Mais pas sur une course complète ou fermée : le bouton s'afficherait sous « Complète ».
+        XCTAssertNil(try course("complete", site: "https://exemple.fr", inscription: "https://exemple.fr/i").adresseDInscription)
+        XCTAssertNil(try course("fermee", site: "https://exemple.fr", inscription: "https://exemple.fr/i").adresseDInscription)
     }
 
     func testUneInscriptionPasEncoreOuverteNommeSonJourQuandOnLeConnait() throws {

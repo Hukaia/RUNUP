@@ -6,6 +6,11 @@ struct SessionDetailSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(SubscriptionService.self) private var subscriptions
     @State private var moved = false
+    /// « SÉANCE DÉJÀ FAITE » AVAIT PERDU SA PORTE. La feuille qui note une séance faite sans GPS
+    /// (tapis, renfo, montre oubliée) existe toujours, mais plus rien ne l'ouvrait dans l'app
+    /// livrée : son seul appelant était un drapeau de capture. Elle s'ouvre d'ici, sous les deux
+    /// boutons de la séance, tant que la séance du jour n'est pas faite.
+    @State private var journalOuvert = false
 
     /// « Déplacer à demain » ne s'affiche que s'il peut réussir.
     ///
@@ -555,17 +560,37 @@ struct SessionDetailSheet: View {
                     .frame(height: HZHauteurDeBouton.grande.rawValue)
                     .background(HZCouleur.surfaceClaire, in: Capsule())
             } else {
-                HStack(spacing: HZEspace.entreCommandes) {
-                    if peutDeplacerADemain {
-                        HZBoutonPilule(libelle: String(localized: "Déplacer à demain"), hauteur: .moyenne,
-                                       fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre,
-                                       etendu: true, action: deplacerADemain)
+                VStack(spacing: HZEspace.entrePilules) {
+                    HStack(spacing: HZEspace.entreCommandes) {
+                        if peutDeplacerADemain {
+                            HZBoutonPilule(libelle: String(localized: "Déplacer à demain"), hauteur: .moyenne,
+                                           fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre,
+                                           etendu: true, action: deplacerADemain)
+                        }
+                        HZBoutonPilule(libelle: String(localized: "Démarrer"), dessin: .lecture,
+                                       hauteur: .moyenne, etendu: true,
+                                       cote: HZBoutonPilule.coteDeLecture, action: demarrer)
                     }
-                    HZBoutonPilule(libelle: String(localized: "Démarrer"), dessin: .lecture,
-                                   hauteur: .moyenne, etendu: true,
-                                   cote: HZBoutonPilule.coteDeLecture, action: demarrer)
+                    if !appState.profile.seanceDoneToday {
+                        Button(action: { journalOuvert = true }) {
+                            Text("Je l'ai déjà faite")
+                                .hzTexte(.c14, .semi)
+                                .foregroundStyle(HZCouleur.secondaireSurClair)
+                                .frame(maxWidth: .infinity, minHeight: HZBoutonRond.zoneTactile)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("Note la séance sans passer par le GPS")
+                    }
                 }
             }
+        }
+        .sheet(isPresented: $journalOuvert, onDismiss: {
+            // Notée : la fiche de la séance n'a plus rien à proposer, on revient à l'écran.
+            if appState.profile.seanceDoneToday { dismiss() }
+        }) {
+            LogSessionSheet()
+                .hzFeuille(detents: [.medium], gereSonBas: true)
         }
         .padding(.horizontal, HZEspace.marge)
         .padding(.top, HZEspace.entreCommandes)

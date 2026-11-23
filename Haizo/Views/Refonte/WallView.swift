@@ -629,10 +629,17 @@ struct WallView: View {
         let raison = reportReason.trimmingCharacters(in: .whitespacesAndNewlines)
         reportTarget = nil
         reportReason = ""
-        guard !raison.isEmpty else { return }
+        guard !raison.isEmpty else {
+            appState.toast(String(localized: "Écris ce qui pose problème pour envoyer le signalement."))
+            return
+        }
         Task {
-            try? await clubService.report(targetType: cible.targetType, targetId: cible.targetId, reason: raison)
-            appState.toast(String(localized: "Signalement envoyé"))
+            do {
+                try await clubService.report(targetType: cible.targetType, targetId: cible.targetId, reason: raison)
+                appState.toast(String(localized: "Signalement envoyé"))
+            } catch {
+                appState.toast(String(localized: "Signalement non envoyé. Réessaie."))
+            }
         }
     }
 

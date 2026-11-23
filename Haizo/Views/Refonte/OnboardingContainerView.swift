@@ -296,8 +296,17 @@ struct OnboardingContainerView: View {
             appState.go(.club)
         }
         Task {
-            await NotificationService.shared.requestAuthorization()
-            NotificationService.shared.rescheduleDailyReminder(for: profile)
+            // LE REFUS SE REFLÈTE DANS LES RÉGLAGES. La réponse était ignorée, et les deux
+            // interrupteurs valent « oui » par défaut : quelqu'un qui refusait ici retrouvait
+            // « Notifications du coach » et « Prévenir s'il va pleuvoir » allumés, pour des
+            // notifications qui n'arriveraient jamais.
+            let accordees = await NotificationService.shared.requestAuthorization()
+            if accordees {
+                NotificationService.shared.rescheduleDailyReminder(for: profile)
+            } else {
+                profile.coachNotificationsEnabled = false
+                profile.weatherAlertsEnabled = false
+            }
         }
     }
 }

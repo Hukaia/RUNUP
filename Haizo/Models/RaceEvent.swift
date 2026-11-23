@@ -248,9 +248,15 @@ struct RaceEvent: Decodable, Identifiable, Hashable {
     /// places ne sont pas parties. Sur une course complète, fermée ou pas encore ouverte, un bouton
     /// « s'inscrire » serait une promesse que le site ne tient pas.
     var adresseDInscription: String? {
+        // COMPLÈTE OU FERMÉE : PAS DE BOUTON, MÊME AVEC UNE ADRESSE. L'adresse d'inscription passait
+        // avant tout, donc une course complète qui en portait une affichait « Inscription sur le
+        // site officiel » sous la mention « Complète ». Avant l'ouverture (« bientôt »), l'adresse
+        // reste utile : c'est la page où l'inscription ouvrira.
+        let statut = registrationStatus ?? ""
+        if statut == "complete" || statut == "fermee" { return nil }
         if let registrationUrl, !registrationUrl.isEmpty { return registrationUrl }
         guard let website, !website.isEmpty else { return nil }
-        switch registrationStatus ?? "" {
+        switch statut {
         case "ouverte", "tirage_au_sort": return website
         default: return nil
         }

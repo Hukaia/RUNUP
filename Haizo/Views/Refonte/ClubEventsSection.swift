@@ -23,9 +23,22 @@ struct ClubEventsSection: View {
     /// LA SORTIE QU'ON MODIFIE. Son bouton est dans `menuDeLaSortie`, juste en dessous : le
     /// déclencheur et la feuille sont dans la même vue, donc la feuille s'ouvre toujours.
     @State private var eventEnModification: ClubEvent?
+    /// Annuler une sortie la retire pour tous ceux qui s'y étaient inscrits : le geste se confirme.
+    @State private var sortieAAnnuler: ClubEvent?
 
     var body: some View {
         eventsCard
+            .alert("Annuler cette sortie ?",
+                   isPresented: Binding(get: { sortieAAnnuler != nil },
+                                        set: { if !$0 { sortieAAnnuler = nil } })) {
+                // Lue AVANT la fermeture de l'alerte, qui remet l'état à `nil`.
+                Button("Annuler la sortie", role: .destructive) {
+                    if let sortie = sortieAAnnuler { magasin.deleteEvent(sortie) }
+                }
+                Button("Garder la sortie", role: .cancel) {}
+            } message: {
+                Text("Elle disparaîtra pour tous ceux qui s'y étaient inscrits.")
+            }
     }
 
     private static let eventDateFormatter: DateFormatter = {
@@ -141,7 +154,7 @@ struct ClubEventsSection: View {
     private func menuDeLaSortie(_ event: ClubEvent) -> some View {
         if event.isMine {
             Button("Modifier cette sortie") { eventEnModification = event }
-            Button("Annuler cette sortie", role: .destructive) { magasin.deleteEvent(event) }
+            Button("Annuler cette sortie", role: .destructive) { sortieAAnnuler = event }
         }
     }
 
