@@ -41726,36 +41726,36 @@
         }
       }
     },
-    "Encore %lld km · limite à %lld km": {
+    "Encore %lld km sur %lld": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld km left · limit %lld km"
+            "value": "%lld km left of %lld"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Quedan %lld km · límite %lld km"
+            "value": "Quedan %lld km de %lld"
           }
         }
       }
     },
-    "Limite de %lld km dépassée": {
+    "%lld km dépassés": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Past the %lld km limit"
+            "value": "Past %lld km"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Límite de %lld km superado"
+            "value": "%lld km superados"
           }
         }
       }

@@ -102,13 +102,14 @@ struct ShoesView: View {
         }
     }
 
-    /// « Encore 640 km · limite à 700 km », ou « Limite de 700 km dépassée ».
+    /// « Encore 640 km sur 700 », ou « 700 km dépassés ». Court exprès : la colonne fait 160 points
+    /// sur un écran de 390, et « Encore 640 km · limite à 700 km » y finissait en points de suspension.
     private func resteAvantLaLimite(km: Double, limite: Double) -> String {
         let seuil = Int(limite.rounded())
         let reste = Int((limite - km).rounded())
         return reste > 0
-            ? String(localized: "Encore \(reste) km · limite à \(seuil) km")
-            : String(localized: "Limite de \(seuil) km dépassée")
+            ? String(localized: "Encore \(reste) km sur \(seuil)")
+            : String(localized: "\(seuil) km dépassés")
     }
 
     /// Une paire : ses kilomètres en chiffres d'affichage sur une tuile noire, son nom, sa barre vers
@@ -152,6 +153,8 @@ struct ShoesView: View {
                     Text(resteAvantLaLimite(km: km, limite: shoe.alertThresholdKm))
                         .hzTexte(.c13, .semi, tabulaire: true)
                         .foregroundStyle(HZCouleur.secondaireSurClair)
+                        // Passe à la ligne plutôt que d'être tronquée : en grand texte, ou à 4 chiffres.
+                        .fixedSize(horizontal: false, vertical: true)
                     if fraction >= 1 {
                         Text("À remplacer").hzTexte(.c13, .gras).foregroundStyle(HZCouleur.encre)
                     } else if usee {
