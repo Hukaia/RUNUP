@@ -394,4 +394,13 @@ final class RaceEventCaracteristiquesTests: XCTestCase {
         XCTAssertTrue(codes.allSatisfy { $0.count == 2 }, "une zone (trois chiffres) s'est glissée dans les pays")
         XCTAssertEqual(codes.count, Set(codes).count, "un pays en double")
     }
+
+    /// Le serveur écarte une adresse sans protocole. On le pose donc avant d'envoyer.
+    func testUneAdresseSansProtocoleLeRecoit() {
+        XCTAssertEqual(RaceEvent.adresseComplete("marathon.fr"), "https://marathon.fr")
+        XCTAssertEqual(RaceEvent.adresseComplete("  www.exemple.org/inscription "), "https://www.exemple.org/inscription")
+        XCTAssertEqual(RaceEvent.adresseComplete("https://marathon.fr"), "https://marathon.fr")
+        XCTAssertEqual(RaceEvent.adresseComplete("HTTP://marathon.fr"), "HTTP://marathon.fr")
+        XCTAssertEqual(RaceEvent.adresseComplete("   "), "", "un champ vide reste vide : rien à envoyer")
+    }
 }

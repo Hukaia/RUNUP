@@ -87,7 +87,7 @@ struct CreateRaceSheet: View {
                         HZPhrase(texte: erreur)
                     }
 
-                    HZPhrase(texte: String(localized: "Tout le monde pourra la trouver et la suivre. Les champs laissés vides se complètent plus tard."))
+                    HZPhrase(texte: String(localized: "Tout le monde pourra la trouver et la suivre. Relis avant de créer : une course ne se modifie pas depuis l'app."))
                 }
                 .padding(.horizontal, HZEspace.marge)
             }
@@ -236,11 +236,11 @@ struct CreateRaceSheet: View {
                 distanceKm: km,
                 elevationGainM: dplus,
                 discipline: discipline,
-                website: site.trimmingCharacters(in: .whitespaces),
+                website: RaceEvent.adresseComplete(site),
                 country: pays,
                 surface: surface,
                 profile: profil,
-                registrationUrl: lienDInscription.trimmingCharacters(in: .whitespaces)
+                registrationUrl: RaceEvent.adresseComplete(lienDInscription)
             )
             Haptics.impact(.light)
             // Pas de `dismiss()` ici : c'est l'écran appelant qui referme cette feuille, puis

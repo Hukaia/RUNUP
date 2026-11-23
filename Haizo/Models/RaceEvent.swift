@@ -244,6 +244,17 @@ struct RaceEvent: Decodable, Identifiable, Hashable {
     /// pour une saisie, dont on ne dit rien.
     var dateEstAnnoncee: Bool { officialDate == true }
 
+    /// « marathon.fr » devient « https://marathon.fr ». C'est ce qu'on tape, et le serveur écarte
+    /// sans rien dire une adresse sans protocole (elle finirait en lien mort sous le doigt de
+    /// quelqu'un d'autre) : la course se créait, son site avait disparu.
+    static func adresseComplete(_ saisie: String) -> String {
+        let propre = saisie.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !propre.isEmpty else { return "" }
+        let bas = propre.lowercased()
+        if bas.hasPrefix("https://") || bas.hasPrefix("http://") { return propre }
+        return "https://" + propre
+    }
+
     /// L'inscription mène quelque part : sa propre adresse, ou à défaut le site, tant que les
     /// places ne sont pas parties. Sur une course complète, fermée ou pas encore ouverte, un bouton
     /// « s'inscrire » serait une promesse que le site ne tient pas.

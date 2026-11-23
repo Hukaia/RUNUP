@@ -30792,23 +30792,6 @@
         }
       }
     },
-    "Tout le monde pourra la trouver et la suivre. Les champs laissés vides se complètent plus tard.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anyone will be able to find it and follow it. Whatever you leave blank can be filled in later."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cualquiera podrá encontrarla y seguirla. Lo que dejes en blanco se completa más tarde."
-          }
-        }
-      }
-    },
     "Toutes": {
       "localizations": {
         "en": {
@@ -42966,6 +42949,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Volver a usar"
+          }
+        }
+      }
+    },
+    "Tout le monde pourra la trouver et la suivre. Relis avant de créer : une course ne se modifie pas depuis l'app.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everyone will be able to find and follow it. Check before creating: a race can't be edited from the app."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todo el mundo podrá encontrarla y seguirla. Revisa antes de crear: una carrera no se puede modificar desde la app."
           }
         }
       }

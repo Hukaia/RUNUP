@@ -112,7 +112,13 @@ struct ActivityDetailView: View {
             if enChargement {
                 ProgressView().frame(maxWidth: .infinity).padding(.vertical, HZFil.enAttente)
             } else if let erreur {
-                HZPhrase(texte: String(localized: "Impossible d'ouvrir cette sortie : \(erreur)."))
+                VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+                    HZPhrase(texte: String(localized: "Impossible d'ouvrir cette sortie : \(erreur)."))
+                    HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .petite,
+                                   fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
+                        Task { await charger() }
+                    }
+                }
             } else if let sortie {
                 contenu(sortie)
             }
