@@ -285,9 +285,15 @@ struct AccueilView: View {
         if let ajustement = session.adjustment {
             if ajustement == String(localized: "Niveau \(profile.weekTier)") {
                 // L'étiquette ne se coupe pas : « Niveau » en fin de ligne et « 2 » seul à la suivante,
-                // c'est ce que la première capture de cette phrase montrait.
-                let etiquette = ajustement.replacingOccurrences(of: " ", with: HZAccueil.espaceInsecable)
-                return String(localized: "Le coach a ajusté cette semaine à « \(etiquette) » d'après ta forme la semaine dernière.")
+                // c'est ce que la première capture de cette phrase montrait. Les guillemets non plus.
+                // ET LA PHRASE EST PLUS COURTE QUE CELLE DE LA FICHE : une fois l'étiquette insécable,
+                // la phrase entière prenait trois lignes au lieu de deux, et ces 19 points repoussaient
+                // les libellés des catégories derrière la barre flottante sur un écran de 6,1 pouces.
+                let insecable = HZAccueil.espaceInsecable
+                let etiquette = ajustement.replacingOccurrences(of: " ", with: insecable)
+                return String(localized: "Semaine ajustée à « \(etiquette) » d'après ta forme de la semaine passée.")
+                    .replacingOccurrences(of: "« ", with: "«" + insecable)
+                    .replacingOccurrences(of: " »", with: insecable + "»")
             }
             return String(localized: String.LocalizationValue(ajustement))
         }

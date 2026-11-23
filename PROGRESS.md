@@ -9306,6 +9306,7 @@ Refonte n° 85, une par une.
 ## « Règle tout » : les quatre défauts restants du tour (23 novembre)
 
 - **La phrase du coach ne se coupe plus dans « Niveau 2 ».** L'étiquette porte une espace insécable (`HZAccueil.espaceInsecable`).
+  - Correction lue sur la capture du build 709 : insécable, l'étiquette passait entière à la ligne et la phrase prenait trois lignes au lieu de deux. Ces 19 points annulaient le resserrement, les libellés des catégories restaient derrière la barre. Sur l'accueil la phrase devient « Semaine ajustée à « Niveau 2 » d'après ta forme de la semaine passée. » (deux lignes) ; la fiche de séance garde la phrase longue, elle a la place.
 - **L'accueil se resserre sur un écran court.** Sur un iPhone de 6,1 pouces, la barre flottante recouvrait les libellés des cinq catégories (« Ro » et « ses » dépassaient de chaque côté). Sous 900 points de haut (`HZAccueil.ecranCourt`, lu une fois sur
   l'écran), six blancs perdent de 2 à 6 points, 28 en tout ; au-delà (6,7 et 6,9 pouces), les valeurs du canvas ne bougent pas. Limite dite : la position de la pliure dépend de ce que l'accueil porte au-dessus (phrase du coach, « La suite »), donc ce
   réglage vise l'état photographié, pas tous.

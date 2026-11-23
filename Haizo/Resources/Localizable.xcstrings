@@ -41759,6 +41759,23 @@
           }
         }
       }
+    },
+    "Semaine ajustée à « %@ » d'après ta forme de la semaine passée.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This week is set to “%@” based on how last week went."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Semana ajustada a «%@» según tu forma de la semana pasada."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
