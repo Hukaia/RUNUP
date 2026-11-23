@@ -9258,3 +9258,6 @@ division à chaque tour), à l'affûtage (3 tours d'un quart), simulation (100 m
 - **Défaut vu, corrigé** : sur un travail complémentaire, « allège d'un tour » ne voulait rien dire ; la fiche dit « allège d'une série ».
 - **À savoir en regardant les captures** : les allures affichées (6:20, 5:45, 5:05) sont celles de la graine de capture, pas d'un profil réel. Le fond montre la séance du plan ce jour-là (« 3 × 1000 », la course compromise du premier palier).
 - **Pas encore vu** : la semaine jour par jour sur l'écran Plan, et les fiches de sled après correction.
+
+**Décision de Charlotte (23 novembre) : une station par semaine, avec le fractionné.** La semaine HYROX reste donc : fractionné, séance de station, course compromise, puis footing et travail complémentaire selon le nombre de jours. Le choix
+d'origine (deux stations par semaine, sans fractionné) est abandonné.
