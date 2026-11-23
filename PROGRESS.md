@@ -9249,3 +9249,12 @@ seconde place de qualité va au fractionné, parce que c'est la course qui préd
 - Le Swift est écrit sans compilateur : la CI compile et lance les tests (`ProgrammeHyroxTests`, `AdaptivePlanEngineSafetyTests`).
 - Les anciens types (`hyrox_compromised_run_3`, `_6`, `_light_2`, `hyrox_light_simulation`) ne sont plus produits ; ils restent lisibles pour un plan enregistré.
 - L'« allure d'épreuve » est l'allure marathon du profil, un repère et non une mesure de l'allure HYROX de la personne.
+
+### Relevé des fiches en image (Refonte n° 83), et un défaut corrigé
+Lues : fractionné (« 4 × 1 km · 5:05 /km · allure seuil… · 200 m en trottinant »), course compromise au bloc de base (4 tours : burpees 40 m, rameur 500 m, farmers 100 m, fentes 50 m, ligne « Les charges »), au spécifique (6 tours, kilos de la
+division à chaque tour), à l'affûtage (3 tours d'un quart), simulation (100 min, huit tours entiers, ligne « L'intention »), wall balls (« 3 × (1 000 m de course + 50 répétitions) »), force des jambes (« Séance du jour », phrase de prudence à la fin).
+- **Défaut vu, corrigé** : la séance de sled était trop maigre. Les parts de l'épreuve donnaient « 3 × (800 m + 1 aller) », trois allers dans toute la séance. Les sleds ont leurs propres paliers (`Station.palierDeSled`) : 6, 8, 10 puis 12 allers
+  au bloc de base, 8 puis 12 au spécifique, plafond à trois fois l'épreuve (la station ne dure que deux minutes en course).
+- **Défaut vu, corrigé** : sur un travail complémentaire, « allège d'un tour » ne voulait rien dire ; la fiche dit « allège d'une série ».
+- **À savoir en regardant les captures** : les allures affichées (6:20, 5:45, 5:05) sont celles de la graine de capture, pas d'un profil réel. Le fond montre la séance du plan ce jour-là (« 3 × 1000 », la course compromise du premier palier).
+- **Pas encore vu** : la semaine jour par jour sur l'écran Plan, et les fiches de sled après correction.

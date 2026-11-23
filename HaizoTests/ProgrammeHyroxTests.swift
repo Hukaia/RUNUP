@@ -246,8 +246,35 @@ final class ProgrammeHyroxTests: XCTestCase {
                     let f = station.format(phase: phase, palier: palier)
                     let volume = f.tours * f.quantite
                     let epreuve = station.deLEpreuve.quantite
-                    XCTAssertLessThanOrEqual(volume * 2, epreuve * 3, "\(station) \(phase) palier \(palier) : \(volume)")
+                    // Les sleds vont jusqu'à trois fois l'épreuve : la station ne dure que deux minutes.
+                    let estUnSled = station == .sledPush || station == .sledPull
+                    XCTAssertLessThanOrEqual(volume * 2, epreuve * (estUnSled ? 6 : 3),
+                                             "\(station) \(phase) palier \(palier) : \(volume)")
                     XCTAssertGreaterThanOrEqual(volume * 2, epreuve, "\(station) \(phase) palier \(palier) : \(volume)")
+                }
+            }
+        }
+    }
+
+    /// UNE SÉANCE DE SLED N'EST JAMAIS UN SEUL ALLER PAR TOUR. Les parts de l'épreuve donnaient trois
+    /// allers dans toute la séance du premier palier ; les sleds ont leurs propres paliers.
+    func testUneSeanceDeSledFaitAssezDeSled() {
+        for station in [ProgrammeHyrox.Station.sledPush, .sledPull] {
+            let base = (0...4).map { palier -> Int in
+                let f = station.format(phase: .base, palier: palier)
+                return f.tours * f.quantite
+            }
+            XCTAssertEqual(base, [6, 8, 10, 12, 12], "\(station)")
+            let specifique = (0...3).map { palier -> Int in
+                let f = station.format(phase: .specifique, palier: palier)
+                return f.tours * f.quantite
+            }
+            XCTAssertEqual(specifique, [8, 12, 12, 12], "\(station)")
+            for phase in Self.phases {
+                for palier in 0...6 {
+                    let f = station.format(phase: phase, palier: palier)
+                    XCTAssertGreaterThanOrEqual(f.quantite, 2, "\(station) \(phase) palier \(palier)")
+                    XCTAssertLessThanOrEqual(f.quantite, station.deLEpreuve.quantite)
                 }
             }
         }

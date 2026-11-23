@@ -41673,6 +41673,23 @@
           }
         }
       }
+    },
+    "ces volumes sont un point de départ : allège d'une série ou d'un cran de charge si le geste se dégrade, et ne dépasse pas ce qui est écrit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "these volumes are a starting point: drop a set or a notch of load if your form breaks down, and do not go beyond what is written"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "estos volúmenes son un punto de partida: quita una serie o baja la carga si el gesto se degrada, y no superes lo que está escrito"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -25,7 +25,7 @@ import Foundation
 ///
 /// 3. CHAQUE STATION A SA SÉANCE, mesurée en parts de l'épreuve. Un tour demande un quart, la moitié ou
 ///    les trois quarts de la station ; une séance n'en demande jamais plus d'une fois et demie le
-///    volume de l'épreuve. Au bloc de base, les stations lestées sont aux deux tiers de la charge de
+///    volume de l'épreuve (trois fois pour les sleds, dont la station ne dure que deux minutes). Au bloc de base, les stations lestées sont aux deux tiers de la charge de
 ///    course et la course est facile ; au bloc spécifique, tout est à la charge et à l'allure de
 ///    l'épreuve, avec moins de volume. Les wall balls passent en premier dans la rotation : c'est la
 ///    station la plus coûteuse de l'étude (fréquence cardiaque, lactate, effort perçu).
@@ -267,6 +267,30 @@ enum ProgrammeHyrox {
             }
         }
 
+        /// LES SLEDS ONT LEURS PROPRES PALIERS, parce que la station est courte : quatre allers, deux
+        /// minutes à l'épreuve (128 s pour le push, 155 s pour le pull, Brandt 2025). Les parts de
+        /// l'épreuve donnaient « 3 × (800 m + 1 aller) » : trois allers de 12,5 m dans toute une séance,
+        /// vus sur la capture, de quoi ne rien apprendre. Un tour fait donc deux allers au moins, puis
+        /// la station entière ; le plafond est de trois fois l'épreuve (douze allers) au lieu d'une
+        /// fois et demie. Bloc de base : 6, 8, 10 puis 12 allers aux deux tiers de la charge. Bloc
+        /// spécifique : 8 puis 12 allers à la charge de course.
+        static func palierDeSled(phase: PhaseHyrox, palier: Int) -> (tours: Int, allers: Int) {
+            let p = max(0, palier)
+            switch phase {
+            case .base:
+                switch p {
+                case 0: return (3, 2)
+                case 1: return (4, 2)
+                case 2: return (5, 2)
+                default: return (3, 4)
+                }
+            case .specifique:
+                return p == 0 ? (2, 4) : (3, 4)
+            case .affutage, .decharge:
+                return (2, 2)
+            }
+        }
+
         /// CE QU'ON FAIT DE LA STATION CETTE SEMAINE : des tours de « course, puis la station », comme
         /// l'épreuve, en plus court.
         ///
@@ -279,7 +303,12 @@ enum ProgrammeHyrox {
         /// part de la station viennent du palier (voir `palierDeStation`).
         func format(phase: PhaseHyrox, palier: Int = 0) -> FormatDeStation {
             let base = phase.estFacile
-            let (tours, part) = Station.palierDeStation(phase: phase, palier: palier)
+            let commun = Station.palierDeStation(phase: phase, palier: palier)
+            var tours = commun.tours
+            var parTour = quantite(commun.part)
+            if self == .sledPush || self == .sledPull {
+                (tours, parTour) = Station.palierDeSled(phase: phase, palier: palier)
+            }
             let intensite: PrescriptionHyrox.Intensite
             switch self {
             case .skiErg, .rameur: intensite = .effort(base ? 7 : 8)
@@ -288,7 +317,7 @@ enum ProgrammeHyrox {
                 intensite = base ? .deuxTiers : .chargeDeCourse
             }
             return FormatDeStation(tours: tours, courseM: base ? 800 : 1000,
-                                   quantite: quantite(part), unite: deLEpreuve.unite,
+                                   quantite: parTour, unite: deLEpreuve.unite,
                                    reposSecondes: base ? 60 : 90, intensite: intensite,
                                    allure: base ? .facile : .epreuve,
                                    secondesParUnite: secondesParUnite)

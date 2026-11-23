@@ -192,7 +192,10 @@ struct SessionDetailSheet: View {
                 + gestes.map {
                     ($0.nom, "\($0.intention) · \($0.prescription.texte)", HZCouleur.secondaireSurClair)
                 }
-                + [(String(localized: "Comment l'ajuster"), valeursDeDepart, HZCouleur.secondaireSurClair)]
+                // « Allège d'un tour » ne veut rien dire ici : cette séance n'a pas de tours, elle a des séries.
+                + [(String(localized: "Comment l'ajuster"),
+                    String(localized: "ces volumes sont un point de départ : allège d'une série ou d'un cran de charge si le geste se dégrade, et ne dépasse pas ce qui est écrit"),
+                    HZCouleur.secondaireSurClair)]
         }
 
         // UN PLAN ENREGISTRÉ AVANT LES SÉANCES PAR STATION peut porter l'ancienne séance de deux
