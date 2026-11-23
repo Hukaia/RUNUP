@@ -326,6 +326,7 @@ extension Sauvegarde.Course {
         healthWorkoutID = m.healthWorkoutID
         shoeID = m.shoeID
         debriefedAt = m.debriefedAt
+        clubClientId = m.clubClientId
     }
 
     func enRunRecord() -> RunRecord {
@@ -352,6 +353,7 @@ extension Sauvegarde.Course {
         r.disciplineRaw = disciplineRaw
         r.shoeID = shoeID
         r.debriefedAt = debriefedAt
+        r.clubClientId = clubClientId
         return r
     }
 }

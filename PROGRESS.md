@@ -9378,11 +9378,20 @@ Corrigé dans ce lot :
 - **Amis** : « Suivi » demande confirmation avant de désabonner.
 - **Ressenti** : sans programme qui s'adapte (sans abonnement, ou en course libre), le bouton dit « Valider » et le message « Séance validée », plus « Programme mis à jour ».
 
+### Lot 5 : les décisions de Charlotte (23 novembre au soir)
+
+Charlotte a tranché cinq points. Trois sont faits ici, deux sont des chantiers à part (gestion du club par sa créatrice, mot de passe oublié).
+
+- **Fin de course sans enregistrer.** La feuille « Terminer la course ? » propose « Arrêter sans enregistrer », avec une seconde confirmation. Rien n'est gardé : ni relevé, ni écriture dans Apple Santé, ni séance cochée (`AppState.abandonnerLaCourse`). « Terminer » n'est plus en rouge, c'est l'autre ligne qui perd la sortie.
+- **Supprimer une sortie la retire partout.** Apple Santé : la séance et ses mesures, seulement si c'est Haizo qui les a écrites (`HealthKitService.supprimerLaSeance`, borné à la source de l'app et au départ de la sortie à deux minutes près). Club : le relevé garde l'identifiant de sa publication (`RunRecord.clubClientId`, posé au ressenti, porté par la sauvegarde), et le serveur sait supprimer par cet identifiant (`api/activities/delete` accepte `clientId`). Une publication encore en file n'est simplement pas envoyée.
+  - Limites dites : une sortie publiée avant ce champ ne peut pas être retirée du club depuis l'historique ; une sortie enregistrée par la montre ou importée n'est pas retirée de Santé, elle appartient à l'app qui l'a écrite.
+- **« Nous écrire »** et « Signaler un problème » écrivent à `contact@hukaia.com` (`Liens.courrielDeContact`), plus à une adresse personnelle. Les pages publiées (assistance, confidentialité) portent encore l'ancienne adresse : elles sont servies depuis `main`, et les changer demande une autorisation de publier.
+- **Explorer** : « Route » liste les courses sur route, comme « Trail » et « HYROX » listent les leurs. Les itinéraires ont leur filtre, « Itinéraires ».
+
 ### Constaté, pas encore corrigé
 
-- Explorer : filtre « Route » qui liste des itinéraires alors que Trail et HYROX listent des courses ; « Garder cet itinéraire » sans liste des gardés.
+- Explorer : « Garder cet itinéraire » sans liste des gardés.
 - Page de course : répondre à un message ne fait rien de visible.
 - Club : le lien d'invitation d'un club ne fait que préremplir une recherche ; pas de retrait de membre, de régénération de code ni de suppression de club ; la créatrice peut quitter son club et le laisser sans propriétaire.
-- Course : pas de « ne pas enregistrer » à la fin ; supprimer une sortie ne la retire ni d'Apple Santé ni du club.
-- Réglages : pas de « mot de passe oublié » ; « Nous écrire » ouvre une adresse personnelle.
+- Réglages : pas de « mot de passe oublié » (chantier décidé, à faire).
 - À confirmer sur téléphone : ouvrir une sortie depuis un profil (deux couvertures plein écran sur la même racine).

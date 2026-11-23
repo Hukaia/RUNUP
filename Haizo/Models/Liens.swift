@@ -24,6 +24,11 @@ enum Liens {
     static let confidentialite = URL(string: "\(base)/privacy.html")!
     static let assistance = URL(string: "\(base)/support.html")!
 
+    /// L'adresse où l'on écrit à Haizo : « Nous écrire » dans les Réglages, « Un problème avec le
+    /// club ». C'était une adresse personnelle, écrite en dur à deux endroits.
+    static let adresseDeContact = "contact@hukaia.com"
+    static let courrielDeContact = URL(string: "mailto:\(adresseDeContact)")!
+
     /// La page d'Apple où l'on gère, donc où l'on résilie, un abonnement.
     static let abonnements = URL(string: "https://apps.apple.com/account/subscriptions")!
 

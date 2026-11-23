@@ -937,6 +937,13 @@ struct ClubService {
         let _: OkResponse = try await send(path: "api/activities/delete", method: "POST", body: ["activityId": activityId])
     }
 
+    /// La même suppression, désignée par l'identifiant que l'APP a donné à la publication
+    /// (`client_id`) : c'est le seul que le relevé d'une sortie connaisse, puisque l'identifiant
+    /// du serveur n'existe qu'une fois la publication partie.
+    func deleteActivity(clientId: UUID) async throws {
+        let _: OkResponse = try await send(path: "api/activities/delete", method: "POST", body: ["clientId": clientId.uuidString.lowercased()])
+    }
+
     @discardableResult
     func toggleKudos(activityId: String) async throws -> Bool {
         let response: KudosResponse = try await send(path: "api/activities/kudos", method: "POST", body: ["activityId": activityId])

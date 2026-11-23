@@ -768,7 +768,7 @@ struct MoreSettingsView: View {
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
         let system = UIDevice.current.systemVersion
         let body = String(localized: "\n\n\n---\nCe qui suit aide juste au diagnostic :\nVersion \(version) (\(build)) · iOS \(system)")
-        var components = URLComponents(string: "mailto:charlottegrudep@gmail.com")!
+        var components = URLComponents(string: Liens.courrielDeContact.absoluteString)!
         components.queryItems = [
             // Le sujet portait « bêta » lui aussi. Il sert à trier les messages reçus : la
             // version et le build sont déjà dans le corps, ils suffisent à savoir d'où ça vient.

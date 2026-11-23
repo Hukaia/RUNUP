@@ -18,6 +18,9 @@ struct LiveRunView: View {
     @Environment(AppState.self) private var appState
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var showStopConfirm = false
+    /// « Arrêter sans enregistrer » demande une seconde confirmation : il est sur la même feuille
+    /// que « Terminer », et un doigt qui glisse d'une ligne ne doit pas coûter deux heures de sortie.
+    @State private var abandonAConfirmer = false
     /// Un instantané du tracé, reconstruit toutes les cinq positions et non à chacune : MapKit
     /// retesselle tout le tableau à chaque mise à jour, et le coût monterait avec la sortie.
     @State private var displayedRoute: [CLLocationCoordinate2D] = []
@@ -590,9 +593,20 @@ struct LiveRunView: View {
             .accessibilityLabel(String(localized: "Terminer"))
             // Un bouton à côté de la pause terminait la séance, irréversiblement, d'un seul toucher :
             // un faux pas en pleine course la tuait.
+            // ET ON PEUT NE PAS LA GARDER. « Terminer » enregistrait toujours : une sortie lancée par
+            // erreur, ou un test, finissait dans l'historique et dans Apple Santé, et la supprimer
+            // ensuite ne la retirait pas de Santé. « Terminer » n'est plus en rouge : il garde la
+            // sortie, c'est l'autre ligne qui la perd.
             .confirmationDialog("Terminer la course ?", isPresented: $showStopConfirm, titleVisibility: .visible) {
-                Button("Terminer", role: .destructive) { _ = appState.endLiveRun() }
+                Button("Terminer") { _ = appState.endLiveRun() }
+                Button("Arrêter sans enregistrer", role: .destructive) { abandonAConfirmer = true }
                 Button("Continuer à courir", role: .cancel) {}
+            }
+            .alert("Ne pas enregistrer cette sortie ?", isPresented: $abandonAConfirmer) {
+                Button("Ne pas enregistrer", role: .destructive) { appState.abandonnerLaCourse() }
+                Button("Annuler", role: .cancel) {}
+            } message: {
+                Text("Elle ne sera gardée nulle part : ni dans ton historique, ni dans Apple Santé.")
             }
 
             Button(action: {

@@ -389,7 +389,7 @@ struct ClubView: View {
         if auth.isSignedIn {
             // Le contact publié, ici et pas seulement dans la politique de confidentialité :
             // App Store, règle 1.2.
-            Link(destination: URL(string: "mailto:charlottegrudep@gmail.com")!) {
+            Link(destination: Liens.courrielDeContact) {
                 Text("Signaler un problème ou nous contacter")
                     .hzTexte(.c13, .medium)
                     .foregroundStyle(HZCouleur.secondaireSurClair)

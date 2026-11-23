@@ -140,16 +140,29 @@ async function handleUpdate(req, res, userId) {
 // row (FKs), and any challenge progress it contributed drops out automatically (progress is a
 // live SUM over these rows). The XP it earned stays: the run really happened — removal is a
 // feed-privacy action, not an undo of the training.
+//
+// DEUX FAÇONS DE LA DÉSIGNER : `activityId`, l'identifiant du serveur, quand on supprime depuis le
+// fil ; `clientId`, celui que l'app a donné à la publication, quand on supprime la SORTIE dans
+// l'historique de l'app. Le relevé d'une sortie ne connaît que le second : l'identifiant du serveur
+// n'existe qu'une fois la publication partie, et l'app ne le relit jamais. Sans cette seconde
+// porte, supprimer une sortie dans l'app la laissait dans le fil du club. Les deux requêtes sont
+// bornées à `user_id` de la même façon.
 async function handleDelete(req, res, userId) {
-  const { activityId } = req.body || {};
-  if (!isUuid(activityId)) return res.status(400).json({ error: 'bad_request' });
+  const { activityId, clientId } = req.body || {};
+  const parClient = !isUuid(activityId) && isUuid(clientId);
+  if (!isUuid(activityId) && !parClient) return res.status(400).json({ error: 'bad_request' });
   // `photo_url` est RENDUE par le DELETE : une sortie effacée doit emporter son image, sinon
   // chaque suppression laisse un objet orphelin dans le stockage — que plus rien ne référence,
   // que personne ne verra jamais, et qui reste facturé.
-  const { rows } = await sql`
-    DELETE FROM activities WHERE id = ${activityId} AND user_id = ${userId}
-    RETURNING id, photo_url
-  `;
+  const { rows } = parClient
+    ? await sql`
+        DELETE FROM activities WHERE client_id = ${clientId} AND user_id = ${userId}
+        RETURNING id, photo_url
+      `
+    : await sql`
+        DELETE FROM activities WHERE id = ${activityId} AND user_id = ${userId}
+        RETURNING id, photo_url
+      `;
   if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
   // `catch` vide et sans `await` : la sortie est déjà supprimée, et l'échec d'un ménage ne doit
   // pas faire croire à un échec de suppression.

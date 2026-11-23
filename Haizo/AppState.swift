@@ -1105,6 +1105,18 @@ final class AppState {
         go(.live)
     }
 
+    /// Arrête la course SANS RIEN EN GARDER : ni relevé, ni écriture dans Apple Santé, ni séance
+    /// cochée. `stop()` éteint ce qui tourne (minuteur, GPS, voix, activité en direct) et efface
+    /// l'instantané de reprise, sans quoi la sortie abandonnée reviendrait au prochain lancement
+    /// comme une course interrompue.
+    func abandonnerLaCourse() {
+        guard let vm = liveRun else { return }
+        _ = vm.stop()
+        liveRun = nil
+        toast(String(localized: "Sortie non enregistrée"))
+        go(.home)
+    }
+
     func endLiveRun() -> RunRecord? {
         guard let vm = liveRun else { return nil }
         let record = vm.stop()

@@ -368,6 +368,42 @@ final class HealthKitService {
         _ = try await builder.finishWorkout()
     }
 
+    /// Retire d'Apple Santé ce que Haizo y a écrit pour UNE sortie : la séance, et les mesures de
+    /// distance et d'énergie posées avec elle.
+    ///
+    /// Supprimer une sortie dans l'historique ne touchait pas à Santé : la séance y restait, donc
+    /// les anneaux, l'app Forme et toutes les autres apps continuaient de compter une course que
+    /// la personne venait d'effacer. Un historique qui dit une chose et Santé une autre.
+    ///
+    /// DEUX GARDE-FOUS, parce qu'on efface des données de santé :
+    ///   · `HKSource.default()` : seulement ce que CETTE app a écrit. Une course venue d'une montre
+    ///     n'est pas à nous, iOS refuserait de toute façon, et la demander serait une erreur.
+    ///   · le départ à deux minutes près : `saveRun` écrit la séance et ses mesures au même instant
+    ///     de départ que la date du relevé. Rien d'autre que cette sortie ne commence là.
+    /// Les mesures sont supprimées une à une, et non avec la séance : `HKWorkoutBuilder` les
+    /// enregistre comme des échantillons à part, que la suppression de la séance laisse en place.
+    ///
+    /// Rend le nombre d'objets retirés ; zéro n'est pas une erreur (sortie saisie à la main,
+    /// Santé non connectée, sortie importée).
+    @discardableResult
+    func supprimerLaSeance(debut: Date) async -> Int {
+        guard Self.isHealthDataAvailable else { return 0 }
+        let predicat = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            HKQuery.predicateForObjects(from: HKSource.default()),
+            HKQuery.predicateForSamples(withStart: debut.addingTimeInterval(-Self.margeDuDepart),
+                                        end: debut.addingTimeInterval(Self.margeDuDepart),
+                                        options: .strictStartDate)
+        ])
+        var retires = 0
+        for type in Self.writeTypes {
+            retires += (try? await store.deleteObjects(of: type, predicate: predicat)) ?? 0
+        }
+        return retires
+    }
+
+    /// De combien le départ d'une séance peut s'écarter de la date du relevé, en secondes.
+    private static let margeDuDepart: TimeInterval = 120
+
     // MARK: - Les courses enregistrées ailleurs
 
     /// Une course lue dans Santé, réduite à ce dont `RunRecord` a besoin.

@@ -153,10 +153,15 @@ extension AppState {
     /// something to retry rather than a `try?` that discarded the payload the instant it failed.
     /// `route` est le tracé BRUT de la sortie. Le rognage de confidentialité est appliqué ici, une
     /// fois, et c'est le résultat qui est mis en file puis envoyé — voir `PendingClubActivity.trace`.
-    func postClubActivity(type: String, text: String, xpEarned: Int, contentKey: String? = nil, discipline: String? = nil, metrics: ActivityMetrics = .none, route: [RunRecord.RoutePoint] = []) {
-        guard auth.isSignedIn else { return }
+    /// Rend l'identifiant de la publication, ou nil si rien n'est parti (pas de compte). L'appelant
+    /// qui publie UNE SORTIE le garde sur le relevé (`RunRecord.clubClientId`) : c'est ce qui
+    /// permet de la retirer du club quand la sortie est supprimée.
+    @discardableResult
+    func postClubActivity(type: String, text: String, xpEarned: Int, contentKey: String? = nil, discipline: String? = nil, metrics: ActivityMetrics = .none, route: [RunRecord.RoutePoint] = []) -> UUID? {
+        guard auth.isSignedIn else { return nil }
+        let identifiant = UUID()
         let pending = PendingClubActivity(
-            clientId: UUID(),
+            clientId: identifiant,
             type: type,
             text: text,
             xpEarned: xpEarned,
@@ -175,7 +180,43 @@ extension AppState {
         if outbox.count > Self.maxEnFile { outbox.removeFirst(outbox.count - Self.maxEnFile) }
         pendingActivityCount = outbox.count
         Task { await attemptPost(pending) }
+        return identifiant
     }
+
+    /// CE QU'UNE SORTIE SUPPRIMÉE LAISSE HORS DE L'APP, et qu'on retire avec elle.
+    ///
+    /// Supprimer une sortie dans l'historique effaçait le relevé et rien d'autre : la séance
+    /// restait dans Apple Santé, et la publication restait dans le fil du club. L'historique
+    /// disait « supprimée » pendant que deux autres endroits disaient le contraire.
+    ///
+    ///   · Santé : seulement si c'est Haizo qui a écrit la séance. Une sortie importée d'une montre
+    ///     appartient à l'app qui l'a enregistrée, et se supprime là-bas.
+    ///   · le club : par l'identifiant de publication, quand le relevé en porte un. Si elle
+    ///     attendait encore dans la file d'envoi, elle n'est simplement jamais envoyée.
+    ///
+    /// Un échec côté club se dit : la sortie a bien disparu d'ici, et il reste un geste à faire.
+    func retirerDAilleurs(debut: Date, ecriteParHaizo: Bool, publication: UUID?) {
+        if ecriteParHaizo {
+            Task { await healthKit.supprimerLaSeance(debut: debut) }
+        }
+        guard let publication else { return }
+        let enAttente = outbox.contains { $0.clientId == publication }
+        outbox.removeAll { $0.clientId == publication }
+        pendingActivityCount = outbox.count
+        // Jamais partie : rien à retirer du serveur.
+        guard !enAttente, auth.isSignedIn else { return }
+        Task {
+            do {
+                try await ClubService(auth: auth).deleteActivity(clientId: publication)
+            } catch ClubServiceError.badResponse(let code, _) where code == Self.introuvable {
+                // Déjà retirée depuis le fil : c'est l'état qu'on voulait.
+            } catch {
+                toast(String(localized: "Sortie supprimée ici, mais pas retirée du club. Retire-la depuis le fil."))
+            }
+        }
+    }
+
+    private static let introuvable = 404
 
     /// Call opportunistically — app foreground, Club tab opening — to retry anything still queued
     /// from a prior failed attempt. Safe to call anytime, including with an empty outbox.

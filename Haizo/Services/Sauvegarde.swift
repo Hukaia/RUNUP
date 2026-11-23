@@ -373,6 +373,7 @@ extension Sauvegarde {
         var healthWorkoutID: UUID?
         var shoeID: UUID?
         var debriefedAt: Date?
+        var clubClientId: UUID?
 
         init() {}
 
@@ -394,6 +395,7 @@ extension Sauvegarde {
             healthWorkoutID = c.lire(UUID.self, .healthWorkoutID)
             shoeID = c.lire(UUID.self, .shoeID)
             debriefedAt = c.lire(Date.self, .debriefedAt)
+            clubClientId = c.lire(UUID.self, .clubClientId)
         }
     }
 

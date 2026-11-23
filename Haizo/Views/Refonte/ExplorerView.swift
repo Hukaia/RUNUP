@@ -16,10 +16,14 @@ import CoreLocation
 /// ville, ses membres, et dans une pilule comment on y entre — Ouvert, Sur demande, Sur code), un
 /// champ pour en chercher un par son nom, et l'entrée « avec un code » pour un club sur code, qui ne
 /// se trouve nulle part ailleurs. Toucher une carte ouvre la fiche du club (`ClubFicheView`).
-/// Les cinq filtres d'Explorer. Hors de la vue parce que l'accueil les nomme aussi : ses cinq
-/// catégories ouvrent Explorer sur le filtre correspondant (`AppState.ouvrirExplorer`).
+/// Les filtres d'Explorer. Hors de la vue parce que l'accueil les nomme aussi : ses catégories
+/// ouvrent Explorer sur le filtre correspondant (`AppState.ouvrirExplorer`).
+///
+/// « ROUTE » LISTE DES COURSES SUR ROUTE, comme « Trail » et « HYROX » listent les leurs. Il listait
+/// des itinéraires : trois filtres voisins, deux sortes de contenu, et rien pour le dire. Les
+/// itinéraires ont leur propre filtre, qui porte leur nom. Décision de Charlotte, 23 novembre.
 enum FiltreDExplorer: CaseIterable, Identifiable {
-    case pourToi, route, trail, hyrox, clubs
+    case pourToi, route, trail, hyrox, itineraires, clubs
     var id: Self { self }
     var libelle: String {
         switch self {
@@ -27,6 +31,7 @@ enum FiltreDExplorer: CaseIterable, Identifiable {
         case .route: return String(localized: "Route")
         case .trail: return String(localized: "Trail")
         case .hyrox: return String(localized: "HYROX")
+        case .itineraires: return String(localized: "Itinéraires")
         case .clubs: return String(localized: "Clubs")
         }
     }
@@ -41,6 +46,7 @@ struct ExplorerView: View {
     @State private var courses: [RaceEvent] = []
     /// Les courses de trail et de HYROX, demandées au serveur À PART : « Courses à venir » ne garde que les
     /// plus proches, et un trail de juin n'y figure pas tant que dix marathons le précèdent.
+    @State private var coursesDeRoute: [RaceEvent] = []
     @State private var coursesDeTrail: [RaceEvent] = []
     @State private var coursesHyrox: [RaceEvent] = []
     @State private var clubs: [ClubSearchResult] = []
@@ -164,6 +170,9 @@ struct ExplorerView: View {
             case .pourToi:
                 pourToi
             case .route:
+                listeDeCourses(coursesDeRoute,
+                               vide: String(localized: "Aucune course sur route à venir pour l'instant."))
+            case .itineraires:
                 listeDItineraires
             case .trail:
                 listeDeCourses(coursesDeTrail,
@@ -479,6 +488,7 @@ struct ExplorerView: View {
         if Demonstration.enCours {
             itineraires = appState.cachedExplorerRoutes ?? []
             courses = appState.cachedUpcomingRaces ?? []
+            coursesDeRoute = courses.filter { $0.discipline == "run" }
             coursesDeTrail = courses.filter { $0.discipline == "trail" }
             coursesHyrox = courses.filter { $0.discipline == "hyrox" }
             clubs = appState.cachedSuggestedClubs ?? []
@@ -495,6 +505,8 @@ struct ExplorerView: View {
         // Un échec ici n'est pas une panne de l'écran : la liste du filtre reste vide et dit « aucune
         // course », ce que « Courses à venir » ne contredit pas. Le serveur filtre ; s'il ignore le
         // paramètre (version plus ancienne), le tri sur l'appareil rend la liste juste quand même.
+        coursesDeRoute = ((try? await service.upcomingRaces(discipline: "run")) ?? courses)
+            .filter { $0.discipline == "run" }
         coursesDeTrail = ((try? await service.upcomingRaces(discipline: "trail")) ?? courses)
             .filter { $0.discipline == "trail" }
         coursesHyrox = ((try? await service.upcomingRaces(discipline: "hyrox")) ?? courses)

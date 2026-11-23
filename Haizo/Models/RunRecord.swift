@@ -133,6 +133,14 @@ final class RunRecord {
     /// reopening the debrief for an already-validated run). `run.modelContext == nil` alone only
     /// ever protected the INSERT, not re-running the reward logic on an already-inserted record.
     var debriefedAt: Date? = nil
+    /// L'identifiant sous lequel cette sortie a été publiée au club (`client_id` côté serveur),
+    /// posé au moment du ressenti.
+    ///
+    /// Sans lui, rien ne reliait un relevé à sa publication : supprimer la sortie dans l'historique
+    /// la laissait dans le fil du club, où les autres continuaient de la voir et de l'applaudir.
+    /// Nil pour une sortie jamais publiée, ou publiée avant que ce champ n'existe : celles-là ne
+    /// peuvent pas être retirées du fil depuis l'historique, seulement depuis le fil.
+    var clubClientId: UUID? = nil
 
     init(
         date: Date = .now,

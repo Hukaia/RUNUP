@@ -64,14 +64,19 @@ struct HistoryView: View {
                     // `runs` won't reflect the deletion until the next @Query update cycle, so
                     // the remaining set is computed by hand rather than read back immediately.
                     AdaptivePlanEngine.recomputeStreak(profile: appState.profile, currentRuns: runs.filter { $0 !== run })
+                    // Lus AVANT la suppression : après, le relevé n'a plus de valeurs à donner.
+                    let debut = run.date
+                    let ecriteParHaizo = run.healthWorkoutID == nil && run.stravaActivityId == nil
+                    let publication = run.clubClientId
                     modelContext.delete(run)
+                    appState.retirerDAilleurs(debut: debut, ecriteParHaizo: ecriteParHaizo, publication: publication)
                     Haptics.warning()
                 }
                 pendingDelete = nil
             }
             Button("Annuler", role: .cancel) { pendingDelete = nil }
         } message: {
-            Text("Cette action est définitive.")
+            Text("Cette action est définitive. La sortie est aussi retirée d'Apple Santé si Haizo l'y a écrite, et du fil de ton club.")
         }
     }
 

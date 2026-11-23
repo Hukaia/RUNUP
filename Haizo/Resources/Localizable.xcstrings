@@ -42272,6 +42272,142 @@
           }
         }
       }
+    },
+    "Arrêter sans enregistrer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop without saving"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detener sin guardar"
+          }
+        }
+      }
+    },
+    "Ne pas enregistrer cette sortie ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don't save this run?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿No guardar esta salida?"
+          }
+        }
+      }
+    },
+    "Ne pas enregistrer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don't save"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No guardar"
+          }
+        }
+      }
+    },
+    "Elle ne sera gardée nulle part : ni dans ton historique, ni dans Apple Santé.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It won't be kept anywhere: not in your history, not in Apple Health."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se guardará en ningún sitio: ni en tu historial ni en Apple Salud."
+          }
+        }
+      }
+    },
+    "Sortie non enregistrée": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run not saved"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salida no guardada"
+          }
+        }
+      }
+    },
+    "Aucune course sur route à venir pour l'instant.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No road races coming up for now."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay carreras en ruta próximamente."
+          }
+        }
+      }
+    },
+    "Sortie supprimée ici, mais pas retirée du club. Retire-la depuis le fil.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run deleted here, but not removed from the club. Remove it from the feed."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salida eliminada aquí, pero no retirada del club. Quítala desde el muro."
+          }
+        }
+      }
+    },
+    "Cette action est définitive. La sortie est aussi retirée d'Apple Santé si Haizo l'y a écrite, et du fil de ton club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This can't be undone. The run is also removed from Apple Health if Haizo wrote it there, and from your club's feed."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta acción es definitiva. La salida también se elimina de Apple Salud si Haizo la escribió allí, y del muro de tu club."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
