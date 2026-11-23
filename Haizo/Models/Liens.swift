@@ -24,6 +24,9 @@ enum Liens {
     static let confidentialite = URL(string: "\(base)/privacy.html")!
     static let assistance = URL(string: "\(base)/support.html")!
 
+    /// La page d'Apple où l'on gère, donc où l'on résilie, un abonnement.
+    static let abonnements = URL(string: "https://apps.apple.com/account/subscriptions")!
+
     /// La fiche App Store de Haizo : le même identifiant que `public/club.html`.
     static let appStore = URL(string: "https://apps.apple.com/app/id6790719663")!
 

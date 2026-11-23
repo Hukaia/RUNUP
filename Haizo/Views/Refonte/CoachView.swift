@@ -231,6 +231,9 @@ struct CoachView: View {
                 }
             }
         }
+        // Même règle que le bouton d'envoi : pas de suggestion pendant que le coach répond.
+        .disabled(vm?.isTyping == true)
+        .opacity(vm?.isTyping == true ? HZCoach.suggestionsEnAttente : HZCoach.suggestionsPretes)
         // Le canvas laisse la rangée sortir par le bord droit de la feuille.
         .padding(.trailing, -HZEspace.marge)
     }
@@ -262,8 +265,12 @@ struct CoachView: View {
             HZBulle(auteur: .coach) {
                 VStack(alignment: .leading, spacing: HZCoach.ecartDansUneBulle) {
                     HZTexteDeBulle(texte: message.text, auteur: .coach)
-                    HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .reponse,
-                                   etendu: true) { retryLast() }
+                    // Pas de « Réessayer » sous un REFUS : la même question recevra la même
+                    // réponse, et le message dit déjà quoi faire (reformuler).
+                    if message.text != CoachViewModel.texteDuRefus {
+                        HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .reponse,
+                                       etendu: true) { retryLast() }
+                    }
                 }
             }
         case .system:
@@ -354,8 +361,11 @@ struct CoachView: View {
     }
 
     /// Y a-t-il quelque chose à envoyer.
+    /// Et le coach n'est pas en train d'écrire : `CoachViewModel.send` refuse un envoi pendant
+    /// qu'une réponse arrive. Le bouton restait allumé, on touchait, et le message n'était ni
+    /// envoyé ni refusé à l'écran.
     private var canSend: Bool {
-        !(vm?.draft ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !(vm?.draft ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && vm?.isTyping != true
     }
 
     /// The zero-message welcome bubble used to always claim "Ta forme est au top" regardless of

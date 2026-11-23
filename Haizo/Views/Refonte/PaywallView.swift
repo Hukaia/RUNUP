@@ -25,10 +25,23 @@ struct PaywallView: View {
 
     /// Trois bénéfices, pas cinq : ce qu'on achète en une ligne chacun. Le coach à la voix et le plan calé
     /// sur une course restent dans l'offre ; ils se découvrent quand on les rencontre.
+    ///
+    /// CHAQUE LIGNE EST VRAIE AU MOT PRÈS, parce que c'est ce qu'on lit avant de payer. Deux ne
+    /// l'étaient pas. « Le coach, sans limite de messages » : le serveur plafonne à 250 demandes
+    /// par jour et 40 messages par conversation (`api/coach.js`). « Allure, charge d'entraînement,
+    /// records, prédictions » : l'allure et les records sont gratuits, seules la charge et les
+    /// prédictions sont dans l'offre (`StatsView`).
     private var avantages: [String] {
         [String(localized: "Un programme qui s'adapte à ta forme chaque semaine"),
-         String(localized: "Le coach, sans limite de messages"),
-         String(localized: "Allure, charge d'entraînement, records, prédictions")]
+         String(localized: "Un coach qui connaît ton objectif et ton historique"),
+         String(localized: "Ta charge d'entraînement et tes temps possibles en course")]
+    }
+
+    /// Les jours offerts de la formule CHOISIE. La pilule prenait le plus grand essai des deux
+    /// formules : elle pouvait annoncer des jours que la formule sélectionnée n'offre pas.
+    private var joursOfferts: Int? {
+        guard let selected else { return subscriptions.joursDEssaiAnnoncables }
+        return subscriptions.joursDEssai(pour: selected)
     }
 
     /// Tout ce que l'App Store exige tient sans défilement : la formule, le prix, la durée, le
@@ -72,7 +85,7 @@ struct PaywallView: View {
     private var entete: some View {
         VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
             HStack {
-                if let jours = subscriptions.joursDEssaiAnnoncables {
+                if let jours = joursOfferts {
                     HZPilule(texte: Pluriel.choisir(jours,
                                                     String(localized: "\(jours) jour offert"),
                                                     String(localized: "\(jours) jours offerts")),
@@ -126,7 +139,27 @@ struct PaywallView: View {
     // MARK: - Les deux formules
 
     @ViewBuilder private var formules: some View {
-        if subscriptions.products.isEmpty {
+        if subscriptions.products.isEmpty && (subscriptions.loadFailed || subscriptions.productsUnavailable) {
+            // L'ÉCHEC SE DIT. Sans réseau, ou si l'App Store ne renvoie aucune formule, l'écran
+            // restait sur « Chargement des formules… » indéfiniment, avec un bouton d'achat éteint
+            // et aucune explication.
+            VStack(alignment: .leading, spacing: HZEspace.entreCommandes) {
+                Text(subscriptions.loadFailed
+                     ? String(localized: "Impossible de charger les formules pour le moment.")
+                     : String(localized: "Les formules ne sont pas disponibles pour le moment."))
+                    .hzTexte(.c14, .semi)
+                    .foregroundStyle(HZCouleur.blanc)
+                    .fixedSize(horizontal: false, vertical: true)
+                HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .petite,
+                               fond: HZCouleur.blanc, couleur: HZCouleur.noir) {
+                    Task {
+                        await subscriptions.loadProducts()
+                        if selected == nil { selected = subscriptions.products.first }
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        } else if subscriptions.products.isEmpty {
             HStack(spacing: HZEspace.entreCommandes) {
                 ProgressView().tint(HZCouleur.blanc)
                 Text("Chargement des formules…")
@@ -209,6 +242,22 @@ struct PaywallView: View {
 
     private var achat: some View {
         VStack(spacing: HZEspace.entreCommandes) {
+            // DÉJÀ ABONNÉE : on ne propose pas de s'abonner. « Voir l'offre », dans les Réglages
+            // d'un compte abonné, ouvrait cet écran avec « S'abonner » comme si de rien n'était.
+            if subscriptions.isSubscribed == true {
+                Text("Ton abonnement Haizo Plus est actif.")
+                    .hzTexte(.c16, .semi)
+                    .multilineTextAlignment(.center)
+                Link(destination: Liens.abonnements) {
+                    Text("Gérer mon abonnement")
+                        .hzTexte(HZHauteurDeBouton.grande.corps, .gras)
+                        .foregroundStyle(HZCouleur.noir)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: HZHauteurDeBouton.grande.rawValue)
+                        .background(HZCouleur.blanc, in: Capsule())
+                        .contentShape(Capsule())
+                }
+            } else {
             if let line = priceLine {
                 Text(line)
                     .hzTexte(.c14, .semi)
@@ -235,6 +284,7 @@ struct PaywallView: View {
             Text("Renouvellement automatique, résiliable à tout moment.")
                 .hzTexte(.c12, .medium)
                 .foregroundStyle(HZCouleur.secondaireSurSombre)
+            }
 
             HStack(spacing: HZEspace.entreTuiles) {
                 Button("Restaurer mes achats") { Task { await restore() } }

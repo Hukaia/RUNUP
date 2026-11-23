@@ -281,7 +281,9 @@ struct FriendsView: View {
         } catch ContactMatcher.Failure.denied {
             contactsDenied = true
         } catch {
-            searchError = PanneReseau.phrase(pour: error)
+            // En message passager : `searchError` ne s'affiche qu'en mode recherche, donc l'échec
+            // de « Trouver mes contacts » ne se voyait nulle part.
+            appState.toast(PanneReseau.phrase(pour: error))
         }
     }
 
@@ -517,9 +519,19 @@ struct FriendsView: View {
         }
     }
 
+    /// DANS LES TROIS LISTES où le bouton « Suivre » apparaît. Seule la recherche était mise à
+    /// jour : dans « Tu connais peut-être » et « Tes contacts sur Haizo », le bouton restait sur
+    /// « Suivre » après l'appui, et un second appui renvoyait la demande.
     private func updateSearchStatus(_ userId: String, status: String?) {
-        guard let index = searchResults.firstIndex(where: { $0.id == userId }) else { return }
-        searchResults[index].followStatus = status
+        if let index = searchResults.firstIndex(where: { $0.id == userId }) {
+            searchResults[index].followStatus = status
+        }
+        if let index = suggestions.firstIndex(where: { $0.id == userId }) {
+            suggestions[index].followStatus = status
+        }
+        if let index = contactMatches?.firstIndex(where: { $0.id == userId }) {
+            contactMatches?[index].followStatus = status
+        }
     }
 
     private func unfollow(_ user: PublicUser) async {

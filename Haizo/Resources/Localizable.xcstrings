@@ -5050,23 +5050,6 @@
         }
       }
     },
-    "Allure, charge d'entraînement, records, prédictions": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pace, training load, records, predictions"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ritmo, carga de entrenamiento, récords, predicciones"
-          }
-        }
-      }
-    },
     "Allégé par ton coach": {
       "localizations": {
         "en": {
@@ -17593,23 +17576,6 @@
         }
       }
     },
-    "Le coach, sans limite de messages": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The coach, with no message limit"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El coach, sin límite de mensajes"
-          }
-        }
-      }
-    },
     "Le compte connecté": {
       "extractionState": "manual",
       "localizations": {
@@ -19968,22 +19934,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dejar de seguir"
-          }
-        }
-      }
-    },
-    "Ne s'applique qu'à une app qui repart de zéro.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Only works on an app starting from scratch."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Solo funciona en una app que empieza de cero."
           }
         }
       }
@@ -25130,22 +25080,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restaurar"
-          }
-        }
-      }
-    },
-    "Restaurer depuis un fichier": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restore from a file"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restaurar desde un archivo"
           }
         }
       }
@@ -41961,6 +41895,159 @@
           "stringUnit": {
             "state": "translated",
             "value": "Si alguien ya ha respondido, se cerrará en lugar de eliminarse."
+          }
+        }
+      }
+    },
+    "Un coach qui connaît ton objectif et ton historique": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A coach who knows your goal and your history"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un coach que conoce tu objetivo y tu historial"
+          }
+        }
+      }
+    },
+    "Ta charge d'entraînement et tes temps possibles en course": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your training load and your possible race times"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu carga de entrenamiento y tus tiempos posibles en carrera"
+          }
+        }
+      }
+    },
+    "Impossible de charger les formules pour le moment.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load the plans right now."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se han podido cargar los planes por ahora."
+          }
+        }
+      }
+    },
+    "Les formules ne sont pas disponibles pour le moment.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The plans aren't available right now."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los planes no están disponibles por ahora."
+          }
+        }
+      }
+    },
+    "Ton abonnement Haizo Plus est actif.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Haizo Plus subscription is active."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu suscripción a Haizo Plus está activa."
+          }
+        }
+      }
+    },
+    "Fermer sans donner ton ressenti ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close without giving your feedback?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cerrar sin dar tu sensación?"
+          }
+        }
+      }
+    },
+    "Fermer quand même": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close anyway"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar de todos modos"
+          }
+        }
+      }
+    },
+    "Ta sortie est enregistrée. Tes XP, ta série et la publication au club attendent ton ressenti : tu peux encore le donner depuis l'historique, jusqu'à dimanche.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your run is saved. Your XP, your streak and the club post are waiting for your feedback: you can still give it from your history, until Sunday."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu salida está guardada. Tus XP, tu racha y la publicación en el club esperan tu sensación: aún puedes darla desde el historial, hasta el domingo."
+          }
+        }
+      }
+    },
+    "Pour relire ce fichier : installe Haizo sur un téléphone neuf, puis touche « J'ai déjà une sauvegarde Haizo » à l'ouverture.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To restore this file: install Haizo on a new phone, then tap “I already have a Haizo backup” when it opens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para restaurar este archivo: instala Haizo en un teléfono nuevo y toca «Ya tengo una copia de Haizo» al abrirla."
           }
         }
       }

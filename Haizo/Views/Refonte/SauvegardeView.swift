@@ -41,22 +41,25 @@ struct CarteDeSauvegarde: View {
             Button(action: preparerLExport) {
                 HZLigneDeReglage(
                     titre: String(localized: "Exporter mes données"),
-                    precision: String(localized: "Un fichier à ranger où tu veux. Il contient tout : ton historique, ta conversation avec le coach, tes chaussures, ta série. Il ne part sur aucun serveur.")) {
+                    precision: String(localized: "Un fichier à ranger où tu veux. Il contient tout : ton historique, ta conversation avec le coach, tes chaussures, ta série. Il ne part sur aucun serveur."),
+                    filet: false) {
                     HZChevron()
                 }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 
-            BoutonDeRestauration {
-                HZLigneDeReglage(
-                    titre: String(localized: "Restaurer depuis un fichier"),
-                    precision: String(localized: "Ne s'applique qu'à une app qui repart de zéro."),
-                    filet: false) {
-                    HZChevron()
-                }
-                .contentShape(Rectangle())
-            }
+            // PAS DE « RESTAURER » ICI, ET C'EST VOULU. La ligne existait, et ne pouvait JAMAIS
+            // réussir : une sauvegarde ne se relit que sur une app qui repart de zéro
+            // (`SauvegardeService.peutRestaurer`), et cet écran n'existe qu'une fois l'inscription
+            // faite. Elle ouvrait un sélecteur de fichier pour répondre « Tes données sont déjà
+            // là ». La phrase dit où se fait la restauration, à la place d'un bouton qui échoue.
+            Text("Pour relire ce fichier : installe Haizo sur un téléphone neuf, puis touche « J'ai déjà une sauvegarde Haizo » à l'ouverture.")
+                .hzParagraphe(.c13, .medium, interligne: HZReglages.interligne)
+                .foregroundStyle(HZCouleur.secondaireSurClair)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, HZEspace.entreCommandes)
         }
         .fileExporter(isPresented: $exportOuvert, document: document,
                       contentType: .json, defaultFilename: nomPropose) { resultat in

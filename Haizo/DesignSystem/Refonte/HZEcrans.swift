@@ -162,6 +162,9 @@ enum HZStats {
 
 /// LE COACH : les mesures de `Coach.dc.html` qui ne sont ni un rayon ni une marge du système.
 enum HZCoach {
+    /// Les suggestions s'éteignent pendant que le coach répond : elles ne sont pas touchables.
+    static let suggestionsEnAttente: Double = 0.4
+    static let suggestionsPretes: Double = 1
     static let sousLEntete: CGFloat = 18
     static let sousLesTuiles: CGFloat = 22
     static let ecartDesTuiles: CGFloat = 10

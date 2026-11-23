@@ -239,10 +239,14 @@ struct SettingsView: View {
             .buttonStyle(.plain)
             // Gérer, donc résilier : les cacher derrière les Réglages iOS est autorisé, les omettre
             // de l'app ne l'est pas. Le canvas n'a pas cette ligne ; elle reste pour la validation.
-            Link(destination: URL(string: "https://apps.apple.com/account/subscriptions")!) {
+            Link(destination: Liens.abonnements) {
                 ligne(String(localized: "Gérer mon abonnement"))
             }
-            destination(String(localized: "Restaurer mes achats")) { Task { await subscriptions.restore() } }
+            // Le résultat est toujours annoncé, comme sur l'écran d'abonnement : la ligne lançait
+            // la restauration et jetait la réponse, donc rien ne disait si elle avait marché.
+            destination(String(localized: "Restaurer mes achats")) {
+                Task { appState.toast(await subscriptions.restore().message) }
+            }
             destination(String(localized: "Plus de réglages"), filet: false) { showMoreSettings = true }
         }
     }

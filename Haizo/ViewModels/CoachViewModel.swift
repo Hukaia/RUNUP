@@ -51,6 +51,12 @@ final class CoachViewModel {
         Haptics.impact(.light)
     }
 
+    /// Le message d'un refus, déclaré une fois : l'écran le compare pour ne pas proposer
+    /// « Réessayer » dessous (voir `CoachView.bubble`).
+    static var texteDuRefus: String {
+        String(localized: "Le coach n'a pas pu répondre à ça. Reformule autrement. Et si c'est une douleur qui dure, parles-en à un médecin.")
+    }
+
     func send(_ text: String, history: [ChatMessage]) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !isTyping else { return }
@@ -118,7 +124,7 @@ final class CoachViewModel {
                 // l'envoyer retaper trois fois une question qui ne passera pas.
                 let message: String
                 if case CoachServiceError.refused = error {
-                    message = String(localized: "Le coach n'a pas pu répondre à ça. Reformule autrement. Et si c'est une douleur qui dure, parles-en à un médecin.")
+                    message = Self.texteDuRefus
                 } else {
                     // « Connexion coupée » affirmait une panne de réseau pour un serveur en
                     // panne comme pour une session expirée — les deux seules autres façons dont

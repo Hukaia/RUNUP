@@ -25,6 +25,7 @@ struct RecapView: View {
     /// masqué dès que cette valeur est posée.
     var historicalRun: RunRecord? = nil
     @State private var showDebrief = false
+    @State private var fermetureSansRessenti = false
     /// Le tracé en grand. Voir `RouteZoomView` : la carte du fond est inerte par nécessité, et c'est
     /// cette feuille-là qui la rend manipulable sans disputer le défilement.
     @State private var tracePleinEcran = false
@@ -55,7 +56,17 @@ struct RecapView: View {
     /// just-finished flow (presented via `appState.go(.recap)`, not a sheet) has nothing to dismiss and
     /// needs the tab switched back to Home instead.
     private func closeRecap() {
-        if isHistorical { dismiss() } else { appState.go(.home) }
+        if isHistorical {
+            dismiss()
+        } else if run?.debriefedAt == nil {
+            // FERMER SANS RESSENTI N'EST PAS ANODIN, ET RIEN NE LE DISAIT. La sortie est
+            // enregistrée, mais ses XP, la série et la publication au club ne partent qu'au
+            // ressenti (`DebriefSheet.valider`). La croix ramenait à l'accueil sans un mot, et le
+            // rattrapage, dans l'historique, ne dure que jusqu'à la fin de la semaine.
+            fermetureSansRessenti = true
+        } else {
+            appState.go(.home)
+        }
     }
 
     /// A genuine personal record vs every OTHER real run on file — pace (2 km+ runs only, same
@@ -124,6 +135,14 @@ struct RecapView: View {
             .sheet(isPresented: $showDebrief) {
                 DebriefSheet(run: run)
                     .hzFeuille(detents: [.medium, .large], gereSonBas: true)
+            }
+            .confirmationDialog("Fermer sans donner ton ressenti ?", isPresented: $fermetureSansRessenti,
+                                titleVisibility: .visible) {
+                Button("Donner mon ressenti") { showDebrief = true }
+                Button("Fermer quand même") { appState.go(.home) }
+                Button("Annuler", role: .cancel) {}
+            } message: {
+                Text("Ta sortie est enregistrée. Tes XP, ta série et la publication au club attendent ton ressenti : tu peux encore le donner depuis l'historique, jusqu'à dimanche.")
             }
             // UN ÉCRAN ENTIER, ET PAS UNE FEUILLE. Une feuille se referme en la tirant vers le bas, et
             // c'est exactement le geste qu'on fait pour déplacer une carte : les deux se disputeraient
@@ -357,7 +376,9 @@ struct RecapView: View {
             HStack(spacing: HZEspace.entreCommandes) {
                 partager
                 if !isHistorical {
-                    HZBoutonPilule(libelle: String(localized: "Détail"), hauteur: .grande,
+                    // « Historique », et non « Détail » : le détail de CETTE sortie (ses kilomètres, son
+                    // dénivelé) est plus bas sur cet écran même, et le bouton ouvre la liste des sorties.
+                    HZBoutonPilule(libelle: String(localized: "Historique"), hauteur: .grande,
                                    fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
                         appState.go(.history)
                     }

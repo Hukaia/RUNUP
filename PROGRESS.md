@@ -9348,4 +9348,23 @@ Corrigé dans ce lot :
 - **Fiche admin** : `adminListConfigured` absent valait « non configurée », ce qui ouvrait la fiche à tout le monde entre la connexion et le premier rafraîchissement. Absent vaut maintenant « on ne sait pas ».
 - **« Inviter un ami »** partageait `runup-nu.vercel.app`, qui répond 404. Il partage la fiche App Store (`Liens.appStore`).
 
-Reste à traiter : voir la suite de cette section au prochain lot.
+### Lot 2
+
+- **Écran d'abonnement, deux promesses fausses.** « Le coach, sans limite de messages » : le serveur plafonne à 250 demandes par jour et 40 messages par conversation. « Allure, charge d'entraînement, records, prédictions » : l'allure et les records sont gratuits. Les deux lignes deviennent « Un coach qui connaît ton objectif et ton historique » et « Ta charge d'entraînement et tes temps possibles en course ». La pilule « N jours offerts » suit la formule choisie, plus le plus grand essai des deux.
+- **Écran d'abonnement, deux états manquants.** Un échec de chargement se dit, avec « Réessayer » (l'écran restait sur « Chargement des formules… »). Un compte déjà abonné voit « Ton abonnement Haizo Plus est actif » et « Gérer mon abonnement », plus « S'abonner ».
+- **« Restaurer mes achats » (Réglages)** annonce son résultat.
+- **Sauvegarde** : la ligne « Restaurer depuis un fichier » ne pouvait jamais réussir depuis les Réglages (une sauvegarde ne se relit que sur une app neuve). Elle est remplacée par la phrase qui dit où se fait la restauration.
+- **Fin de course** : fermer le résumé sans donner son ressenti demande confirmation et dit ce qui attend (XP, série, publication au club). Le bouton « Détail », qui ouvrait la liste des sorties, s'appelle « Historique ».
+- **Coach** : l'envoi et les suggestions s'éteignent pendant que le coach répond (l'appui était perdu). Plus de « Réessayer » sous un refus.
+- **Amis** : « Suivre » change d'état dans « Tu connais peut-être » et dans les contacts. L'échec de la recherche de contacts se voit.
+
+### Constaté, pas encore corrigé
+
+- Explorer : état vide HYROX et Trail sans suite ; filtre « Route » qui liste des itinéraires alors que Trail et HYROX listent des courses ; « Garder cet itinéraire » sans liste des gardés.
+- Objectif : triathlon et duathlon affichent un tableau d'allure bâti sur 10 km par défaut, et leurs feuilles « Jour J » sont inaccessibles ; HYROX choisi depuis l'assistant n'a pas de date.
+- Page de course : « Inscription » affichée sur une course complète ; répondre à un message ne fait rien de visible.
+- Club : « Inviter » mène au club sans partage ; le lien d'invitation d'un club ne fait que préremplir une recherche ; pas de retrait de membre, de régénération de code ni de suppression de club ; la créatrice peut quitter son club et le laisser sans propriétaire.
+- Course : pas de « ne pas enregistrer » à la fin ; supprimer une sortie ne la retire ni d'Apple Santé ni du club.
+- Réglages : notifications refusées, interrupteurs toujours allumés ; pas de « mot de passe oublié » ; « Nous écrire » ouvre une adresse personnelle.
+- « Séance déjà faite » n'a plus d'entrée dans l'app livrée.
+- À confirmer sur téléphone : ouvrir une sortie depuis un profil (deux couvertures plein écran sur la même racine).
