@@ -92,6 +92,9 @@ final class AppState {
     /// Et pour les pages de course — ouvert aussi bien par la carte « Courses » du Profil que par
     /// l'écran de l'objectif, qui propose d'aller voir qui prépare la même.
     var openRacesTabOnNextVisit = false
+    /// Le fil doit s'ouvrir sur le filtre « Amis » : on y arrive depuis « Voir le fil » de l'écran
+    /// des abonnements. Lu une fois par le fil, puis remis à faux.
+    var filSurLesAmis = false
     /// Le filtre sur lequel Explorer doit s'ouvrir à son prochain passage, ou nil : posé par les
     /// catégories de l'accueil, lu et effacé par `ExplorerView` à son apparition.
     var filtreDExplorerAuProchainPassage: FiltreDExplorer?

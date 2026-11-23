@@ -119,6 +119,13 @@ struct WallView: View {
         }
         .ignoresSafeArea(edges: .top)
         .statusBarHidden()
+        .onAppear {
+            // Venue de « Voir le fil » des abonnements : le filtre « Amis », une seule fois.
+            if appState.filSurLesAmis {
+                appState.filSurLesAmis = false
+                filtre = .amis
+            }
+        }
         .task { if page == nil, appState.auth.isSignedIn { await charger() } }
         .refreshable { if appState.auth.isSignedIn { await charger() } }
         .onChange(of: appState.auth.isSignedIn) { _, connectee in

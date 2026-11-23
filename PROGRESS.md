@@ -9434,6 +9434,7 @@ La campagne de captures App Store n° 269 est la première depuis le 18 novembre
 - **Anneaux** : le drapeau de chargement d'un jour passé ne reste plus levé si on revient à aujourd'hui entre-temps.
 - **Créer une course** : « marathon.fr » devient « https://marathon.fr » avant l'envoi. Le serveur écartait sans rien dire une adresse sans protocole, la course se créait sans son site (cas dans `RaceEventTests`). Et la phrase « Les champs laissés vides se complètent plus tard » promettait une modification qui n'existe pas : elle dit maintenant de relire avant de créer.
 - **Détail d'une sortie** : l'erreur de chargement a son « Réessayer ».
+- **Amis, « Voir le fil »** : ouvre le fil sur le filtre « Amis », pas sur le fil entier.
 - Non vérifié sur appareil : la remontée de la page vers le champ de réponse (c'est le système qui la fait quand un champ prend la main), et l'échec de localisation (le simulateur ne le produit pas).
 
 ### Constaté, pas encore corrigé

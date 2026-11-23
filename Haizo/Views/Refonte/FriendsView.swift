@@ -225,6 +225,8 @@ struct FriendsView: View {
         VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
             HZTitreDeSection(titre: String(localized: "Abonnements"),
                              lien: feed.isEmpty ? nil : String(localized: "Voir le fil")) {
+                // Le fil de CEUX QUE JE SUIS, pas le fil entier : c'est ce que ce titre annonce.
+                appState.filSurLesAmis = true
                 appState.go(.fil)
             }
             if following.isEmpty && !isLoading && errorMessage == nil {
