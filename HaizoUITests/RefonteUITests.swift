@@ -391,11 +391,11 @@ final class RefonteUITests: XCTestCase {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["Haizo_REFONTE"] != nil,
                           "réservé à refonte.yml")
 
-        // 1. La recherche de l'accueil mène au Club : l'écran change de contenu.
+        // 1. La recherche de l'accueil mène à Explorer : l'écran change de contenu.
         let accueil = lancer(arguments: ["--ecran=prog"])
         verifierQuEcranFixe(accueil, "accueil")
         toucherEtComparer(accueil, "accueil-recherche", dx: 0.5, dy: 0.095,
-                          attendu: "la recherche de l'accueil doit ouvrir le Club")
+                          attendu: "la recherche de l'accueil doit ouvrir Explorer")
         accueil.terminate()
 
         // 2. Le retour du plan mène à l'accueil.

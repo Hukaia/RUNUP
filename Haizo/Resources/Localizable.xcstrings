@@ -41690,6 +41690,40 @@
           }
         }
       }
+    },
+    "Facultatif": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opcional"
+          }
+        }
+      }
+    },
+    "Dès tes premiers mètres": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From your first metres"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desde tus primeros metros"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

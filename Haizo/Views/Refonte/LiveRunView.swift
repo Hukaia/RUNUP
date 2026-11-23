@@ -466,6 +466,7 @@ struct LiveRunView: View {
         case .onTarget, .unknown: libelle = vm?.rythmeLibelle ?? String(localized: "Allure")
         }
         let valeur = vm?.rythmeRecent ?? "--:--"
+        let aUneLecture = valeur.contains(where: \.isNumber)
         // Le NOM d'un côté, le CHIFFRE de l'autre : VoiceOver ne relit que la valeur.
         let nomParle = vm?.discipline.seLitEnAllure ?? true
             ? String(localized: "Allure")
@@ -486,9 +487,22 @@ struct LiveRunView: View {
                     .foregroundStyle(derive ? HZCouleur.accent : HZCouleur.secondaireSurSombre)
                 Text(verbatim: valeur)
                     .hzAffichage(.direct)
-                    // Pas encore de lecture (« --:-- ») : les traits à cette taille sont de gros blocs, qui
-                    // attirent l'œil vers ce qui n'est pas une mesure. Ils s'éteignent jusqu'au premier chiffre.
-                    .foregroundStyle(valeur.contains(where: \.isNumber) ? HZCouleur.accent : HZCouleur.pointEteint)
+                    .foregroundStyle(HZCouleur.accent)
+                    // PAS ENCORE DE LECTURE (« --:-- ») : à cette taille et dans cette fonte, les traits
+                    // sont des pavés. Éteints, ils restaient cinq pavés gris en croix au milieu de
+                    // l'écran, ce qui se lit comme un affichage cassé. Ils gardent leur place (rien ne
+                    // bouge quand le premier chiffre arrive) mais ne se dessinent plus, et une phrase
+                    // dit ce qu'on attend.
+                    .opacity(aUneLecture ? HZLive.visible : HZLive.invisible)
+                    .overlay(alignment: .bottomLeading) {
+                        if !aUneLecture {
+                            Text("Dès tes premiers mètres")
+                                .hzTexte(.c17, .semi)
+                                .foregroundStyle(HZCouleur.secondaireSurSombre)
+                                .padding(.leading, HZLive.debordDeLAllure)
+                                .padding(.bottom, HZLive.sousLaCible)
+                        }
+                    }
                     .lineLimit(1)
                     .minimumScaleFactor(HZLive.reductionDeLAllure)
                     .padding(.leading, -HZLive.debordDeLAllure)

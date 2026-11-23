@@ -9280,3 +9280,25 @@ du code le disait lui-même (« Provisoire… l'écran Explorer les séparera »
 - La note sous une affiche (« J-12 · Paris ») est écrite une fois (`RaceEvent.noteDAffiche`), pour la liste des courses et pour Explorer.
 - Test `test10CategoriesDeLAccueil` : touche « Trail » puis « Clubs » depuis l'accueil, vérifie qu'on arrive sur Explorer, photographie `accueil-vers-trail` et `accueil-vers-clubs`.
 - **Non vérifié à l'écriture** : écrit sans compilateur, la CI le dira ; le filtre HYROX peut être vide s'il n'y a pas de course HYROX à venir dans le catalogue (il le dit alors en une phrase).
+
+## Le tour complet de l'app (23 novembre)
+
+Charlotte : « Il y a encore plein de choses comme ça à modifier dans l'app, fais un tour complet et regarde ce qui ne va pas. » Deux passes : le code (raccourcis provisoires, boutons sans destination, tous les `go(.club)`), puis les 75 captures de
+Refonte n° 85, une par une.
+
+### Corrigé
+- **La recherche de l'accueil ouvrait la page du club.** « Où cours-tu aujourd'hui ? » menait à `go(.club)`, le même raccourci provisoire que les cinq catégories ; la capture `touche-accueil-recherche` le montrait depuis des semaines (la page « Les
+  Foulées du Canal »). Elle ouvre Explorer, où la même question est posée.
+- **« Rejoins un club » ouvrait une page de club vide.** Sur l'onglet Club de quelqu'un qui n'en a pas, la carte mène maintenant à la découverte des clubs d'Explorer.
+- **La carte du coach disait « Niveau 2 », et rien d'autre.** Elle dit la phrase de la fiche de séance : « Le coach a ajusté cette semaine à « Niveau 2 » d'après ta forme la semaine dernière. »
+- **L'allure de l'écran de course, avant le GPS, était cinq pavés gris en croix.** « --:-- » dans la fonte d'affichage ; éteints, ils se lisaient comme un affichage cassé. Les traits gardent leur place sans se dessiner, et une phrase dit « Dès tes
+  premiers mètres ».
+- **Le champ Distance de « Séance déjà faite » montrait un tiret collé au curseur.** L'invite est « Facultatif ».
+
+### Vu, pas touché (à décider ou à regarder sur un téléphone)
+- Sur un iPhone de 6,1 pouces, au repos, la barre flottante recouvre les libellés des catégories de l'accueil (Route… Courses). Ils se lisent dès qu'on fait défiler.
+- La carte d'une paire de chaussures empile « 60 km », une barre, puis « / 700 km » sur une autre ligne : lisible, pas élégant.
+- Le paywall de la CI affiche des dollars : c'est le catalogue de test, un vrai téléphone affiche la devise de son App Store.
+
+### Non vérifié
+- Ces cinq corrections sont écrites sans compilateur. Les animations, les états vides réels (sans réseau, sans localisation, sans club) et tout ce qui dépend d'un vrai téléphone ne sont pas dans les captures.

@@ -238,10 +238,12 @@ struct WallView: View {
                 actionDeSortie: { if let sortie = prochaineSortie { Task { await repondre(sortie) } } },
                 ouvrir: { appState.go(.club) })
         } else {
-            // Pas (encore) de club : la carte le dit et mène à l'écran où l'on en trouve un.
+            // Pas (encore) de club : la carte le dit et mène à l'écran où l'on en trouve un, c'est-à-dire
+            // la découverte des clubs d'Explorer (les clubs à rejoindre, la recherche par nom, l'entrée
+            // par un code). Elle ouvrait la page du club, vide pour qui n'en a pas.
             HZCarteDeClub(membres: String(localized: "Pas encore de club"),
                           nom: String(localized: "Rejoins un club"),
-                          ouvrir: { appState.go(.club) })
+                          ouvrir: { appState.ouvrirExplorer(.clubs) })
         }
     }
 

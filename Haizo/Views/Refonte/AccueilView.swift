@@ -104,11 +104,13 @@ struct AccueilView: View {
                      nom: String(localized: "Profil"), fond: HZCouleur.surfaceSombre) {
                 appState.go(.profile)
             }
-            // Provisoire : la recherche mène à Explorer, qui n'est pas encore refait. Les parcours,
-            // les courses et les clubs vivent aujourd'hui dans le hub du Club.
+            // LA RECHERCHE MÈNE À EXPLORER, où la même question (« Où cours-tu aujourd'hui ? ») est
+            // posée au-dessus des itinéraires, des courses et des clubs. Elle ouvrait la page du
+            // club : un raccourci provisoire d'avant l'écran Explorer, resté en place comme celui
+            // des cinq catégories plus bas.
             HZAmorceDeRecherche(invite: String(localized: "Où cours-tu aujourd'hui ?"),
                                 fond: HZCouleur.surfaceSombre) {
-                appState.go(.club)
+                appState.go(.explorer)
             }
             HZBoutonRond(dessin: .cloche, nom: libelleDesNotifications, fond: HZCouleur.surfaceSombre) {
                 appState.openNotifications()
@@ -275,7 +277,15 @@ struct AccueilView: View {
     /// de montrer un bandeau vide.
     private var texteDuCoach: String? {
         let session = profile.todaySession
+        // « NIVEAU 2 » SEUL NE DIT RIEN. La carte affichait l'étiquette de l'ajustement telle quelle,
+        // deux mots dans un bandeau du coach. Elle dit maintenant la même phrase que la fiche de
+        // la séance : qui a ajusté, à quoi, et d'après quoi.
+        // Seulement pour l'étiquette de niveau : un allègement du coach arrive déjà en phrase entière
+        // (« Tu as peu dormi… »), et s'affiche tel quel.
         if let ajustement = session.adjustment {
+            if ajustement == String(localized: "Niveau \(profile.weekTier)") {
+                return String(localized: "Le coach a ajusté cette semaine à « \(ajustement) » d'après ta forme la semaine dernière.")
+            }
             return String(localized: String.LocalizationValue(ajustement))
         }
         return PourquoiCetteSeance.phrase(pour: profile, session: session,

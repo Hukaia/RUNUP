@@ -55,7 +55,9 @@ struct LogSessionSheet: View {
                                        texte: $durationText, clavier: .decimalPad)
                             .focused($focus, equals: .duration)
                         HZChampDeTexte(titre: "\(String(localized: "Distance")) (\(HZJournee.uniteDeDistance))",
-                                       invite: "—",
+                                       // « Facultatif », et non un tiret : collé au curseur, le tiret
+                                       // dessinait un signe sans nom au milieu du champ.
+                                       invite: String(localized: "Facultatif"),
                                        texte: $distanceText, clavier: .decimalPad)
                             .focused($focus, equals: .distance)
                     }

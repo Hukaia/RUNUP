@@ -342,6 +342,9 @@ enum HZReglages {
 
 /// LES MESURES DE L'ÉCRAN DE COURSE, relevées sur le canvas « Run ».
 enum HZLive {
+    /// L'allure avant sa première lecture : elle garde sa place sans se dessiner.
+    static let visible: Double = 1
+    static let invisible: Double = 0
     /// La carte : 400 sur le canvas, et elle cède la place au panneau sur un écran plus court.
     static let carte: CGFloat = 400
     static let carteMinimale: CGFloat = 180
