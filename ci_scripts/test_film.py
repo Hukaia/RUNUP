@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Les cas de `check_film.py`.
 
-Chaque cas casse UN des cinq faits et vérifie que le contrôle le dit. Sans eux, un contrôle qui
+Chaque cas casse UN des faits et vérifie que le contrôle le dit. Sans eux, un contrôle qui
 rend vert quoi qu'il arrive est indiscernable d'un dépôt sain — et celui-ci garde une image qui
 part chez Apple.
 """
@@ -65,6 +65,36 @@ class Atelier(unittest.TestCase):
         self.abimer("app", ".transaction { if Demonstration.animationsFigees",
                     "// .transaction retirée { if rien")
         self.assertTrue(any("racine" in p for p in cf.controler()))
+
+    # ── Le film appuie-t-il sur la barre telle qu'elle est ───────────────────
+
+    ENTREES = "case aujourdhui = 0.236, explorer = 0.368, club = 0.500, stats = 0.632, coach = 0.764"
+
+    def test_les_positions_de_lancienne_barre(self):
+        """Le défaut du 19 novembre, tel quel : cinq onglets étalés sur toute la largeur."""
+        self.abimer("film", self.ENTREES,
+                    "case aujourdhui = 0.141, explorer = 0.320, club = 0.500, "
+                    "stats = 0.679, coach = 0.858")
+        plaintes = cf.controler()
+        self.assertTrue(any("tomberait à côté" in p for p in plaintes), plaintes)
+
+    def test_la_barre_qui_change_dordre(self):
+        self.abimer("barre", "case aujourdhui, explorer, club, stats, coach",
+                    "case aujourdhui, coach, explorer, club, stats")
+        plaintes = cf.controler()
+        self.assertTrue(any("ne sont pas celles de la barre" in p for p in plaintes), plaintes)
+
+    def test_la_barre_qui_selargit(self):
+        self.abimer("barre", "static let largeurDEntree: CGFloat = 52",
+                    "static let largeurDEntree: CGFloat = 72")
+        plaintes = cf.controler()
+        self.assertTrue(any("tomberait à côté" in p for p in plaintes), plaintes)
+
+    def test_la_barre_qui_monte(self):
+        self.abimer("forme", "static let sousLaBarre: CGFloat = 28",
+                    "static let sousLaBarre: CGFloat = 90")
+        plaintes = cf.controler()
+        self.assertTrue(any("au-dessus ou en dessous" in p for p in plaintes), plaintes)
 
     # ── Et le cas « vert pour la mauvaise raison » ───────────────────────────
 

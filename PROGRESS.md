@@ -9409,6 +9409,16 @@ Un compte créé avec une adresse et un mot de passe n'avait aucune issue quand 
 - Non vérifié : aucun courriel n'a été envoyé, aucune des deux routes n'a tourné contre la vraie base. Les tests couvrent les règles, pas les requêtes ni Resend.
 - Limites dites : changer le mot de passe ne ferme pas les sessions ouvertes sur d'autres appareils. La politique de confidentialité devra nommer le prestataire d'envoi une fois la clé posée (page servie depuis `main`).
 
+### Le film d'aperçu tapait sur l'ancienne barre (23 novembre)
+
+La campagne de captures App Store n° 269 est la première depuis le 18 novembre à passer le grand texte, la bannière et la comparaison. Elle s'arrête à l'étape suivante, le film : « 3 bascules tombent sur le mauvais écran ».
+
+- **Cause, lue sur les images gardées par la machine** : `ApercuUITests` appuie à des coordonnées, et c'étaient celles de la barre d'avant le 19 novembre (cinq onglets sur toute la largeur, Profil compris). La barre flottante est plus étroite, dans un autre ordre, et le Profil s'ouvre par l'avatar. L'appui « coach » ouvrait Explorer, l'appui « profil » tombait à côté.
+- **Corrigé** : les cinq entrées recalées (0,236 / 0,368 / 0,500 / 0,632 / 0,764 de la largeur, 0,939 de la hauteur, mesurées sur une capture de la campagne 269). Le plan « profil » repasse par l'accueil puis touche l'avatar, hors champ. Les plans et leurs titres restent les mêmes.
+- **Un sous-titre était devenu faux** : « Trente jours, en distance et en allure » sous le bas de l'accueil, qui ne montre plus de bilan sur trente jours. Remplacé par « Tes dernières sorties, en distance et en allure » (et en anglais, en espagnol).
+- **Garde-fou** : `check_film.py` recalcule à chaque build les positions des entrées depuis les constantes de `HZBarreFlottante` et les confronte à celles du test (ordre, largeur, hauteur). Quatre cas dans `test_film.py`, dont l'ancienne barre telle quelle. Ce décalage a tenu quatre jours sans bruit ; il se dira désormais en une minute.
+- Non vérifié tant que la campagne suivante n'a pas tourné : le film lui-même. Le garde-fou du découpage le jugera plan par plan.
+
 ### Constaté, pas encore corrigé
 
 - Explorer : « Garder cet itinéraire » sans liste des gardés.

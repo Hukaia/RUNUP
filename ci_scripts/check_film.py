@@ -31,6 +31,16 @@ Trois faits, lisibles dans le code :
   2. `CapturesUITests` ne le fait PAS ;
   3. l'app lit ce drapeau et ne fige que si elle ne filme pas.
 
+Et un quatrième, depuis le 23 novembre 2026 :
+
+  4. le test du film appuie là où la barre flottante a ses entrées.
+
+Le test appuie à des coordonnées, pas sur des éléments (interroger l'arbre d'accessibilité tuait
+l'app sur les écrans denses). La barre a été refaite le 19 novembre : plus étroite, autre ordre,
+le Profil sorti. Le test tapait toujours l'ancienne, et rien ne l'a dit avant qu'une campagne
+de soixante-dix minutes n'arrive jusqu'au film, quatre jours plus tard. Les positions se
+recalculent depuis les constantes de la barre : c'est une minute, à chaque build.
+
 Ce qu'il ne sait pas faire : dire si l'image est effectivement posée. Aucun script ne lit une
 animation. La preuve, elle, est la comparaison de deux campagnes prises à des heures différentes.
 """
@@ -45,7 +55,17 @@ FICHIERS = {
     "app": RACINE / "Haizo/HaizoApp.swift",
     "mode": RACINE / "Haizo/Shared/Demonstration.swift",
     "lecture": RACINE / "Haizo/Services/CaptureSeed.swift",
+    "barre": RACINE / "Haizo/DesignSystem/Refonte/HZBarreFlottante.swift",
+    "forme": RACINE / "Haizo/DesignSystem/Refonte/HZForme.swift",
 }
+
+#: L'écran sur lequel le film est tourné, en points : le plus grand iPhone, celui que
+#: `captures.yml` choisit quand on lui dit « auto ». Les fractions du test en dépendent, puisque
+#: la barre a une largeur fixe.
+ECRAN = (440.0, 956.0)
+#: De combien une position écrite peut s'écarter de la position calculée. Une entrée fait 52
+#: points, soit 0,118 de la largeur : deux centièmes laissent l'appui au cœur de l'entrée.
+TOLERANCE = 0.02
 
 
 def code_nu(source):
@@ -66,6 +86,67 @@ def lire(cle):
     if not chemin.is_file():
         return None
     return code_nu(chemin.read_text())
+
+
+def _constante(source, nom):
+    trouve = re.search(rf"static let {nom}\s*:\s*CGFloat\s*=\s*([0-9.]+)", source)
+    return float(trouve.group(1)) if trouve else None
+
+
+def _cas(source, enum):
+    """Les cas d'une énumération, dans l'ordre, avec leur valeur brute s'ils en ont une."""
+    bloc = re.search(rf"enum {enum}\b[^{{]*\{{(.*?)\}}", source, flags=re.S)
+    if not bloc:
+        return None
+    ligne = re.search(r"case ([^\n]+)", bloc.group(1))
+    if not ligne:
+        return None
+    cas = []
+    for morceau in ligne.group(1).split(","):
+        nom, _, valeur = morceau.partition("=")
+        cas.append((nom.strip(), float(valeur) if valeur.strip() else None))
+    return cas
+
+
+def barre_et_film(sources):
+    """Le test du film appuie-t-il sur les entrées de la barre telle qu'elle est dessinée ?"""
+    plaintes = []
+    onglets = _cas(sources["barre"], "HZOnglet")
+    entrees = _cas(sources["film"], "Entree")
+    mesures = {nom: _constante(sources["barre"], nom)
+               for nom in ("hauteur", "marge", "ecart", "largeurDEntree")}
+    sous = _constante(sources["forme"], "sousLaBarre")
+    hauteur_ecrite = re.search(r"static let barre\s*:\s*CGFloat\s*=\s*([0-9.]+)", sources["film"])
+    if not onglets or None in mesures.values() or sous is None:
+        return ["Les constantes de `HZBarreFlottante` (ou `HZEspace.sousLaBarre`) ne se lisent "
+                "plus : le contrôle ne sait plus où sont les entrées de la barre."]
+    if not entrees or not hauteur_ecrite:
+        return ["ApercuUITests n'a plus son énumération `Entree` ou sa constante `barre` : le "
+                "contrôle ne sait plus où le film appuie."]
+
+    if [n for n, _ in entrees] != [n for n, _ in onglets]:
+        plaintes.append(
+            "Les entrées du film ne sont pas celles de la barre : le test connaît "
+            f"« {', '.join(n for n, _ in entrees)} », la barre montre "
+            f"« {', '.join(n for n, _ in onglets)} ». Chaque appui ouvrirait un autre écran.")
+        return plaintes
+
+    largeur, haut = ECRAN
+    pas = mesures["largeurDEntree"] + mesures["ecart"]
+    milieu = (len(onglets) - 1) / 2
+    for rang, (nom, ecrite) in enumerate(entrees):
+        attendue = (largeur / 2 + (rang - milieu) * pas) / largeur
+        if ecrite is None or abs(ecrite - attendue) > TOLERANCE:
+            plaintes.append(
+                f"L'entrée « {nom} » est écrite à {ecrite} dans ApercuUITests, la barre la "
+                f"dessine à {attendue:.3f} de la largeur : l'appui tomberait à côté.")
+    y_attendu = (haut - sous - mesures["hauteur"] / 2) / haut
+    y_ecrit = float(hauteur_ecrite.group(1))
+    if abs(y_ecrit - y_attendu) > TOLERANCE / 2:
+        plaintes.append(
+            f"Le milieu de la barre est écrit à {y_ecrit} dans ApercuUITests, il est à "
+            f"{y_attendu:.3f} de la hauteur : l'appui passerait au-dessus ou en dessous.")
+    return plaintes
 
 
 def controler():
@@ -110,6 +191,7 @@ def controler():
             "La racine des vues ne fige plus rien : c'est la `transaction` qui vide l'animation "
             "de tout ce qui passe en dessous, et sans elle chaque vue retrouve la sienne.")
 
+    plaintes += barre_et_film(sources)
     return plaintes
 
 
@@ -120,7 +202,8 @@ def main():
     if plaintes:
         print(f"\ncheck_film : {len(plaintes)} problème(s).")
         return 1
-    print("check_film : le film se déclare, les photos sont figées, et la racine applique la règle.")
+    print("check_film : le film se déclare, les photos sont figées, la racine applique la règle, "
+          "et le film appuie sur les entrées de la barre.")
     return 0
 
 

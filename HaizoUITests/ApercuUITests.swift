@@ -25,10 +25,21 @@ import XCTest
 /// XCTest exige un instantané de l'arbre d'accessibilité, ce qui a tué l'app sur les écrans
 /// SwiftUI denses. Un appui à une coordonnée normalisée ne consulte rien.
 ///
-/// Les cinq onglets sont relevés sur une capture réelle : la barre flottante occupe la bande
-/// 0,894 → 0,949 en hauteur, et les cinq pastilles sont centrées sur 0,141 / 0,320 / 0,500 /
-/// 0,679 / 0,858. Un changement de la barre les décale : c'est le genre de constante qu'il faut
-/// revérifier sur une capture, pas deviner.
+/// Les cinq entrées sont relevées sur une capture réelle du plus grand iPhone (440 × 956 points) :
+/// la barre flottante est une pilule de 300 points, centrée, posée à 28 points du bas. Elle occupe
+/// la bande 0,908 → 0,971 en hauteur, et ses cinq entrées sont centrées sur 0,236 / 0,368 / 0,500 /
+/// 0,632 / 0,764.
+///
+/// CES NOMBRES ONT ÉTÉ FAUX QUATRE JOURS SANS QUE RIEN NE LE DISE. La barre a été refaite le
+/// 19 novembre : plus étroite, dans un autre ordre, et le Profil n'y est plus. Le test tapait
+/// toujours les positions de l'ancienne. L'appui « coach » ouvrait Explorer, l'appui « profil »
+/// tombait à côté de la barre, et le garde-fou du découpage a refusé le film à la première
+/// campagne qui est allée jusqu'à lui, le 23. `ci_scripts/check_film.py` recalcule désormais
+/// ces positions depuis les constantes de `HZBarreFlottante` à chaque build : un changement de
+/// la barre se dit en une minute, pas au bout d'une heure de machine.
+///
+/// LE PROFIL S'OUVRE PAR L'AVATAR DE L'ACCUEIL, en haut à gauche, puisqu'il n'a plus d'entrée :
+/// on repasse donc par l'accueil, hors champ, avant le plan.
 ///
 /// # LE DÉCOUPAGE, VINGT-SIX SECONDES
 ///
@@ -47,12 +58,25 @@ import XCTest
 /// quand il commence et quand il finit, et `apercu.py` coupe sur ces deux marques.
 final class ApercuUITests: XCTestCase {
 
-    /// Les cinq onglets, en fraction de la largeur. Relevés sur une capture (voir l'en-tête).
-    private enum Onglet: CGFloat {
-        case prog = 0.141, coach = 0.320, run = 0.500, stats = 0.679, profil = 0.858
+    /// Les cinq entrées de la barre, en fraction de la largeur, DANS L'ORDRE DE `HZOnglet`.
+    /// `check_film.py` relit cette ligne et la confronte à la barre : même ordre, mêmes positions.
+    private enum Entree: CGFloat {
+        case aujourdhui = 0.236, explorer = 0.368, club = 0.500, stats = 0.632, coach = 0.764
     }
     /// Le milieu de la barre flottante, en fraction de la hauteur.
-    private static let barre: CGFloat = 0.921
+    private static let barre: CGFloat = 0.939
+    /// L'avatar de l'accueil : un rond de 40 points, à 20 points du bord gauche, centré à 80 du haut.
+    private static let avatar = CGVector(dx: 0.091, dy: 0.084)
+    /// Le temps passé sur l'écran traversé pour en atteindre un autre. Plus long que la fenêtre de
+    /// mesure de `bascules.py` (0,9 s) : elle ne doit voir qu'UN changement d'écran, le dernier.
+    private static let escale: TimeInterval = 1.2
+
+    private static func entree(_ entree: Entree) -> CGVector {
+        CGVector(dx: entree.rawValue, dy: barre)
+    }
+    /// Le Profil n'a pas d'entrée dans la barre : on revient à l'accueil, puis on touche l'avatar.
+    private static let versLeProfil: [CGVector] = [ApercuUITests.entree(.aujourdhui),
+                                                   ApercuUITests.avatar]
 
     func testApercu() throws {
         // CE TEST NE TOURNE QUE QUAND ON LE DEMANDE. La cible est la même que celle des
@@ -124,10 +148,12 @@ final class ApercuUITests: XCTestCase {
         // Le type est écrit plutôt que déduit : un littéral de tuples mêlant une valeur nommée
         // et des formes abrégées compile ou non selon l'humeur de l'inférence, et ici une erreur
         // de compilation ne se découvre qu'au bout de quarante minutes de machine.
-        let passeAblanc: [(String, Onglet)] = [("coach", .coach), ("stats", .stats),
-                                               ("profil", .profil), ("accueil", .prog)]
-        for (nom, onglet) in passeAblanc {
-            plan(app, "première-\(nom)", onglet: onglet, pose: 2.0, defilements: 0, prise: false)
+        let passeAblanc: [(String, [CGVector])] = [
+            ("coach", [Self.entree(.coach)]), ("stats", [Self.entree(.stats)]),
+            ("profil", Self.versLeProfil), ("accueil", [Self.entree(.aujourdhui)]),
+        ]
+        for (nom, chemin) in passeAblanc {
+            plan(app, "première-\(nom)", vers: chemin, pose: 2.0, defilements: 0, prise: false)
         }
         Thread.sleep(forTimeInterval: 0.8)
 
@@ -149,13 +175,13 @@ final class ApercuUITests: XCTestCase {
         // poussaient le film à vingt-huit secondes, à deux du plafond d'Apple ; deux le gardent
         // sous vingt même dans le pire des cas mesurés. Le Coach perd le sien : son texte est
         // long, et le défiler n'apprend rien de plus que le lire.
-        plan(app, "accueil", onglet: nil, pose: 2.0, defilements: 0)
-        plan(app, "accueil-bas", onglet: nil, pose: 1.0, defilements: 1)
-        plan(app, "coach", onglet: .coach, pose: 2.0, defilements: 0)
-        plan(app, "stats", onglet: .stats, pose: 2.0, defilements: 0)
-        plan(app, "stats-bas", onglet: nil, pose: 1.0, defilements: 1)
-        plan(app, "profil", onglet: .profil, pose: 2.0, defilements: 0)
-        plan(app, "retour", onglet: .prog, pose: 2.0, defilements: 0)
+        plan(app, "accueil", vers: [], pose: 2.0, defilements: 0)
+        plan(app, "accueil-bas", vers: [], pose: 1.0, defilements: 1)
+        plan(app, "coach", vers: [Self.entree(.coach)], pose: 2.0, defilements: 0)
+        plan(app, "stats", vers: [Self.entree(.stats)], pose: 2.0, defilements: 0)
+        plan(app, "stats-bas", vers: [], pose: 1.0, defilements: 1)
+        plan(app, "profil", vers: Self.versLeProfil, pose: 2.0, defilements: 0)
+        plan(app, "retour", vers: [Self.entree(.aujourdhui)], pose: 2.0, defilements: 0)
 
         // LE DÉCOUPAGE VIENT D'ICI, parce que c'est ici qu'on le connaît.
         //
@@ -197,13 +223,18 @@ final class ApercuUITests: XCTestCase {
     ///
     /// La bascule d'onglet est HORS du plan : elle appartient à la coupe, pas à l'image. Le plan
     /// commence quand l'écran est en place, ce qui évite au montage de garder une transition.
-    private func plan(_ app: XCUIApplication, _ nom: String, onglet: Onglet?,
+    ///
+    /// `vers` est le chemin jusqu'à l'écran : aucun appui si on y est déjà, un seul pour une entrée
+    /// de la barre, deux pour le Profil. Seul le DERNIER appui précède le plan de 0,6 s ; les
+    /// autres laissent une escale, pour que la mesure ne voie qu'un changement d'écran.
+    private func plan(_ app: XCUIApplication, _ nom: String, vers: [CGVector],
                       pose: TimeInterval, defilements: Int, prise: Bool = true) {
-        if let onglet {
-            app.coordinate(withNormalizedOffset: CGVector(dx: onglet.rawValue, dy: Self.barre)).tap()
-            // Les transitions d'onglet de `RootTabView` durent moins d'une demi-seconde ; on
+        for (rang, point) in vers.enumerated() {
+            app.coordinate(withNormalizedOffset: point).tap()
+            // Les transitions d'écran de `RootTabView` durent moins d'une demi-seconde ; on
             // laisse une marge pour que le plan ne commence pas pendant le fondu.
-            Thread.sleep(forTimeInterval: 0.6)
+            let dernier = rang == vers.count - 1
+            Thread.sleep(forTimeInterval: dernier ? 0.6 : Self.escale)
         }
         let debut = Date().timeIntervalSince1970
         Thread.sleep(forTimeInterval: pose)
@@ -228,7 +259,7 @@ final class ApercuUITests: XCTestCase {
         // parfois non, selon le contexte, et ce genre d'implicite se paie à la compilation —
         // c'est-à-dire ici, quinze minutes plus tard.
         let borne = (nom: nom, debut: debut, fin: Date().timeIntervalSince1970,
-                     bascule: onglet != nil)
+                     bascule: !vers.isEmpty)
         if prise { bornes.append(borne) } else { prechauffage.append(borne) }
     }
 
