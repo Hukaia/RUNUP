@@ -26,6 +26,11 @@
 name: Refonte
 
 on:
+  # Le bouton, pour photographier sans pousser. Il manquait : pendant qu'une campagne de captures
+  # App Store tourne (une heure, et le moindre envoi l'annule), les lots partent avec « skip ci »
+  # et n'étaient donc jamais photographiés. Quatre lots de suite sont passés ainsi le 23 novembre.
+  workflow_dispatch:
+
   push:
     branches:
       - "**"

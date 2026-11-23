@@ -9418,6 +9418,8 @@ La campagne de captures App Store n° 269 est la première depuis le 18 novembre
 - **Un sous-titre était devenu faux** : « Trente jours, en distance et en allure » sous le bas de l'accueil, qui ne montre plus de bilan sur trente jours. Remplacé par « Tes dernières sorties, en distance et en allure » (et en anglais, en espagnol).
 - **Garde-fou** : `check_film.py` recalcule à chaque build les positions des entrées depuis les constantes de `HZBarreFlottante` et les confronte à celles du test (ordre, largeur, hauteur). Quatre cas dans `test_film.py`, dont l'ancienne barre telle quelle. Ce décalage a tenu quatre jours sans bruit ; il se dira désormais en une minute.
 - Non vérifié tant que la campagne suivante n'a pas tourné : le film lui-même. Le garde-fou du découpage le jugera plan par plan.
+- La campagne 270 n'est pas allée jusqu'au film : en espagnol, six captures de suite ont échoué sur « Timed out while acquiring background assertion », le simulateur de la machine qui ne rend plus la main. Aucun rapport de plantage de l'app. Campagne relancée telle quelle.
+- `refonte.yml` reçoit un bouton (`workflow_dispatch`) : les lots poussés avec « skip ci » pendant une campagne n'étaient jamais photographiés.
 
 ### Lot 8 : pannes qui passaient pour du vide, et quelques gestes sans effet
 
