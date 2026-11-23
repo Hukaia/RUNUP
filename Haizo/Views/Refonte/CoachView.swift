@@ -111,7 +111,10 @@ struct CoachView: View {
             }
             Spacer(minLength: 0)
             if !messages.isEmpty {
-                HZBoutonRond(dessin: .fermer, nom: String(localized: "Effacer la conversation"),
+                // TROIS POINTS, PAS UNE CROIX. Une croix en haut à droite d'une conversation se lit
+                // « fermer » : on la touchait pour sortir, et on tombait sur « Effacer toute la
+                // conversation ? ». Les trois points annoncent un choix, et le choix dit son nom.
+                HZBoutonRond(dessin: .options, nom: String(localized: "Effacer la conversation"),
                              diametre: .outil, fond: HZCouleur.surfaceSombre) {
                     showClearConfirm = true
                 }

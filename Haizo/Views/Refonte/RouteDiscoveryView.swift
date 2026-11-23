@@ -301,6 +301,9 @@ final class LocationPermission: NSObject {
     /// Où elle est, une fois demandé (`requestPosition`) : un seul relevé, pas de suivi. Sert Explorer à
     /// chercher des itinéraires autour d'elle.
     private(set) var coordinate: CLLocationCoordinate2D?
+    /// Le relevé a échoué (pas de signal, mode avion). Sans ce drapeau, Explorer affichait
+    /// « On cherche où tu es » pour toujours.
+    private(set) var releveEchoue = false
 
     /// `nonisolated`, et le réglage repoussé sur l'acteur principal — voir le raisonnement écrit
     /// en long dans `LocationService.init`. C'est ici que le compilateur a refusé net
@@ -333,11 +336,18 @@ final class LocationPermission: NSObject {
     /// `coordinate`.
     func requestPosition() {
         guard isGranted else { return }
+        releveEchoue = false
         manager.requestLocation()
     }
 
     fileprivate func majDeLaPosition(latitude: Double, longitude: Double) {
         coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        releveEchoue = false
+    }
+
+    fileprivate func noterLEchecDuReleve() {
+        // Une position déjà connue reste valable : un relevé raté ne la retire pas.
+        releveEchoue = coordinate == nil
     }
 }
 
@@ -355,6 +365,8 @@ extension LocationPermission: CLLocationManagerDelegate {
 
     /// Obligatoire dès qu'on appelle `requestLocation`. Un échec laisse `coordinate` vide : Explorer le
     /// dit honnêtement au lieu de deviner où elle est.
-    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {}
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        surLActeurPrincipal { [self] in noterLEchecDuReleve() }
+    }
 }
 

@@ -152,7 +152,10 @@ struct ClubEventsSection: View {
 
     @ViewBuilder
     private func menuDeLaSortie(_ event: ClubEvent) -> some View {
-        if event.isMine {
+        // La sortie se modifie par qui l'a proposée, ET par qui tient le club. Le serveur
+        // l'autorisait déjà aux organisateurs ; l'app ne le proposait qu'à l'auteur, donc une
+        // organisatrice ne pouvait pas corriger l'heure d'une sortie posée par quelqu'un d'autre.
+        if event.isMine || magasin.jAdministreLeClub {
             Button("Modifier cette sortie") { eventEnModification = event }
             Button("Annuler cette sortie", role: .destructive) { sortieAAnnuler = event }
         }

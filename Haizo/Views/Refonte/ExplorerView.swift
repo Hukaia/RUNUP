@@ -250,6 +250,14 @@ struct ExplorerView: View {
                            hauteur: .petite, fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
                 if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
             }
+        } else if position.releveEchoue {
+            VStack(alignment: .leading, spacing: 0) {
+                message(String(localized: "On n'a pas réussi à savoir où tu es. Sans position, pas d'itinéraire autour de toi."))
+                HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .petite,
+                               fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
+                    position.requestPosition()
+                }
+            }
         } else if position.coordinate == nil {
             message(String(localized: "On cherche où tu es pour te proposer des itinéraires autour de toi."))
         } else {

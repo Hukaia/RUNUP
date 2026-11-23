@@ -319,7 +319,9 @@ struct AccueilView: View {
                 HStack(alignment: .top, spacing: HZEspace.entreTuiles) {
                     ForEach(prochaines) { prochaine in
                         Button {
-                            appState.go(.plan)
+                            // Le Plan s'ouvre sur LE JOUR TOUCHÉ. Il s'ouvrait sur aujourd'hui :
+                            // on touchait « jeudi » et il fallait le rechercher dans la rangée.
+                            appState.ouvrirLePlan(sur: prochaine.id)
                         } label: {
                             tuile(prochaine)
                         }

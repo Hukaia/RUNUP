@@ -42935,6 +42935,40 @@
           }
         }
       }
+    },
+    "On n'a pas réussi à savoir où tu es. Sans position, pas d'itinéraire autour de toi.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We couldn't find where you are. Without a position, no routes around you."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hemos podido saber dónde estás. Sin ubicación, no hay rutas cerca de ti."
+          }
+        }
+      }
+    },
+    "Remettre en service": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Put back in use"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volver a usar"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

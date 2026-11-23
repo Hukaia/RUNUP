@@ -17,6 +17,9 @@ struct RaceDiscoveryView: View {
     @State private var query = ""
     @State private var results: [RaceEvent] = []
     @State private var searchEnCours = false
+    /// La recherche a échoué (réseau, serveur, session). Sans ce relevé, une panne s'affichait
+    /// « Aucune course à venir ne porte ce nom », ce qui est faux et pousse à créer un doublon.
+    @State private var recherchePanne: String?
     @State private var searchTask: Task<Void, Never>?
     @State private var isLoading = true
     @State private var loadError: String?
@@ -187,6 +190,14 @@ struct RaceDiscoveryView: View {
     private var resultats: some View {
         if searchEnCours {
             ProgressView().frame(maxWidth: .infinity).padding(.vertical, HZEspace.entreSections)
+        } else if let recherchePanne {
+            VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+                HZPhrase(texte: recherchePanne)
+                HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .petite,
+                               fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
+                    chercher(query)
+                }
+            }
         } else if results.isEmpty {
             VStack(alignment: .leading, spacing: HZEspace.groupe) {
                 HZPhrase(texte: String(localized: "Aucune course à venir ne porte ce nom."))
@@ -206,17 +217,29 @@ struct RaceDiscoveryView: View {
         guard propre.count >= HZHub.lettresPourChercher else {
             results = []
             searchEnCours = false
+            recherchePanne = nil
             return
         }
         searchEnCours = true
         searchTask = Task {
             try? await Task.sleep(for: .milliseconds(HZHub.delaiDeRecherche))
             guard !Task.isCancelled else { return }
-            let trouvees = (try? await clubService.searchRaces(query: propre)) ?? []
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                results = trouvees
-                searchEnCours = false
+            do {
+                let trouvees = try await clubService.searchRaces(query: propre)
+                guard !Task.isCancelled else { return }
+                await MainActor.run {
+                    results = trouvees
+                    recherchePanne = nil
+                    searchEnCours = false
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+                let phrase = PanneReseau.phrase(pour: error)
+                await MainActor.run {
+                    results = []
+                    recherchePanne = phrase
+                    searchEnCours = false
+                }
             }
         }
     }

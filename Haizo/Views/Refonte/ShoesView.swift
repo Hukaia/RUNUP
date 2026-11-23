@@ -102,6 +102,14 @@ struct ShoesView: View {
         }
     }
 
+    /// La paire redevient active. S'il n'y en avait plus aucune, elle redevient aussi la paire par
+    /// défaut : sinon les prochaines sorties ne seraient attribuées à rien.
+    private func remettreEnService(_ shoe: Shoe) {
+        shoe.retiredAt = nil
+        if profile.defaultShoeID == nil { profile.defaultShoeID = shoe.id }
+        Haptics.selection()
+    }
+
     /// « Encore 640 km sur 700 », ou « 700 km dépassés ». Court exprès : la colonne fait 160 points
     /// sur un écran de 390, et « Encore 640 km · limite à 700 km » y finissait en points de suspension.
     private func resteAvantLaLimite(km: Double, limite: Double) -> String {
@@ -168,6 +176,10 @@ struct ShoesView: View {
                         Button("Définir par défaut") { profile.defaultShoeID = shoe.id }
                     }
                     Button("Retirer cette paire") { pendingRetire = shoe }
+                } else {
+                    // Une paire retirée par erreur, ou ressortie du placard : sans ce geste il ne
+                    // restait qu'à la supprimer et à la recréer, donc à perdre ses kilomètres.
+                    Button("Remettre en service") { remettreEnService(shoe) }
                 }
                 Button("Supprimer", role: .destructive) { pendingDelete = shoe }
             } label: {
@@ -229,7 +241,9 @@ private struct AddShoeSheet: View {
         // `shoes` won't reflect the insert below until the next @Query update cycle, so whether
         // this is the first pair ever is captured before it, not after (same reasoning as
         // HistoryView's delete-time streak recompute).
-        let isFirstShoe = shoes.isEmpty
+        // « Première » veut dire : aucune paire EN SERVICE. Une paire retirée ne reçoit plus de
+        // sorties ; ne compter qu'elle laissait la nouvelle sans paire par défaut.
+        let isFirstShoe = shoes.allSatisfy { $0.retiredAt != nil } || profile.defaultShoeID == nil
         let startKm = Double(startKmText.replacingOccurrences(of: ",", with: ".")) ?? 0
         let shoe = Shoe(name: name.trimmingCharacters(in: .whitespaces), startDistanceKm: max(0, startKm))
         modelContext.insert(shoe)

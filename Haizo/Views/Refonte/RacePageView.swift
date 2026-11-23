@@ -59,6 +59,10 @@ struct RacePageView: View {
     @State private var genreDuMessage = "message"
     @State private var brouillon = ""
     @State private var reponseA: RacePost?
+    /// Le champ de rédaction a la main. « Répondre » le lui donne : le champ est en haut du mur, le
+    /// message auquel on répond souvent bien plus bas, et sans cela toucher la bulle ne montrait
+    /// rien (l'en-tête de la réponse apparaissait hors de l'écran).
+    @FocusState private var redactionActive: Bool
     @State private var filtrePartenaires = false
 
     // Modération
@@ -185,7 +189,14 @@ struct RacePageView: View {
             if isLoading {
                 ProgressView().frame(maxWidth: .infinity).padding(.vertical, HZFil.enAttente)
             } else if let loadError {
-                HZPhrase(texte: String(localized: "Impossible de charger cette page : \(loadError)."))
+                VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+                    HZPhrase(texte: String(localized: "Impossible de charger cette page : \(loadError)."))
+                    HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .petite,
+                                   fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
+                        isLoading = true
+                        Task { await charger() }
+                    }
+                }
             } else {
                 maParticipation
                 quiLaPrepare
@@ -686,6 +697,7 @@ struct RacePageView: View {
     private var champDeRedaction: some View {
         TextField(reponseA == nil ? placeholderDuGenre : String(localized: "Ta réponse…"),
                   text: $brouillon, axis: .vertical)
+            .focused($redactionActive)
             .lineLimit(HZCourse.lignesDeLaRedaction)
             .font(HZPolice.texte(.c16, .semi))
             .foregroundStyle(HZCouleur.encre)
@@ -764,8 +776,10 @@ struct RacePageView: View {
             // LA MÊME BULLE QUE DANS LE FIL, AVEC LE MÊME COMPTE : l'icône dit « répondre », le
             // nombre dit en plus s'il y a déjà une conversation.
             geste(dessin: .bulle, compte: reponses(a: message).count, actif: false) {
+                // Le brouillon reste : un texte commencé ne s'efface pas parce qu'on a touché
+                // une bulle. Le clavier s'ouvre, et la page remonte jusqu'au champ.
                 reponseA = message
-                brouillon = ""
+                redactionActive = true
             }
             .accessibilityLabel(String(localized: "Répondre à \(message.author.name)"))
 

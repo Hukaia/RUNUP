@@ -172,6 +172,15 @@ final class AppState {
     /// touchée dans « Passer à un objectif ». Lu une fois par l'assistant, puis remis à `nil`.
     var objectifDeLAssistant: GoalType?
 
+    /// Le jour sur lequel le Plan doit s'ouvrir (0 = lundi) : celui de la tuile touchée dans
+    /// « La suite » de l'accueil. Lu une fois par le Plan, puis remis à `nil`.
+    var jourDuPlanAOuvrir: Int?
+
+    func ouvrirLePlan(sur jour: Int) {
+        jourDuPlanAOuvrir = jour
+        go(.plan)
+    }
+
     func ouvrirLAssistant(sur objectif: GoalType? = nil) {
         objectifDeLAssistant = objectif
         newGoalWizardPresented = true

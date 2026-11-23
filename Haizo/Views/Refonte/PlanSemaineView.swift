@@ -261,7 +261,11 @@ struct PlanSemaineView: View {
                             carte(jour)
                                 .contentShape(Rectangle())
                                 .onTapGesture { toucher(jour) }
-                                .accessibilityAddTraits(.isButton)
+                                // Bouton seulement quand le toucher fait quelque chose : amener la
+                                // carte au premier plan, ou ouvrir la séance d'aujourd'hui. La
+                                // carte d'un autre jour, déjà devant, n'ouvre rien : l'annoncer
+                                // comme un bouton à VoiceOver était faux.
+                                .accessibilityAddTraits(repondAuToucher(jour) ? .isButton : [])
                                 .id(jour.id)
                         }
                     }
@@ -288,12 +292,21 @@ struct PlanSemaineView: View {
             // Ouvert sur le jour choisi (aujourd'hui) : la position initiale du système n'est pas
             // toujours honorée avant la première mise en page.
             .onAppear {
+                // Venue d'une tuile « La suite » de l'accueil : le jour demandé, une seule fois.
+                if let demande = appState.jourDuPlanAOuvrir {
+                    appState.jourDuPlanAOuvrir = nil
+                    if planDebloque, visibles.contains(where: { $0.id == demande }) { choix = demande }
+                }
                 if choix == nil { choix = choisi }
                 lecteur.scrollTo(choisi, anchor: .leading)
             }
             // Le cran du doigt ou de la rangée : un seul endroit pour le retour tactile.
             .onChange(of: choix) { Haptics.selection() }
         }
+    }
+
+    private func repondAuToucher(_ jour: PlanSemaineModele.Jour) -> Bool {
+        jour.id != choisi || jour.etat == .aujourdhui
     }
 
     private func toucher(_ jour: PlanSemaineModele.Jour) {

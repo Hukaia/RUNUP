@@ -9419,9 +9419,24 @@ La campagne de captures App Store n° 269 est la première depuis le 18 novembre
 - **Garde-fou** : `check_film.py` recalcule à chaque build les positions des entrées depuis les constantes de `HZBarreFlottante` et les confronte à celles du test (ordre, largeur, hauteur). Quatre cas dans `test_film.py`, dont l'ancienne barre telle quelle. Ce décalage a tenu quatre jours sans bruit ; il se dira désormais en une minute.
 - Non vérifié tant que la campagne suivante n'a pas tourné : le film lui-même. Le garde-fou du découpage le jugera plan par plan.
 
+### Lot 8 : pannes qui passaient pour du vide, et quelques gestes sans effet
+
+- **Recherche d'une course** : une panne s'affichait « Aucune course à venir ne porte ce nom », avec le bouton pour en créer une, donc de quoi fabriquer un doublon. Elle dit maintenant la panne, avec « Réessayer ».
+- **Commentaires d'un itinéraire** : même défaut (« Personne n'a encore rien dit »), même remède.
+- **Page d'une course** : l'erreur de chargement a son « Réessayer ».
+- **Explorer, position introuvable** : « On cherche où tu es » restait affiché pour toujours quand le relevé échouait (pas de signal, mode avion). L'échec est maintenant relevé et dit, avec « Réessayer ».
+- **Page de course, répondre à un message** : le champ est en haut du mur, le message souvent bien plus bas. Toucher la bulle donne la main au champ (le clavier s'ouvre, la page y remonte) et ne vide plus un texte commencé.
+- **Accueil, « La suite »** : toucher jeudi ouvre le Plan sur jeudi. Il s'ouvrait sur aujourd'hui.
+- **Plan** : la carte d'un autre jour, déjà au premier plan, n'ouvre rien ; elle n'est plus annoncée comme un bouton à VoiceOver.
+- **Chaussures** : une paire retirée se remet en service (il fallait la supprimer et la recréer, donc perdre ses kilomètres). Une nouvelle paire devient la paire par défaut quand aucune autre n'est en service.
+- **Club, sorties** : une organisatrice peut modifier ou annuler une sortie proposée par quelqu'un d'autre. Le serveur l'autorisait déjà, l'app ne le proposait qu'à l'auteur.
+- **Coach** : « Effacer la conversation » porte trois points et non une croix, qui se lisait « fermer ». La confirmation est inchangée.
+- **Anneaux** : le drapeau de chargement d'un jour passé ne reste plus levé si on revient à aujourd'hui entre-temps.
+- Non vérifié sur appareil : la remontée de la page vers le champ de réponse (c'est le système qui la fait quand un champ prend la main), et l'échec de localisation (le simulateur ne le produit pas).
+
 ### Constaté, pas encore corrigé
 
 - Explorer : « Garder cet itinéraire » sans liste des gardés.
-- Page de course : répondre à un message ne fait rien de visible.
-- Club : le lien d'invitation d'un club ne fait que préremplir une recherche.
+- Club : le lien d'invitation d'un club ne fait que préremplir une recherche. La fiche d'un club existe maintenant, mais l'ouvrir depuis un lien demande que le serveur dise le mode d'adhésion à quelqu'un qui n'a pas le code : à faire avec la vraie base sous les yeux.
+- Plan : la carte d'un autre jour qu'aujourd'hui n'ouvre pas sa fiche de séance (la fiche ne sait montrer que la séance du jour).
 - À confirmer sur téléphone : ouvrir une sortie depuis un profil (deux couvertures plein écran sur la même racine).

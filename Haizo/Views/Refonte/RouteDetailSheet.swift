@@ -21,6 +21,8 @@ struct RouteDetailSheet: View {
     @State private var reportPresented = false
     @State private var reportReason = ""
     @State private var commentaires: [CommentItem] = []
+    /// Le chargement a échoué : on le dit, plutôt que « Personne n'a encore rien dit ».
+    @State private var commentairesEnPanne: String?
     @State private var brouillon = ""
     @State private var envoiEnCours = false
     @State private var cibleSignalee: ReportTarget?
@@ -169,7 +171,15 @@ struct RouteDetailSheet: View {
         VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
             HZTitreDeSection(titre: String(localized: "Ce qu'on en sait"))
 
-            if commentaires.isEmpty {
+            if let commentairesEnPanne, commentaires.isEmpty {
+                VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
+                    HZPhrase(texte: commentairesEnPanne)
+                    HZBoutonPilule(libelle: String(localized: "Réessayer"), hauteur: .petite,
+                                   fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
+                        Task { await chargerLesCommentaires() }
+                    }
+                }
+            } else if commentaires.isEmpty {
                 HZPhrase(texte: String(localized: "Personne n'a encore rien dit sur ce parcours."))
             } else {
                 LazyVStack(alignment: .leading, spacing: 0) {
@@ -212,8 +222,13 @@ struct RouteDetailSheet: View {
     }
 
     private func chargerLesCommentaires() async {
-        commentaires = (try? await ClubService(auth: appState.auth)
-            .fetchRouteComments(routeId: route.id)) ?? []
+        do {
+            commentaires = try await ClubService(auth: appState.auth).fetchRouteComments(routeId: route.id)
+            commentairesEnPanne = nil
+        } catch {
+            // Ce qui est déjà à l'écran y reste : une panne au rechargement n'efface pas le fil.
+            commentairesEnPanne = PanneReseau.phrase(pour: error)
+        }
     }
 
     private func envoyer() async {

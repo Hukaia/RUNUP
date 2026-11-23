@@ -243,7 +243,12 @@ struct RingsView: View {
     }
 
     private func loadHistoricalDayIfNeeded() async {
-        guard !isToday else { return }
+        guard !isToday else {
+            // Revenue à aujourd'hui pendant un chargement : la tâche annulée ne remettra jamais ce
+            // drapeau à faux, donc on le fait ici.
+            isLoadingHistoricalDay = false
+            return
+        }
         isLoadingHistoricalDay = true
         historicalSteps = 0
         historicalCalories = 0

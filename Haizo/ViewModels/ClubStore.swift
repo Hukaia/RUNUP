@@ -59,6 +59,15 @@ final class ClubStore {
         board.club.map { $0.memberCount <= 1 } == true
     }
 
+    /// Je tiens ce club : je l'ai créé, ou on m'y a nommée organisatrice. C'est la règle du
+    /// serveur (`clubQueJAdministre`), lue sur ce qu'il a déjà rendu : le rôle de ma ligne dans le
+    /// classement. Le serveur revérifie chaque geste ; ceci ne décide que de ce qu'on propose.
+    var jAdministreLeClub: Bool {
+        if board.club?.isOwner == true { return true }
+        let monRole = board.leaderboard.first(where: \.isMe)?.role
+        return monRole == "owner" || monRole == "organiser"
+    }
+
     /// LE MUR DU CLUB : ce qu'on se dit entre deux sorties. Les messages vivent dans le même
     /// onglet que les activités et s'y entrelacent par date — un mur à part aurait fait un
     /// quatrième onglet pour une conversation de dix lignes.
