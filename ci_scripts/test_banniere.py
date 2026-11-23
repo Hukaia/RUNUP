@@ -140,6 +140,29 @@ def _():
     assert "inscription" not in sortie, f"l'inscription a été accusée :\n{sortie}"
 
 
+@cas_de("UNE FEUILLE BLANCHE EN HAUT N'EST PAS UNE BANNIÈRE, pour les six captures nommées")
+def _():
+    # Depuis la refonte, un écran défilé ou recouvert d'une feuille a le haut blanc. Les six
+    # captures du diagnostic prises dans cet état sortent du relevé ; elles l'ont fait rougir à
+    # chaque campagne du 18 au 23 novembre.
+    images = {"fr-FR/1-accueil.png": ecran(0.02)}
+    for nom in ck.FEUILLE_BLANCHE_EN_HAUT:
+        images[f"fr-FR/diagnostic/{nom}.png"] = ecran(0.96, fond=250)
+    code, sortie = lance(images)
+    assert code == 0, f"une feuille blanche a été prise pour une bannière :\n{sortie}"
+
+
+@cas_de("et une image LIVRÉE, ou une autre capture, au haut blanc sonne toujours")
+def _():
+    # La liste est une liste de noms DANS `diagnostic/` : elle ne couvre ni une image livrée, ni
+    # une capture qui n'y est pas inscrite.
+    code, sortie = lance({"fr-FR/reglages.png": ecran(0.96, fond=250)})
+    assert code == 1 and "reglages" in sortie, f"une image livrée au haut blanc est passée :\n{sortie}"
+    code, sortie = lance({"fr-FR/1-accueil.png": ecran(0.02),
+                          "fr-FR/diagnostic/stats-bas.png": ecran(0.96, fond=250)})
+    assert code == 1 and "stats-bas" in sortie, f"une capture non inscrite est passée :\n{sortie}"
+
+
 @cas_de("la même image fautive dans trois langues : le message dit que ce n'est pas le minutage")
 def _():
     # Le message d'origine disait « relancer la chaîne suffit ». Le 10 novembre, relancer n'aurait

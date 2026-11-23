@@ -100,12 +100,37 @@ def part_de_clair(chemin: pathlib.Path) -> float:
 AVANT_LE_PROFIL = {"inscription"}
 
 
+#: LES CAPTURES DU DIAGNOSTIC DONT LE HAUT EST UNE FEUILLE BLANCHE.
+#:
+#: « En thème sombre, cette bande est noire » : c'était vrai de l'ancienne interface. Depuis la
+#: refonte du 17 novembre, un écran est un haut noir sur lequel REMONTE une feuille blanche ; dès
+#: qu'on le fait défiler, ou qu'une feuille de réglages le recouvre, le haut de l'image est blanc.
+#: Ces six captures sont prises dans cet état, et le contrôle les accusait d'une bannière à chaque
+#: campagne, dans les trois langues, entre 55 % et 98 % : la chaîne était rouge depuis le 18
+#: novembre, et la reprise « une langue à refaire » se déclenchait pour rien à chaque langue.
+#: Tranché en regardant les six images de la campagne 264 (23 novembre) : aucune ne porte de
+#: bannière, toutes montrent une feuille blanche.
+#:
+#: La mesure ne sait pas distinguer une bannière claire d'une page claire : ces captures sortent
+#: donc du relevé, par leur nom. Ce qu'on y perd est écrit : une bannière posée sur l'une d'elles
+#: ne serait plus vue. Aucune n'est livrée à Apple (les six livrées restent toutes mesurées), et
+#: une capture qui n'est pas dans cette liste et dont le haut blanchit refera échouer la chaîne,
+#: ce qui est voulu : on ira regarder l'image avant de l'ajouter ici.
+FEUILLE_BLANCHE_EN_HAUT = {
+    "accueil-verrouille-bas", "club-apercu-bas", "cycle", "profil-bas", "reglages", "sortie-bas",
+}
+
+
 def sombres(dossier: pathlib.Path):
     """Les captures du thème sombre, celles qu'on livre et celles du diagnostic."""
     for p in sorted(dossier.rglob("*.png")):
-        if "clair" in p.relative_to(dossier).parts:
+        parties = p.relative_to(dossier).parts
+        if "clair" in parties:
             continue
         if p.stem in AVANT_LE_PROFIL:
+            continue
+        # Seulement dans `diagnostic/` : une image LIVRÉE qui porterait un de ces noms resterait mesurée.
+        if "diagnostic" in parties and "grand-texte" not in parties and p.stem in FEUILLE_BLANCHE_EN_HAUT:
             continue
         yield p
 

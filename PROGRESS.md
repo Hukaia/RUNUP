@@ -9315,3 +9315,11 @@ Refonte n° 85, une par une.
   plancher propre (4 et 6, `PLANCHERS_PROPRES`), qui attrape toujours une copie (écart sous 1). Vérifié sur les captures réelles de la campagne 264, dans les trois langues : les neuf paires passent. Un huitième cas dans `test_grand_texte.py`.
 - **Un vrai défaut de grand texte trouvé en regardant** : « Déplacer à demain » se coupait en « Déplacer à dem… ». Le libellé d'un bouton pilule rétrécit maintenant d'un quart avant de se couper (`HZBoutonPilule.reductionDuLibelle`).
 - **Non vérifié** : écrit sans compilateur. Le workflow « Captures App Store » n'a pas été vert depuis le 18 novembre, et les étapes qui suivent le grand texte (bannière, film d'aperçu) ne tournaient plus : elles peuvent révéler d'autres échecs.
+
+### « Captures App Store » : le grand texte passe, et l'étape suivante accusait six feuilles blanches (23 novembre)
+Campagne 266 : l'étape du grand texte est verte. L'échec venait de l'étape d'après, qui ne tournait plus depuis une semaine : `check_banniere.py` voyait une bannière du système sur six captures, les mêmes dans les trois langues (55 % à 98 % de pixels
+clairs en haut). J'ai regardé les six images : aucune bannière, six écrans défilés ou recouverts d'une feuille, donc blancs en haut. Le contrôle supposait qu'en thème sombre le haut de l'écran est noir, ce qui n'est plus vrai depuis la refonte.
+- Les six captures du diagnostic sortent du relevé par leur nom (`FEUILLE_BLANCHE_EN_HAUT`). Ce qu'on y perd est écrit dans le fichier : une bannière sur l'une d'elles ne serait plus vue. Aucune n'est livrée à Apple ; les six images livrées restent mesurées.
+- Vérifié sur les captures réelles de la campagne 264 : 96 captures sombres regardées, au plus 17 % (plafond 25). Deux cas de plus dans `test_banniere.py` (13 sur 13).
+- Effet de bord attendu : la reprise « une langue à refaire » se déclenchait à chaque langue pour ces faux positifs ; la campagne devrait raccourcir.
+- **Pas encore vu** : les étapes qui suivent (mesure des bascules, comparaison, film d'aperçu) n'ont pas tourné depuis le 18 novembre.
