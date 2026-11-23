@@ -156,6 +156,9 @@ struct HZBoutonPilule: View {
                     .hzTexte(hauteur.corps, graisse)
                     .foregroundStyle(couleur)
                     .lineLimit(1)
+                    // En grand texte, « Déplacer à demain » devenait « Déplacer à dem… » dans la moitié
+                    // d'une feuille. Un libellé de bouton rétrécit d'un quart avant de se couper.
+                    .minimumScaleFactor(HZBoutonPilule.reductionDuLibelle)
                 if let suite {
                     HZIcone(dessin: suite, cote: HZBoutonPilule.coteDeSuite,
                             trait: HZBoutonPilule.traitDeSuite, couleur: couleur)
@@ -173,6 +176,8 @@ struct HZBoutonPilule: View {
     static let ecart: CGFloat = 8
     /// Devant le triangle de lecture, plus massif qu'une icône au trait.
     static let ecartDeLecture: CGFloat = 10
+    /// Jusqu'où un libellé rétrécit avant d'être coupé par des points de suspension.
+    static let reductionDuLibelle: CGFloat = 0.75
     /// Le triangle de lecture, dans une pilule : 14, là où une icône au trait en fait 18.
     static let coteDeLecture: CGFloat = 14
     /// Le chevron qui suit un libellé : 14 de côté, tracé à 2,4, à six points du mot.

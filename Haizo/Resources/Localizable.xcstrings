@@ -5443,22 +5443,6 @@
         }
       }
     },
-    "Appuie pour la définir par défaut": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tap to set as default"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Toca para definirlo por defecto"
-          }
-        }
-      }
-    },
     "Appuie pour partir tout de suite": {
       "localizations": {
         "en": {
@@ -41721,6 +41705,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Desde tus primeros metros"
+          }
+        }
+      }
+    },
+    "Touche pour la choisir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to make it your default"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toca para elegirlas"
+          }
+        }
+      }
+    },
+    "Encore %lld km · limite à %lld km": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld km left · limit %lld km"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quedan %lld km · límite %lld km"
+          }
+        }
+      }
+    },
+    "Limite de %lld km dépassée": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Past the %lld km limit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Límite de %lld km superado"
           }
         }
       }

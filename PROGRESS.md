@@ -9302,3 +9302,16 @@ Refonte n° 85, une par une.
 
 ### Non vérifié
 - Ces cinq corrections sont écrites sans compilateur. Les animations, les états vides réels (sans réseau, sans localisation, sans club) et tout ce qui dépend d'un vrai téléphone ne sont pas dans les captures.
+
+## « Règle tout » : les quatre défauts restants du tour (23 novembre)
+
+- **La phrase du coach ne se coupe plus dans « Niveau 2 ».** L'étiquette porte une espace insécable (`HZAccueil.espaceInsecable`).
+- **L'accueil se resserre sur un écran court.** Sur un iPhone de 6,1 pouces, la barre flottante recouvrait les libellés des cinq catégories (« Ro » et « ses » dépassaient de chaque côté). Sous 900 points de haut (`HZAccueil.ecranCourt`, lu une fois sur
+  l'écran), six blancs perdent de 2 à 6 points, 28 en tout ; au-delà (6,7 et 6,9 pouces), les valeurs du canvas ne bougent pas. Limite dite : la position de la pliure dépend de ce que l'accueil porte au-dessus (phrase du coach, « La suite »), donc ce
+  réglage vise l'état photographié, pas tous.
+- **La carte d'une paire de chaussures** dit ce qu'il lui reste (« Encore 640 km · limite à 700 km », ou « Limite de 700 km dépassée ») au lieu d'un « / 700 km » orphelin sous la barre, et son invite tient sur une ligne (« Touche pour la choisir »).
+- **Grand texte : le contrôle était rouge depuis le 18 novembre, et il avait tort sur le fond.** `check_grand_texte.py` échouait sur l'écran de course (6,89) et la fiche de séance (9,22) pour un plancher de 10. J'ai regardé les images, comme son
+  en-tête le demande : le réglage a bien pris sur les deux (libellés nettement plus gros). L'écart a baissé avec leur refonte (écran presque noir, grands chiffres déjà à leur taille maximale, fiche sur une demi-hauteur). Ils ont maintenant leur
+  plancher propre (4 et 6, `PLANCHERS_PROPRES`), qui attrape toujours une copie (écart sous 1). Vérifié sur les captures réelles de la campagne 264, dans les trois langues : les neuf paires passent. Un huitième cas dans `test_grand_texte.py`.
+- **Un vrai défaut de grand texte trouvé en regardant** : « Déplacer à demain » se coupait en « Déplacer à dem… ». Le libellé d'un bouton pilule rétrécit maintenant d'un quart avant de se couper (`HZBoutonPilule.reductionDuLibelle`).
+- **Non vérifié** : écrit sans compilateur. Le workflow « Captures App Store » n'a pas été vert depuis le 18 novembre, et les étapes qui suivent le grand texte (bannière, film d'aperçu) ne tournaient plus : elles peuvent révéler d'autres échecs.

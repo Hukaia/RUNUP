@@ -102,6 +102,15 @@ struct ShoesView: View {
         }
     }
 
+    /// « Encore 640 km · limite à 700 km », ou « Limite de 700 km dépassée ».
+    private func resteAvantLaLimite(km: Double, limite: Double) -> String {
+        let seuil = Int(limite.rounded())
+        let reste = Int((limite - km).rounded())
+        return reste > 0
+            ? String(localized: "Encore \(reste) km · limite à \(seuil) km")
+            : String(localized: "Limite de \(seuil) km dépassée")
+    }
+
     /// Une paire : ses kilomètres en chiffres d'affichage sur une tuile noire, son nom, sa barre vers
     /// la limite. Toucher la ligne en fait la paire par défaut ; le menu retire ou supprime.
     private func shoeRow(_ shoe: Shoe) -> some View {
@@ -128,7 +137,9 @@ struct ShoesView: View {
             VStack(alignment: .leading, spacing: HZEspace.entrePilules) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(shoe.name).hzTexte(.c16, .gras).foregroundStyle(HZCouleur.encre)
-                    Text(LocalizedStringKey(isRetired ? "Retirée" : (isDefault ? "Paire par défaut" : "Appuie pour la définir par défaut")))
+                    // Une ligne, pas deux : « Appuie pour la définir par défaut » passait à la ligne et
+                    // poussait la barre vers le bas.
+                    Text(LocalizedStringKey(isRetired ? "Retirée" : (isDefault ? "Paire par défaut" : "Touche pour la choisir")))
                         .hzParagraphe(.c13, .medium, interligne: HZBandeauDuCoach.interligne)
                         .foregroundStyle(HZCouleur.secondaireSurClair)
                         .fixedSize(horizontal: false, vertical: true)
@@ -136,7 +147,9 @@ struct ShoesView: View {
                 HZJauge(fraction: fraction, couleur: usee ? HZCouleur.accent : HZCouleur.encre,
                         rail: HZCouleur.blanc, epaisseur: HZHub.hauteurDeLaProgression)
                 VStack(alignment: .leading, spacing: 0) {
-                    Text(verbatim: "/ \(String(format: "%.0f", shoe.alertThresholdKm)) km")
+                    // CE QU'IL LUI RESTE, et non « / 700 km » : la tuile dit déjà les kilomètres faits, et
+                    // un dénominateur posé seul sous une barre se lisait comme une ligne orpheline.
+                    Text(resteAvantLaLimite(km: km, limite: shoe.alertThresholdKm))
                         .hzTexte(.c13, .semi, tabulaire: true)
                         .foregroundStyle(HZCouleur.secondaireSurClair)
                     if fraction >= 1 {

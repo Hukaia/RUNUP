@@ -284,7 +284,10 @@ struct AccueilView: View {
         // (« Tu as peu dormi… »), et s'affiche tel quel.
         if let ajustement = session.adjustment {
             if ajustement == String(localized: "Niveau \(profile.weekTier)") {
-                return String(localized: "Le coach a ajusté cette semaine à « \(ajustement) » d'après ta forme la semaine dernière.")
+                // L'étiquette ne se coupe pas : « Niveau » en fin de ligne et « 2 » seul à la suivante,
+                // c'est ce que la première capture de cette phrase montrait.
+                let etiquette = ajustement.replacingOccurrences(of: " ", with: HZAccueil.espaceInsecable)
+                return String(localized: "Le coach a ajusté cette semaine à « \(etiquette) » d'après ta forme la semaine dernière.")
             }
             return String(localized: String.LocalizationValue(ajustement))
         }

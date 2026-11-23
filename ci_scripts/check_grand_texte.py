@@ -65,6 +65,29 @@ PAIRES = {
 }
 
 
+#: LE PLANCHER PROPRE À UN ÉCRAN, quand il réagit au grand texte mais change peu de pixels.
+#:
+#: Tranché EN REGARDANT LES IMAGES, comme l'en-tête le demande, sur la campagne 264 (23 novembre) : le
+#: contrôle était rouge depuis le 18 novembre sur ces deux écrans, à 6,89 et 9,22 pour un plancher
+#: de 10. Sur les deux, le réglage a bien pris : « Recherche du signal GPS… », « Allure », « Temps »,
+#: « Séance clé », « Course continue » sont nettement plus gros. Ce qui a fait baisser l'écart, c'est
+#: leur refonte : l'écran de course est presque entièrement noir, et ses grands chiffres d'affichage
+#: ne grandissent pas (ils sont déjà à la taille maximale) ; la fiche de séance n'occupe plus que la
+#: moitié de l'écran, au-dessus d'un accueil assombri. Une copie de la capture ordinaire rend moins
+#: de 1 : un plancher à 4 et à 6 attrape toujours le défaut cherché, sans faire échouer la campagne
+#: pour un écran qui fait ce qu'on lui demande.
+PLANCHERS_PROPRES = {
+    "diagnostic/grand-texte/course-en-cours.png": 4.0,
+    "diagnostic/grand-texte/seance.png": 6.0,
+}
+
+
+def plancher_de(nom: str, general: float) -> float:
+    """Le plancher d'une capture : le sien si elle en a un, sinon celui de la campagne. Jamais plus
+    haut que le général : un plancher propre ne sert qu'à desserrer, pour une raison écrite."""
+    return min(general, PLANCHERS_PROPRES.get(nom, general))
+
+
 def gris(chemin: pathlib.Path) -> Image.Image:
     with Image.open(chemin) as im:
         return im.convert("L").copy()
@@ -113,12 +136,14 @@ def main() -> int:
         print("\n(aucun plancher demandé : on mesure et on se tait)")
         return 0
 
-    plates = [(nom, valeur) for nom, valeur in mesures if valeur < options.plancher]
+    plates = [(nom, valeur) for nom, valeur in mesures
+              if valeur < plancher_de(nom, options.plancher)]
     if plates:
         print(f"\n{len(plates)} capture(s) en grand texte ressemblent à la capture ORDINAIRE :\n",
               file=sys.stderr)
         for nom, valeur in plates:
-            print(f"  {nom} — écart {valeur:.2f}, plancher {options.plancher:.2f}", file=sys.stderr)
+            print(f"  {nom} — écart {valeur:.2f}, plancher {plancher_de(nom, options.plancher):.2f}",
+                  file=sys.stderr)
         print("\nLe réglage de taille du texte n'a pas pris. Le drapeau est",
               file=sys.stderr)
         print("`-UIPreferredContentSizeCategoryName` dans `CapturesUITests.prendre` ; le lire est",

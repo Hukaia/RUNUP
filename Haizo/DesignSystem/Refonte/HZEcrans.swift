@@ -1,4 +1,5 @@
 import CoreGraphics
+import UIKit
 
 /// LES MESURES PROPRES À CHAQUE ÉCRAN DU CANVAS.
 ///
@@ -15,26 +16,43 @@ import CoreGraphics
 /// Ce fichier s'allonge d'un espace de noms par écran refait ; il n'en déclare aujourd'hui que
 /// ce que la planche de l'étape 1 remonte.
 enum HZAccueil {
+    /// SUR UN ÉCRAN COURT, L'ACCUEIL SE RESSERRE DE QUELQUES POINTS.
+    ///
+    /// Sur un iPhone de 6,1 pouces (844 points de haut), la rangée des cinq catégories tombait à la
+    /// hauteur de la barre flottante : les disques au-dessus, leurs libellés derrière la barre, « Ro »
+    /// et « ses » dépassant de chaque côté. Les blancs du canvas sont justes, mais le canvas n'avait pas
+    /// la phrase du coach sur deux lignes au-dessus. Sous 900 points de haut, six blancs perdent de 2
+    /// à 6 points chacun (28 en tout), ce qui remonte les libellés au-dessus de la barre ; au-delà
+    /// (6,7 et 6,9 pouces), ce sont les valeurs du canvas, inchangées.
+    ///
+    /// La hauteur est celle de l'écran, lue une fois : une mesure prise pendant la mise en page
+    /// arriverait après le premier dessin, et l'écran sauterait en s'ouvrant.
+    static let ecranCourt: Bool = UIScreen.main.bounds.height < hauteurDUnEcranCourt
+    static let hauteurDUnEcranCourt: CGFloat = 900
+    private static func blanc(_ canvas: CGFloat, court: CGFloat) -> CGFloat { ecranCourt ? court : canvas }
+    /// L'espace insécable, pour qu'une étiquette de deux mots ne se coupe pas en fin de ligne.
+    static let espaceInsecable = "\u{00A0}"
+
     /// Sous la rangée avatar, recherche, cloche : les points de la semaine.
     static let sousLesCommandes: CGFloat = 22
     /// Sous les points de la semaine : la séance du jour.
-    static let sousLaSemaine: CGFloat = 26
+    static let sousLaSemaine: CGFloat = blanc(26, court: 20)
     /// Sous la ligne de date : le préfixe du nombre (« 5 × »).
     static let sousLaDate: CGFloat = 20
     /// Le grand nombre sort de 5 points à gauche : l'approche du premier chiffre, à 128 points,
     /// le décollerait sinon de la marge où s'alignent les autres lignes.
     static let debordDuNombre: CGFloat = 5
     /// Sous le grand nombre : le nom de la séance.
-    static let sousLeNombre: CGFloat = 10
+    static let sousLeNombre: CGFloat = blanc(10, court: 8)
     /// Sous le nom de la séance : la pilule de durée, d'allure et de zone.
-    static let sousLeNom: CGFloat = 12
+    static let sousLeNom: CGFloat = blanc(12, court: 10)
     /// Sous la séance : la rangée des quatre actions.
-    static let sousLaSeance: CGFloat = 26
+    static let sousLaSeance: CGFloat = blanc(26, court: 20)
     /// Sous les actions : la feuille.
-    static let sousLesActions: CGFloat = 30
+    static let sousLesActions: CGFloat = blanc(30, court: 24)
     /// Avant « Explorer » et « Dernières sorties » : deux points de plus qu'entre les autres
     /// sections, parce que la rangée qui précède finit sur une légende et non sur une tuile.
-    static let avantUneSectionBasse: CGFloat = 30
+    static let avantUneSectionBasse: CGFloat = blanc(30, court: 24)
     /// Sous le titre « Dernières sorties » : la première ligne, qui porte déjà sa propre marge.
     static let sousLeTitreDesSorties: CGFloat = 4
     /// Sous le dernier bloc : de quoi dégager la barre flottante (60 de haut, à 28 du bas) et

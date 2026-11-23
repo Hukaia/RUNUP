@@ -133,6 +133,18 @@ def _():
         assert f'nom: "{nom}"' in test, f"aucun test ne prend « {nom} »"
 
 
+@cas_de("un plancher propre desserre pour un écran nommé, et seulement pour lui")
+def _():
+    # Chaque plancher propre vise une capture que le contrôle connaît, et reste sous le général.
+    for nom, valeur in ck.PLANCHERS_PROPRES.items():
+        assert nom in ck.PAIRES, f"« {nom} » n'est pas une paire mesurée"
+        assert 1.0 < valeur < 10.0, f"{nom} : {valeur} n'attraperait plus une copie, ou ne desserre rien"
+    assert ck.plancher_de("diagnostic/grand-texte/course-en-cours.png", 10.0) == 4.0
+    assert ck.plancher_de("diagnostic/grand-texte/accueil.png", 10.0) == 10.0
+    # Jamais plus haut que le général : il ne sert qu'à desserrer.
+    assert ck.plancher_de("diagnostic/grand-texte/seance.png", 3.0) == 3.0
+
+
 def main():
     echecs = 0
     for nom, f in cas:
