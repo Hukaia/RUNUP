@@ -399,13 +399,21 @@ final class RefonteUITests: XCTestCase {
         accueil.terminate()
 
         // 2. Le retour du plan mène à l'accueil.
+        //
+        // L'ÉCRAN DOIT ÊTRE POSÉ AVANT L'APPUI, sinon la comparaison passe pour une mauvaise
+        // raison. Le 23 novembre (Refonte 93), la capture d'après montrait encore le Plan, à
+        // l'identique de `plan.png`, et le test était vert : l'image d'avant avait été prise sur
+        // une machine lente, pendant que l'écran finissait de s'installer, donc « différente »
+        // sans que le retour ait rien fait. Le témoin d'immobilité ferme cette porte.
         let retour = lancer(arguments: ["--ecran=plan"])
+        verifierQuEcranFixe(retour, "plan")
         toucherEtComparer(retour, "plan-retour", dx: 0.1, dy: 0.095,
                           attendu: "le retour du plan doit ramener à l'accueil")
         retour.terminate()
 
         // 3. La carte du jour ouvre la feuille de la séance.
         let carte = lancer(arguments: ["--ecran=plan"])
+        verifierQuEcranFixe(carte, "plan")
         toucherEtComparer(carte, "plan-carte", dx: 0.5, dy: 0.5,
                           attendu: "la carte du jour doit ouvrir le détail de la séance")
         carte.terminate()

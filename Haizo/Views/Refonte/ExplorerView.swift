@@ -23,7 +23,12 @@ import CoreLocation
 /// des itinéraires : trois filtres voisins, deux sortes de contenu, et rien pour le dire. Les
 /// itinéraires ont leur propre filtre, qui porte leur nom. Décision de Charlotte, 23 novembre.
 enum FiltreDExplorer: CaseIterable, Identifiable {
-    case pourToi, route, trail, hyrox, itineraires, clubs
+    // « Clubs » AVANT « Itinéraires ». La rangée défile, et sur un écran de 390 points seules les
+    // cinq premières pilules se voient (la cinquième coupée, ce qui dit qu'il y en a d'autres).
+    // Avec « Itinéraires » en cinquième, « Clubs » sortait entièrement de l'écran : l'entrée pour
+    // rejoindre un club devenait invisible, et le test de capture ne pouvait plus la toucher. Les
+    // itinéraires, eux, sont déjà sous « Pour toi ».
+    case pourToi, route, trail, hyrox, clubs, itineraires
     var id: Self { self }
     var libelle: String {
         switch self {
