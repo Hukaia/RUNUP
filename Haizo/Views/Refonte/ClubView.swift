@@ -232,7 +232,15 @@ struct ClubView: View {
             Button("Quitter", role: .destructive) { Task { await magasin.leaveClub() } }
             Button("Annuler", role: .cancel) {}
         } message: {
-            Text("Pour revenir, tu repasseras par la façon dont ce club accueille : un toucher, une demande ou un code.")
+            // LA CRÉATRICE NE LAISSE PLUS UN CLUB SANS PERSONNE POUR LE TENIR, et on lui dit ce
+            // que son départ fait : le club est transmis, ou supprimé si elle y est seule.
+            if magasin.board.club?.isOwner == true {
+                Text(magasin.seuleDansSonClub
+                     ? String(localized: "Tu es la seule personne de ce club : le quitter le supprime.")
+                     : String(localized: "Tu as créé ce club. En partant, tu le transmets à l'organisateur le plus ancien, ou à défaut au membre le plus ancien."))
+            } else {
+                Text("Pour revenir, tu repasseras par la façon dont ce club accueille : un toucher, une demande ou un code.")
+            }
         }
         // Block confirmation — the other half of guideline 1.2, doesn't require leaving the club.
         .alert(
@@ -525,6 +533,13 @@ struct ClubView: View {
                 onSetClubCover: { try await magasin.reglerLaCouverture(dataURI: $0, badges: badges) },
                 onSetMemberRole: { memberId, organisateur in
                     try await magasin.reglerLeRole(memberId: memberId, organisateur: organisateur, badges: badges)
+                },
+                onRemoveMember: { try await magasin.retirerLeMembre(memberId: $0, badges: badges) },
+                onRegenerateCode: { try await magasin.changerLeCode(badges: badges) },
+                onDeleteClub: {
+                    try await magasin.supprimerLeClub()
+                    showManagement = false
+                    appState.toast(String(localized: "Club supprimé"))
                 },
                 demandes: magasin.demandes,
                 demandesEnChargement: magasin.demandesEnChargement,

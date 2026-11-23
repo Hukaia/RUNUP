@@ -878,8 +878,29 @@ struct ClubService {
                                            body: ["coverDataURI": valeur])
     }
 
+    /// Quitter son club. La créatrice le TRANSMET en partant (à l'organisateur le plus ancien, à
+    /// défaut au membre le plus ancien), et le supprime si elle y était seule : le serveur décide,
+    /// voir `lib/proprieteClub.js`.
     func leaveClub() async throws {
         let _: OkResponse = try await send(path: "api/clubs/leave", method: "POST")
+    }
+
+    // MARK: Ce que seule la créatrice du club peut faire
+
+    /// Retire un membre du club. Pas une exclusion définitive : dans un club ouvert, la personne
+    /// peut revenir. Pour l'en empêcher, le club passe sur demande ou sur code.
+    func removeClubMember(memberId: String) async throws {
+        let _: OkResponse = try await send(path: "api/clubs/removeMember", method: "POST", body: ["memberId": memberId])
+    }
+
+    /// Tire un nouveau code d'invitation. L'ancien cesse de marcher aussitôt.
+    func regenerateClubCode() async throws {
+        let _: JoinModeResponse = try await send(path: "api/clubs/regenerateCode", method: "POST")
+    }
+
+    /// Supprime le club, pour tout le monde. Les sorties de chacun restent chez leur autrice.
+    func deleteClub() async throws {
+        let _: OkResponse = try await send(path: "api/clubs/deleteClub", method: "POST")
     }
 
     /// LE MUR : tout ce qui arrive, d'où que ça vienne.

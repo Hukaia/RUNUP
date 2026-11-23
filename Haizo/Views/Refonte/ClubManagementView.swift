@@ -36,6 +36,11 @@ struct ClubManagementView: View {
     var onSetClubCover: (String?) async throws -> Void
     /// Nommer un organisateur, ou lui retirer le rôle. Réservé à qui a créé le club.
     var onSetMemberRole: (String, Bool) async throws -> Void
+    /// Les trois gestes réservés à qui a créé le club : retirer un membre (son identifiant),
+    /// changer le code d'invitation, supprimer le club.
+    var onRemoveMember: (String) async throws -> Void
+    var onRegenerateCode: () async throws -> Void
+    var onDeleteClub: () async throws -> Void
     /// Les demandes pour rejoindre le club, leur chargement et leur panne : ce que l'appelante a lu
     /// du serveur, que cette vue ne fait que montrer.
     var demandes: [ClubJoinRequest]
@@ -53,6 +58,12 @@ struct ClubManagementView: View {
     /// Le mode qu'on s'apprête à choisir et qui retirerait des demandes en attente : tant que la
     /// personne n'a pas confirmé, rien n'est changé.
     @State private var modeAConfirmer: ClubJoinMode?
+    /// Les trois gestes de la créatrice qui défont quelque chose : chacun se confirme ici, dans la
+    /// feuille, avant de partir.
+    @State private var membreARetirer: LeaderboardRow?
+    @State private var codeAChanger = false
+    @State private var suppressionDemandee = false
+    @State private var gesteEnCours = false
     @State private var demandeEnCours: String?
     @State private var descriptionDuClub = ""
     @State private var villeDuClub = ""
@@ -90,6 +101,29 @@ struct ClubManagementView: View {
             Button(String(localized: "Annuler"), role: .cancel) {}
         } message: {
             Text("Les demandes en attente seront retirées. Ces personnes devront entrer selon la nouvelle façon d'accueillir.")
+        }
+        .alert(membreARetirer.map { String(localized: "Retirer \($0.name) du club ?") } ?? "",
+               isPresented: Binding(get: { membreARetirer != nil },
+                                    set: { if !$0 { membreARetirer = nil } })) {
+            // Lu AVANT la fermeture de l'alerte, qui remet l'état à `nil`.
+            Button("Retirer", role: .destructive) {
+                if let membre = membreARetirer { Task { await retirer(membre) } }
+            }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Cette personne n'aura plus accès au club. Dans un club ouvert, elle peut revenir : passe le club sur demande ou sur code pour l'en empêcher.")
+        }
+        .alert("Changer le code d'invitation ?", isPresented: $codeAChanger) {
+            Button("Changer le code", role: .destructive) { Task { await changerLeCode() } }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("L'ancien code ne marchera plus. Les membres actuels restent dans le club.")
+        }
+        .alert("Supprimer ce club ?", isPresented: $suppressionDemandee) {
+            Button("Supprimer le club", role: .destructive) { Task { await supprimerLeClub() } }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Le club disparaît pour tous ses membres, avec son classement, ses défis, ses sorties prévues et ses messages. Les courses de chacun restent dans leur historique. C'est définitif.")
         }
         .sheet(item: $membreOuvert) { member in
             ClubMemberProfileView(
@@ -150,7 +184,45 @@ struct ClubManagementView: View {
                         Task { await changerLeRole(member, organisateur: true) }
                     }
                 }
+                // RETIRER QUELQU'UN n'existait pas : la créatrice pouvait bloquer une personne pour
+                // elle-même, pas l'ôter du club. Même règle que les rôles : elle seule.
+                Button("Retirer du club", role: .destructive) { membreARetirer = member }
             }
+        }
+    }
+
+    private func retirer(_ member: LeaderboardRow) async {
+        guard !gesteEnCours else { return }
+        gesteEnCours = true
+        defer { gesteEnCours = false }
+        do {
+            try await onRemoveMember(member.id)
+            appState.toast(String(localized: "\(member.name) ne fait plus partie du club."))
+        } catch {
+            appState.toast(PanneReseau.phrase(pour: error))
+        }
+    }
+
+    private func changerLeCode() async {
+        guard !gesteEnCours else { return }
+        gesteEnCours = true
+        defer { gesteEnCours = false }
+        do {
+            try await onRegenerateCode()
+            appState.toast(String(localized: "Nouveau code en place"))
+        } catch {
+            appState.toast(PanneReseau.phrase(pour: error))
+        }
+    }
+
+    private func supprimerLeClub() async {
+        guard !gesteEnCours else { return }
+        gesteEnCours = true
+        defer { gesteEnCours = false }
+        do {
+            try await onDeleteClub()
+        } catch {
+            appState.toast(PanneReseau.phrase(pour: error))
         }
     }
 
@@ -188,9 +260,17 @@ struct ClubManagementView: View {
             // confirmation. La forme doit dire ce que le geste fait. « Quitter le club » dit ce qu'il
             // coûte : il redemande le code d'invitation pour revenir.
             Button(action: onLeaveClub) {
-                ligneDAdhesion(String(localized: "Quitter le club"), filet: false)
+                ligneDAdhesion(String(localized: "Quitter le club"), filet: club.isOwner == true)
             }
             .buttonStyle(.plain)
+            // SUPPRIMER LE CLUB, pour qui l'a créé. Il n'existait aucun moyen de fermer un club :
+            // on pouvait seulement le quitter, et le laisser derrière soi.
+            if club.isOwner == true {
+                Button(action: { suppressionDemandee = true }) {
+                    ligneDAdhesion(String(localized: "Supprimer le club"), filet: false)
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 
@@ -285,9 +365,16 @@ struct ClubManagementView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(HZClubs.reductionDuCode)
                     .textSelection(.enabled)
-                HZBoutonPilule(libelle: String(localized: "Copier le code"), hauteur: .petite) {
-                    UIPasteboard.general.string = code
-                    appState.toast(String(localized: "Code copié"))
+                HStack(spacing: HZEspace.entrePilules) {
+                    HZBoutonPilule(libelle: String(localized: "Copier le code"), hauteur: .petite) {
+                        UIPasteboard.general.string = code
+                        appState.toast(String(localized: "Code copié"))
+                    }
+                    // Un code qui a circulé plus loin que prévu se change : il n'y avait aucun moyen.
+                    HZBoutonPilule(libelle: String(localized: "Changer le code"), hauteur: .petite,
+                                   fond: HZCouleur.surfaceClaire, couleur: HZCouleur.encre) {
+                        codeAChanger = true
+                    }
                 }
             }
         }

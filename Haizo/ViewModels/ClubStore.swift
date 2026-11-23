@@ -359,21 +359,43 @@ final class ClubStore {
         isLoading = true
         do {
             try await clubService.leaveClub()
-            board = ClubBoard(club: nil, leaderboard: [])
-            feed = []
-            // Without this, re-opening Club after leaving would briefly show the OLD club's cached
-            // board/feed (see AppState.cachedClubBoard) before the next fetch caught up.
-            appState.cachedClubBoard = nil
-            appState.cachedClubFeed = nil
-            // Both dictionaries are keyed by activity UUIDs from the club she's leaving — none of
-            // those ids can ever appear in a feed she can see again, so without this they'd just
-            // accumulate permanently in UserProfile across every club she's ever cycled through.
-            profile.kudosSeenCounts.removeAll()
-            profile.commentsSeenCounts.removeAll()
+            oublierLeClub()
         } catch {
             errorMessage = String(localized: "Impossible de quitter le club.")
         }
         isLoading = false
+    }
+
+    /// Ce que l'app tient d'un club qu'on vient de quitter ou de supprimer, et qu'il faut lâcher.
+    private func oublierLeClub() {
+        board = ClubBoard(club: nil, leaderboard: [])
+        feed = []
+        // Without this, re-opening Club after leaving would briefly show the OLD club's cached
+        // board/feed (see AppState.cachedClubBoard) before the next fetch caught up.
+        appState.cachedClubBoard = nil
+        appState.cachedClubFeed = nil
+        // Both dictionaries are keyed by activity UUIDs from the club she's leaving — none of
+        // those ids can ever appear in a feed she can see again, so without this they'd just
+        // accumulate permanently in UserProfile across every club she's ever cycled through.
+        profile.kudosSeenCounts.removeAll()
+        profile.commentsSeenCounts.removeAll()
+    }
+
+    // MARK: Ce que seule la créatrice peut faire
+
+    func retirerLeMembre(memberId: String, badges: [ClubBadge]) async throws {
+        try await clubService.removeClubMember(memberId: memberId)
+        await loadIfSignedIn(badges: badges)
+    }
+
+    func changerLeCode(badges: [ClubBadge]) async throws {
+        try await clubService.regenerateClubCode()
+        await loadIfSignedIn(badges: badges)
+    }
+
+    func supprimerLeClub() async throws {
+        try await clubService.deleteClub()
+        oublierLeClub()
     }
 
     func toggleKudos(_ item: FeedItem) async {

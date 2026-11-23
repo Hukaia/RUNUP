@@ -9388,10 +9388,20 @@ Charlotte a tranché cinq points. Trois sont faits ici, deux sont des chantiers 
 - **« Nous écrire »** et « Signaler un problème » écrivent à `contact@hukaia.com` (`Liens.courrielDeContact`), plus à une adresse personnelle. Les pages publiées (assistance, confidentialité) portent encore l'ancienne adresse : elles sont servies depuis `main`, et les changer demande une autorisation de publier.
 - **Explorer** : « Route » liste les courses sur route, comme « Trail » et « HYROX » listent les leurs. Les itinéraires ont leur filtre, « Itinéraires ».
 
+### Lot 6 : tenir son club (décision 2 de Charlotte)
+
+La créatrice d'un club pouvait nommer un organisateur et changer le mode d'entrée, rien de plus. Et la quitter laissait le club sans personne pour le tenir.
+
+- **Quitter son club le transmet.** `api/clubs/leave` passe le club à l'organisateur le plus ancien, à défaut au membre le plus ancien ; seule dans son club, la créatrice le supprime en partant. La règle est une fonction pure (`lib/proprieteClub.js`), avec six cas dans `tests/proprieteClub.test.js`. La confirmation de l'app dit lequel des deux va se produire.
+- **Retirer un membre** (`removeMember`), **changer le code d'invitation** (`regenerateCode`), **supprimer le club** (`deleteClub`) : trois routes réservées à la créatrice, bornées au club qu'elle possède. Dans l'app : « Retirer du club » dans le menu d'un membre, « Changer le code » à côté de « Copier le code », « Supprimer le club » sous « Quitter le club ». Chacun se confirme.
+- Limites dites : retirer quelqu'un n'est pas une exclusion définitive (dans un club ouvert il peut revenir, la confirmation le dit) ; « Retirer du club » et les rôles ne sont accessibles qu'à l'appui long sur un membre.
+- Le serveur est déployé en production par Vercel au push. Les routes sont nouvelles, donc sans effet sur les versions déjà installées ; seul `leave` change de comportement, et seulement pour une créatrice.
+- Non vérifié : aucune de ces routes n'a été appelée contre la vraie base. Les tests couvrent la règle de transmission, pas les requêtes.
+
 ### Constaté, pas encore corrigé
 
 - Explorer : « Garder cet itinéraire » sans liste des gardés.
 - Page de course : répondre à un message ne fait rien de visible.
-- Club : le lien d'invitation d'un club ne fait que préremplir une recherche ; pas de retrait de membre, de régénération de code ni de suppression de club ; la créatrice peut quitter son club et le laisser sans propriétaire.
+- Club : le lien d'invitation d'un club ne fait que préremplir une recherche.
 - Réglages : pas de « mot de passe oublié » (chantier décidé, à faire).
 - À confirmer sur téléphone : ouvrir une sortie depuis un profil (deux couvertures plein écran sur la même racine).

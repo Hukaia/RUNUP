@@ -16,6 +16,7 @@ const MAX_CLUB_CITY = 80;
 const { sendPushToUsers } = require('../../lib/apns');
 const { underDailyCap } = require('../../lib/rateLimit');
 const { MAX_SUGGESTIONS, ligneSuggeree } = require('../../lib/clubsSuggeres');
+const { heritierDuClub } = require('../../lib/proprieteClub');
 const {
   LONGUEUR_DU_CODE, MAX_DEMANDES_EN_ATTENTE, MAX_ESSAIS_DE_CODE_PAR_JOUR,
   modeValide, modeDuClub, colonnesDuMode, normaliserLeCode, codesIdentiques, codeVisible,
@@ -82,6 +83,15 @@ module.exports = withErrorHandling(async function handler(req, res) {
     case 'setJoinMode':
       if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
       return handleSetJoinMode(req, res, userId);
+    case 'removeMember':
+      if (req.method !== 'POST') return res.status(405).end();
+      return handleRemoveMember(req, res, userId);
+    case 'regenerateCode':
+      if (req.method !== 'POST') return res.status(405).end();
+      return handleRegenerateCode(req, res, userId);
+    case 'deleteClub':
+      if (req.method !== 'POST') return res.status(405).end();
+      return handleDeleteClub(req, res, userId);
     case 'leave':
       if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
       return handleLeave(req, res, userId);
@@ -427,8 +437,103 @@ async function retirerLesDemandesDuClub(clubId) {
   } catch { /* table pas encore migrée : rien à retirer */ }
 }
 
+// QUITTER SON CLUB, Y COMPRIS QUAND ON L'A CRÉÉ.
+//
+// La créatrice qui partait laissait un club sans personne pour le tenir (voir
+// `lib/proprieteClub.js`). Elle le TRANSMET maintenant en partant : à l'organisateur le plus
+// ancien, à défaut au membre le plus ancien. Seule dans son club, elle le supprime en le quittant.
+// La réponse dit ce qui s'est passé, pour que l'app puisse le dire aussi.
 async function handleLeave(req, res, userId) {
+  const { rows: possedes } = await sql`
+    SELECT c.id, c.cover_url
+      FROM clubs c
+      JOIN club_members m ON m.club_id = c.id AND m.user_id = ${userId}
+     WHERE c.created_by = ${userId}
+  `;
+  const club = possedes[0];
+  if (!club) {
+    await sql`DELETE FROM club_members WHERE user_id = ${userId}`;
+    return res.status(200).json({ ok: true });
+  }
+
+  const { rows: membres } = await sql`
+    SELECT user_id, role, joined_at FROM club_members WHERE club_id = ${club.id}
+  `;
+  const heritier = heritierDuClub(
+    membres.map((m) => ({ userId: m.user_id, role: m.role, joinedAt: m.joined_at })), userId);
+
+  if (!heritier) {
+    await supprimerLeClub(club);
+    return res.status(200).json({ ok: true, clubDeleted: true });
+  }
+  // La propriété D'ABORD, l'adhésion ensuite : dans l'autre ordre, un échec entre les deux
+  // laisserait exactement le club orphelin que cette route existe pour empêcher.
+  await sql`UPDATE clubs SET created_by = ${heritier} WHERE id = ${club.id}`;
   await sql`DELETE FROM club_members WHERE user_id = ${userId}`;
+  res.status(200).json({ ok: true, newOwnerId: heritier });
+}
+
+// Supprime un club et ce qui en dépend. Les membres, les défis, les sorties, les messages et les
+// demandes partent avec lui (clés étrangères en cascade) ; les activités restent chez leurs
+// autrices, détachées du club (`ON DELETE SET NULL`). L'image de couverture est retirée du
+// stockage, sans quoi elle y resterait, facturée et sans plus rien pour la référencer.
+async function supprimerLeClub(club) {
+  await sql`DELETE FROM clubs WHERE id = ${club.id}`;
+  if (club.cover_url) del(club.cover_url).catch(() => {});
+}
+
+// ─── CE QUE SEULE LA CRÉATRICE PEUT FAIRE ────────────────────────────────────────────────────
+//
+// Elle pouvait nommer un organisateur et changer le mode d'entrée, et rien de plus : ni retirer
+// quelqu'un, ni changer un code qui avait circulé, ni fermer son club. Trois gestes sans lesquels
+// « tenir un club » ne veut pas dire grand-chose.
+
+// Retire UN membre. Jamais soi-même (c'est `leave`, qui transmet le club), et jamais quelqu'un
+// d'un autre club : la suppression est bornée au club que l'appelante possède.
+//
+// Ce n'est PAS une exclusion définitive : dans un club ouvert, la personne peut revenir. Pour
+// l'en empêcher, la créatrice passe le club sur demande ou sur code.
+async function handleRemoveMember(req, res, userId) {
+  const { memberId } = req.body || {};
+  if (!isUuid(memberId) || memberId === userId) return res.status(400).json({ error: 'bad_request' });
+  const club = await clubQueJePossede(userId);
+  if (!club) return res.status(403).json({ error: 'not_owner' });
+  const { rows } = await sql`
+    DELETE FROM club_members WHERE club_id = ${club.id} AND user_id = ${memberId}
+    RETURNING user_id
+  `;
+  if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+  res.status(200).json({ ok: true, memberId });
+}
+
+// Tire un nouveau code. L'ancien cesse de marcher à l'instant : c'est tout l'objet du geste,
+// quand un code a circulé plus loin que prévu.
+async function handleRegenerateCode(req, res, userId) {
+  const club = await clubQueJePossede(userId);
+  if (!club) return res.status(403).json({ error: 'not_owner' });
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = randomInviteCode();
+    try {
+      await sql`UPDATE clubs SET invite_code = ${code} WHERE id = ${club.id}`;
+      return res.status(200).json({ inviteCode: codeVisible(modeDuClub(club), true, code) });
+    } catch (e) {
+      // La même collision, rarissime, que `create` rejoue : un code déjà porté par un autre club.
+      if (!String(e.message).includes('invite_code')) throw e;
+    }
+  }
+  res.status(500).json({ error: 'could_not_regenerate' });
+}
+
+// Supprime le club. Seule la créatrice, et seulement tant qu'elle en est membre.
+async function handleDeleteClub(req, res, userId) {
+  const { rows } = await sql`
+    SELECT c.id, c.cover_url
+      FROM clubs c
+      JOIN club_members m ON m.club_id = c.id AND m.user_id = ${userId}
+     WHERE c.created_by = ${userId}
+  `;
+  if (!rows[0]) return res.status(403).json({ error: 'not_owner' });
+  await supprimerLeClub(rows[0]);
   res.status(200).json({ ok: true });
 }
 

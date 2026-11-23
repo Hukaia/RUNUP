@@ -42408,6 +42408,244 @@
           }
         }
       }
+    },
+    "Retirer %@ du club ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove %@ from the club?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Quitar a %@ del club?"
+          }
+        }
+      }
+    },
+    "Cette personne n'aura plus accès au club. Dans un club ouvert, elle peut revenir : passe le club sur demande ou sur code pour l'en empêcher.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This person will no longer have access to the club. In an open club they can come back: switch the club to request or code to prevent it."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta persona ya no tendrá acceso al club. En un club abierto puede volver: pasa el club a solicitud o a código para impedirlo."
+          }
+        }
+      }
+    },
+    "Changer le code d'invitation ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change the invite code?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cambiar el código de invitación?"
+          }
+        }
+      }
+    },
+    "Changer le code": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change the code"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambiar el código"
+          }
+        }
+      }
+    },
+    "L'ancien code ne marchera plus. Les membres actuels restent dans le club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The old code will stop working. Current members stay in the club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El código anterior dejará de funcionar. Los miembros actuales siguen en el club."
+          }
+        }
+      }
+    },
+    "Supprimer ce club ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this club?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Eliminar este club?"
+          }
+        }
+      }
+    },
+    "Supprimer le club": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete the club"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar el club"
+          }
+        }
+      }
+    },
+    "Le club disparaît pour tous ses membres, avec son classement, ses défis, ses sorties prévues et ses messages. Les courses de chacun restent dans leur historique. C'est définitif.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The club disappears for all its members, with its leaderboard, challenges, planned runs and messages. Everyone's runs stay in their own history. This can't be undone."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El club desaparece para todos sus miembros, con su clasificación, sus retos, sus salidas previstas y sus mensajes. Las carreras de cada uno siguen en su historial. Es definitivo."
+          }
+        }
+      }
+    },
+    "Retirer du club": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove from the club"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar del club"
+          }
+        }
+      }
+    },
+    "%@ ne fait plus partie du club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is no longer in the club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ya no forma parte del club."
+          }
+        }
+      }
+    },
+    "Nouveau code en place": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New code in place"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuevo código activo"
+          }
+        }
+      }
+    },
+    "Tu as créé ce club. En partant, tu le transmets à l'organisateur le plus ancien, ou à défaut au membre le plus ancien.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You created this club. By leaving, you hand it over to the longest-standing organiser, or failing that the longest-standing member."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Has creado este club. Al irte, lo pasas al organizador más antiguo o, en su defecto, al miembro más antiguo."
+          }
+        }
+      }
+    },
+    "Tu es la seule personne de ce club : le quitter le supprime.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're the only person in this club: leaving it deletes it."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eres la única persona de este club: al dejarlo se elimina."
+          }
+        }
+      }
+    },
+    "Club supprimé": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Club deleted"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Club eliminado"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
