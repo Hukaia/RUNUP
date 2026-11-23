@@ -11,6 +11,11 @@ enum HZHub {
     /// Dimanche, compté de 0 (lundi) : le dernier jour d'une semaine de plan, d'où l'on ne peut
     /// plus déplacer une séance « à demain ».
     static let dernierJourDeLaSemaine = 6
+    /// Le code de réinitialisation d'un mot de passe : six chiffres. Voir `lib/motDePasseOublie.js`.
+    static let chiffresDuCodeDeReinitialisation = 6
+    /// Les deux statuts que la feuille « Mot de passe oublié » distingue.
+    static let serviceIndisponible = 503
+    static let tropDeDemandes = 429
     /// Du dernier élément du haut noir au bord de la feuille (avant le rayon, que la feuille remonte).
     static let sousLeHaut: CGFloat = 22
     static let sousLesCommandes: CGFloat = 16

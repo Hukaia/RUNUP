@@ -23,6 +23,7 @@ struct SignInView: View {
     @State private var password = ""
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @State private var motDePasseOublie = false
 
     @State private var showChooseUsername = false
     @State private var usernameField = ""
@@ -195,6 +196,24 @@ struct SignInView: View {
                            couleur: isEmailFormSubmittable ? HZCouleur.blanc : HZCouleur.secondaireSurClair,
                            etendu: true) { submitEmailForm() }
                 .disabled(!isEmailFormSubmittable)
+            // L'ISSUE QUI MANQUAIT. « Email ou mot de passe incorrect » était un cul-de-sac : pas
+            // de lien, pas de code, et un compte perdu avec son historique de club.
+            if mode == .signIn {
+                Button("Mot de passe oublié ?") { motDePasseOublie = true }
+                    .hzTexte(.c14, .semi)
+                    .foregroundStyle(HZCouleur.secondaireSurClair)
+                    .frame(maxWidth: .infinity, minHeight: HZBoutonRond.zoneTactile)
+                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+            }
+        }
+        .sheet(isPresented: $motDePasseOublie) {
+            MotDePasseOublieSheet(adresseInitiale: email.trimmingCharacters(in: .whitespaces)) {
+                // Déjà connectée par la feuille : on déroule la suite d'une connexion (jeton de
+                // notification, photo, choix du pseudo), sans refaire d'appel.
+                Task { await runAuth {} }
+            }
+            .hzFeuille(detents: [.large])
         }
     }
 

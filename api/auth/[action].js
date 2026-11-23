@@ -10,6 +10,13 @@ const { containsObjectionableContent } = require('../../lib/moderation');
 // Le nom d'affichage : comment on le choisit à la création, et quand on a le droit de le
 // remplacer. Les deux règles vivent ensemble — voir l'en-tête de `lib/noms.js`.
 const { nomALaCreation, nomDeReparation } = require('../../lib/noms');
+const { underDailyCap } = require('../../lib/rateLimit');
+const { courrielDisponible, envoyerUnCourriel } = require('../../lib/courriel');
+const {
+  DUREE_DU_CODE_MINUTES, DEMANDES_PAR_ADRESSE_ET_PAR_JOUR, DEMANDES_PAR_IP_ET_PAR_JOUR,
+  ESSAIS_PAR_IP_ET_PAR_JOUR,
+  nouveauCode, normaliserLeCode, empreinteDuCode, empreintesIdentiques, etatDeLaDemande, courrielDuCode,
+} = require('../../lib/motDePasseOublie');
 module.exports = withErrorHandling(async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
 
@@ -22,6 +29,10 @@ module.exports = withErrorHandling(async function handler(req, res) {
       return handleLogin(req, res);
     case 'signout':
       return handleSignout(req, res);
+    case 'requestReset':
+      return handleRequestReset(req, res);
+    case 'resetPassword':
+      return handleResetPassword(req, res);
     default:
       return res.status(404).json({ error: 'not_found' });
   }
@@ -235,4 +246,113 @@ async function handleSignout(req, res) {
   }
 
   res.status(200).json({ ok: true, revoked: true });
+}
+
+// ─── MOT DE PASSE OUBLIÉ ──────────────────────────────────────────────────────────────────────
+//
+// Deux routes, sans session : on ne peut pas être connectée, c'est tout le problème.
+//
+//   requestReset   { email, lang }             → envoie un code à six chiffres par courriel
+//   resetPassword  { email, code, password }   → pose le nouveau mot de passe, et connecte
+//
+// Les règles (durée, essais, texte du courriel) sont dans `lib/motDePasseOublie.js`, sous test.
+
+function adresseIP(req) {
+  return String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+}
+
+// `requestReset` répond PAREIL qu'un compte existe ou non. Répondre « adresse inconnue » ferait de
+// cette route un annuaire : n'importe qui saurait quelles adresses ont un compte. L'app affiche
+// donc une phrase conditionnelle (« si un compte existe… »). Un compte créé avec Apple n'a pas de
+// mot de passe : rien ne part, et la même réponse.
+//
+// La seule réponse différente est celle d'un serveur qui ne SAIT PAS envoyer de courriel (clé
+// absente) : elle ne dit rien sur aucun compte, et sans elle l'app promettrait un message qui
+// ne viendra jamais.
+async function handleRequestReset(req, res) {
+  const { email, lang } = req.body || {};
+  if (typeof email !== 'string' || !email.includes('@') || email.length > 320) {
+    return res.status(400).json({ error: 'bad_request' });
+  }
+  if (!courrielDisponible()) return res.status(503).json({ error: 'reset_unavailable' });
+  if (!(await underDailyCap('reset:' + adresseIP(req), DEMANDES_PAR_IP_ET_PAR_JOUR))) {
+    return res.status(429).json({ error: 'too_many_attempts' });
+  }
+
+  const adresse = email.trim().toLowerCase();
+  // Plafond PAR ADRESSE, et silencieux : sans lui, n'importe qui pourrait noyer la boîte de
+  // quelqu'un d'autre sous les codes. Dépassé, on répond comme si de rien n'était.
+  const sousLePlafond = await underDailyCap('resetmail:' + adresse, DEMANDES_PAR_ADRESSE_ET_PAR_JOUR);
+  const { rows } = await sql`SELECT id, email, password_hash FROM users WHERE lower(email) = ${adresse}`;
+  const user = rows[0];
+  if (user && user.password_hash && sousLePlafond) {
+    const code = nouveauCode();
+    const empreinte = empreinteDuCode(code, user.id, process.env.RUNUP_SESSION_SECRET);
+    const fin = new Date(Date.now() + DUREE_DU_CODE_MINUTES * 60 * 1000).toISOString();
+    await sql`
+      INSERT INTO password_resets (user_id, code_hash, expires_at, attempts)
+      VALUES (${user.id}, ${empreinte}, ${fin}, 0)
+      ON CONFLICT (user_id) DO UPDATE
+        SET code_hash = EXCLUDED.code_hash, expires_at = EXCLUDED.expires_at, attempts = 0, created_at = now()
+    `;
+    // L'adresse du COMPTE, pas celle tapée : la casse et les espaces viennent de la base.
+    await envoyerUnCourriel({ to: user.email, ...courrielDuCode(code, lang) });
+  }
+  res.status(200).json({ ok: true });
+}
+
+// Pose le nouveau mot de passe si le code est le bon, et rend une session comme `login` : on vient
+// de prouver qu'on tient la boîte de réception, redemander le mot de passe qu'on vient de taper
+// n'apprendrait rien de plus.
+//
+// CE QUE CETTE ROUTE NE FAIT PAS : fermer les sessions déjà ouvertes sur d'autres appareils. Les
+// jetons se révoquent un par un (`revoked_tokens`), et rien ne liste ceux d'un compte.
+async function handleResetPassword(req, res) {
+  const { email, code, password } = req.body || {};
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    return res.status(400).json({ error: 'bad_request' });
+  }
+  if (password.length < 8 || password.length > 200) return res.status(400).json({ error: 'weak_password' });
+  const saisi = normaliserLeCode(code);
+  if (!saisi) return res.status(400).json({ error: 'invalid_code' });
+  if (!(await underDailyCap('resettry:' + adresseIP(req), ESSAIS_PAR_IP_ET_PAR_JOUR))) {
+    return res.status(429).json({ error: 'too_many_attempts' });
+  }
+
+  const adresse = email.trim().toLowerCase();
+  const { rows } = await sql`
+    SELECT u.id, u.name, u.last_name, u.username, u.xp_total, r.code_hash, r.expires_at, r.attempts
+      FROM users u
+      LEFT JOIN password_resets r ON r.user_id = u.id
+     WHERE lower(u.email) = ${adresse}
+  `;
+  const user = rows[0];
+  // Même réponse pour « pas de compte » et « pas de demande » : ne pas servir d'annuaire non plus.
+  const etat = user && user.code_hash ? etatDeLaDemande(user) : 'absente';
+  if (etat === 'absente') return res.status(400).json({ error: 'invalid_code' });
+  if (etat === 'expire') {
+    await sql`DELETE FROM password_resets WHERE user_id = ${user.id}`;
+    return res.status(400).json({ error: 'expired_code' });
+  }
+  if (etat === 'trop_d_essais') return res.status(429).json({ error: 'code_locked' });
+
+  const attendu = empreinteDuCode(saisi, user.id, process.env.RUNUP_SESSION_SECRET);
+  if (!empreintesIdentiques(attendu, user.code_hash)) {
+    await sql`UPDATE password_resets SET attempts = attempts + 1 WHERE user_id = ${user.id}`;
+    return res.status(400).json({ error: 'invalid_code' });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+  await sql`UPDATE users SET password_hash = ${passwordHash} WHERE id = ${user.id}`;
+  // Le code a servi : il ne resservira pas.
+  await sql`DELETE FROM password_resets WHERE user_id = ${user.id}`;
+
+  const token = await signSession(user.id);
+  res.status(200).json({
+    token,
+    user: {
+      id: user.id, name: user.name, xpTotal: user.xp_total,
+      lastName: user.last_name || null, username: user.username || null,
+    },
+  });
 }

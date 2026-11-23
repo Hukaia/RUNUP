@@ -9398,10 +9398,20 @@ La créatrice d'un club pouvait nommer un organisateur et changer le mode d'entr
 - Le serveur est déployé en production par Vercel au push. Les routes sont nouvelles, donc sans effet sur les versions déjà installées ; seul `leave` change de comportement, et seulement pour une créatrice.
 - Non vérifié : aucune de ces routes n'a été appelée contre la vraie base. Les tests couvrent la règle de transmission, pas les requêtes.
 
+### Lot 7 : mot de passe oublié (décision 3 de Charlotte)
+
+Un compte créé avec une adresse et un mot de passe n'avait aucune issue quand le mot de passe était perdu.
+
+- **Serveur** : `api/auth/requestReset` envoie un code à six chiffres par courriel, `api/auth/resetPassword` pose le nouveau mot de passe et connecte. Le code vit 15 minutes et meurt au cinquième essai raté ; on n'en garde que l'empreinte (table `password_resets`). Plafonds par adresse et par IP. `requestReset` répond pareil qu'un compte existe ou non, pour ne pas servir d'annuaire. Les règles sont dans `lib/motDePasseOublie.js`, sept cas dans `tests/motDePasseOublie.test.js`.
+- **Envoi** : `lib/courriel.js`, par Resend, sans dépendance. Deux variables sur Vercel : `RESEND_API_KEY` (obligatoire) et `RESEND_FROM` (facultative, `Haizo <contact@hukaia.com>` par défaut, sur un domaine vérifié chez Resend).
+- **App** : « Mot de passe oublié ? » sous le formulaire de connexion, et la feuille `MotDePasseOublieSheet` en deux temps (adresse, puis code et nouveau mot de passe). Courriel en français, anglais ou espagnol selon la langue de l'app.
+- **Tant que la clé n'est pas posée**, le serveur répond « pas disponible » et la feuille le dit, avec l'adresse de contact. Rien n'est envoyé, rien n'est promis.
+- Non vérifié : aucun courriel n'a été envoyé, aucune des deux routes n'a tourné contre la vraie base. Les tests couvrent les règles, pas les requêtes ni Resend.
+- Limites dites : changer le mot de passe ne ferme pas les sessions ouvertes sur d'autres appareils. La politique de confidentialité devra nommer le prestataire d'envoi une fois la clé posée (page servie depuis `main`).
+
 ### Constaté, pas encore corrigé
 
 - Explorer : « Garder cet itinéraire » sans liste des gardés.
 - Page de course : répondre à un message ne fait rien de visible.
 - Club : le lien d'invitation d'un club ne fait que préremplir une recherche.
-- Réglages : pas de « mot de passe oublié » (chantier décidé, à faire).
 - À confirmer sur téléphone : ouvrir une sortie depuis un profil (deux couvertures plein écran sur la même racine).

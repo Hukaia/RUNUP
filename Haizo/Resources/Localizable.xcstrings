@@ -42646,6 +42646,295 @@
           }
         }
       }
+    },
+    "Mot de passe oublié": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forgot password"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraseña olvidada"
+          }
+        }
+      }
+    },
+    "Mot de passe oublié ?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forgot your password?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Has olvidado tu contraseña?"
+          }
+        }
+      }
+    },
+    "Donne l'adresse de ton compte. On t'y envoie un code à six chiffres pour choisir un nouveau mot de passe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your account's email address. We'll send a six-digit code there so you can choose a new password."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indica el correo de tu cuenta. Te enviamos allí un código de seis cifras para elegir una nueva contraseña."
+          }
+        }
+      }
+    },
+    "Recevoir un code": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get a code"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recibir un código"
+          }
+        }
+      }
+    },
+    "Si un compte avec mot de passe existe pour %@, un code à six chiffres vient d'y être envoyé. Il est valable 15 minutes. Pense à regarder dans les indésirables.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If an account with a password exists for %@, a six-digit code has just been sent there. It is valid for 15 minutes. Remember to check your spam folder."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si existe una cuenta con contraseña para %@, se acaba de enviar allí un código de seis cifras. Es válido durante 15 minutos. Mira también en el correo no deseado."
+          }
+        }
+      }
+    },
+    "Code reçu": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code received"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Código recibido"
+          }
+        }
+      }
+    },
+    "6 chiffres": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6 digits"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6 cifras"
+          }
+        }
+      }
+    },
+    "Nouveau mot de passe": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New password"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nueva contraseña"
+          }
+        }
+      }
+    },
+    "Changer mon mot de passe": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change my password"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambiar mi contraseña"
+          }
+        }
+      }
+    },
+    "Recevoir un nouveau code": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get a new code"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recibir un código nuevo"
+          }
+        }
+      }
+    },
+    "L'envoi du code n'est pas encore disponible. Écris-nous à %@ et on règle ça avec toi.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sending the code isn't available yet. Write to us at %@ and we'll sort it out with you."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El envío del código aún no está disponible. Escríbenos a %@ y lo resolvemos contigo."
+          }
+        }
+      }
+    },
+    "Trop de demandes aujourd'hui. Réessaie demain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too many requests today. Try again tomorrow."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demasiadas solicitudes hoy. Inténtalo mañana."
+          }
+        }
+      }
+    },
+    "Mot de passe changé": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password changed"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraseña cambiada"
+          }
+        }
+      }
+    },
+    "Ce code a expiré. Demande-en un nouveau.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This code has expired. Ask for a new one."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este código ha caducado. Pide uno nuevo."
+          }
+        }
+      }
+    },
+    "Trop d'essais sur ce code. Demande-en un nouveau.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too many attempts on this code. Ask for a new one."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demasiados intentos con este código. Pide uno nuevo."
+          }
+        }
+      }
+    },
+    "Ce code n'est pas le bon. Vérifie les six chiffres.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That's not the right code. Check the six digits."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ese código no es correcto. Comprueba las seis cifras."
+          }
+        }
+      }
+    },
+    "Trop d'essais aujourd'hui. Réessaie demain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too many attempts today. Try again tomorrow."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demasiados intentos hoy. Inténtalo mañana."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

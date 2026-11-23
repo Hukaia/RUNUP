@@ -235,6 +235,28 @@ final class AuthService {
         try await authenticate(path: "api/auth/login", body: ["email": email, "password": password])
     }
 
+    // MARK: Mot de passe oublié
+
+    /// Demande l'envoi d'un code à six chiffres à cette adresse. Le serveur répond PAREIL qu'un
+    /// compte existe ou non : un succès ici veut dire « la demande est partie », pas « ce compte
+    /// existe ». La langue voyage avec la demande, pour que le courriel soit dans celle de l'app.
+    func requestPasswordReset(email: String) async throws {
+        var request = URLRequest(url: Self.baseURL.appending(path: "api/auth/requestReset"))
+        request.timeoutInterval = Delais.interactif
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        let langue = Bundle.main.preferredLocalizations.first ?? "fr"
+        request.httpBody = try JSONSerialization.data(withJSONObject: ["email": email, "lang": langue])
+        let _: ReponseSansContenu = try await send(request)
+    }
+
+    /// Pose le nouveau mot de passe avec le code reçu. Réussi, il connecte : même réponse que
+    /// `logIn`.
+    func resetPassword(email: String, code: String, password: String) async throws {
+        try await authenticate(path: "api/auth/resetPassword",
+                               body: ["email": email, "code": code, "password": password])
+    }
+
     /// Refreshes `currentUser` (name, real `xpTotal`) from the server — call after sign-in and
     /// whenever Club needs a fresh number, since the server (not this device) owns that total
     /// once an account exists.
@@ -362,6 +384,9 @@ final class AuthService {
         return try JSONDecoder().decode(T.self, from: data)
     }
 }
+
+/// Une réponse dont seul le statut compte (`{"ok":true}`).
+private struct ReponseSansContenu: Decodable {}
 
 private struct AuthResponse: Decodable {
     var token: String

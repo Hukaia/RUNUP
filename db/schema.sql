@@ -1013,3 +1013,16 @@ CREATE TABLE IF NOT EXISTS club_join_requests (
 -- la plus ancienne d'abord) et « quelles demandes ai-je en attente » (par personne).
 CREATE INDEX IF NOT EXISTS idx_club_join_requests_club ON club_join_requests (club_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_club_join_requests_user ON club_join_requests (user_id);
+
+-- MOT DE PASSE OUBLIÉ : la demande en cours d'un compte. Une seule à la fois (clé primaire sur le
+-- compte) : en redemander un remplace le code précédent et remet les essais à zéro.
+--
+-- On ne garde PAS le code, seulement son empreinte (`lib/motDePasseOublie.js`). `attempts` compte
+-- les essais ratés : au cinquième le code est mort, et il en faut un nouveau.
+CREATE TABLE IF NOT EXISTS password_resets (
+  user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  code_hash TEXT NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  attempts INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
