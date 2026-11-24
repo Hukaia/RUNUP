@@ -19,7 +19,7 @@ import sys
 import tempfile
 import unittest
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import montage as M  # noqa: E402
@@ -122,6 +122,33 @@ class Decalage(unittest.TestCase):
     def test_le_simulateur_nest_pas_un_ecran(self):
         """Un décalage qui met le dernier plan après la fin de l'app ne tient pas."""
         self.assertFalse(M.tient(self.PLANS, 10.8, self.images, self.references))
+
+
+class PhraseDuBas(unittest.TestCase):
+    """La phrase du bas, dans le film : entière, et dans le cadre.
+
+    Le film reprenait la ligne courante des images fixes, qui traverse six images côte à côte :
+    vue un cadre à la fois, elle commençait et finissait au milieu d'un mot. Signalé par
+    Charlotte le 24 novembre 2026.
+    """
+
+    def test_chaque_langue_tient_dans_le_cadre_sans_rien_perdre(self):
+        import json
+        textes = json.loads((M.RACINE / "appstore/captions.json").read_text(encoding="utf-8"))
+        d = ImageDraw.Draw(Image.new("RGB", (10, 10)))
+        police = ImageFont.truetype(str(M.S.FONTS / "DMMono-Medium.ttf"), M.S.BANDEAU_TAILLE)
+        largeur = M.S.CANVAS[0] - 2 * M.S.MARGE
+        for langue, bloc in textes.items():
+            bandeau = bloc.get("bandeau") if isinstance(bloc, dict) else None
+            if not bandeau:
+                continue
+            lignes = M.lignes_du_bandeau(bandeau, d, police)
+            for ligne in lignes:
+                self.assertLessEqual(M.S.tracked_width(d, ligne, police, M.S.BANDEAU_CHASSE),
+                                     largeur, f"{langue} : « {ligne} » sort du cadre")
+            promesse = bandeau.split(" — ", 1)[-1].strip()
+            self.assertEqual(" ".join(lignes).lower(), promesse.lower(),
+                             f"{langue} : la phrase du film n'est pas la phrase entière")
 
 
 @unittest.skipUnless(shutil.which("ffmpeg"), "ffmpeg absent : ce cas tourne après son installation")

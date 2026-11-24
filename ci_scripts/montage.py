@@ -40,7 +40,7 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import screenshots as S  # noqa: E402
 import bascules as B  # noqa: E402
-from PIL import Image, ImageDraw, ImageFilter  # noqa: E402
+from PIL import Image, ImageDraw, ImageFilter, ImageFont  # noqa: E402
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 LARGEUR, HAUTEUR = 886, 1920
@@ -57,14 +57,56 @@ ECRAN_XY = (CHASSIS_X + BEZEL, S.DEVICE_TOP + BEZEL)
 ECRAN_WH = (S.SCREEN_W, CHASSIS[1] - 2 * BEZEL)
 
 
-def fond(rang: int, bandeau: str) -> Image.Image:
-    """Le décor d'un plan, SANS son titre : le fond, les filets, la ligne courante.
+def lignes_du_bandeau(bandeau: str, draw: ImageDraw.ImageDraw,
+                      police: ImageFont.FreeTypeFont) -> list[str]:
+    """La phrase du bas, ENTIÈRE, en deux lignes équilibrées qui tiennent dans le cadre.
 
-    Le cadre est pris dans la bande des six : chaque plan hérite donc d'un morceau DIFFÉRENT du
-    fond et de la ligne courante, et celle-ci avance d'un plan à l'autre comme elle avance d'une
-    capture à l'autre. Au-delà du sixième, on reboucle plutôt que de sortir de la bande.
+    On garde la promesse (« un programme qui se recalcule, un coach qui te lit, un club qui
+    court avec toi ») et on laisse les disciplines, que la carte d'ouverture vient de dire. La
+    coupe tombe sur la virgule qui équilibre le mieux les deux lignes.
     """
-    return S.cadre((rang - 1) % S.TOTAL + 1, bandeau).convert("RGB")
+    phrase = bandeau.split(" — ", 1)[-1].strip()
+    phrase = phrase[:1].upper() + phrase[1:]
+    largeur = S.CANVAS[0] - 2 * S.MARGE
+    mesure = lambda s: S.tracked_width(draw, s, police, S.BANDEAU_CHASSE)  # noqa: E731
+    if mesure(phrase) <= largeur:
+        return [phrase]
+    coupes = [i + 1 for i, c in enumerate(phrase) if c == ","]
+    candidats = [(max(mesure(phrase[:i].strip()), mesure(phrase[i:].strip())), i) for i in coupes]
+    if not candidats:
+        return [phrase]
+    _, i = min(candidats)
+    return [phrase[:i].strip(), phrase[i:].strip()]
+
+
+def fond(rang: int, bandeau: str) -> Image.Image:
+    """Le décor d'un plan, SANS son titre : le fond, les filets, et la phrase du bas.
+
+    # LA PHRASE DU BAS EST ENTIÈRE DANS LE FILM, ET C'EST LA CORRECTION DU 24 NOVEMBRE.
+
+    Le fond était la tranche de la bande des six images fixes, ligne courante comprise. Sur la
+    fiche, cette ligne traverse les six images posées côte à côte, et c'est voulu. Dans un film,
+    on ne voit qu'un cadre à la fois : la phrase commençait et finissait au milieu d'un mot, et
+    sautait d'un morceau à un autre toutes les deux secondes. Charlotte l'a vue « coupée ».
+
+    Le film garde le papier et les filets de sa tranche, sans la ligne courante, et pose la
+    phrase entière, centrée sous le filet du bas.
+    """
+    img = S.cadre((rang - 1) % S.TOTAL + 1, "").convert("RGBA")
+    if bandeau:
+        calque = Image.new("RGBA", img.size, (0, 0, 0, 0))
+        d = ImageDraw.Draw(calque)
+        police = ImageFont.truetype(str(S.FONTS / "DMMono-Medium.ttf"), S.BANDEAU_TAILLE)
+        lignes = lignes_du_bandeau(bandeau, d, police)
+        interligne = round(S.BANDEAU_TAILLE * 1.6)
+        bas = S.FILET_BAS + S.FILET
+        haut = bas + (img.height - bas - interligne * len(lignes)) // 2
+        for k, ligne in enumerate(lignes):
+            w = S.tracked_width(d, ligne, police, S.BANDEAU_CHASSE)
+            S.tracked(d, ((img.width - w) / 2, haut + k * interligne), ligne, police,
+                      S.ENCRE + (130,), S.BANDEAU_CHASSE)
+        img.alpha_composite(calque)
+    return img.convert("RGB")
 
 
 def titre_calque(titre: str, sous: str, rang: int, total: int) -> Image.Image:
@@ -165,9 +207,9 @@ def carte_titre(dossier: pathlib.Path, bandeau: str, mot: str, sous: str,
     # là et la rendait telle quelle. Le film se terminait sur « Course · Trail · Triathlon » au
     # lieu de « Sur l'App Store », dans les trois langues.
     f = dossier / f"carte-{role}.png"
-    img = S.cadre(1, bandeau).convert("RGBA")
+    # Le même décor que les plans : la phrase du bas entière, pas la tranche de la ligne courante.
+    img = fond(1, bandeau).convert("RGBA")
     d = ImageDraw.Draw(img)
-    from PIL import ImageFont
 
     # LE MOT EST POSÉ, PAS COMPOSÉ — correction du 16 novembre.
     #
