@@ -458,13 +458,26 @@ final class RefonteUITests: XCTestCase {
                        "l'écran « \(nom) » n'est pas stable : la comparaison ne prouve rien")
     }
 
+    /// Touche, ATTEND QUE L'ÉCRAN AIT CHANGÉ, puis photographie.
+    ///
+    /// Il attendait une seconde et demie fixe. Deux campagnes (93 et 95) ont photographié le Plan
+    /// après l'appui sur son retour, et le test passait quand même : la vérification, faite juste
+    /// APRÈS la photo, voyait déjà l'accueil. Le retour marchait, la machine était lente, et la
+    /// photo montrait un défaut qui n'existait pas. On attend donc le changement (six secondes au
+    /// plus), on laisse la transition se poser, et seulement alors on photographie.
     private func toucherEtComparer(_ app: XCUIApplication, _ nom: String, dx: CGFloat, dy: CGFloat,
                                    attendu: String) {
         let avant = app.screenshot().pngRepresentation
         app.coordinate(withNormalizedOffset: CGVector(dx: dx, dy: dy)).tap()
-        Thread.sleep(forTimeInterval: 1.5)
+        let limite = Date().addingTimeInterval(6)
+        var apres = app.screenshot().pngRepresentation
+        while apres == avant && Date() < limite {
+            Thread.sleep(forTimeInterval: 0.25)
+            apres = app.screenshot().pngRepresentation
+        }
+        XCTAssertNotEqual(avant, apres, attendu)
+        Thread.sleep(forTimeInterval: 1.0)
         photographier("touche-\(nom)", app: app)
-        XCTAssertNotEqual(avant, app.screenshot().pngRepresentation, attendu)
     }
 
     private func prendre(_ nom: String, arguments: [String], attente: TimeInterval = 2.0) {
