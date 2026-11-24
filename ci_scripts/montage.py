@@ -102,28 +102,37 @@ def chassis() -> Image.Image:
 
 def plaque(titre: str, sous: str, rang: int, total: int, bandeau: str,
            dossier: pathlib.Path) -> tuple[pathlib.Path, pathlib.Path, pathlib.Path]:
-    """Les trois calques d'un plan : le décor (avec l'ombre portée), le châssis percé, le titre."""
+    """Les trois calques d'un plan : le décor (avec l'ombre portée), le châssis percé, le titre.
+
+    # RIEN N'EST REPRIS D'UN FICHIER DÉJÀ LÀ, ET C'EST LA CORRECTION DU 24 NOVEMBRE.
+
+    Chaque calque n'était dessiné que si son fichier manquait. Or le workflow monte les trois
+    langues dans le même dossier de travail, le français d'abord : les films anglais et espagnol
+    reprenaient donc `titre-1.png`, `fond-1.png`… tels que le français les avait laissés. L'app à
+    l'écran parlait anglais, le titre au-dessus et la ligne courante en dessous parlaient
+    français. Rien ne le disait : le montage réussissait, les durées étaient justes.
+
+    Un calque coûte une fraction de seconde à dessiner, et chacun n'est demandé qu'une fois par
+    film. Il n'y avait rien à économiser, seulement de quoi se tromper de langue.
+    """
     dossier.mkdir(parents=True, exist_ok=True)
     f = dossier / f"fond-{rang}.png"
-    if not f.exists():
-        img = fond(rang, bandeau).convert("RGBA")
-        # L'ombre de l'appareil appartient au FOND : posée avec le châssis, elle s'appliquerait
-        # par-dessus la vidéo et noircirait le bas de l'écran.
-        silhouette = Image.new("L", CHASSIS, 0)
-        ImageDraw.Draw(silhouette).rounded_rectangle(
-            (0, 0, CHASSIS[0] - 1, CHASSIS[1] - 1),
-            radius=S.SCREEN_W * S.SCREEN_RADIUS + BEZEL, fill=255)
-        ombre = Image.new("RGBA", S.CANVAS, (0, 0, 0, 0))
-        ombre.paste(Image.new("RGBA", CHASSIS, (0, 0, 0, 120)), (CHASSIS_X, S.DEVICE_TOP + 26),
-                    silhouette)
-        img.alpha_composite(ombre.filter(ImageFilter.GaussianBlur(40)))
-        img.convert("RGB").save(f)
+    img = fond(rang, bandeau).convert("RGBA")
+    # L'ombre de l'appareil appartient au FOND : posée avec le châssis, elle s'appliquerait
+    # par-dessus la vidéo et noircirait le bas de l'écran.
+    silhouette = Image.new("L", CHASSIS, 0)
+    ImageDraw.Draw(silhouette).rounded_rectangle(
+        (0, 0, CHASSIS[0] - 1, CHASSIS[1] - 1),
+        radius=S.SCREEN_W * S.SCREEN_RADIUS + BEZEL, fill=255)
+    ombre = Image.new("RGBA", S.CANVAS, (0, 0, 0, 0))
+    ombre.paste(Image.new("RGBA", CHASSIS, (0, 0, 0, 120)), (CHASSIS_X, S.DEVICE_TOP + 26),
+                silhouette)
+    img.alpha_composite(ombre.filter(ImageFilter.GaussianBlur(40)))
+    img.convert("RGB").save(f)
     c = dossier / "chassis.png"
-    if not c.exists():
-        chassis().save(c)
+    chassis().save(c)
     tt = dossier / f"titre-{rang}.png"
-    if not tt.exists():
-        titre_calque(titre, sous, rang, total).save(tt)
+    titre_calque(titre, sous, rang, total).save(tt)
     return f, c, tt
 
 
@@ -132,16 +141,19 @@ def plaque(titre: str, sous: str, rang: int, total: int, bandeau: str,
 MARQUE = "Haizo/Resources/Assets.xcassets/haizo-mot.imageset/haizo-mot.png"
 
 
-def carte_titre(dossier: pathlib.Path, bandeau: str, mot: str, sous: str) -> pathlib.Path:
+def carte_titre(dossier: pathlib.Path, bandeau: str, mot: str, sous: str,
+                role: str) -> pathlib.Path:
     """L'image d'ouverture ou de fin : le fond de la fiche, et le nom au centre.
 
     Deux secondes à l'entrée, une et demie à la sortie, sur vingt-quatre : Apple demande qu'un
     aperçu soit d'abord du contenu capturé dans l'app, et c'est aussi ce qu'on veut — une carte
     de titre longue est une publicité, pas une démonstration.
     """
-    f = dossier / f"carte-{mot[:6].lower().strip()}.png"
-    if f.exists():
-        return f
+    # NOMMÉE PAR SON RÔLE, ET TOUJOURS REDESSINÉE. Le fichier portait le MOT (« haizo »), qui
+    # est le même à l'ouverture et à la fin : la carte de fin trouvait celle d'ouverture déjà
+    # là et la rendait telle quelle. Le film se terminait sur « Course · Trail · Triathlon » au
+    # lieu de « Sur l'App Store », dans les trois langues.
+    f = dossier / f"carte-{role}.png"
     img = S.cadre(1, bandeau).convert("RGBA")
     d = ImageDraw.Draw(img)
     from PIL import ImageFont
@@ -330,7 +342,9 @@ def main() -> int:
                        "sous": bloc["plans"][b["nom"]][1]}
                       for i, b in enumerate(bornes, start=1)],
         }
-    travail = options.travail or options.sortie.parent / "montage"
+    # UN DOSSIER DE TRAVAIL PAR FILM. Le workflow monte les trois langues l'une après l'autre
+    # dans le même dossier de sortie : un dossier commun mêlait leurs calques et leurs morceaux.
+    travail = options.travail or options.sortie.parent / "montage" / options.sortie.stem
     travail.mkdir(parents=True, exist_ok=True)
     bandeau = script.get("bandeau", "")
 
@@ -340,7 +354,8 @@ def main() -> int:
 
     ouverture = script.get("ouverture")
     if ouverture:
-        img = carte_titre(travail, bandeau, ouverture["mot"], ouverture.get("sous", ""))
+        img = carte_titre(travail, bandeau, ouverture["mot"], ouverture.get("sous", ""),
+                          role="ouverture")
         m = travail / "00-ouverture.mp4"
         plan_fixe(img, ouverture["duree"], m)
         morceaux.append(m); duree_totale += ouverture["duree"]
@@ -374,7 +389,7 @@ def main() -> int:
 
     fin = script.get("fin")
     if fin:
-        img = carte_titre(travail, bandeau, fin["mot"], fin.get("sous", ""))
+        img = carte_titre(travail, bandeau, fin["mot"], fin.get("sous", ""), role="fin")
         m = travail / "99-fin.mp4"
         plan_fixe(img, fin["duree"], m)
         morceaux.append(m); duree_totale += fin["duree"]
@@ -405,6 +420,12 @@ def main() -> int:
             f"{SECONDES_MAX}. Ajoute ou retire un plan, ou change leur durée.")
     if poids > 500:
         raise SystemExit("Au-delà des 500 Mo qu'Apple accepte.")
+    # Les morceaux ont servi : ils pèsent autant que le film, et il y en a un jeu par langue
+    # depuis que chaque film a son dossier. Les calques, eux, restent — quelques images, et la
+    # preuve de ce qui a été écrit sur chaque plan.
+    if options.travail is None:
+        for morceau in morceaux:
+            morceau.unlink(missing_ok=True)
     return 0
 
 

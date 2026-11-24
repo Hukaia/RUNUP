@@ -97,6 +97,7 @@ on:
       - "ci_scripts/comparer.py"
       - "ci_scripts/test_comparer.py"
       - "ci_scripts/test_bascules.py"
+      - "ci_scripts/test_montage.py"
       - "ci_scripts/check_grand_texte.py"
       - "ci_scripts/test_grand_texte.py"
       - "ci_scripts/check_banniere.py"
@@ -312,6 +313,9 @@ jobs:
             "$RUNNER_TEMP/venv/bin/python" "ci_scripts/$outil" --help > /dev/null
             echo "ci_scripts/$outil se charge."
           done
+          # Et ce qu'un film ne doit pas reprendre d'un autre : les titres, la ligne courante, la
+          # carte de fin. Une seconde, sans ffmpeg — voir `test_montage.py`.
+          "$RUNNER_TEMP/venv/bin/python" ci_scripts/test_montage.py
 
       - name: Photographier, langue par langue
         run: |
