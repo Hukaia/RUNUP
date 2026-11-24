@@ -106,6 +106,12 @@ struct ExplorerView: View {
                 filtre = demande
                 appState.filtreDExplorerAuProchainPassage = nil
             }
+            ouvrirLeClubDuLien()
+        }
+        // Le lien peut arriver alors qu'Explorer est déjà à l'écran.
+        .onChange(of: appState.clubIdDepuisUnLien) { _, _ in ouvrirLeClubDuLien() }
+        .onChange(of: appState.auth.isSignedIn) { _, connectee in
+            if connectee { ouvrirLeClubDuLien() }
         }
         .task { await charger() }
         .task {
@@ -477,6 +483,33 @@ struct ExplorerView: View {
     }
 
     /// Une adhésion faite depuis une fiche : on va dans le club, qui se relit.
+    /// LE CLUB D'UN LIEN : sa fiche, avec « Rejoindre ». Lu une fois, puis effacé.
+    ///
+    /// Un club sur code ne montre pas sa fiche sans son code (le serveur répond 404) : on ouvre
+    /// alors la saisie du code, et on dit pourquoi.
+    private func ouvrirLeClubDuLien() {
+        guard let identifiant = appState.clubIdDepuisUnLien else { return }
+        filtre = .clubs
+        // Pas encore connectée (elle vient peut-être d'installer l'app par ce lien) : le lien
+        // attend la connexion, et la fiche s'ouvrira à ce moment-là.
+        guard appState.auth.isSignedIn else {
+            appState.toast(String(localized: "Connecte-toi pour rejoindre ce club."))
+            return
+        }
+        appState.clubIdDepuisUnLien = nil
+        Task {
+            do {
+                let fiche = try await service.clubPreview(id: identifiant)
+                ficheOuverte = ClubFicheOuverte(fiche, code: nil)
+            } catch ClubServiceError.badResponse(let statut, _) where statut == HZHub.introuvable {
+                codeOuvert = true
+                appState.toast(String(localized: "Ce club se rejoint avec un code. Demande-le à qui t'a envoyé le lien."))
+            } catch {
+                appState.toast(PanneReseau.phrase(pour: error))
+            }
+        }
+    }
+
     private func apresAdhesion() async {
         Analytics.shared.track(.clubJoined)
         appState.cachedClubBoard = nil

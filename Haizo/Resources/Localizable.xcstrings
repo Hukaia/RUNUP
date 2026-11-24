@@ -42969,6 +42969,125 @@
           }
         }
       }
+    },
+    "Mes itinéraires": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My routes"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mis rutas"
+          }
+        }
+      }
+    },
+    "Connecte-toi pour garder des itinéraires et les retrouver ici.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in to save routes and find them here."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicia sesión para guardar rutas y encontrarlas aquí."
+          }
+        }
+      }
+    },
+    "Aucun itinéraire gardé pour l'instant. Ouvre-en un et touche « Garder cet itinéraire » : il t'attendra ici, où que tu sois.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No saved routes yet. Open one and tap “Save this route”: it'll be waiting here, wherever you are."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no has guardado ninguna ruta. Abre una y toca «Guardar esta ruta»: te esperará aquí, estés donde estés."
+          }
+        }
+      }
+    },
+    "Ce club se rejoint avec un code. Demande-le à qui t'a envoyé le lien.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This club is joined with a code. Ask the person who sent you the link."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A este club se entra con un código. Pídeselo a quien te envió el enlace."
+          }
+        }
+      }
+    },
+    "Connecte-toi pour rejoindre ce club.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in to join this club."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicia sesión para unirte a este club."
+          }
+        }
+      }
+    },
+    "%@ · Séance clé": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · Key session"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · Sesión clave"
+          }
+        }
+      }
+    },
+    "Séance faite ✓": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session done ✓"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sesión hecha ✓"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

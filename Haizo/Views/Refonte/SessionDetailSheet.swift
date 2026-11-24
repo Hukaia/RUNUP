@@ -1,7 +1,22 @@
 import SwiftUI
 
+/// Une séance d'un AUTRE jour de la semaine, ouverte depuis le Plan.
+///
+/// La fiche ne savait montrer que la séance du jour : toucher jeudi dans le Plan ne faisait rien.
+/// Elle montre maintenant ce qui est prévu ce jour-là, sans les gestes qui n'ont de sens
+/// qu'aujourd'hui (démarrer, déplacer à demain, noter comme faite).
+struct SeanceDUnAutreJour: Identifiable {
+    var id: Int
+    var seance: WorkoutSession
+    var date: Date
+    var faite: Bool
+}
+
 /// Bottom sheet reached by tapping the home hero card. Mirrors `SessionDetailSheet` in screensC.jsx.
 struct SessionDetailSheet: View {
+    /// Nil : la séance du jour, la seule qui se démarre.
+    var autreJour: SeanceDUnAutreJour? = nil
+
     @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
     @Environment(SubscriptionService.self) private var subscriptions
@@ -32,6 +47,7 @@ struct SessionDetailSheet: View {
         // Capture : `--hyrox=<kind>` fait lire à la feuille CETTE séance. Voir `CaptureSeed.seanceHyroxDemandee`.
         if let demandee = CaptureSeed.seanceHyroxDemandee { return demandee }
         #endif
+        if let autreJour { return autreJour.seance }
         return appState.profile.todaySession
     }
 
@@ -436,7 +452,13 @@ struct SessionDetailSheet: View {
             // Les deux états partent ensemble : « Déplacer à demain / Démarrer », et la confirmation
             // qui les remplace une fois la séance déplacée. Épingler seulement le premier aurait
             // fait disparaître la barre d'un coup au moment où l'on déplace.
-            .safeAreaInset(edge: .bottom, spacing: 0) { pied }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if let autreJour {
+                    piedDUnAutreJour(autreJour)
+                } else {
+                    pied
+                }
+            }
         }
     }
 
@@ -446,6 +468,17 @@ struct SessionDetailSheet: View {
     /// Elle l'écrivait sur TOUTES les séances, y compris un footing ou un travail de mobilité : un mot
     /// qui ne distingue plus rien ne dit plus rien.
     private var legende: String {
+        if let autreJour {
+            // « Jeudi 26 novembre » : la majuscule de début de phrase vient du formateur, qui sait
+            // la mettre selon la langue (et ne touche pas au mois).
+            let quand = autreJour.date.formatted(
+                Date.FormatStyle(capitalizationContext: .beginningOfSentence)
+                    .weekday(.wide).day().month(.wide))
+            switch session.role {
+            case .speed, .longRun: return String(localized: "\(quand) · Séance clé")
+            case .easy, .none: return quand
+            }
+        }
         if isRestDay { return String(localized: "Aujourd'hui") }
         switch session.role {
         case .speed, .longRun: return String(localized: "Séance clé")
@@ -530,7 +563,8 @@ struct SessionDetailSheet: View {
     // MARK: - L'ajustement
 
     @ViewBuilder private var explicationDeLAjustement: some View {
-        if let adj = session.adjustment {
+        // L'allègement du jour ne vaut que pour aujourd'hui : sur un autre jour, l'expliquer serait faux.
+        if let adj = session.adjustment, autreJour == nil || !adj.hasPrefix("Allégée") {
             // Two different mechanisms can set this same field (see `WorkoutSession.
             // adjustment`) — a week-boundary tier bump/ease from LAST week's average
             // RPE ("Niveau X"), or a same-day reactive lightening from TODAY's sleep/
@@ -549,6 +583,23 @@ struct SessionDetailSheet: View {
     }
 
     // MARK: - Le pied
+
+    /// Un autre jour : rien à démarrer ni à déplacer d'ici. Seulement, si c'est le cas, qu'elle est faite.
+    @ViewBuilder private func piedDUnAutreJour(_ jour: SeanceDUnAutreJour) -> some View {
+        if jour.faite {
+            Text(String(localized: "Séance faite ✓"))
+                .hzTexte(.c16, .semi)
+                .foregroundStyle(HZCouleur.encre)
+                .frame(maxWidth: .infinity)
+                .frame(height: HZHauteurDeBouton.grande.rawValue)
+                .background(HZCouleur.surfaceClaire, in: Capsule())
+                .padding(.horizontal, HZEspace.marge)
+                .padding(.top, HZEspace.entreCommandes)
+                .padding(.bottom, HZHub.basDeFeuille)
+                .frame(maxWidth: .infinity)
+                .background(HZCouleur.blanc)
+        }
+    }
 
     @ViewBuilder private var pied: some View {
         Group {

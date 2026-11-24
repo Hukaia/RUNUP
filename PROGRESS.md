@@ -9460,9 +9460,13 @@ La campagne de captures App Store n° 269 est la première depuis le 18 novembre
 - **Amis, « Voir le fil »** : ouvre le fil sur le filtre « Amis », pas sur le fil entier.
 - Non vérifié sur appareil : la remontée de la page vers le champ de réponse (c'est le système qui la fait quand un champ prend la main), et l'échec de localisation (le simulateur ne le produit pas).
 
+### Lot 9 : les trois derniers points du contrôle des liens (24 novembre)
+
+- **« Garder cet itinéraire » mène quelque part** : l'écran des itinéraires a un filtre « Mes itinéraires », qui liste ceux qu'on a gardés puis ceux qu'on a publiés, et cadre la carte dessus (ils peuvent être à l'autre bout du pays). Retirer un itinéraire gardé l'enlève de la liste. La route serveur (`routesMine`) existait déjà, rien ne l'appelait.
+- **Le lien d'invitation d'un club ouvre sa fiche** : `runup-nu.vercel.app/club/<id>` ouvre Explorer sur « Clubs » avec la fiche du club et son bouton pour rejoindre. Il ne faisait que préremplir une recherche par nom. Un club sur code ne montre pas sa fiche sans son code : la saisie du code s'ouvre, avec la raison. Pas encore connectée : le lien attend la connexion. L'ancienne recherche par nom et l'appel public qui la servait sont retirés.
+- **Le Plan ouvre la séance d'un autre jour** : la carte de jeudi, au premier plan, ouvre la fiche de la séance prévue jeudi (date en légende, « Séance clé » si c'en est une), sans « Démarrer », « Déplacer » ni « Je l'ai déjà faite », qui n'ont de sens qu'aujourd'hui. Une séance déjà faite le dit. Photographié par `test04Touches` (`touche-plan-carte-jeudi`).
+- Non vérifié : le lien d'invitation sur un vrai téléphone (le simulateur des captures ne reçoit pas de lien universel), et « Mes itinéraires » contre la vraie base.
+
 ### Constaté, pas encore corrigé
 
-- Explorer : « Garder cet itinéraire » sans liste des gardés.
-- Club : le lien d'invitation d'un club ne fait que préremplir une recherche. La fiche d'un club existe maintenant, mais l'ouvrir depuis un lien demande que le serveur dise le mode d'adhésion à quelqu'un qui n'a pas le code : à faire avec la vraie base sous les yeux.
-- Plan : la carte d'un autre jour qu'aujourd'hui n'ouvre pas sa fiche de séance (la fiche ne sait montrer que la séance du jour).
 - À confirmer sur téléphone : ouvrir une sortie depuis un profil (deux couvertures plein écran sur la même racine).

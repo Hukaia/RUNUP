@@ -113,20 +113,6 @@ struct ClubView: View {
         }
         .task { await magasin.loadIfSignedIn(badges: badges) }
         .sheet(isPresented: $showManagement) { gestion.hzFeuille(detents: [.large]) }
-        // Arrivée par le lien public d'un club : la recherche s'ouvre déjà remplie de son nom,
-        // donc le bouton « Rejoindre » est à un geste. Le nom est consommé pour qu'un retour sur
-        // l'onglet ne le réécrive pas par-dessus une recherche en cours.
-        .onChange(of: appState.clubDepuisUnLien) { _, nom in
-            guard let nom else { return }
-            clubQuery = nom
-            appState.clubDepuisUnLien = nil
-        }
-        .onAppear {
-            if let nom = appState.clubDepuisUnLien {
-                clubQuery = nom
-                appState.clubDepuisUnLien = nil
-            }
-        }
         // Même temporisation que la recherche de personnes : on cherche À LA FRAPPE, mais on
         // n'envoie pas une requête par lettre.
         .onChange(of: clubQuery) { _, nouveau in magasin.chercherUnClub(nouveau) }

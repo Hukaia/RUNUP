@@ -262,12 +262,8 @@ private struct RootView: View {
             // donc la recherche préremplie, qui mène au bouton « Rejoindre » en un geste.
             if url.host == "runup-nu.vercel.app",
                url.pathComponents.count >= 3, url.pathComponents[1] == "club" {
-                let identifiant = url.pathComponents[2]
-                Task { @MainActor in
-                    guard let club = await ClubService.clubPublic(id: identifiant) else { return }
-                    appState?.clubDepuisUnLien = club.name
-                    appState?.go(.club)
-                }
+                appState?.clubIdDepuisUnLien = url.pathComponents[2]
+                appState?.allerALOnglet(.explorer)
             }
         }
     }

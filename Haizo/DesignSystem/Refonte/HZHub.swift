@@ -15,6 +15,8 @@ enum HZHub {
     static let chiffresDuCodeDeReinitialisation = 6
     /// Les deux statuts que la feuille « Mot de passe oublié » distingue.
     static let serviceIndisponible = 503
+    /// Ce que le serveur répond pour la fiche d'un club sur code demandée sans son code.
+    static let introuvable = 404
     static let tropDeDemandes = 429
     /// Du dernier élément du haut noir au bord de la feuille (avant le rayon, que la feuille remonte).
     static let sousLeHaut: CGFloat = 22

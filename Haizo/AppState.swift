@@ -149,13 +149,15 @@ final class AppState {
         courseOuverte = course
     }
 
-    /// LE CLUB QU'UN LIEN DEMANDE D'OUVRIR.
+    /// LE CLUB QU'UN LIEN DEMANDE D'OUVRIR : son identifiant.
     ///
-    /// Posé par `.onOpenURL` quand on arrive depuis `runup-nu.vercel.app/club/<id>` — le lien
-    /// qu'un crew met dans sa bio Instagram. L'écran du Club le lit à son apparition et
-    /// préremplit la recherche avec le nom, puisqu'il n'existe pas d'écran « club de quelqu'un
-    /// d'autre » : ce qu'on veut en arrivant par ce lien, c'est le rejoindre.
-    var clubDepuisUnLien: String?
+    /// Posé par `.onOpenURL` quand on arrive depuis `runup-nu.vercel.app/club/<id>`, le lien
+    /// qu'un club met dans sa bio ou que « Inviter » partage. Explorer le lit à son apparition et
+    /// ouvre LA FICHE DU CLUB, avec son bouton pour rejoindre.
+    ///
+    /// Il ne faisait que préremplir une recherche par nom : un geste de plus, et pour un club sur
+    /// code, une recherche qui ne pouvait rien trouver (ces clubs n'y figurent pas).
+    var clubIdDepuisUnLien: String?
     /// Phone↔watch bridge — receives runs finished on the wrist, mirrors today's session out.
     /// Optional only because it needs `self` (created at the end of `init`); never nil after.
     @ObservationIgnored private(set) var watchSession: WatchSessionService?

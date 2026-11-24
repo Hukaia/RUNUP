@@ -429,6 +429,15 @@ final class RefonteUITests: XCTestCase {
         photographier("plan-jeudi", app: jeudi)
         XCTAssertNotEqual(avant, jeudi.screenshot().pngRepresentation,
                           "le jeudi de la rangée doit changer la carte et la pastille")
+
+        // 5. La carte de jeudi, au premier plan, ouvre la fiche de SA séance. Elle ne faisait
+        //    rien : seule la séance du jour avait une fiche.
+        let avantLaFiche = jeudi.screenshot().pngRepresentation
+        jeudi.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        photographier("touche-plan-carte-jeudi", app: jeudi)
+        XCTAssertNotEqual(avantLaFiche, jeudi.screenshot().pngRepresentation,
+                          "la carte de jeudi doit ouvrir la fiche de sa séance")
         jeudi.terminate()
     }
 

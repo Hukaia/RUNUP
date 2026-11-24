@@ -29,6 +29,8 @@ struct PlanSemaineView: View {
 
     /// Le jour regardé. `nil` tant qu'on n'a rien touché : c'est alors aujourd'hui.
     @State private var choix: Int?
+    /// La séance d'un autre jour que le jour même, ouverte en touchant sa carte.
+    @State private var seanceDUnAutreJour: SeanceDUnAutreJour?
     @State private var planCompletOuvert = false
 
     private var profile: UserProfile { appState.profile }
@@ -95,6 +97,10 @@ struct PlanSemaineView: View {
         }
         .ignoresSafeArea(edges: .top)
         .statusBarHidden()
+        .sheet(item: $seanceDUnAutreJour) { jour in
+            SessionDetailSheet(autreJour: jour)
+                .hzFeuille(detents: [.medium, .large], gereSonBas: true)
+        }
         .fullScreenCover(isPresented: $planCompletOuvert) {
             PlanView(retour: { planCompletOuvert = false })
                 .toastDeModale()
@@ -306,13 +312,26 @@ struct PlanSemaineView: View {
     }
 
     private func repondAuToucher(_ jour: PlanSemaineModele.Jour) -> Bool {
-        jour.id != choisi || jour.etat == .aujourdhui
+        jour.id != choisi || jour.etat == .aujourdhui || seanceDuJour(jour) != nil
+    }
+
+    /// La séance prévue un AUTRE jour que le jour même, s'il y en a une (pas un repos).
+    private func seanceDuJour(_ jour: PlanSemaineModele.Jour) -> SeanceDUnAutreJour? {
+        guard jour.etat != .aujourdhui, !jour.estUnRepos,
+              let prevu = appState.profile.weekSessions.first(where: { $0.weekday == jour.id }),
+              let seance = prevu.session, seance.durationMinutes > 0 else { return nil }
+        return SeanceDUnAutreJour(id: jour.id, seance: seance, date: jour.date, faite: prevu.completed)
     }
 
     private func toucher(_ jour: PlanSemaineModele.Jour) {
         if jour.id == choisi {
-            // La carte déjà au premier plan : celle d'aujourd'hui ouvre le détail de la séance.
-            if jour.etat == .aujourdhui { appState.openSessionDetail() }
+            // La carte déjà au premier plan ouvre le détail de sa séance : celle d'aujourd'hui avec
+            // « Démarrer », celle d'un autre jour pour voir ce qui est prévu.
+            if jour.etat == .aujourdhui {
+                appState.openSessionDetail()
+            } else if let autre = seanceDuJour(jour) {
+                seanceDUnAutreJour = autre
+            }
         } else {
             selectionner(jour.id)
         }

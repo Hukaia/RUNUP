@@ -19,6 +19,10 @@ struct RouteDiscoveryView: View {
     @State private var loadError: String?
     @State private var selected: SharedRoute?
     @State private var filter: DistanceFilter = .all
+    /// « Mes itinéraires » : ceux que j'ai gardés, et ceux que j'ai publiés. « Garder cet
+    /// itinéraire » ne menait nulle part : rien dans l'app ne listait ce qu'on avait gardé, et un
+    /// itinéraire gardé en voyage était perdu dès qu'on quittait la zone de la carte.
+    @State private var mesItineraires = false
     @State private var permission = LocationPermission()
     @Environment(\.openURL) private var openURL
 
@@ -66,6 +70,11 @@ struct RouteDiscoveryView: View {
         .sheet(item: $selected) { route in
             RouteDetailSheet(route: route) { updated in
                 if let index = routes.firstIndex(where: { $0.id == updated.id }) { routes[index] = updated }
+                // Retiré de mes itinéraires pendant que je les regarde : il quitte la liste, sauf
+                // si c'est l'un des miens (publié), qui y reste.
+                if mesItineraires, !updated.saved, !publies.contains(updated.id) {
+                    routes.removeAll { $0.id == updated.id }
+                }
             }
             .hzFeuille()
         }
@@ -174,6 +183,8 @@ struct RouteDiscoveryView: View {
 
     private var libelleDeLaPilule: String {
         if isLoading { return String(localized: "Recherche des itinéraires…") }
+        // Sur « Mes itinéraires », la pilule ramène à la carte : chercher ce qu'il y a par ici.
+        if mesItineraires { return String(localized: "Chercher dans cette zone") }
         if regionMovedSinceSearch { return String(localized: "Chercher dans cette zone") }
         return Pluriel.choisir(routes.count,
                                String(localized: "\(routes.count) itinéraire par ici"),
@@ -198,8 +209,14 @@ struct RouteDiscoveryView: View {
     private var filtres: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: HZEspace.entrePilules) {
+                HZFiltre(libelle: String(localized: "Mes itinéraires"), actif: mesItineraires,
+                         fond: .clair) {
+                    Haptics.selection()
+                    Task { await chargerMesItineraires() }
+                }
                 ForEach(DistanceFilter.allCases) { option in
-                    HZFiltre(libelle: option.label, actif: filter == option, fond: .clair) {
+                    HZFiltre(libelle: option.label, actif: !mesItineraires && filter == option,
+                             fond: .clair) {
                         filter = option
                         Haptics.selection()
                         Task { await search() }
@@ -216,6 +233,10 @@ struct RouteDiscoveryView: View {
             phrase(String(localized: "Recherche des itinéraires…"))
         } else if let loadError {
             phrase(String(localized: "Impossible de charger les itinéraires : \(loadError)."))
+        } else if mesItineraires && !appState.auth.isSignedIn {
+            phrase(String(localized: "Connecte-toi pour garder des itinéraires et les retrouver ici."))
+        } else if mesItineraires && routes.isEmpty {
+            phrase(String(localized: "Aucun itinéraire gardé pour l'instant. Ouvre-en un et touche « Garder cet itinéraire » : il t'attendra ici, où que tu sois."))
         } else if routes.isEmpty {
             phrase(Accord.selon(
                 f: String(localized: "Personne n'a encore partagé d'itinéraire par ici. Publie le tien après ta prochaine sortie et tu seras la première."),
@@ -259,7 +280,40 @@ struct RouteDiscoveryView: View {
 
     // MARK: - La recherche
 
+    /// Les itinéraires que j'ai publiés, pour savoir lesquels restent dans « Mes itinéraires »
+    /// quand je retire le « gardé ».
+    @State private var publies: Set<String> = []
+
+    /// Mes itinéraires : gardés d'abord (les plus récents en tête), puis publiés, sans doublon.
+    /// La carte se cadre dessus : ils peuvent être à l'autre bout du pays.
+    private func chargerMesItineraires() async {
+        mesItineraires = true
+        loadError = nil
+        if Demonstration.enCours {
+            routes = (appState.cachedExplorerRoutes ?? []).filter(\.saved)
+            if let cadre = HZHub.cadre(de: routes.map(\.startCoordinate)) { camera = .region(cadre) }
+            return
+        }
+        guard appState.auth.isSignedIn else {
+            routes = []
+            return
+        }
+        isLoading = true
+        do {
+            let (publiesTrouves, gardes) = try await ClubService(auth: appState.auth).fetchMyRoutes()
+            var vus = Set<String>()
+            routes = (gardes + publiesTrouves).filter { vus.insert($0.id).inserted }
+            publies = Set(publiesTrouves.map(\.id))
+            if let cadre = HZHub.cadre(de: routes.map(\.startCoordinate)) { camera = .region(cadre) }
+        } catch {
+            routes = []
+            loadError = PanneReseau.motif(pour: error)
+        }
+        isLoading = false
+    }
+
     private func search() async {
+        mesItineraires = false
         // En démonstration, ce que la graine a posé : il n'y a pas de serveur à interroger.
         if Demonstration.enCours {
             routes = appState.cachedExplorerRoutes ?? []
