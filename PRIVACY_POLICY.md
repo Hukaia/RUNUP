@@ -1,0 +1,101 @@
+# Politique de confidentialité — Haizo
+
+**Dernière mise à jour : 24 novembre 2026**
+
+Cette politique explique quelles données l'application Haizo collecte, comment elles sont utilisées, et avec qui elles sont partagées.
+
+## Qui sommes-nous
+
+Haizo est éditée par **Charlotte Grudé**.
+Contact : **contact@hukaia.com**
+
+## Données collectées
+
+### Données de profil
+Prénom, date de naissance, objectif de course (course à préparer, progression, perte de poids, reprise, forme), niveau d'expérience, jours de course choisis. Ces données sont saisies par toi lors de l'inscription (onboarding) et modifiables à tout moment dans Profil → Réglages.
+
+### Données de santé (Apple Santé / HealthKit)
+Si tu actives la connexion Apple Santé, Haizo lit : fréquence cardiaque, nombre de pas, et le type/durée de tes séances de sport (course, renforcement musculaire, mobilité, yoga, pilates) — ces dernières alimentent tes objectifs quotidiens "Renfo & mobilité" et "Pas". Haizo écrit dans Apple Santé les séances de course que tu termines dans l'app (distance, durée, calories).
+
+**Ces données de santé ne sont jamais transmises à un tiers, ni stockées sur un serveur distant.** Elles restent sur ton appareil et dans ta base Apple Santé, conformément aux règles d'Apple sur les données de santé.
+
+### Localisation (GPS)
+Pendant une course, Haizo utilise ta position pour mesurer la distance parcourue, l'allure et tracer ton itinéraire sur la carte. Le tracé n'est jamais partagé avec des tiers. Il quitte ton appareil dans deux cas, et dans les deux il est d'abord rogné de 300 mètres à chaque extrémité, sur ton téléphone : quand ta sortie est publiée dans le fil de ton club, où les membres de ton club voient sa forme sur une petite carte ; et quand tu choisis toi-même de la publier comme itinéraire — voir « Itinéraires partagés » ci-dessous. Ni ton point de départ ni ton point d'arrivée réels ne quittent l'appareil dans un cas comme dans l'autre.
+
+### Itinéraires partagés (optionnel)
+Après une sortie, tu peux choisir de publier son tracé comme itinéraire, pour aider quelqu'un qui cherche où courir dans le coin. Ce n'est jamais automatique : rien n'est publié sans que tu l'aies demandé, sortie par sortie.
+
+**Avant l'envoi, et sur ton téléphone, les 300 premiers et derniers mètres du tracé sont supprimés.** Ni ton point de départ ni ton point d'arrivée réels ne quittent l'appareil : notre serveur ne les reçoit jamais, et ne peut donc pas les divulguer.
+
+Ce qui est publié : le tracé ainsi rogné, la distance, le dénivelé, le temps que tu as mis, le nom de la ville, le nom que tu donnes à l'itinéraire, la description que tu écris et, si tu en ajoutes une, une photo. Ces éléments sont visibles par toutes les personnes connectées, y compris hors de ton club.
+
+Tu peux signaler l'itinéraire de quelqu'un d'autre, et supprimer ton compte efface tous les itinéraires que tu as publiés. La localisation n'est utilisée que pendant une séance de course active et n'est pas partagée avec des tiers.
+
+### Historique de course et données de progression
+Distance, durée, allure, fréquence cardiaque moyenne et splits de chaque course sont enregistrés localement sur ton appareil pour alimenter tes statistiques, ton historique et l'adaptation de ton programme.
+
+### Messages envoyés au coach
+Les messages que tu écris au coach, ainsi qu'un résumé de ton profil et de ta forme du jour (nécessaires pour que le coach te réponde de façon pertinente), sont envoyés à notre serveur, qui les relaie à **l'API d'Anthropic (Claude)** pour générer les réponses du coach. Nous ne stockons pas ces messages sur notre serveur — ils ne font que transiter le temps de la réponse.
+
+Voir la politique de confidentialité d'Anthropic : https://www.anthropic.com/legal/privacy
+
+### Compte Le Club (optionnel)
+Le Club (classement, fil d'activité entre membres) est la seule fonctionnalité de Haizo qui nécessite un vrai compte — tout le reste de l'app fonctionne sans jamais te connecter. Si tu choisis de te connecter (Apple, ou email/mot de passe), nous créons un compte sur notre serveur contenant :
+
+- **Identifiant de connexion** : selon la méthode choisie, un identifiant Apple (jamais ton mot de passe Apple, que nous ne voyons jamais), ou ton email et un mot de passe (stocké sous forme hachée, jamais en clair) si tu choisis email/mot de passe.
+- **Prénom** — le tien, ou celui transmis par Apple lors de la première connexion.
+- **XP total et activité du Club** : les séances/objectifs que tu termines sont envoyées à notre serveur pour alimenter le classement de ton club et le fil d'activité partagé avec ses membres (ex. "a couru 8.2 km · Sortie longue"). Les autres membres de ton club voient ton prénom, ton XP et ces activités.
+- **Appartenance à un club** : le club que tu as créé ou rejoint (nom, code d'invitation).
+- **Kudos** : les 👏 que tu donnes ou reçois sur le fil d'activité.
+
+Ces données Club **sont stockées sur notre serveur** (contrairement au reste de tes données, voir ci-dessous) puisque c'est ce qui permet à un classement et un fil d'activité d'être réellement partagés entre plusieurs personnes. Elles ne sont jamais vendues ni partagées avec un tiers en dehors des sous-traitants nécessaires à la connexion (Apple — voir sa propre politique de confidentialité) de l'hébergement (Vercel) et de l'envoi du code de mot de passe oublié (Resend, voir plus bas).
+
+### Mot de passe oublié
+Si ton compte utilise un email et un mot de passe et que tu demandes à le réinitialiser, notre serveur t'envoie un code à six chiffres par courriel. Ce courriel part par Resend, un service d'envoi de courriels : Resend reçoit ton adresse email et le texte du message, qui ne contient que le code et la façon de s'en servir. Le code est valable 15 minutes, et notre serveur n'en garde qu'une empreinte, jamais le code lui-même. Rien n'est envoyé à Resend tant que tu ne fais pas cette demande. Voir la [politique de confidentialité de Resend](https://resend.com/legal/privacy-policy).
+
+### Modération du Club
+Le nom d'un club et ton prénom sont filtrés automatiquement pour bloquer les contenus manifestement injurieux. Depuis Le Club, tu peux à tout moment **signaler** un club, une personne ou une activité (Profil du club/classement/fil → appui long → "Signaler"), ou **bloquer** quelqu'un pour ne plus voir son score ni ses activités (sans avoir à quitter le club). Les signalements sont conservés (qui signale, quoi, pourquoi) le temps qu'on les traite. Un lien "Signaler un problème ou nous contacter" est aussi visible directement dans Le Club.
+
+### Statistiques d'usage
+Pour savoir où l'application est confuse ou cassée (par exemple à quelle étape de l'inscription les gens abandonnent), Haizo enregistre une courte liste d'événements d'usage sur notre propre serveur : ouverture de l'app, étapes de l'inscription vues et validées, course démarrée et course terminée, message envoyé au coach, club créé ou rejoint. Chaque événement est accompagné de quelques informations techniques sur l'action elle-même (numéro d'étape, distance et durée arrondies d'une course, ressenti indiqué) — **jamais le contenu de ce que tu écris**, en particulier jamais tes messages au coach.
+
+Ces événements sont rattachés à un identifiant aléatoire généré par l'application sur ton appareil, qui n'est lié à aucune donnée personnelle et change si tu réinstalles l'application. Si tu es connectée au Club, ils sont aussi rattachés à ton compte. Ils sont conservés au maximum 400 jours, puis supprimés automatiquement.
+
+### Rapports de panne
+Quand l'application plante, se bloque plusieurs secondes, consomme anormalement le processeur ou le disque, ou met trop longtemps à démarrer, iOS en établit un rapport technique. Haizo le reçoit au lancement suivant et l'envoie à notre propre serveur.
+
+Ce rapport est produit par iOS, pas par nous : il contient la liste des fonctions du programme en cours d'exécution au moment de la panne (sous forme d'adresses, qui ne veulent rien dire sans nos propres fichiers de débogage), la version de l'application, la version d'iOS, le modèle d'appareil et la cause technique de l'arrêt. **Il ne contient rien de ce que tu écris, aucune donnée de santé, aucune position, aucun contenu de l'application.**
+
+Comme pour les statistiques d'usage, il est rattaché à l'identifiant aléatoire de ton appareil, et à ton compte si tu es connectée au Club. Les rapports de panne sont conservés au maximum 180 jours, puis supprimés automatiquement — passé ce délai, la version de l'application concernée n'est plus distribuée et le rapport ne sert plus à rien.
+
+Ces rapports nous arrivent par MetricKit, le mécanisme d'Apple prévu pour ça : Haizo n'installe aucun gestionnaire de plantage de son côté, et n'embarque aucun outil tiers de rapport de panne.
+
+### Aucune collecte publicitaire
+Haizo ne contient aucun SDK publicitaire, aucun traceur tiers, aucun outil d'analyse tiers, aucun outil tiers de rapport de panne, et ne vend aucune donnée. Les statistiques d'usage et les rapports de panne décrits ci-dessus sont enregistrés par notre propre serveur, pour nous seuls, et ne sont partagés avec personne.
+
+## Où sont stockées tes données
+
+Ton profil, ton historique de courses et tes messages au coach restent **localement sur ton appareil** — la suppression de l'application supprime l'ensemble de ces données. Rien de tout ça n'est stocké sur un serveur, y compris si tu te connectes pour le Club.
+
+Si tu te connectes pour utiliser le Club, ton compte (identifiant de connexion, prénom, XP, appartenance à un club, activités postées, kudos — voir "Compte Le Club" ci-dessus) est stocké sur notre serveur (hébergé chez Vercel, base de données Neon), tant que tu ne le supprimes pas.
+
+Les seules autres données qui quittent ton appareil sont celles envoyées à notre serveur pour faire fonctionner le coach conversationnel (voir ci-dessus), les statistiques d'usage décrites ci-dessus, et les données Apple Santé que tu choisis explicitement de synchroniser.
+
+## Tes droits
+
+- **Supprimer tes données locales** : désinstalle l'application, ou utilise "Refaire l'onboarding" pour repartir de zéro.
+- **Supprimer ton compte Le Club** : Profil → Compte → "Supprimer mon compte" — supprime immédiatement et définitivement ton compte, ton XP, ton appartenance au club et tes activités postées de notre serveur.
+- **Se déconnecter sans supprimer le compte** : Profil → Compte → "Se déconnecter".
+- **Révoquer l'accès à Apple Santé ou à la localisation** : Réglages iOS → Confidentialité et sécurité → Santé / Service de localisation → Haizo.
+
+## Âge minimum
+
+Haizo n'est pas destinée aux enfants de moins de 13 ans.
+
+## Modifications de cette politique
+
+Cette politique peut être mise à jour ; la date de dernière mise à jour est indiquée en haut de page.
+
+## Contact
+
+Pour toute question relative à cette politique ou à tes données : **contact@hukaia.com**
