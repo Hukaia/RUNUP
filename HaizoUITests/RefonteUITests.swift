@@ -430,14 +430,22 @@ final class RefonteUITests: XCTestCase {
         XCTAssertNotEqual(avant, jeudi.screenshot().pngRepresentation,
                           "le jeudi de la rangée doit changer la carte et la pastille")
 
-        // 5. La carte de jeudi, au premier plan, ouvre la fiche de SA séance. Elle ne faisait
-        //    rien : seule la séance du jour avait une fiche.
+        // 5. La carte d'un autre jour, au premier plan, ouvre la fiche de SA séance. Elle ne
+        //    faisait rien : seule la séance du jour avait une fiche.
+        //
+        //    VENDREDI ET NON JEUDI : dans la semaine de démonstration, jeudi est un jour de repos,
+        //    et un repos n'a pas de fiche (c'est voulu). Le premier essai touchait jeudi, et a
+        //    échoué pour cette seule raison.
+        let vendredi = jeudi.buttons["rangee-des-jours-4"]
+        XCTAssertTrue(vendredi.waitForExistence(timeout: 5), "la rangée des jours doit exister")
+        vendredi.tap()
+        Thread.sleep(forTimeInterval: 1.5)
         let avantLaFiche = jeudi.screenshot().pngRepresentation
         jeudi.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         Thread.sleep(forTimeInterval: 1.5)
-        photographier("touche-plan-carte-jeudi", app: jeudi)
+        photographier("touche-plan-carte-vendredi", app: jeudi)
         XCTAssertNotEqual(avantLaFiche, jeudi.screenshot().pngRepresentation,
-                          "la carte de jeudi doit ouvrir la fiche de sa séance")
+                          "la carte de vendredi doit ouvrir la fiche de sa séance")
         jeudi.terminate()
     }
 
