@@ -1,13 +1,13 @@
 # Politique de confidentialité — Haizo
 
-**Dernière mise à jour : 24 août 2026**
+**Dernière mise à jour : 24 novembre 2026**
 
 Cette politique explique quelles données l'application Haizo collecte, comment elles sont utilisées, et avec qui elles sont partagées.
 
 ## Qui sommes-nous
 
 Haizo est éditée par **Charlotte Grudé**.
-Contact : **charlottegrudep@gmail.com**
+Contact : **contact@hukaia.com**
 
 ## Données collectées
 
@@ -48,7 +48,10 @@ Le Club (classement, fil d'activité entre membres) est la seule fonctionnalité
 - **Appartenance à un club** : le club que tu as créé ou rejoint (nom, code d'invitation).
 - **Kudos** : les 👏 que tu donnes ou reçois sur le fil d'activité.
 
-Ces données Club **sont stockées sur notre serveur** (contrairement au reste de tes données, voir ci-dessous) puisque c'est ce qui permet à un classement et un fil d'activité d'être réellement partagés entre plusieurs personnes. Elles ne sont jamais vendues ni partagées avec un tiers en dehors des sous-traitants nécessaires à la connexion (Apple — voir sa propre politique de confidentialité) et de l'hébergement (Vercel).
+Ces données Club **sont stockées sur notre serveur** (contrairement au reste de tes données, voir ci-dessous) puisque c'est ce qui permet à un classement et un fil d'activité d'être réellement partagés entre plusieurs personnes. Elles ne sont jamais vendues ni partagées avec un tiers en dehors des sous-traitants nécessaires à la connexion (Apple — voir sa propre politique de confidentialité) de l'hébergement (Vercel) et de l'envoi du code de mot de passe oublié (Resend, voir plus bas).
+
+### Mot de passe oublié
+Si ton compte utilise un email et un mot de passe et que tu demandes à le réinitialiser, notre serveur t'envoie un code à six chiffres par courriel. Ce courriel part par Resend, un service d'envoi de courriels : Resend reçoit ton adresse email et le texte du message, qui ne contient que le code et la façon de s'en servir. Le code est valable 15 minutes, et notre serveur n'en garde qu'une empreinte, jamais le code lui-même. Rien n'est envoyé à Resend tant que tu ne fais pas cette demande. Voir la [politique de confidentialité de Resend](https://resend.com/legal/privacy-policy).
 
 ### Modération du Club
 Le nom d'un club et ton prénom sont filtrés automatiquement pour bloquer les contenus manifestement injurieux. Depuis Le Club, tu peux à tout moment **signaler** un club, une personne ou une activité (Profil du club/classement/fil → appui long → "Signaler"), ou **bloquer** quelqu'un pour ne plus voir son score ni ses activités (sans avoir à quitter le club). Les signalements sont conservés (qui signale, quoi, pourquoi) le temps qu'on les traite. Un lien "Signaler un problème ou nous contacter" est aussi visible directement dans Le Club.
@@ -95,4 +98,4 @@ Cette politique peut être mise à jour ; la date de dernière mise à jour est 
 
 ## Contact
 
-Pour toute question relative à cette politique ou à tes données : **charlottegrudep@gmail.com**
+Pour toute question relative à cette politique ou à tes données : **contact@hukaia.com**
