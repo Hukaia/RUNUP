@@ -39,6 +39,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import screenshots as S  # noqa: E402
+import bascules as B  # noqa: E402
 from PIL import Image, ImageDraw, ImageFilter  # noqa: E402
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
@@ -230,6 +231,166 @@ def plan_video(entree: pathlib.Path, debut: float, duree: float,
          str(sortie)], check=True)
 
 
+#: Au-delà de cet écart, l'écran du plan ne ressemble à AUCUNE capture, même à la plus proche.
+#: Un plan posé sur son écran rend 3 dans les campagnes (0,9 sur un enregistrement fabriqué) ; le
+#: plus proche des autres écrans, 45 et plus. Sans ce plafond, l'écran d'accueil du simulateur
+#: — sur lequel le film espagnol du 24 novembre finissait — passait pour « le plus proche de
+#: l'accueil », à 108.
+ECART_MAXIMUM = 20.0
+
+
+def ecran_monte(morceau: pathlib.Path, duree: float, sortie: pathlib.Path) -> Image.Image:
+    """Ce que l'écran du téléphone montre au milieu d'un plan MONTÉ, prêt à être comparé.
+
+    Le même rognage que `bascules.py` (le haut de l'écran, au-dessus de la barre d'onglets), pris
+    dans le morceau tel qu'il partira dans le film : derrière le châssis, à sa place.
+    """
+    sortie.unlink(missing_ok=True)
+    x, y = ECRAN_XY
+    largeur, hauteur = ECRAN_WH
+    subprocess.run(
+        ["ffmpeg", "-y", "-v", "error", "-ss", f"{duree / 2:.3f}", "-i", str(morceau),
+         "-frames:v", "1",
+         "-vf", f"crop={largeur}:{int(hauteur * B.HAUT_UTILE)}:{x}:{y},scale=258:-2,format=gray",
+         str(sortie)], check=True)
+    with Image.open(sortie) as im:
+        return im.convert("L").copy()
+
+
+def verifier_le_plan(nom: str, morceau: pathlib.Path, duree: float, temoins: pathlib.Path,
+                     travail: pathlib.Path) -> str | None:
+    """Le plan monté montre-t-il l'écran que son titre annonce ? Rend la plainte, ou rien.
+
+    # POURQUOI LE MONTAGE SE RELIT
+
+    `bascules.py` vérifie le découpage sur l'enregistrement, AVANT le montage. Le 24 novembre
+    2026 il a validé l'espagnol — huit bascules sur huit — et le film monté sur ce même découpage
+    posait « Tu día, en una pantalla » sur le Coach, puis chaque titre sur l'écran suivant, et
+    finissait sur l'écran d'accueil du simulateur. La campagne était verte.
+
+    Les deux outils ne lisaient pas l'enregistrement de la même façon, et un contrôle fait sur
+    autre chose que ce qui sort ne contrôle pas ce qui sort. Celui-ci regarde le morceau qui
+    part dans le film.
+    """
+    vise = B.ecran_vise(nom)
+    image = ecran_monte(morceau, duree, travail / f"vu-{nom}.png")
+    references = B.temoins(temoins, image)
+    if vise not in references:
+        return None
+    classement = B.le_plus_proche(image, references)
+    proche, ecart = classement[0]
+    if proche == vise and ecart <= ECART_MAXIMUM:
+        print(f"           écran « {vise} » sous son titre (écart {ecart:.1f})")
+        return None
+    if proche == vise:
+        return (f"le plan « {nom} » ne montre aucun écran de l'app : le plus proche est "
+                f"« {vise} », à {ecart:.1f} (plafond {ECART_MAXIMUM:.0f}) — image gardée : "
+                f"{travail / f'vu-{nom}.png'}")
+    return (f"le plan « {nom} » montre « {proche} » (écart {ecart:.1f}) et non « {vise} » "
+            f"({dict(classement)[vise]:.1f}) — image gardée : {travail / f'vu-{nom}.png'}")
+
+
+# ── LE DÉCALAGE, RELU DANS LA LECTURE DU MONTAGE ────────────────────────────────────────────────
+#
+# `bascules.py` cherche le décalage en demandant à ffmpeg « la première image après tel
+# instant ». Le montage, lui, déroule l'enregistrement à trente images par seconde et coupe dans
+# ce déroulé (`fps` puis `trim`, voir `plan_video`). Sur un enregistrement à cadence variable,
+# ces deux lectures ne désignent pas toujours le même endroit : le 24 novembre 2026, sur
+# l'espagnol, elles étaient à sept secondes l'une de l'autre. Le contrôle a validé huit bascules
+# sur huit ; le film posait chaque titre sur l'écran suivant.
+#
+# On ne sait pas encore dire POURQUOI ces sept secondes (l'enregistrement fautif n'était pas
+# gardé ; il l'est désormais quand un film échoue). On sait en revanche comment ne plus en
+# dépendre : le montage vérifie le décalage qu'on lui donne DANS SA PROPRE LECTURE, et le
+# recherche s'il ne tient pas.
+
+#: De part et d'autre de chaque plan, l'instant où l'écran doit DÉJÀ et ENCORE être le bon. Le
+#: test appuie 0,6 s avant le début du plan et le fondu dure 0,22 s : à 0,15 s du début, l'écran
+#: est posé depuis un quart de seconde.
+MARGE_DU_PLAN = 0.15
+#: Aux BORDS d'un plan, l'écran peut encore s'installer (une courbe qui se trace, un chiffre qui
+#: monte) : on y demande seulement qu'il soit reconnu, sans être plus loin de sa capture qu'un
+#: AUTRE écran ne le serait (45 et plus, mesuré). Au MILIEU, il doit être posé : `ECART_MAXIMUM`.
+ECART_AUX_BORDS = 40.0
+#: Jusqu'où chercher autour du décalage reçu, et à quel pas.
+RECHERCHE, PAS_DE_RECHERCHE = 10.0, 0.25
+
+
+def derouler(entree: pathlib.Path, travail: pathlib.Path) -> dict[int, pathlib.Path]:
+    """L'enregistrement déroulé à trente images par seconde, en petit et en gris.
+
+    LE MÊME `fps` QUE `plan_video`, et c'est tout l'intérêt : une image numéro N est ici ce que
+    `trim=start=N/30` rendra là-bas. Les fichiers portent leur numéro d'image (`-frame_pts`), donc
+    aucune recherche dans un conteneur n'intervient entre « tel instant » et « telle image ».
+    """
+    dossier = travail / "deroule"
+    shutil.rmtree(dossier, ignore_errors=True)
+    dossier.mkdir(parents=True)
+    subprocess.run(
+        ["ffmpeg", "-y", "-v", "error", "-i", str(entree), "-an",
+         "-vf", f"fps={IPS},crop=in_w:in_h*{B.HAUT_UTILE}:0:0,scale=258:-2,format=gray",
+         "-frame_pts", "1", str(dossier / "%06d.png")], check=True)
+    return {int(f.stem): f for f in dossier.glob("*.png")}
+
+
+def _ecran_a(images: dict[int, pathlib.Path], seconde: float) -> Image.Image | None:
+    chemin = images.get(round(seconde * IPS))
+    if chemin is None:
+        return None
+    with Image.open(chemin) as im:
+        return im.convert("L").copy()
+
+
+def tient(plans: list[dict], decalage: float, images: dict[int, pathlib.Path],
+          references: dict[str, Image.Image]) -> bool:
+    """Chaque plan qui a une capture montre-t-il son écran, du début à la fin, à ce décalage ?"""
+    juges = 0
+    for p in plans:
+        vise = B.ecran_vise(p["nom"])
+        if vise not in references:
+            continue
+        regards = ((p["debut"] + MARGE_DU_PLAN, ECART_AUX_BORDS),
+                   ((p["debut"] + p["fin"]) / 2, ECART_MAXIMUM),
+                   (p["fin"] - MARGE_DU_PLAN, ECART_AUX_BORDS))
+        for instant, plafond in regards:
+            image = _ecran_a(images, instant + decalage)
+            if image is None:
+                return False
+            proche, ecart = B.le_plus_proche(image, references)[0]
+            if proche != vise or ecart > plafond:
+                return False
+        juges += 1
+    return juges > 0
+
+
+def decalage_juste(plans: list[dict], decalage: float, images: dict[int, pathlib.Path],
+                   references: dict[str, Image.Image]) -> float | None:
+    """Le décalage reçu s'il tient ; sinon le milieu de la plage qui tient, la plus proche.
+
+    Rend `None` quand aucun décalage ne met tous les plans sur leur écran : il n'y a alors pas
+    de film à monter, et c'est au montage de le dire.
+    """
+    if tient(plans, decalage, images, references):
+        return decalage
+    n = int(round(RECHERCHE / PAS_DE_RECHERCHE))
+    bons = [k for k in range(-n, n + 1)
+            if decalage + k * PAS_DE_RECHERCHE >= 0
+            and tient(plans, decalage + k * PAS_DE_RECHERCHE, images, references)]
+    if not bons:
+        return None
+    # Les plages de décalages CONSÉCUTIFS qui tiennent ; on garde la plus proche du décalage
+    # reçu, et son MILIEU : le bord d'une plage est un plan qui commence ou finit dans un fondu.
+    plages, courante = [], [bons[0]]
+    for k in bons[1:]:
+        if k == courante[-1] + 1:
+            courante.append(k)
+        else:
+            plages.append(courante); courante = [k]
+    plages.append(courante)
+    plage = min(plages, key=lambda pl: min(abs(k) for k in pl))
+    return decalage + (plage[0] + plage[-1]) / 2 * PAS_DE_RECHERCHE
+
+
 def plan_fixe(image: pathlib.Path, duree: float, sortie: pathlib.Path) -> None:
     """Une carte de titre, tenue le temps voulu."""
     subprocess.run(
@@ -301,6 +462,8 @@ def main() -> int:
     # de `simctl`, et il n'y a plus rien à corriger ici.
     a.add_argument("--decalage", type=float, default=0.0)
     a.add_argument("--travail", type=pathlib.Path, default=None)
+    a.add_argument("--temoins", type=pathlib.Path, default=None,
+                   help="Les captures claires de la langue : chaque plan monté leur est confronté")
     # LA COULEUR DES MARGES, s'il en reste une fois le plan mis au format d'Apple : le papier de
     # la fiche, lu dans `screenshots.py`, qui dessine déjà le décor de chaque plan.
     #
@@ -332,13 +495,35 @@ def main() -> int:
             raise SystemExit(
                 f"Le test a filmé des plans sans texte en {options.langue} : "
                 f"{', '.join(manquants)}. Ajoute-les à {options.textes.name}.")
+        if options.temoins:
+            # Le dossier de travail n'est pas encore posé : la relecture a le sien, à côté.
+            relecture = (options.travail or options.sortie.parent / "montage"
+                         / options.sortie.stem)
+            relecture.mkdir(parents=True, exist_ok=True)
+            images = derouler(options.entree, relecture)
+            references = B.temoins(options.temoins, next(iter(
+                Image.open(f).convert("L") for f in list(images.values())[:1])))
+            juste = decalage_juste(bornes, options.decalage, images, references)
+            if juste is None:
+                raise SystemExit(
+                    f"Aucun décalage, à {RECHERCHE:.0f} s près de {options.decalage:.2f} s, ne "
+                    f"met chaque plan sur son écran dans l'enregistrement déroulé. Pas de film.")
+            if juste != options.decalage:
+                print(f"  DÉCALAGE RELU : {options.decalage:.2f} s ne tient pas dans la lecture "
+                      f"du montage ; {juste:.2f} s met chaque plan sur son écran "
+                      f"({juste - options.decalage:+.2f} s).")
+                options.decalage = juste
+            else:
+                print(f"  décalage {options.decalage:.2f} s : chaque plan sur son écran, "
+                      f"à ses deux bords, dans la lecture du montage.")
+            shutil.rmtree(relecture / "deroule", ignore_errors=True)
         script = {
             "bandeau": options.bandeau,
             "ouverture": bloc.get("ouverture"),
             "fin": bloc.get("fin"),
             "plans": [{"debut": b["debut"] + options.decalage,
                        "duree": b["fin"] - b["debut"],
-                       "rang": i, "titre": bloc["plans"][b["nom"]][0],
+                       "rang": i, "nom": b["nom"], "titre": bloc["plans"][b["nom"]][0],
                        "sous": bloc["plans"][b["nom"]][1]}
                       for i, b in enumerate(bornes, start=1)],
         }
@@ -350,6 +535,7 @@ def main() -> int:
 
     morceaux: list[pathlib.Path] = []
     manques: list[str] = []
+    egares: list[str] = []
     duree_totale = 0.0
 
     ouverture = script.get("ouverture")
@@ -386,6 +572,10 @@ def main() -> int:
         morceaux.append(m); duree_totale += rendu
         print(f"  plan {i} : {p['debut']:.1f} → {p['debut'] + p['duree']:.1f} s  "
               f"({rendu:.2f} s)  « {p['titre']} »")
+        if options.temoins and p.get("nom"):
+            plainte = verifier_le_plan(p["nom"], m, rendu, options.temoins, travail)
+            if plainte:
+                egares.append(plainte)
 
     fin = script.get("fin")
     if fin:
@@ -402,6 +592,13 @@ def main() -> int:
             print(f"  {x}", file=sys.stderr)
         raise SystemExit(
             "\nLa caméra n'a pas couvert toute la prise, ou le décalage est faux.")
+
+    # UN TITRE SUR LE MAUVAIS ÉCRAN, ET IL N'Y A PAS DE FILM. Voir `verifier_le_plan`.
+    if egares:
+        print("\nLe film poserait des titres sur le mauvais écran :", file=sys.stderr)
+        for x in egares:
+            print(f"  {x}", file=sys.stderr)
+        raise SystemExit("\nLe découpage ne désigne pas, dans l'enregistrement, ce qu'il croit.")
 
     options.sortie.parent.mkdir(parents=True, exist_ok=True)
     assembler(morceaux, options.sortie, options.fond)

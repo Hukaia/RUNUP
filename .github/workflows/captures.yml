@@ -590,7 +590,13 @@ jobs:
       # Ici et pas dans `testflight.yml` : il demande ffmpeg, qui vient d'être installé, et il
       # prend quelques secondes.
       - name: Éprouver la mesure des bascules
-        run: cd ci_scripts && "$RUNNER_TEMP/venv/bin/python" test_bascules.py
+        run: |
+          set -euo pipefail
+          cd ci_scripts
+          "$RUNNER_TEMP/venv/bin/python" test_bascules.py
+          # Les cas du montage, une seconde fois : ceux qui relisent un plan monté ont besoin de
+          # ffmpeg, et s'étaient donc passés leur tour au début de la campagne.
+          "$RUNNER_TEMP/venv/bin/python" test_montage.py
 
       # LE DÉCOUPAGE D'UN ÉCRAN PHOTOGRAPHIÉ NE DOIT RIEN CHANGER À L'IMAGE, et cette chaîne-ci
       # ne le vérifie pas : son vert dit que l'app n'a pas planté et qu'un fichier a été écrit.
@@ -615,6 +621,10 @@ jobs:
             echo "──────────── $langue · aperçu ────────────"
             dossier="$PWD/appstore/apercu/$langue"
             rm -rf "$dossier"; mkdir -p "$dossier"
+            # SI LE FILM DE CETTE LANGUE ÉCHOUE, SON ENREGISTREMENT PART AVEC LES PREUVES.
+            # Trente mégaoctets qu'on ne publie pas quand tout va bien ; mais un film refusé sans
+            # l'enregistrement oblige à refaire une heure de machine pour seulement le regarder.
+            trap 'cp "$dossier/brut.mov" "$dossier/brut-en-echec.mov" 2>/dev/null || true' ERR
 
             # L'HEURE DU DÉPART DE LA CAMÉRA — CELLE DE LA CAMÉRA, PAS CELLE DE L'APPEL.
             #
@@ -780,7 +790,8 @@ jobs:
               --textes appstore/apercu.json \
               --langue "$langue" \
               --bandeau "$bandeau" \
-              --decalage "$decalage"
+              --decalage "$decalage" \
+              --temoins "appstore/raw/$langue/clair"
           done
           ls -la appstore/apercu/out
 
@@ -828,5 +839,6 @@ jobs:
             appstore/apercu/*/*.json
             appstore/apercu/*/debut.txt
             appstore/apercu/*/preuves/*.png
+            appstore/apercu/*/brut-en-echec.mov
           if-no-files-found: error
           retention-days: 30
