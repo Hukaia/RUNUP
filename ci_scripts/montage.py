@@ -82,6 +82,20 @@ def titre_calque(titre: str, sous: str, rang: int, total: int) -> Image.Image:
     return calque
 
 
+def masque_ecran() -> Image.Image:
+    """La forme de l'écran : un rectangle aux coins arrondis, blanc dedans, noir dehors.
+
+    UNE SEULE FORME POUR LE TROU DU CHÂSSIS ET POUR LA VIDÉO, et c'est la correction du 24
+    novembre. Seul le châssis était arrondi ; la vidéo passait dessous en rectangle. Le châssis
+    étant transparent hors de son contour, les quatre angles de la vidéo dépassaient à chaque
+    coin du téléphone (noirs sur l'accueil, blancs sur le bas des pages), dans les trois films.
+    """
+    masque = Image.new("L", ECRAN_WH, 0)
+    ImageDraw.Draw(masque).rounded_rectangle((0, 0, ECRAN_WH[0] - 1, ECRAN_WH[1] - 1),
+                                             radius=S.SCREEN_W * S.SCREEN_RADIUS, fill=255)
+    return masque
+
+
 def chassis() -> Image.Image:
     """Le châssis seul, écran TRANSPARENT, pour se poser par-dessus la vidéo.
 
@@ -91,13 +105,8 @@ def chassis() -> Image.Image:
     """
     noir = Image.new("RGB", (1320, 2868), (0, 0, 0))
     corps, _, b = S.device(noir, screen_w=S.SCREEN_W)
-    trou = Image.new("L", ECRAN_WH, 255)
-    rayon = S.SCREEN_W * S.SCREEN_RADIUS
-    masque = Image.new("L", ECRAN_WH, 0)
-    ImageDraw.Draw(masque).rounded_rectangle((0, 0, ECRAN_WH[0] - 1, ECRAN_WH[1] - 1),
-                                             radius=rayon, fill=255)
     vide = Image.new("RGBA", ECRAN_WH, (0, 0, 0, 0))
-    corps.paste(vide, (b, b), masque)
+    corps.paste(vide, (b, b), masque_ecran())
     return corps
 
 
@@ -132,6 +141,7 @@ def plaque(titre: str, sous: str, rang: int, total: int, bandeau: str,
     img.convert("RGB").save(f)
     c = dossier / "chassis.png"
     chassis().save(c)
+    masque_ecran().save(dossier / "masque-ecran.png")
     tt = dossier / f"titre-{rang}.png"
     titre_calque(titre, sous, rang, total).save(tt)
     return f, c, tt
@@ -212,7 +222,10 @@ def plan_video(entree: pathlib.Path, debut: float, duree: float,
     # une seconde de source fait une seconde de film.
     filtre = (
         f"[0:v]fps={IPS},trim=start={debut}:duration={duree},setpts=PTS-STARTPTS,"
-        f"scale={ECRAN_WH[0]}:{ECRAN_WH[1]}[ecran];"
+        f"scale={ECRAN_WH[0]}:{ECRAN_WH[1]},format=rgba[brut];"
+        # Les coins de la vidéo sont arrondis comme le trou du châssis : voir `masque_ecran`.
+        f"[4:v]loop=loop=-1:size=1:start=0,setpts=N/{IPS}/TB,format=gray[forme];"
+        f"[brut][forme]alphamerge[ecran];"
         f"[1:v]loop=loop=-1:size=1:start=0,setpts=N/{IPS}/TB[bg];"
         f"[bg][ecran]overlay={ECRAN_XY[0]}:{ECRAN_XY[1]}:shortest=1[pose];"
         f"[2:v]loop=loop=-1:size=1:start=0,setpts=N/{IPS}/TB[ch];"
@@ -226,6 +239,7 @@ def plan_video(entree: pathlib.Path, debut: float, duree: float,
     subprocess.run(
         ["ffmpeg", "-y", "-v", "error",
          "-i", str(entree), "-i", str(fond_png), "-i", str(chassis_png), "-i", str(titre_png),
+         "-i", str(chassis_png.parent / "masque-ecran.png"),
          "-filter_complex", filtre, "-map", "[v]",
          "-t", f"{duree}", "-c:v", "libx264", "-crf", "16", "-pix_fmt", "yuv420p",
          str(sortie)], check=True)

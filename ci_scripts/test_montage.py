@@ -172,6 +172,34 @@ class PlanMonte(unittest.TestCase):
         for nom in ("retour", "coach", "profil"):
             self.assertIsNotNone(M.verifier_le_plan(nom, m, 1.0, self.temoins, self.dossier), nom)
 
+    def test_les_coins_de_lecran_ne_depassent_pas_du_telephone(self):
+        """Une vidéo toute rouge, montée : aucun rouge hors du contour du téléphone.
+
+        Le défaut du 24 novembre : la vidéo passait en rectangle sous un châssis arrondi, et ses
+        quatre angles sortaient à chaque coin, dans les trois films.
+        """
+        rouge = self.dossier / "rouge.mp4"
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
+                        "color=c=red:s=660x1434:r=30:d=2", "-pix_fmt", "yuv420p", str(rouge)],
+                       check=True)
+        f, c, tt = M.plaque("Titre", "Sous-titre", 1, 7, "ligne", self.dossier)
+        sortie = self.dossier / "plan.mp4"
+        M.plan_video(rouge, 0.0, 1.0, f, c, tt, sortie)
+        image_png = self.dossier / "plan.png"
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-ss", "0.5", "-i", str(sortie),
+                        "-frames:v", "1", str(image_png)], check=True)
+        image = Image.open(image_png).convert("RGB")
+        x, y = M.ECRAN_XY
+        w, h = M.ECRAN_WH
+        # Juste à l'intérieur de chaque angle du RECTANGLE de l'écran : hors du téléphone arrondi.
+        for px, py in ((x + 2, y + 2), (x + w - 3, y + 2), (x + 2, y + h - 3), (x + w - 3, y + h - 3)):
+            r, g, b = image.getpixel((px, py))
+            self.assertFalse(r > 180 and g < 90 and b < 90,
+                             f"la vidéo dépasse du téléphone en ({px}, {py}) : {(r, g, b)}")
+        # Et le milieu de l'écran montre bien la vidéo.
+        r, g, b = image.getpixel((x + w // 2, y + h // 2))
+        self.assertTrue(r > 180 and g < 90 and b < 90, (r, g, b))
+
     def test_un_plan_sans_capture_nest_pas_juge(self):
         """« accueil-bas » et « stats-bas » n'ont pas de capture à eux : rien à confronter."""
         m = self.morceau(self.ecrans["stats"], "bas")
