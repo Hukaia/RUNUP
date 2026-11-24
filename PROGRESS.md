@@ -2243,7 +2243,7 @@ Et l'item parlait des « deux pages qu'Apple affiche ». **Il n'y en a qu'une.**
 | | |
 | --- | --- |
 | URL de politique sur la fiche | `https://hicsuntco.github.io/Haizo/privacy.html` |
-| URL de support sur la fiche | `mailto:charlottegrudep@gmail.com` |
+| URL de support sur la fiche | `mailto:` vers l’adresse personnelle (remplacée le 24 novembre 2026 par contact@hukaia.com) |
 | Dans l'app, « nous contacter » | le même `mailto:`, à deux endroits |
 | Ce qui pointe vers `support.html` | **rien** |
 
@@ -9468,6 +9468,14 @@ La campagne de captures App Store n° 269 est la première depuis le 18 novembre
 - **La photo du retour du Plan (campagnes 93 et 95) était prise trop tôt** : identique au Plan, alors que la vérification faite juste après voyait déjà l'accueil. Le retour fonctionne ; la machine était lente. `toucherEtComparer` attend maintenant que l'écran ait changé (six secondes au plus), laisse la transition se poser, puis photographie.
 - **Vérifié en capture (Refonte 97)** : la fiche de vendredi s'ouvre depuis le Plan (« Vendredi 20 novembre », pas de « Démarrer »), le retour du Plan ramène à l'accueil, la fiche du jour garde « Démarrer » et « Je l'ai déjà faite ». Build 727 vert.
 - Non vérifié : le lien d'invitation sur un vrai téléphone (le simulateur des captures ne reçoit pas de lien universel), et « Mes itinéraires » contre la vraie base.
+
+### Pages publiques : contact@hukaia.com et Resend (24 novembre)
+
+- **L'adresse personnelle quitte les pages publiées** : `privacy.html`, `support.html` et `PRIVACY_POLICY.md` donnent contact@hukaia.com, sur la branche et sur `main` (commit a2dae11, seuls ces trois fichiers). Le lien « Assistance » de la fiche App Store mène à `support.html` : il affiche la nouvelle adresse sans nouvelle soumission.
+- **La politique nomme Resend** : un paragraphe « Mot de passe oublié » dit ce qu'il reçoit (l'adresse email et le texte du courriel, qui ne contient que le code) et quand (seulement sur demande). Le code dure 15 minutes ; le serveur n'en garde qu'une empreinte.
+- **La page d'assistance publiée menait à une 404** : son lien vers la politique pointait vers `hicsuntco.github.io`, qui ne répond plus. Corrigé par la même recopie.
+- L'adresse personnelle reste dans l'historique git (anciens commits) ; elle n'est plus dans aucun fichier actuel, ni sur la branche ni sur `main`.
+- `RUNUP_ADMIN_EMAILS` : pas d'accès à Vercel d'ici, la variable est à poser par Charlotte.
 
 ### Constaté, pas encore corrigé
 

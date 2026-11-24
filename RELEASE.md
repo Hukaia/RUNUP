@@ -206,7 +206,7 @@ Puis, sur la machine :
   dépôt, texte compris, précisément parce que c'est la manœuvre où l'on reporte un paragraphe sur
   deux.
 - **`support.html` n'est la page de personne.** Mesuré le 10 novembre 2026 : la fiche App Store
-  déclare `mailto:charlottegrudep@gmail.com` comme URL de support, l'app propose ce même `mailto:`
+  déclare `mailto:` vers l’adresse personnelle (remplacée le 24 novembre 2026 par contact@hukaia.com) comme URL de support, l'app propose ce même `mailto:`
   à deux endroits, et `privacy.html` ne pointe pas vers `support.html`. La page est publiée sur
   GitHub Pages et **rien n'y mène**. Quatre documents de ce dépôt parlaient des « deux pages
   qu'Apple affiche » : il n'y en a qu'une. Soit on fait de `support.html` la vraie URL de support —
