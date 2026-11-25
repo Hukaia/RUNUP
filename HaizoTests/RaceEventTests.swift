@@ -403,4 +403,43 @@ final class RaceEventCaracteristiquesTests: XCTestCase {
         XCTAssertEqual(RaceEvent.adresseComplete("HTTP://marathon.fr"), "HTTP://marathon.fr")
         XCTAssertEqual(RaceEvent.adresseComplete("   "), "", "un champ vide reste vide : rien à envoyer")
     }
+
+    // MARK: - Le filtre de distance
+
+    func testLesDistancesOfficiellesTombentDansLeurCategorie() {
+        XCTAssertEqual(FiltreDeDistance.categorie(de: 5), .cinq)
+        XCTAssertEqual(FiltreDeDistance.categorie(de: 10.1), .dix)
+        XCTAssertEqual(FiltreDeDistance.categorie(de: 21.0975), .semi)
+        XCTAssertEqual(FiltreDeDistance.categorie(de: 42.195), .marathon)
+        XCTAssertEqual(FiltreDeDistance.categorie(de: 78), .ultra)
+    }
+
+    func testUneDistanceVoisineNEstPasAvaleeParSaCategorie() {
+        // Le quart de marathon de Rotterdam et les 10 miles ne sont pas des 10 km.
+        XCTAssertEqual(FiltreDeDistance.categorie(de: 10.55), .autres)
+        XCTAssertEqual(FiltreDeDistance.categorie(de: 16.0934), .autres)
+        XCTAssertNil(FiltreDeDistance.categorie(de: 0))
+        XCTAssertNil(FiltreDeDistance.categorie(de: .nan))
+    }
+
+    func testUnEvenementAPlusieursFormatsRepondAChacun() throws {
+        let course = try decoder("""
+        {"id":"v","name":"Vienna City Marathon","raceDate":"2027-04-18","discipline":"run","distancesKm":[42.195,5,10,21.0975]}
+        """)
+        XCTAssertTrue(course.aUnFormat(.cinq))
+        XCTAssertTrue(course.aUnFormat(.semi))
+        XCTAssertFalse(course.aUnFormat(.ultra))
+        // Sous « 5 km », l'affiche dit 5 et pas 42.
+        XCTAssertEqual(course.grandeEtiquette(pour: .cinq), Distances.valeur(5))
+        XCTAssertEqual(course.grandeEtiquette(pour: nil), course.grandeEtiquette)
+        XCTAssertEqual(course.grandeEtiquette(pour: .ultra), course.grandeEtiquette)
+    }
+
+    func testUneCourseSansDistanceNeRepondAAucunFiltre() throws {
+        let course = try decoder("""
+        {"id":"h","name":"HYROX Paris","raceDate":"2027-04-18","discipline":"hyrox"}
+        """)
+        for filtre in FiltreDeDistance.allCases { XCTAssertFalse(course.aUnFormat(filtre)) }
+    }
 }
+
