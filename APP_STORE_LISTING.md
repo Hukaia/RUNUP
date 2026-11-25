@@ -101,32 +101,34 @@ Politique de confidentialité : https://hukaia.github.io/RUNUP/privacy.html
 
 ## Nouveautés de cette version (4000 caractères max — obligatoire pour une mise à jour)
 ```
-Cette version n'ajoute pas un écran. Elle rend justes les chiffres sur lesquels tu t'entraînes.
+Haizo, c'est le nouveau nom de l'app. Et presque tout a changé.
 
-TES ALLURES VIENNENT ENFIN DE QUELQUE PART
-Les quatre allures de ton plan — footing, marathon, seuil, VMA — se calculent maintenant sur les tables VDOT de Jack Daniels et Jimmy Gilbert, celles sur lesquelles les entraîneurs travaillent depuis 1979. Avant, c'étaient quatre multiplications dont le code avouait lui-même qu'elles ne venaient de nulle part : les footings partaient trop vite, et la séance de VMA se courait à une allure qui n'était pas la sienne.
-Et si tu n'as donné ni chrono ni allure de footing, ton plan part d'une hypothèse prudente. Un entraîneur qui ne t'a jamais vue courir ne te fait pas partir vite.
+UN NOUVEAU NOM, UN NOUVEAU DESSIN
+L'app change de nom et devient Haizo. Chaque écran a été redessiné : fond clair, une seule couleur d'accent, des chiffres qui se lisent d'un coup d'œil. La montre, le widget et l'activité en direct suivent le même dessin.
+
+EXPLORER : TA PROCHAINE COURSE
+Un nouvel onglet pour la trouver parmi plus de 200 courses dans 39 pays, du 5 km au marathon et à l'ultra, avec un filtre par distance. Chaque course donne sa date, ses distances, son dénivelé et le lien pour s'inscrire. Choisis celle que tu prépares : ton programme compte les semaines jusqu'au départ.
+
+CLUBS ET ITINÉRAIRES
+Rejoins un club, ouvert, sur demande ou avec un code : c'est son créateur qui choisit. Sorties proposées, fil d'activité, classement. Et des itinéraires partagés par d'autres coureurs, près de chez toi.
+
+UN VRAI PROGRAMME HYROX
+Une séance par station, le travail de force et de gainage autour, et une progression semaine après semaine.
+
+TES ALLURES VIENNENT DE QUELQUE PART
+Footing, marathon, seuil, VMA : tes quatre allures se calculent sur les tables VDOT de Jack Daniels, celles des entraîneurs depuis 1979. Sans chrono donné, ton plan part d'une hypothèse prudente.
 
 LA VOIX DIT LA SÉANCE
-« Échauffement terminé. Première répétition : vise 4:30, foulée relâchée. » « Dernière répétition faite, bien joué. » Ces phrases existaient, s'affichaient à l'écran, et n'étaient jamais dites. Tu les entends maintenant, sans sortir le téléphone. Et la montre et le widget, qui parlaient français à tout le monde, parlent ta langue.
+« Première répétition : vise 4:30, foulée relâchée. » Tu l'entends sans sortir le téléphone. La montre et le widget parlent ta langue.
 
 TON CYCLE, SUR TA LONGUEUR DE CYCLE
-L'ovulation se calculait au milieu du cycle : juste à vingt-huit jours, faux partout ailleurs — trois jours trop tard sur un cycle de 21 jours, quatre jours trop tôt sur un cycle de 35. Elle se calcule maintenant depuis la phase qui, elle, ne varie pas. Et la phase du jour ne se recopie plus sur toute la semaine.
+L'ovulation se calcule sur ta longueur de cycle, plus au milieu d'un cycle de 28 jours.
 
-LE BILAN COMPTE LA MÊME CHOSE PARTOUT
-« Parcourus » comptait la course à pied, « volume par jour » comptait toutes les disciplines, et « ta meilleure semaine » comparait l'une à l'autre. Cinq définitions de la semaine sur un seul écran, et des chiffres qui se contredisaient sans le dire. Une seule, maintenant.
-
-L'APP DIT CE QUI SE PASSE
-Une erreur de réseau disparaissait sans un mot. Un achat qu'Apple venait de débiter pouvait s'annoncer « L'achat n'a pas abouti ». L'activité en direct ne s'affichait pas sans jamais dire que la case était décochée dans les Réglages. L'accueil pouvait tourner une minute entière sur une roue. Chacun de ces silences est remplacé par une phrase.
-
-PLUS CALME À REGARDER
-Fond clair par défaut, dégradés et verre dépoli retirés. Les écrans vides disent tous la même chose de la même façon. Aux plus grandes tailles de texte, les écrans vont jusqu'au bout de leur dernier bouton, et la seule phrase de la montre n'est plus coupée par le bord.
+LA FIN DE COURSE
+Tu peux arrêter sans enregistrer. Supprimer une sortie la retire aussi d'Apple Santé et du club.
 
 TU CHOISIS CE QUI PART
-Les statistiques d'usage se refusent, à l'inscription ou dans les réglages, et la politique de confidentialité dit ce qui part et ce qui ne part pas. Si tu refuses, aucune statistique n'est envoyée.
-
-UN CLUB, SANS EN CONNAÎTRE UN SEUL
-La recherche demandait le nom d'un club qu'il fallait déjà connaître. Quand le champ est vide, elle propose maintenant des clubs ouverts.
+Les statistiques d'usage se refusent, à l'inscription ou dans les réglages.
 ```
 
 ## Mots-clés (100 caractères max, séparés par des virgules sans espace)
@@ -227,32 +229,34 @@ Privacy Policy: https://hukaia.github.io/RUNUP/privacy.html
 
 ## What's New in This Version (4000 characters max — required for an update)
 ```
-This release doesn't add a screen. It makes the numbers you train on correct.
+Haizo is the app's new name. And almost everything has changed.
 
-YOUR PACES NOW COME FROM SOMEWHERE
-Your plan's four paces — easy, marathon, threshold, intervals — are now computed from the VDOT tables of Jack Daniels and Jimmy Gilbert, the ones coaches have worked from since 1979. Before, they were four multiplications that the code itself admitted came from nowhere: easy runs set off too fast, and the interval session was run at a pace that wasn't its own.
-And if you gave neither a race time nor an easy pace, your plan starts from a careful assumption. A coach who has never watched you run doesn't send you off fast.
+A NEW NAME, A NEW LOOK
+The app has a new name: Haizo. Every screen has been redrawn: light background, a single accent colour, numbers you read at a glance. The watch, the widget and the Live Activity follow the same design.
+
+EXPLORE: YOUR NEXT RACE
+A new tab to find it among more than 200 races in 39 countries, from 5K to marathon and ultra, with a distance filter. Each race shows its date, distances, elevation and where to sign up. Pick the one you're training for: your plan counts the weeks to the start line.
+
+CLUBS AND ROUTES
+Join a club, open, on request or with a code: its creator decides. Planned runs, activity feed, leaderboard. And routes shared by other runners near you.
+
+A REAL HYROX PROGRAMME
+One session per station, the strength and core work around them, and week-by-week progression.
+
+YOUR PACES COME FROM SOMEWHERE
+Easy, marathon, threshold, VO2max: your four paces are computed from Jack Daniels' VDOT tables, used by coaches since 1979. Without a race time, your plan starts from a cautious assumption.
 
 THE VOICE CALLS THE SESSION
-"Warm-up done. First rep: aim for 4:30, stay relaxed." "Last rep done, well played." Those lines existed, were shown on screen, and were never spoken. You hear them now, without taking the phone out. And the watch and the widget, which spoke French to everyone, speak your language.
+"First rep: aim for 4:30, stay relaxed." You hear it without taking your phone out. The watch and the widget speak your language.
 
 YOUR CYCLE, ON YOUR CYCLE LENGTH
-Ovulation was placed at the middle of the cycle: right at twenty-eight days, wrong everywhere else — three days too late on a 21-day cycle, four days too early on a 35-day one. It is now worked out from the phase that doesn't vary. And the day's phase no longer gets copied across the whole week.
+Ovulation is computed from your own cycle length, no longer from the middle of a 28-day cycle.
 
-THE RECAP COUNTS THE SAME THING EVERYWHERE
-"Covered" counted running, "volume per day" counted every sport, and "your best week" compared one against the other. Five definitions of the week on a single screen, and numbers that contradicted each other without saying so. One, now.
-
-THE APP SAYS WHAT IS HAPPENING
-A network error vanished without a word. A purchase Apple had just charged you for could announce itself as "Purchase didn't go through". Live Activity simply didn't appear, and never said the switch was off in Settings. Home could spin for a full minute. Each of those silences has been replaced by a sentence.
-
-QUIETER TO LOOK AT
-Light background by default, gradients and frosted glass gone. Empty screens all say the same thing the same way. At the largest text sizes, screens reach their last button, and the watch's one sentence is no longer cut off by the edge.
+THE END OF A RUN
+You can stop without saving. Deleting a run also removes it from Apple Health and from your club.
 
 YOU CHOOSE WHAT LEAVES
-Usage statistics can be refused, at sign-up or in settings, and the privacy policy says what leaves and what doesn't. If you refuse, no usage statistics are sent.
-
-A CLUB, WITHOUT KNOWING A SINGLE ONE
-Search asked for the name of a club you had to know already. When the field is empty, it now suggests open clubs.
+Usage statistics can be declined, at sign-up or in settings.
 ```
 
 ## Keywords (100 characters max, comma-separated, no spaces)
@@ -332,32 +336,34 @@ Política de privacidad: https://hukaia.github.io/RUNUP/privacy.html
 
 ## Novedades de esta versión (4000 caracteres máx. — obligatorio para una actualización)
 ```
-Esta versión no añade ni una pantalla. Corrige las cifras con las que entrenas.
+Haizo es el nuevo nombre de la app. Y casi todo ha cambiado.
 
-TUS RITMOS POR FIN VIENEN DE ALGÚN SITIO
-Los cuatro ritmos de tu plan — rodaje, maratón, umbral y series — se calculan ahora con las tablas VDOT de Jack Daniels y Jimmy Gilbert, con las que trabajan los entrenadores desde 1979. Antes eran cuatro multiplicaciones que el propio código admitía que no venían de ninguna parte: los rodajes salían demasiado rápidos y la sesión de series se corría a un ritmo que no era el suyo.
-Y si no has dado ni una marca ni un ritmo de rodaje, tu plan parte de una hipótesis prudente. Un entrenador que nunca te ha visto correr no te hace salir rápido.
+UN NOMBRE NUEVO, UN DISEÑO NUEVO
+La app cambia de nombre y pasa a llamarse Haizo. Cada pantalla se ha rediseñado: fondo claro, un solo color de acento, cifras que se leen de un vistazo. El reloj, el widget y la actividad en directo siguen el mismo diseño.
+
+EXPLORAR: TU PRÓXIMA CARRERA
+Una pestaña nueva para encontrarla entre más de 200 carreras en 39 países, del 5K al maratón y al ultra, con un filtro por distancia. Cada carrera muestra su fecha, sus distancias, su desnivel y dónde inscribirse. Elige la que preparas: tu plan cuenta las semanas hasta la salida.
+
+CLUBES E ITINERARIOS
+Únete a un club, abierto, bajo solicitud o con un código: decide quien lo creó. Salidas propuestas, actividad, clasificación. E itinerarios compartidos por otros corredores cerca de ti.
+
+UN PROGRAMA HYROX DE VERDAD
+Una sesión por estación, el trabajo de fuerza y core alrededor, y una progresión semana a semana.
+
+TUS RITMOS VIENEN DE ALGÚN SITIO
+Rodaje, maratón, umbral, VO2máx: tus cuatro ritmos se calculan con las tablas VDOT de Jack Daniels, las de los entrenadores desde 1979. Sin una marca, tu plan parte de una hipótesis prudente.
 
 LA VOZ DICE LA SESIÓN
-«Calentamiento terminado. Primera serie: busca 4:30, zancada suelta.» «Última serie hecha, bien jugado.» Esas frases existían, se mostraban en pantalla y nunca se decían. Ahora las oyes, sin sacar el teléfono. Y el reloj y el widget, que hablaban en francés a todo el mundo, hablan tu idioma.
+«Primera repetición: apunta a 4:30, zancada suelta.» La oyes sin sacar el móvil. El reloj y el widget hablan tu idioma.
 
 TU CICLO, SOBRE LA LONGITUD DE TU CICLO
-La ovulación se situaba en la mitad del ciclo: correcto con veintiocho días, falso en todo lo demás — tres días tarde en un ciclo de 21, cuatro días pronto en uno de 35. Ahora se calcula desde la fase que no varía. Y la fase del día ya no se copia a toda la semana.
+La ovulación se calcula sobre la longitud de tu ciclo, ya no sobre la mitad de un ciclo de 28 días.
 
-EL RESUMEN CUENTA LO MISMO EN TODAS PARTES
-«Recorridos» contaba la carrera a pie, «volumen por día» contaba todos los deportes y «tu mejor semana» comparaba una con otra. Cinco definiciones de la semana en una sola pantalla, y cifras que se contradecían sin decirlo. Ahora una.
-
-LA APP DICE LO QUE PASA
-Un error de red desaparecía sin una palabra. Una compra que Apple acababa de cobrar podía anunciarse como «La compra no se ha completado». La actividad en directo no aparecía y nunca decía que la casilla estaba desactivada en Ajustes. El inicio podía girar un minuto entero. Cada uno de esos silencios se ha sustituido por una frase.
-
-MÁS TRANQUILA DE MIRAR
-Fondo claro por defecto, degradados y cristal esmerilado fuera. Las pantallas vacías dicen todas lo mismo de la misma manera. Con los tamaños de texto más grandes, las pantallas llegan hasta su último botón, y la única frase del reloj ya no la corta el borde.
+EL FINAL DE UNA CARRERA
+Puedes parar sin guardar. Borrar una salida también la quita de Apple Salud y del club.
 
 TÚ ELIGES LO QUE SALE
-Las estadísticas de uso se pueden rechazar, en el registro o en los ajustes, y la política de privacidad dice qué sale y qué no. Si las rechazas, no se envía ninguna estadística.
-
-UN CLUB, SIN CONOCER NINGUNO
-La búsqueda pedía el nombre de un club que había que conocer de antemano. Cuando el campo está vacío, ahora propone clubes abiertos.
+Las estadísticas de uso se pueden rechazar, al registrarte o en los ajustes.
 ```
 
 ## Palabras clave (100 caracteres máx., separadas por comas sin espacios)
