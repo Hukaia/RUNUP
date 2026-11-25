@@ -756,6 +756,11 @@ def cmd_push_name(args):
     print("\nLe nom change à la mise en vente de la prochaine version, pas avant.")
 
 
+# Les états d'une fiche d'app (appInfo) qu'Apple ne laisse plus modifier : celle de la version en
+# vente. Toute écriture y répond 409.
+FICHES_FIGEES = {"READY_FOR_SALE", "READY_FOR_DISTRIBUTION"}
+
+
 def pousser_l_url_de_confidentialite(aid: str, a_blanc: bool) -> None:
     """L'URL de politique de confidentialité, écrite par la machine comme le reste de la fiche.
 
@@ -789,6 +794,14 @@ def pousser_l_url_de_confidentialite(aid: str, a_blanc: bool) -> None:
     page répond : on ne pousse jamais une adresse qu'on n'a pas éprouvée.
     """
     for info in call("GET", f"apps/{aid}/appInfos")["data"]:
+        # LA FICHE EN VENTE EST FIGÉE. Le 25 novembre, Apple a répondu 409 « The field
+        # 'privacyPolicyUrl' can not be modified in the current state » sur la fiche d'app de la
+        # 3.3, et la commande est morte avant d'atteindre celle de la 3.4. Seule la fiche en
+        # préparation se modifie ; elle remplace l'autre à la mise en vente.
+        etat = info["attributes"].get("state") or info["attributes"].get("appStoreState") or "?"
+        if etat in FICHES_FIGEES:
+            print(f"  fiche {etat} : figée par Apple, l'URL suivra à la mise en vente de la nouvelle")
+            continue
         for il in call("GET", f"appInfos/{info['id']}/appInfoLocalizations")["data"]:
             locale = il["attributes"].get("locale")
             avant = il["attributes"].get("privacyPolicyUrl")
@@ -1397,6 +1410,8 @@ def cmd_pret(args):
             dit = "NON" if not url else ("oui" if url == liens.CONFIDENTIALITE else "AUTRE")
             print(f"    {b.get('locale')} : nom {'oui' if b.get('name') else 'NON'}, "
                   f"confidentialité {dit}")
+            if etat in FICHES_FIGEES:
+                continue  # figée : on ne peut rien y faire, elle sera remplacée à la mise en vente
             if not url:
                 manques.append(f"{b.get('locale')} n'a pas d'URL de confidentialité")
             elif url != liens.CONFIDENTIALITE:
