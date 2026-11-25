@@ -292,6 +292,22 @@ struct RaceEvent: Decodable, Identifiable, Hashable {
         return libelleDeDiscipline
     }
 
+    /// L'un des formats de la course tombe-t-il dans cette catégorie ? Un événement qui propose un
+    /// 10 km et un semi répond aux deux filtres.
+    func aUnFormat(_ filtre: FiltreDeDistance) -> Bool {
+        formats.contains { FiltreDeDistance.categorie(de: $0) == filtre }
+    }
+
+    /// Le grand chiffre de l'affiche quand un filtre de distance est choisi : le format qui répond
+    /// au filtre, pas le plus long. Sous « 5 km », le Vienna City Marathon s'affiche « 5 », sinon on
+    /// croirait la liste fausse. Sans filtre, ou sans format qui réponde, l'étiquette habituelle.
+    func grandeEtiquette(pour filtre: FiltreDeDistance?) -> String {
+        guard let filtre, let format = formats.last(where: { FiltreDeDistance.categorie(de: $0) == filtre }) else {
+            return grandeEtiquette
+        }
+        return Distances.valeur(format)
+    }
+
     private static func jourLisible(_ iso: String) -> String? {
         guard let jour = jourISO.date(from: iso) else { return nil }
         return jour.formatted(styleDuJour)
@@ -442,5 +458,50 @@ extension RaceEvent {
         }
         if !sousTitre.isEmpty { morceaux.append(sousTitre) }
         return morceaux.isEmpty ? nil : morceaux.joined(separator: " · ")
+    }
+}
+
+/// LES DISTANCES QU'ON CHERCHE : le filtre « 5 km », « 10 km »… de l'écran des courses.
+///
+/// Les bornes sont celles du serveur (`lib/courses.js`, `BANDES_DE_DISTANCE`) :
+/// `ci_scripts/check_bandes_distance.py` refuse qu'elles divergent. Le serveur filtre la liste, et
+/// l'app refiltre derrière lui, parce qu'un serveur plus ancien ignore le paramètre. Elles laissent
+/// la marge des parcours réels (un 10 km mesuré à 10,1) sans avaler les distances voisines : le
+/// quart de marathon de Rotterdam (10,55 km) est rangé dans « Autres distances ».
+enum FiltreDeDistance: String, CaseIterable, Identifiable {
+    case cinq = "5k"
+    case dix = "10k"
+    case semi
+    case marathon
+    case ultra
+    case autres
+
+    var id: String { rawValue }
+
+    static let bandes: [(FiltreDeDistance, ClosedRange<Double>)] = [
+        (.cinq, 4.8...5.2),
+        (.dix, 9.7...10.3),
+        (.semi, 20.9...21.3),
+        (.marathon, 41.9...42.5),
+    ]
+    /// Au-delà de la borne haute du marathon : ultra.
+    static let ultraAuDelaDe = 42.5
+
+    /// La catégorie d'UN format, en kilomètres. nil pour une valeur qui n'est pas une distance.
+    static func categorie(de km: Double) -> FiltreDeDistance? {
+        guard km.isFinite, km > 0 else { return nil }
+        if let bande = bandes.first(where: { $0.1.contains(km) }) { return bande.0 }
+        return km > ultraAuDelaDe ? .ultra : .autres
+    }
+
+    var libelle: String {
+        switch self {
+        case .cinq: return String(localized: "5 km")
+        case .dix: return String(localized: "10 km")
+        case .semi: return String(localized: "Semi")
+        case .marathon: return String(localized: "Marathon")
+        case .ultra: return String(localized: "Ultra")
+        case .autres: return String(localized: "Autres distances")
+        }
     }
 }

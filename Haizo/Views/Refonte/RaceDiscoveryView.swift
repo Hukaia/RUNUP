@@ -29,6 +29,9 @@ struct RaceDiscoveryView: View {
     /// Le type d'épreuve montré : `nil` pour tous. Le serveur filtre la liste « Ça approche », qui est
     /// limitée aux plus proches ; mes courses, peu nombreuses, se filtrent ici.
     @State private var epreuve: Epreuve?
+    /// La distance cherchée : `nil` pour toutes. Même règle que l'épreuve : le serveur filtre « Ça
+    /// approche », l'app refiltre (un serveur plus ancien ignore le paramètre) et filtre mes courses.
+    @State private var distance: FiltreDeDistance?
 
     /// Ce qu'on montre : tout, ce que je prépare, ce qui approche.
     private enum Filtre: CaseIterable, Identifiable {
@@ -70,9 +73,15 @@ struct RaceDiscoveryView: View {
     /// Le serveur filtre déjà `upcoming`, mais un serveur plus ancien ignore le paramètre : refiltrer
     /// ici coûte une boucle et rend la liste juste dans les deux cas.
     private func retenues(_ courses: [RaceEvent]) -> [RaceEvent] {
-        guard let epreuve else { return courses }
-        return courses.filter { $0.discipline == epreuve.clef }
+        courses.filter { course in
+            (epreuve.map { course.discipline == $0.clef } ?? true)
+                && (distance.map { course.aUnFormat($0) } ?? true)
+        }
     }
+
+    /// La distance n'a de sens que pour la course à pied : un HYROX ou un triathlon ne se range pas
+    /// en « 10 km ». La rangée n'apparaît que pour toutes les épreuves, la route et le trail.
+    private var distanceProposee: Bool { epreuve == nil || epreuve == .route || epreuve == .trail }
 
     private var recherche: String { query.trimmingCharacters(in: .whitespaces) }
     private var enRecherche: Bool { recherche.count >= HZHub.lettresPourChercher }
@@ -87,7 +96,12 @@ struct RaceDiscoveryView: View {
             feuille
         }
         .onChange(of: query) { _, nouveau in chercher(nouveau) }
-        .onChange(of: epreuve) { _, _ in Task { await charger() } }
+        .onChange(of: epreuve) { _, _ in
+            // Une distance choisie avant de passer à HYROX ne doit pas vider la liste en silence.
+            if !distanceProposee { distance = nil }
+            Task { await charger() }
+        }
+        .onChange(of: distance) { _, _ in Task { await charger() } }
         .fullScreenCover(item: $ouverte) { course in
             RacePageView(race: course) { Task { await charger() } }
                 .toastDeModale()
@@ -157,6 +171,26 @@ struct RaceDiscoveryView: View {
                 .padding(.horizontal, HZEspace.marge)
             }
             .padding(.top, HZEspace.entrePilules)
+            // La distance, dans une troisième rangée : 5 km, 10 km, semi… Une course y répond si l'un de
+            // ses formats tombe dans la catégorie.
+            if distanceProposee {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: HZEspace.entrePilules) {
+                        HZFiltre(libelle: String(localized: "Toutes les distances"), actif: distance == nil && !enRecherche) {
+                            query = ""
+                            distance = nil
+                        }
+                        ForEach(FiltreDeDistance.allCases) { valeur in
+                            HZFiltre(libelle: valeur.libelle, actif: distance == valeur && !enRecherche) {
+                                query = ""
+                                distance = valeur
+                            }
+                        }
+                    }
+                    .padding(.horizontal, HZEspace.marge)
+                }
+                .padding(.top, HZEspace.entrePilules)
+            }
         }
     }
 
@@ -205,7 +239,7 @@ struct RaceDiscoveryView: View {
             }
         } else {
             VStack(alignment: .leading, spacing: HZEspace.entreSections) {
-                grille(results)
+                grille(results, distance: nil)
                 boutonCreer
             }
         }
@@ -249,15 +283,17 @@ struct RaceDiscoveryView: View {
     private func section(titre: String, courses: [RaceEvent]) -> some View {
         VStack(alignment: .leading, spacing: HZEspace.sousUnTitre) {
             HZTitreDeSection(titre: titre)
-            grille(courses)
+            grille(courses, distance: distance)
         }
     }
 
-    private func grille(_ courses: [RaceEvent]) -> some View {
+    /// `distance` : le filtre choisi, pour que le grand chiffre de l'affiche soit le format qui
+    /// répond (« 5 » sous « 5 km »), pas le plus long. Les résultats d'une recherche n'en ont pas.
+    private func grille(_ courses: [RaceEvent], distance: FiltreDeDistance?) -> some View {
         LazyVGrid(columns: colonnes, alignment: .leading, spacing: HZEspace.entreSections) {
             ForEach(Array(courses.enumerated()), id: \.element.id) { index, course in
                 HZTuileDeCourse(mois: mois(de: course),
-                                distance: course.grandeEtiquette,
+                                distance: course.grandeEtiquette(pour: distance),
                                 nom: course.name,
                                 note: course.noteDAffiche,
                                 couleur: HZIntensite.allCases[index % HZIntensite.allCases.count].couleur,
@@ -273,9 +309,16 @@ struct RaceDiscoveryView: View {
             .month(.wide))
     }
 
-    private var videHonnete: some View {
-        HZPhrase(texte: String(localized: "Cherche celle que tu prépares. Sur sa page tu verras qui la court aussi, à quelle allure, et où ils en sont de leur préparation."),
-                 titre: String(localized: "Aucune course en vue"))
+    @ViewBuilder private var videHonnete: some View {
+        if distance != nil {
+            // Un filtre de distance qui ne rend rien ne dit pas « aucune course » : il dit « aucune
+            // sur cette distance », et la sortie est de changer de distance ou d'ajouter la sienne.
+            HZPhrase(texte: String(localized: "Change de distance, ou ajoute celle que tu prépares : sa page se crée en une minute."),
+                     titre: String(localized: "Aucune course sur cette distance"))
+        } else {
+            HZPhrase(texte: String(localized: "Cherche celle que tu prépares. Sur sa page tu verras qui la court aussi, à quelle allure, et où ils en sont de leur préparation."),
+                     titre: String(localized: "Aucune course en vue"))
+        }
     }
 
     private var boutonCreer: some View {
@@ -296,7 +339,7 @@ struct RaceDiscoveryView: View {
             // Les deux listes ensemble : elles s'affichent ensemble, et les charger l'une après
             // l'autre ferait apparaître la page en deux temps.
             async let miennes = clubService.myRaces()
-            async let aVenir = clubService.upcomingRaces(discipline: epreuve?.clef)
+            async let aVenir = clubService.upcomingRaces(discipline: epreuve?.clef, distance: distance)
             mine = try await miennes
             upcoming = try await aVenir
         } catch {

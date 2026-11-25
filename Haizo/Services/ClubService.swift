@@ -1332,12 +1332,17 @@ struct ClubService {
     /// jamais celles qu'on prépare déjà. La meilleure recherche est celle qu'on n'a pas à taper.
     ///
     /// `discipline` (« run », « trail », « hyrox »…) restreint la liste : le serveur ne rend que les
-    /// vingt plus proches, et filtrer ces vingt-là sur l'appareil ferait croire qu'il n'y a pas de
-    /// trail à venir parce que les vingt prochaines sont des marathons. Un serveur plus ancien
+    /// quarante plus proches, et filtrer ces quarante-là sur l'appareil ferait croire qu'il n'y a pas de
+    /// trail à venir parce que les quarante prochaines sont des marathons. Un serveur plus ancien
     /// ignore le paramètre et rend tout : l'appelant qui filtre déjà de son côté reste juste.
-    func upcomingRaces(discipline: String? = nil) async throws -> [RaceEvent] {
-        var query: [String: String]?
-        if let discipline, !discipline.isEmpty { query = ["discipline": discipline] }
+    ///
+    /// `distance` (« 5k », « 10k », « semi »…, voir `FiltreDeDistance`) suit la même règle : le
+    /// serveur filtre avant de couper la liste, l'appelant refiltre derrière lui.
+    func upcomingRaces(discipline: String? = nil, distance: FiltreDeDistance? = nil) async throws -> [RaceEvent] {
+        var parametres: [String: String] = [:]
+        if let discipline, !discipline.isEmpty { parametres["discipline"] = discipline }
+        if let distance { parametres["distance"] = distance.rawValue }
+        let query: [String: String]? = parametres.isEmpty ? nil : parametres
         let response: RaceListResponse = try await send(path: "api/races/upcoming", method: "GET", query: query)
         return response.items
     }

@@ -358,3 +358,46 @@ test('verifiedOn n\'entre jamais par la porte de création', () => {
   // La date de vérification est la parole du générateur de courses semées, pas celle d'un coureur.
   assert.strictEqual(course({ verifiedOn: '2026-11-22' }).verifiedOn, undefined);
 });
+
+// --- Les catégories de distance (filtre « 5 km », « 10 km »… de l'app) ------------------------------
+const { categorieDeDistance, filtreDeDistance, FILTRES_DE_DISTANCE, BANDES_DE_DISTANCE } = require('../lib/courses');
+
+test('les distances officielles tombent dans leur catégorie', () => {
+  assert.strictEqual(categorieDeDistance(5), '5k');
+  assert.strictEqual(categorieDeDistance(10), '10k');
+  assert.strictEqual(categorieDeDistance(21.0975), 'semi');
+  assert.strictEqual(categorieDeDistance(21.1), 'semi');
+  assert.strictEqual(categorieDeDistance(42.195), 'marathon');
+});
+
+test('un parcours mesuré un peu long reste dans sa catégorie, une distance voisine non', () => {
+  assert.strictEqual(categorieDeDistance(10.1), '10k');
+  // Le quart de marathon de Rotterdam n'est pas un 10 km.
+  assert.strictEqual(categorieDeDistance(10.55), 'autres');
+  assert.strictEqual(categorieDeDistance(16.0934), 'autres'); // 10 miles
+  assert.strictEqual(categorieDeDistance(20), 'autres');
+  assert.strictEqual(categorieDeDistance(8), 'autres');
+});
+
+test('au-delà du marathon, c\'est un ultra', () => {
+  assert.strictEqual(categorieDeDistance(43.6), 'ultra');
+  assert.strictEqual(categorieDeDistance(78), 'ultra');
+  assert.strictEqual(categorieDeDistance(42.5), 'marathon');
+});
+
+test('une valeur qui n\'est pas une distance n\'a pas de catégorie', () => {
+  for (const v of [0, -5, NaN, null, undefined, 'abc']) assert.strictEqual(categorieDeDistance(v), null);
+});
+
+test('un filtre inconnu est ignoré, pas transformé en liste vide', () => {
+  for (const f of FILTRES_DE_DISTANCE) assert.strictEqual(filtreDeDistance(f), f);
+  for (const f of ['', '42k', 'SEMI', undefined, ['5k']]) assert.strictEqual(filtreDeDistance(f), null);
+});
+
+test('les bandes ne se chevauchent pas et vont croissant', () => {
+  const bandes = Object.values(BANDES_DE_DISTANCE);
+  for (let i = 0; i < bandes.length; i += 1) {
+    assert.ok(bandes[i][0] < bandes[i][1]);
+    if (i > 0) assert.ok(bandes[i - 1][1] < bandes[i][0]);
+  }
+});

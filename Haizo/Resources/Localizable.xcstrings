@@ -43088,6 +43088,91 @@
           }
         }
       }
+    },
+    "Ultra": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ultra"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ultra"
+          }
+        }
+      }
+    },
+    "Autres distances": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other distances"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otras distancias"
+          }
+        }
+      }
+    },
+    "Toutes les distances": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All distances"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas las distancias"
+          }
+        }
+      }
+    },
+    "Aucune course sur cette distance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No race at this distance"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninguna carrera en esta distancia"
+          }
+        }
+      }
+    },
+    "Change de distance, ou ajoute celle que tu prépares : sa page se crée en une minute.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick another distance, or add the one you're training for: its page takes a minute to create."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambia de distancia, o añade la que preparas: su página se crea en un minuto."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

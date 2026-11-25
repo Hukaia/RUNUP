@@ -546,6 +546,13 @@ jobs:
           cd ci_scripts && python3 test_tirets.py
           cd .. && python3 ci_scripts/check_tirets.py
 
+      # Le filtre de distance des courses (5 km, 10 km, semi…) est appliqué par le serveur ET par l'app :
+      # leurs bornes doivent être les mêmes, sinon une course rendue sous « 10 km » disparaît à l'écran.
+      - name: Vérifier que le serveur et l'app rangent les distances pareil
+        run: |
+          cd ci_scripts && python3 test_bandes_distance.py
+          cd .. && python3 ci_scripts/check_bandes_distance.py
+
       # « Aucune valeur en dur dans les vues » — la méthode de la refonte, point 5. Le garde
       # ci-dessus compare trois écritures à la grille de l'ancien système ; celui-ci refuse tout
       # nombre dans une vue de la refonte, quelle que soit son écriture, sans liste d'exceptions.

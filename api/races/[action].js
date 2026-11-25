@@ -25,7 +25,9 @@ const { underDailyCap } = require('../../lib/rateLimit');
 // ligatures. « marathon de paris » trouve « Marathon de PARIS », et surtout l'index UNIQUE sur
 // (nom replié, date) empêche les deux d'exister en même temps.
 const { ACCENTS_SOURCE, ACCENTS_CIBLE, normaliser, echapperPourLike } = require('../../lib/recherche');
-const { nettoyerCourse, codesPourPays, pays, DISCIPLINES } = require('../../lib/courses');
+const {
+  nettoyerCourse, codesPourPays, pays, DISCIPLINES, BANDES_DE_DISTANCE, ULTRA_AU_DELA_DE, filtreDeDistance,
+} = require('../../lib/courses');
 
 // Ce qu'un message peut être. `partner` est une recherche de partenaire, `bib_offer` une annonce
 // de cession, `bib_wanted` une recherche de dossard, `message` tout le reste.
@@ -172,6 +174,11 @@ async function handleUpcoming(req, res, userId) {
   // serveur ne doit pas voir « aucune course » parce qu'elle a demandé quelque chose de neuf.
   const discipline = DISCIPLINES.includes(req.query.discipline) ? req.query.discipline : null;
   const paysFiltre = pays(req.query.country);
+  // Troisième filtre : la distance (« 5k », « 10k », « semi », « marathon », « ultra », « autres »).
+  // Une course répond si L'UN de ses formats tombe dans la catégorie ; les bornes sont celles de
+  // lib/courses.js, passées en paramètres pour que le SQL et les tests disent la même chose.
+  const distance = filtreDeDistance(req.query.distance);
+  const b = BANDES_DE_DISTANCE;
   const { rows } = await sql`
     SELECT r.id, r.name, r.city, to_char(r.race_date, 'YYYY-MM-DD') AS race_date, r.distance_km, r.elevation_gain_m, r.discipline,
            r.website, r.country, r.distances_km::float8[] AS distances_km, r.surface, r.profile, r.start_time,
@@ -183,8 +190,20 @@ async function handleUpcoming(req, res, userId) {
       AND r.id NOT IN (SELECT race_id FROM race_followers WHERE user_id = ${userId})
       AND (${discipline}::text IS NULL OR r.discipline = ${discipline}::text)
       AND (${paysFiltre}::text IS NULL OR r.country = ${paysFiltre}::text)
+      AND (${distance}::text IS NULL OR EXISTS (
+        SELECT 1
+        FROM unnest(COALESCE(r.distances_km, '{}'::numeric[]) || array_remove(ARRAY[r.distance_km], NULL)) AS f(km)
+        WHERE f.km IS NOT NULL AND f.km > 0 AND CASE
+          WHEN f.km BETWEEN ${b['5k'][0]}::numeric AND ${b['5k'][1]}::numeric THEN '5k'
+          WHEN f.km BETWEEN ${b['10k'][0]}::numeric AND ${b['10k'][1]}::numeric THEN '10k'
+          WHEN f.km BETWEEN ${b.semi[0]}::numeric AND ${b.semi[1]}::numeric THEN 'semi'
+          WHEN f.km BETWEEN ${b.marathon[0]}::numeric AND ${b.marathon[1]}::numeric THEN 'marathon'
+          WHEN f.km > ${ULTRA_AU_DELA_DE}::numeric THEN 'ultra'
+          ELSE 'autres'
+        END = ${distance}::text
+      ))
     ORDER BY follower_count DESC, r.race_date ASC
-    LIMIT 20
+    LIMIT 40
   `;
   res.status(200).json({ items: rows.map(mapRace) });
 }
