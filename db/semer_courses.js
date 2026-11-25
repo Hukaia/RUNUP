@@ -60,7 +60,7 @@ const {
 
 // Le jour où cette liste a été relue à ses sources. Aucune course d'avant ce jour n'y entre : l'app
 // ne montre que les courses dont la date est >= aujourd'hui.
-const AUJOURDHUI = '2026-11-22';
+const AUJOURDHUI = '2026-11-25';
 
 // `distanceKm` et `elevationGainM` restent absents pour les événements à plusieurs formats
 // (EcoTrail, Marathon du Mont-Blanc) : annoncer une distance quand il y en a six serait faux pour
@@ -518,6 +518,17 @@ const CHAMPS_CONTROLES = [
   'country', 'distancesKm', 'surface', 'profile', 'startTime', 'registrationStatus',
   'registrationUrl', 'registrationOpens', 'website',
 ];
+
+// LES COURSES SUR ROUTE DE TOUTES DISTANCES (25 novembre 2026) : semis, 10 km, 5 km, 15 km, 20 km,
+// 10 miles… 166 courses de 40 pays, dans db/courses_route.json plutôt qu'ici, parce qu'elles
+// portent chacune deux champs de plus que les autres : `dateCitee`, la phrase EXACTE de la source
+// qui donne la date, et `controle`, ce qui l'a confirmée. Chaque source a été retéléchargée et la
+// date retrouvée écrite sur la page (163 par un contrôle automatique, 3 relues à la main : une date
+// en chinois, « 24-OCT-2027 », « DO 31.12. » sous « PROGRAMM 2026 »). Mêmes règles que plus haut :
+// une date seulement publiée par un agrégateur, ou un week-end sans le jour de la course, n'entre
+// pas ; un format repris de l'édition passée non plus (Sydney et Perth n'ont donc pas de distance).
+// Le calendrier de la FFA n'a pas été lu : son robots.txt interdit la lecture automatique.
+COURSES.push(...require('./courses_route.json').courses);
 
 const vues = new Set();
 const lignes = [];

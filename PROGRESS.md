@@ -9477,6 +9477,16 @@ La campagne de captures App Store n° 269 est la première depuis le 18 novembre
 - L'adresse personnelle reste dans l'historique git (anciens commits) ; elle n'est plus dans aucun fichier actuel, ni sur la branche ni sur `main`.
 - `RUNUP_ADMIN_EMAILS` : pas d'accès à Vercel d'ici, la variable est à poser par Charlotte.
 
+### Courses : toutes les distances, et un filtre par distance (25 novembre)
+
+Charlotte : « pas que les marathons, aussi les semis, les 10 km, les 5 km, toutes les courses officielles possibles ».
+- **Catalogue : 52 → 218 courses, 39 pays.** 166 courses sur route ajoutées (semis, 10 km, 5 km, 15 et 20 km, 10 miles, 25 km…) : France 41, reste de l'Europe 55, Amériques 36, Asie, Moyen-Orient, Océanie et Afrique 34. Elles sont dans `db/courses_route.json`, que `db/semer_courses.js` charge ; chacune porte sa `source`, la phrase exacte qui donne la date (`dateCitee`) et ce qui l'a confirmée (`controle`).
+- **Contrôle** : chaque source retéléchargée, la date retrouvée écrite sur la page, 163 fois par un script (formes françaises, anglaises, espagnoles, catalanes, allemandes, italiennes, néerlandaises, suédoises, polonaises, ISO, chiffrées), 3 fois relue à la main (une date en chinois, « 24-OCT-2027 », « DO 31.12. »). Une date fausse injectée est refusée par le script.
+- **Écartées** : environ 110 candidates, faute de date publiée par l'organisateur (seulement un agrégateur, ou un week-end sans le jour de la course) ; 9 passées avant la mise en base (fin novembre 2026) ; le Bangkok Marathon (course de nuit, 10 ou 11 janvier). Sydney et Perth entrent sans distance : les formats publiés sont ceux de 2026. Moins solides, à relire : Disney (lien jour/distance relevé par un second site), Falmouth (compte à rebours), adidas 10K Paris (le site dit 23 mai, un agenda dit 6 juin), Brighton Half (page d'un partenaire caritatif).
+- **« Toutes les courses officielles »** : en France c'est le calendrier de la FFA, et son `robots.txt` interdit la lecture automatique. Il n'a pas été lu. Pour aller au bout il faut un accès accordé par la FFA (décision de Charlotte).
+- **Filtre par distance** (5 km, 10 km, Semi, Marathon, Ultra, Autres distances) : troisième rangée de pilules pour la route, le trail et toutes les épreuves ; une course répond si l'un de ses formats tombe dans la catégorie, et l'affiche montre ce format. Serveur : paramètre `distance` de `upcoming`, liste portée de 20 à 40. Bornes communes (`lib/courses.js`, `RaceEvent.swift`), tenues par `check_bandes_distance.py` (6 cas).
+- **Vérifié** : SQL du filtre contre un Postgres 16 local avec les 218 courses ; le fichier Neon collé deux fois dans une base neuve donne 218 lignes ; 252 tests Node. **Non vu** : l'écran (compilation et capture en CI), la base réelle. **À faire par Charlotte : coller `db/A_COLLER_courses_monde.sql` dans la console Neon** (idempotent).
+
 ### Constaté, pas encore corrigé
 
 - À confirmer sur téléphone : ouvrir une sortie depuis un profil (deux couvertures plein écran sur la même racine).
